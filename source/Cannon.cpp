@@ -16,11 +16,10 @@ void Cannon::draw(sf::RenderWindow& renderWindow)
 {
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 3, y_+ 3);
-    sprite_.setRotation(rotation_);
+    sprite_.setRotation(rotation_ + 90.f);
     renderWindow.draw(sprite_);
 
     sprite_.setColor(sf::Color(255, 255, 255, 255));
     sprite_.setPosition(x_, y_);
-    sprite_.setRotation(rotation_);
     renderWindow.draw(sprite_);
 }
