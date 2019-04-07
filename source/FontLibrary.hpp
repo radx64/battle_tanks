@@ -1,3 +1,6 @@
+#ifndef FONT_LIBRARY_HPP_
+#define FONT_LIBRARY_HPP_
+
 #include <map>
 #include <string>
 
@@ -14,3 +17,5 @@ private:
     static void initFont(const std::string& name, const std::string& path);
     static std::map<std::string, sf::Font> fonts_;
 };
+
+#endif  // FONT_LIBRARY_HPP_

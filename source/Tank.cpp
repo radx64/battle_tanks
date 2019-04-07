@@ -51,7 +51,7 @@ void Tank::set_throtle(float throttle)
 void Tank::set_direction(float direction)
 {
     set_direction_ = direction;
-    cannon_.rotation_ = direction;
+    cannon_.set_rotation(direction);
 }
 
 void Tank::physics()
@@ -69,4 +69,5 @@ void Tank::physics()
 
     x_ += cos(direction_ * M_PI/180.f) * velocity_;
     y_ += sin(direction_ * M_PI/180.f) * velocity_;
+    cannon_.physics();
 }

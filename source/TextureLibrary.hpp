@@ -1,3 +1,6 @@
+#ifndef TEXTURE_LIBRARY_HPP_
+#define TEXTURE_LIBRARY_HPP_
+
 #include <map>
 #include <string>
 
@@ -14,3 +17,5 @@ private:
     static void initTexture(const std::string& name, const std::string& path);
     static std::map<std::string, sf::Texture> textures_;
 };
+
+#endif  //  TEXTURE_LIBRARY_HPP_

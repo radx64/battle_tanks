@@ -12,6 +12,12 @@ void TextureLibrary::initialize()
 {
     initTexture("blue_tank",    "../sprites/tankBody_blue_outline.png");
     initTexture("blue_cannon",  "../sprites/tankBlue_barrel1_outline.png");
+    initTexture("grass_1",  "../sprites/tileGrass1.png");
+    initTexture("grass_2",  "../sprites/tileGrass2.png");
+    initTexture("sand_1",  "../sprites/tileSand1.png");
+    initTexture("sand_2",  "../sprites/tileSand1.png");
+    initTexture("grass_sand_NS", "../sprites/tileGrass_transitionS.png");
+    initTexture("grass_sand_SN", "../sprites/tileGrass_transitionN.png");
 }
 
 sf::Texture& TextureLibrary::get(const std::string& name)

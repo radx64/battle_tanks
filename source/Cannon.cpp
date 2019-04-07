@@ -1,6 +1,10 @@
 #include "Cannon.hpp"
 
+#include <cmath>
+
 #include "TextureLibrary.hpp"
+
+constexpr float TANK_ROTATION_SPEED = 6.0f;
 
 Cannon::Cannon(float x, float y, float rotation) : x_(x), y_(y), rotation_(rotation)
 {
@@ -22,4 +26,21 @@ void Cannon::draw(sf::RenderWindow& renderWindow)
     sprite_.setColor(sf::Color(255, 255, 255, 255));
     sprite_.setPosition(x_, y_);
     renderWindow.draw(sprite_);
+}
+
+void Cannon::set_rotation(float rotation)
+{
+    set_rotation_ = rotation;
+}
+
+void Cannon::physics()
+{
+    if (rotation_ > 360.f) rotation_ = 0.f;
+    if (rotation_ < 0.f) rotation_ = 359.f;
+
+    float delta = set_rotation_ - rotation_;
+    while (delta < 0.f) delta +=360.f;
+
+    if (delta < 180.f) rotation_+= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
+    if (delta > 180.f) rotation_-= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));   
 }
