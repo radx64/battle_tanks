@@ -1,17 +1,27 @@
 #include <cstdint>
 #include <cmath>
 #include <iostream>
+
+#include "source/FontLibrary.hpp"
+#include "source/TextureLibrary.hpp"
 #include "source/Tank.hpp"
 
 #include <SFML/Graphics.hpp>
 
+float distance(float x1, float y1, float x2, float y2)
+{
+    return sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+}
+
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Battle tanks DEMO!");
+    FontLibrary::initialize();
+    TextureLibrary::initialize();
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Battle tanks!");
     window.setFramerateLimit(60);
     sf::Clock clock;
     std::vector<Tank*> tanks;
-    for (uint8_t i = 1; i < 10; ++i)
+    for (uint8_t i = 1; i < 4; ++i)
         tanks.push_back(new Tank(i * 50, i * 50, i * 36 + 0));
 
     float mouse_x = 300;
@@ -35,11 +45,30 @@ int main()
         (void) clock;
         window.clear(sf::Color(0, 100, 20));
 
+        //target circle
+        sf::CircleShape target(10);
+        target.setFillColor(sf::Color(0, 0, 0));
+        target.setOutlineThickness(5);
+        target.setOutlineColor(sf::Color(250, 10, 10));
+        target.setPosition(mouse_x, mouse_y);
+        target.setOrigin(10,10);
+        window.draw(target);
+
         for (Tank* tank : tanks)
         {
-            float direction = atan2(mouse_y - tank->y_, mouse_x - tank->x_);
-            tank->set_throtle(1.0f);
-            tank->set_direction(direction * 180 / M_PI);
+            float dist = distance(mouse_x, mouse_y, tank->x_, tank->y_);
+
+            if (dist > 10.0f)
+            {
+                float direction = atan2(mouse_y - tank->y_, mouse_x - tank->x_);
+                tank->set_throtle(1.0f);
+                tank->set_direction(direction * 180 / M_PI);
+            }
+            else
+            {
+                tank->set_throtle(0.f);
+            }
+
             tank->physics();
             tank->draw(window);
             if (tank->x_ > 1100) tank->x_ = -50;
@@ -48,14 +77,6 @@ int main()
             if (tank->y_ < -50) tank->y_ = 800;
             
         }
-        
-        //click circle
-        sf::CircleShape shape(10);
-        shape.setFillColor(sf::Color(0, 0, 0));
-        shape.setOutlineThickness(5);
-        shape.setOutlineColor(sf::Color(250, 10, 10));
-        shape.setPosition(mouse_x, mouse_y);
-        window.draw(shape);
         window.display();
     }
 

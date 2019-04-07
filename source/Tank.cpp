@@ -3,24 +3,23 @@
 #include <algorithm>
 #include <cmath>
 
-constexpr float TANK_MAX_VELOCITY = 1.0f;
-constexpr float TANK_ACCELERATION = 0.1f;
+#include "TextureLibrary.hpp"
+#include "FontLibrary.hpp"
+
+constexpr float TANK_MAX_VELOCITY = 2.0f;
+constexpr float TANK_BRAKE_FORCE = 0.9f;
+constexpr float TANK_ACCELERATION = 0.02f;
 constexpr float TANK_ROTATION_SPEED = 2.5f;
 
 Tank::Tank(float x, float y, float rotation) : x_(x), y_(y), direction_(rotation), set_direction_(rotation), cannon_(x, y, direction_)
 {
-    if (!texture_.loadFromFile("../sprites/tankBody_blue_outline.png"))
-        throw std::string("Couldn't load texture file...");
-
-    sprite_.setTexture(texture_);
+    auto& texture = TextureLibrary::get("blue_tank");
+    sprite_.setTexture(texture);
     sprite_.setPosition(sf::Vector2f(x_, y_));
-    sf::Vector2u texture_body_size = texture_.getSize();
+    sf::Vector2u texture_body_size = texture.getSize();
     sf::Vector2f texture_body_middle_point(texture_body_size.x / 2.f, texture_body_size.y / 2.f);
     sprite_.setOrigin(texture_body_middle_point);   
-
-    if (!font_.loadFromFile("../fonts/armata.ttf"))
-        throw std::string("Couldn't load font file...");
-    text_.setFont(font_);
+    text_.setFont(FontLibrary::get("armata"));
 }
 
 void Tank::draw(sf::RenderWindow& renderWindow)
@@ -57,7 +56,8 @@ void Tank::set_direction(float direction)
 
 void Tank::physics()
 {
-    if(velocity_<= TANK_MAX_VELOCITY) velocity_ += set_throttle_ * TANK_ACCELERATION;
+    if(velocity_<= TANK_MAX_VELOCITY * set_throttle_) velocity_ += set_throttle_ * TANK_ACCELERATION;
+    else velocity_ *= TANK_BRAKE_FORCE;
     if (direction_ > 360.f) direction_ = 0.f;
     if (direction_ < 0.f) direction_ = 359.f;
 

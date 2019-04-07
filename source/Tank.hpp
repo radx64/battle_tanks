@@ -24,8 +24,6 @@ public:
     float set_direction_{};
     float set_throttle_{};
     float velocity_{};
-    sf::Texture texture_;
-    sf::Font font_;
     sf::Sprite sprite_;
     sf::Text text_;
     Cannon cannon_;

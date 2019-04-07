@@ -17,7 +17,6 @@ public:
     float x_;
     float y_;
     float rotation_;
-    sf::Texture texture_;
     sf::Sprite sprite_;
 };
 
