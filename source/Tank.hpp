@@ -10,20 +10,20 @@
 class Tank : public IRenderable
 {
 public:
-    Tank(float x, float y, float rotation);
+    Tank(double x, double y, double rotation);
     void draw(sf::RenderWindow& renderWindow) override;
     void physics();
 
-    void set_throtle(float throttle);
-    void set_direction(float direction);
+    void set_throtle(double throttle);
+    void set_direction(double direction);
 
 public:
-    float x_{};
-    float y_{};
-    float direction_{};
-    float set_direction_{};
-    float set_throttle_{};
-    float velocity_{};
+    double x_{};
+    double y_{};
+    double direction_{};
+    double set_direction_{};
+    double set_throttle_{};
+    double velocity_{};
     sf::Sprite sprite_;
     sf::Text text_;
     Cannon cannon_;

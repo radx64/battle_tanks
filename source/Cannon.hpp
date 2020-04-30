@@ -11,15 +11,15 @@ namespace sf
 class Cannon
 {
 public:
-    Cannon(float x, float y, float rotation);
+    Cannon(double x, double y, double rotation);
     void draw(sf::RenderWindow& renderWindow);
     void physics();
-    void set_rotation(float rotation);
+    void set_rotation(double rotation);
 
-    float x_;
-    float y_;
-    float rotation_;
-    float set_rotation_;
+    double x_;
+    double y_;
+    double rotation_;
+    double set_rotation_;
     sf::Sprite sprite_;
 };
 

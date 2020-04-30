@@ -63,13 +63,13 @@ int main()
 
             for (Tank* tank : tanks)
             {
-                float dist = distance(mouse_x, mouse_y, tank->x_, tank->y_);
+                double dist = distance(mouse_x, mouse_y, tank->x_, tank->y_);
 
                 if (dist > 10.0f)
                 {
                     float direction = atan2(mouse_y - tank->y_, mouse_x - tank->x_);
                     tank->set_throtle(1.0f);
-                    tank->set_direction(direction * 180 / M_PI);
+                    tank->set_direction(direction * 180.0f / M_PI);
                 }
                 else
                 {

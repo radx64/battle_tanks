@@ -11,7 +11,7 @@ constexpr float TANK_BRAKE_FORCE = 0.9f;
 constexpr float TANK_ACCELERATION = 0.02f;
 constexpr float TANK_ROTATION_SPEED = 2.5f;
 
-Tank::Tank(float x, float y, float rotation) : x_(x), y_(y), direction_(rotation), set_direction_(rotation), cannon_(x, y, direction_)
+Tank::Tank(double x, double y, double rotation) : x_(x), y_(y), direction_(rotation), set_direction_(rotation), cannon_(x, y, direction_)
 {
     auto& texture = TextureLibrary::get("blue_tank");
     sprite_.setTexture(texture);
@@ -44,11 +44,11 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     // renderWindow.draw(text_);
 }
 
-void Tank::set_throtle(float throttle)
+void Tank::set_throtle(double throttle)
 {
     set_throttle_ = throttle;
 }
-void Tank::set_direction(float direction)
+void Tank::set_direction(double direction)
 {
     set_direction_ = direction;
     cannon_.set_rotation(direction);
@@ -58,16 +58,16 @@ void Tank::physics()
 {
     if(velocity_<= TANK_MAX_VELOCITY * set_throttle_) velocity_ += set_throttle_ * TANK_ACCELERATION;
     else velocity_ *= TANK_BRAKE_FORCE;
-    if (direction_ > 360.f) direction_ = 0.f;
-    if (direction_ < 0.f) direction_ = 359.f;
+    if (direction_ > 360.0) direction_ = 0.0;
+    if (direction_ < 0.0) direction_ = 359.0;
 
-    float delta = set_direction_ - direction_;
-    while (delta < 0.f) delta +=360.f;
+    double delta = set_direction_ - direction_;
+    while (delta < 0.0) delta +=360.0;
 
-    if (delta < 180.f) direction_+= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
-    if (delta > 180.f) direction_-= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
+    if (delta < 180.0) direction_+= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
+    if (delta > 180.0) direction_-= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
 
-    x_ += cos(direction_ * M_PI/180.f) * velocity_;
-    y_ += sin(direction_ * M_PI/180.f) * velocity_;
+    x_ += cos(direction_ * M_PI/180.0) * velocity_;
+    y_ += sin(direction_ * M_PI/180.0) * velocity_;
     cannon_.physics();
 }
