@@ -18,7 +18,7 @@ public:
 
     double x_;
     double y_;
-    double rotation_;
+    double current_rotation_;
     double set_rotation_;
     sf::Sprite sprite_;
 };

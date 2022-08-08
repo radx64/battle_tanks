@@ -4,13 +4,25 @@
 
 #include "TextureLibrary.hpp"
 
-constexpr double TANK_ROTATION_SPEED = 8.0;
+// #include <iostream>
+// #include <iomanip>
 
-Cannon::Cannon(double x, double y, double rotation) : x_(x), y_(y), rotation_(rotation)
+
+constexpr double CANNON_ROTATION_SPEED = 15.0;
+
+// TODO: make some math header for such things
+namespace 
+{
+double signed_fmod(double a, double n)
+{
+    return a - floor(a/n) * n;
+}
+}  // namespace
+
+Cannon::Cannon(double x, double y, double rotation) : x_(x), y_(y), current_rotation_(rotation)
 {
     auto& texture = TextureLibrary::get("blue_cannon");
     sprite_.setTexture(texture);
-    sprite_.setPosition(sf::Vector2f(x_, y_));
     sf::Vector2u texture_size = texture.getSize();
     sf::Vector2f texture_middle_point(texture_size.x/ 2.f, texture_size.y / 2.f + 10.f);
     sprite_.setOrigin(texture_middle_point);
@@ -20,7 +32,7 @@ void Cannon::draw(sf::RenderWindow& renderWindow)
 {
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 3, y_+ 3);
-    sprite_.setRotation(rotation_ + 90.0);
+    sprite_.setRotation(current_rotation_ + 90.0);
     renderWindow.draw(sprite_);
 
     sprite_.setColor(sf::Color(255, 255, 255, 255));
@@ -35,12 +47,9 @@ void Cannon::set_rotation(double rotation)
 
 void Cannon::physics()
 {
-    if (rotation_ > 360.0) rotation_ = 0.0;
-    if (rotation_ < 0.0) rotation_ = 359.0;
+    double delta = set_rotation_ - current_rotation_;
+    delta = signed_fmod((delta + 180.0), 360.0) - 180.0;
 
-    double delta = set_rotation_ - rotation_;
-    while (delta < 0.0) delta += 360.0;
-
-    if (delta <= 180.0) rotation_+= std::min(TANK_ROTATION_SPEED, (double) fabs(delta));
-    if (delta > 180.0) rotation_-= std::min(TANK_ROTATION_SPEED, (double) fabs(delta));   
+    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED, fabs(delta));
+    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED, fabs(delta));   
 }

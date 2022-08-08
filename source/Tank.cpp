@@ -6,19 +6,41 @@
 #include "TextureLibrary.hpp"
 #include "FontLibrary.hpp"
 
-constexpr float TANK_MAX_VELOCITY = 2.0f;
-constexpr float TANK_BRAKE_FORCE = 0.9f;
-constexpr float TANK_ACCELERATION = 0.02f;
-constexpr float TANK_ROTATION_SPEED = 2.5f;
+#include <iostream>
+#include <iomanip>
 
-Tank::Tank(double x, double y, double rotation) : x_(x), y_(y), direction_(rotation), set_direction_(rotation), cannon_(x, y, direction_)
+constexpr double TANK_BRAKE_FORCE = 0.1;
+constexpr double TANK_ACCELERATION = 0.8;
+constexpr float ROLLING_RESISTANCE_COEEF = 0.9;
+
+constexpr double TANK_ROTATION_SPEED = 5.0;
+
+constexpr double TANK_RADIUS = 25;
+constexpr double TANK_MASS = 5;
+
+constexpr bool DEBUG = true;
+
+// TODO: make some math header for such things
+namespace 
+{
+double distance(double x1, double y1, double x2, double y2)
+{
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
+double signed_fmod(double a, double n)
+{
+    return a - floor(a/n) * n;
+}
+}  // namespace
+
+Tank::Tank(uint32_t id, double x, double y, double rotation) : id_(id), x_(x), y_(y), current_direction_(rotation), set_direction_(rotation), cannon_(x, y, current_direction_)
 {
     auto& texture = TextureLibrary::get("blue_tank");
     sprite_.setTexture(texture);
-    sprite_.setPosition(sf::Vector2f(x_, y_));
     sf::Vector2u texture_body_size = texture.getSize();
-    sf::Vector2f texture_body_middle_point(texture_body_size.x / 2.f, texture_body_size.y / 2.f);
-    sprite_.setOrigin(texture_body_middle_point);   
+    tank_middle_point_ = sf::Vector2f(texture_body_size.x / 2.f, texture_body_size.y / 2.f);
+    sprite_.setOrigin(tank_middle_point_);   
     text_.setFont(FontLibrary::get("armata"));
 }
 
@@ -26,7 +48,7 @@ void Tank::draw(sf::RenderWindow& renderWindow)
 {
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 8, y_+ 8);
-    sprite_.setRotation(direction_ - 90.f);
+    sprite_.setRotation(current_direction_ - 90.f);
     renderWindow.draw(sprite_);
 
     sprite_.setColor(sf::Color(255, 255, 255, 255));
@@ -42,6 +64,43 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     // text_.setPosition(x_ + 20.f, y_ - 40.f);
     // text_.setCharacterSize(10);
     // renderWindow.draw(text_);
+
+    if(DEBUG)
+    {
+        // Collision circle
+        sf::CircleShape boundary(0, 10);
+        boundary.setFillColor(sf::Color(0, 0, 0, 0));
+        boundary.setOutlineThickness(2);
+        boundary.setOutlineColor(sf::Color(0, 0, 255));
+        boundary.setPosition(x_, y_);
+        boundary.setOrigin(tank_middle_point_);
+        boundary.setRadius(TANK_RADIUS);
+        renderWindow.draw(boundary);
+
+        // Velocity vectors
+        sf::Vertex velocity_vector[] =
+        {
+            sf::Vertex(sf::Vector2f(x_, y_)),
+            sf::Vertex(sf::Vector2f(x_, y_)+ (velocity_ * 16.0f))
+        };
+        renderWindow.draw(velocity_vector, 2, sf::Lines);
+
+        sf::Vertex velocity_x_vector[] =
+        {
+            sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Red),
+            sf::Vertex(sf::Vector2f(x_+velocity_.x * 16.0f, y_), sf::Color::Red)
+        };
+
+        renderWindow.draw(velocity_x_vector, 2, sf::Lines);
+
+        sf::Vertex velocity_y_vector[] =
+        {
+            sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Green),
+            sf::Vertex(sf::Vector2f(x_, y_+velocity_.y * 16.0f), sf::Color::Green)
+        };
+
+        renderWindow.draw(velocity_y_vector, 2, sf::Lines);
+    }
 }
 
 void Tank::set_throtle(double throttle)
@@ -54,20 +113,63 @@ void Tank::set_direction(double direction)
     cannon_.set_rotation(direction);
 }
 
-void Tank::physics()
+void Tank::physics(std::vector<Tank*>& tanks)
 {
-    if(velocity_<= TANK_MAX_VELOCITY * set_throttle_) velocity_ += set_throttle_ * TANK_ACCELERATION;
-    else velocity_ *= TANK_BRAKE_FORCE;
-    if (direction_ > 360.0) direction_ = 0.0;
-    if (direction_ < 0.0) direction_ = 359.0;
+    drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
+    drivetrain_force_.y = sin(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
 
-    double delta = set_direction_ - direction_;
-    while (delta < 0.0) delta +=360.0;
+    if (current_direction_ > 360.0) current_direction_ = 0.0;
+    if (current_direction_ < 0.0) current_direction_ = 359.999;
 
-    if (delta < 180.0) direction_+= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
-    if (delta > 180.0) direction_-= std::min(TANK_ROTATION_SPEED, (float) fabs(delta));
 
-    x_ += cos(direction_ * M_PI/180.0) * velocity_;
-    y_ += sin(direction_ * M_PI/180.0) * velocity_;
+    braking_force_.x = -velocity_.x * ROLLING_RESISTANCE_COEEF * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+    braking_force_.y = -velocity_.y * ROLLING_RESISTANCE_COEEF * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+
+    double delta = set_direction_ - current_direction_;
+    delta = signed_fmod((delta + 180.0), 360.0) - 180.0;
+    
+    // If current direction of movement is different(more than 15deg) than current one cut the throttle
+    if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = set_throttle_; 
+
+    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED, fabs(delta));
+    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED, fabs(delta));
+
+    velocity_ += drivetrain_force_ + braking_force_;
+    velocity_ *= ROLLING_RESISTANCE_COEEF;
+
     cannon_.physics();
+
+    //Simple circle collision detection code
+
+    for (Tank* other_tank : tanks)
+    {
+        if (other_tank->id_ == id_) continue; // do not check collision with itself.
+        
+        double distance_between_tanks = distance(x_, y_, other_tank->x_, other_tank->y_);
+        double sum_of_radius = TANK_RADIUS*2;
+
+        if (distance_between_tanks < sum_of_radius)
+        {
+            //Collision detected here
+            //Calculating hit vectors
+            double nx = (other_tank->x_ - x_) / distance_between_tanks;
+            double ny = (other_tank->y_ - y_) / distance_between_tanks;
+            double p = (velocity_.x * nx + velocity_.y * ny
+                - other_tank->velocity_.x * nx - other_tank->velocity_.y * ny) / TANK_MASS*2;
+
+            sf::Vector2f tankCollisionVelocity = sf::Vector2f(
+                (float)(velocity_.x - p * TANK_MASS * nx),
+                (float)(velocity_.y - p * TANK_MASS * ny));
+            
+            sf::Vector2f otherTankCollisionVelocity = sf::Vector2f(
+                (float)(other_tank->velocity_.x + p * TANK_MASS * nx),
+                (float)(other_tank->velocity_.y + p * TANK_MASS * ny));
+
+            velocity_ = tankCollisionVelocity;
+            other_tank->velocity_ = otherTankCollisionVelocity;
+        }
+    };
+
+    x_ += velocity_.x;
+    y_ += velocity_.y;
 }

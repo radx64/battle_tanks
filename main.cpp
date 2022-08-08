@@ -10,10 +10,15 @@
 
 #include <SFML/Graphics.hpp>
 
-float distance(float x1, float y1, float x2, float y2)
+double distance(double x1, double y1, double x2, double y2)
 {
-    return sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
+
+constexpr uint32_t WINDOW_WIDTH = 800;
+constexpr uint32_t WINDOW_HEIGHT = 600;
+
+constexpr uint32_t TANKS_COUNT = 4;
 
 int main()
 {
@@ -23,12 +28,12 @@ int main()
         TextureLibrary::initialize();
         Tilemap tilemap;
 
-        sf::RenderWindow window(sf::VideoMode(800, 600), "Battle tanks!");
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!");
         window.setFramerateLimit(60);
         sf::Clock clock;
         std::vector<Tank*> tanks;
-        for (uint8_t i = 1; i < 2; ++i)
-            tanks.push_back(new Tank(i * 50, i * 50, i * 36 + 0));
+        for (uint8_t i = 0; i < TANKS_COUNT; ++i)
+            tanks.push_back(new Tank(i, i * 100 + 100, i * 100 + 100, i * 36 + 0));
 
         float mouse_x = 300;
         float mouse_y = 300;
@@ -65,23 +70,23 @@ int main()
             {
                 double dist = distance(mouse_x, mouse_y, tank->x_, tank->y_);
 
-                if (dist > 10.0f)
+                if (dist > 20.0f)
                 {
-                    float direction = atan2(mouse_y - tank->y_, mouse_x - tank->x_);
-                    tank->set_throtle(1.0f);
-                    tank->set_direction(direction * 180.0f / M_PI);
+                    double direction = atan2((double)mouse_y - tank->y_, (double)mouse_x - tank->x_);
+                    tank->set_throtle(std::min(1.0, dist*0.02));
+                    tank->set_direction(direction * 180.0 / M_PI);
                 }
                 else
                 {
-                    tank->set_throtle(0.f);
+                    tank->set_throtle(0.0f);
                 }
-
-                tank->physics();
+                
+                tank->physics(tanks);
                 tank->draw(window);
-                if (tank->x_ > 1100) tank->x_ = -50;
-                if (tank->y_ > 800) tank->y_ = -50;
-                if (tank->x_ < -50) tank->x_ = 1100;
-                if (tank->y_ < -50) tank->y_ = 800;
+                if (tank->x_ > WINDOW_WIDTH) tank->x_ = -50;
+                if (tank->y_ > WINDOW_HEIGHT) tank->y_ = -50;
+                if (tank->x_ < -50) tank->x_ = WINDOW_WIDTH;
+                if (tank->y_ < -50) tank->y_ = WINDOW_HEIGHT;
                 
             }
             window.display();
