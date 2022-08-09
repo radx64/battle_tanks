@@ -18,7 +18,7 @@ double distance(double x1, double y1, double x2, double y2)
 constexpr uint32_t WINDOW_WIDTH = 800;
 constexpr uint32_t WINDOW_HEIGHT = 600;
 
-constexpr uint32_t TANKS_COUNT = 4;
+constexpr uint32_t TANKS_COUNT = 5;
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
         Tilemap tilemap;
 
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!");
-        window.setFramerateLimit(60);
+        window.setFramerateLimit(30);
         sf::Clock clock;
         std::vector<Tank*> tanks;
         for (uint8_t i = 0; i < TANKS_COUNT; ++i)
@@ -58,19 +58,27 @@ int main()
             tilemap.draw(window);
 
             //target circle
-            sf::CircleShape target(10);
-            target.setFillColor(sf::Color(0, 0, 0));
+            sf::CircleShape target(15);
+            target.setFillColor(sf::Color(255, 255, 255));
             target.setOutlineThickness(5);
             target.setOutlineColor(sf::Color(250, 10, 10));
             target.setPosition(mouse_x, mouse_y);
-            target.setOrigin(10,10);
+            target.setOrigin(15,15);
             window.draw(target);
+
+            sf::CircleShape target2(5);
+            target2.setFillColor(sf::Color(250, 10, 10));
+            target2.setOutlineThickness(5);
+            target2.setOutlineColor(sf::Color(250, 10, 10));
+            target2.setPosition(mouse_x, mouse_y);
+            target2.setOrigin(5,5);
+            window.draw(target2);
 
             for (Tank* tank : tanks)
             {
                 double dist = distance(mouse_x, mouse_y, tank->x_, tank->y_);
 
-                if (dist > 20.0f)
+                if (dist > 1.0f)
                 {
                     double direction = atan2((double)mouse_y - tank->y_, (double)mouse_x - tank->x_);
                     tank->set_throtle(std::min(1.0, dist*0.02));
@@ -80,7 +88,7 @@ int main()
                 {
                     tank->set_throtle(0.0f);
                 }
-                
+
                 tank->physics(tanks);
                 tank->draw(window);
                 if (tank->x_ > WINDOW_WIDTH) tank->x_ = -50;
