@@ -37,7 +37,7 @@ Cannon::Cannon(uint32_t id, double x, double y, double rotation) : x_(x), y_(y),
 
     sprite_.setTexture(texture);
     sf::Vector2u texture_size = texture.getSize();
-    sf::Vector2f texture_middle_point(texture_size.x/ 2.f, texture_size.y / 2.f + 10.f);
+    sf::Vector2f texture_middle_point(texture_size.x / 2, texture_size.y / 2 + 10);
     sprite_.setOrigin(texture_middle_point);
 }
 

@@ -47,7 +47,7 @@ Tank::Tank(uint32_t id, double x, double y, double rotation) : id_(id), x_(x), y
 
     sprite_.setTexture(texture);
     sf::Vector2u texture_body_size = texture.getSize();
-    tank_middle_point_ = sf::Vector2f(texture_body_size.x / 2.f, texture_body_size.y / 2.f);
+    tank_middle_point_ = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
     sprite_.setOrigin(tank_middle_point_);   
     text_.setFont(FontLibrary::get("armata"));
 }
@@ -76,13 +76,12 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     if(DEBUG)
     {
         // Collision circle
-        sf::CircleShape boundary(0, 10);
+        sf::CircleShape boundary(TANK_RADIUS, 12);
         boundary.setFillColor(sf::Color(0, 0, 0, 0));
-        boundary.setOutlineThickness(2);
+        boundary.setOutlineThickness(1);
         boundary.setOutlineColor(sf::Color(0, 0, 255));
+        boundary.setOrigin(TANK_RADIUS, TANK_RADIUS);
         boundary.setPosition(x_, y_);
-        boundary.setOrigin(tank_middle_point_);
-        boundary.setRadius(TANK_RADIUS);
         renderWindow.draw(boundary);
 
         // Velocity vectors
