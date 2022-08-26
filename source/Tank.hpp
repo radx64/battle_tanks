@@ -12,7 +12,7 @@ class Tank : public IRenderable
 public:
     Tank(uint32_t id, double x, double y, double rotation);
     void draw(sf::RenderWindow& renderWindow) override;
-    void physics(std::vector<Tank*>& tanks);
+    void physics(std::vector<Tank*>& tank, double timeStep);
 
     void set_throtle(double throttle);
     void set_direction(double direction);
@@ -32,6 +32,7 @@ public:
     Cannon cannon_;
 
 protected:
+    void drawDebugInfo(sf::RenderWindow& renderWindow);
     sf::Vector2f tank_middle_point_;
     sf::Vector2f velocity_;
 

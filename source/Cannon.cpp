@@ -2,22 +2,10 @@
 
 #include <cmath>
 
+#include "Math.hpp"
 #include "TextureLibrary.hpp"
 
-// #include <iostream>
-// #include <iomanip>
-
-
-constexpr double CANNON_ROTATION_SPEED = 15.0;
-
-// TODO: make some math header for such things
-namespace 
-{
-double signed_fmod(double a, double n)
-{
-    return a - floor(a/n) * n;
-}
-}  // namespace
+constexpr double CANNON_ROTATION_SPEED = 600.0;
 
 Cannon::Cannon(uint32_t id, double x, double y, double rotation) : x_(x), y_(y), current_rotation_(rotation)
 {
@@ -58,11 +46,11 @@ void Cannon::set_rotation(double rotation)
     set_rotation_ = rotation;
 }
 
-void Cannon::physics()
+void Cannon::physics(double timeStep)
 {
     double delta = set_rotation_ - current_rotation_;
-    delta = signed_fmod((delta + 180.0), 360.0) - 180.0;
+    delta = math::signed_fmod((delta + 180.0), 360.0) - 180.0;
 
-    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED, fabs(delta));
-    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED, fabs(delta));   
+    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * timeStep, fabs(delta));
+    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * timeStep, fabs(delta));   
 }

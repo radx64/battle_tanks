@@ -1,6 +1,6 @@
 set(projectName "battle_tanks")
-cmake_minimum_required (VERSION 2.6)
-set(CMAKE_BUILD_TYPE Debug)
+cmake_minimum_required (VERSION 3.0)
+#set(CMAKE_BUILD_TYPE Debug)
 project (${projectName})
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR

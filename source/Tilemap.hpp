@@ -5,6 +5,11 @@
 
 #include "TextureLibrary.hpp"
 
+namespace {
+
+constexpr auto WIDTH = 15;
+constexpr auto HEIGHT = 10;
+
 enum class TileType
 {
     GRASS1,
@@ -13,6 +18,8 @@ enum class TileType
     SAND2,
     GRASS_SAND_N
 };
+
+}  // namespace
 
 std::string toTextureName(const TileType type)
 {
@@ -61,9 +68,9 @@ class Tilemap
 public:
     Tilemap()
     {
-        for (int x = 0; x < 15; ++x)
+        for (int x = 0; x < WIDTH; ++x)
         {
-            for(int y = 0; y < 10; ++y)
+            for(int y = 0; y < HEIGHT; ++y)
             {
                 tiles_.emplace_back(Tile(x * 64, y*64, idToType(tileIds_[y][x])));
             }
@@ -78,7 +85,7 @@ public:
     }
 
 private:
-    uint8_t tileIds_[10][15] = 
+    uint8_t tileIds_[HEIGHT][WIDTH] = 
     {
         {1,2,1,2,1,2,1,2,1,2,1,2,1,2,1},
         {2,1,2,1,2,1,2,1,2,1,2,1,2,1,2},

@@ -3,32 +3,55 @@
 #include <algorithm>
 #include <cmath>
 
-#include "TextureLibrary.hpp"
 #include "FontLibrary.hpp"
+#include "Math.hpp"
+#include "TextureLibrary.hpp"
 
-constexpr double TANK_BRAKE_FORCE = 0.1;
-constexpr double TANK_ACCELERATION = 0.8;
-constexpr float ROLLING_RESISTANCE_COEEF = 0.9;
-constexpr double TANK_ROTATION_SPEED = 5.0;
+constexpr double TANK_BRAKE_FORCE = 0.05;
+constexpr double TANK_ACCELERATION = 10.0;
+constexpr float ROLLING_RESISTANCE_COEEF = 0.99;
+constexpr double TANK_ROTATION_SPEED = 300.0;
 
 constexpr double TANK_RADIUS = 25;
 constexpr double TANK_MASS = 5;
 
-constexpr bool DEBUG = true;
+constexpr bool DEBUG = false;
 
-// TODO: make some math header for such things
-namespace 
+void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
 {
-double distance(double x1, double y1, double x2, double y2)
-{
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-}
+    // Collision circle
+    sf::CircleShape boundary(TANK_RADIUS, 12);
+    boundary.setFillColor(sf::Color(0, 0, 0, 0));
+    boundary.setOutlineThickness(1);
+    boundary.setOutlineColor(sf::Color(0, 0, 255));
+    boundary.setOrigin(TANK_RADIUS, TANK_RADIUS);
+    boundary.setPosition(x_, y_);
+    renderWindow.draw(boundary);
 
-double signed_fmod(double a, double n)
-{
-    return a - floor(a/n) * n;
+    // Velocity vectors
+    sf::Vertex velocity_vector[] =
+    {
+        sf::Vertex(sf::Vector2f(x_, y_)),
+        sf::Vertex(sf::Vector2f(x_, y_)+ (velocity_ * 16.0f))
+    };
+    renderWindow.draw(velocity_vector, 2, sf::Lines);
+
+    sf::Vertex velocity_x_vector[] =
+    {
+        sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Red),
+        sf::Vertex(sf::Vector2f(x_+velocity_.x * 16.0f, y_), sf::Color::Red)
+    };
+
+    renderWindow.draw(velocity_x_vector, 2, sf::Lines);
+
+    sf::Vertex velocity_y_vector[] =
+    {
+        sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Green),
+        sf::Vertex(sf::Vector2f(x_, y_+velocity_.y * 16.0f), sf::Color::Green)
+    };
+
+    renderWindow.draw(velocity_y_vector, 2, sf::Lines);
 }
-}  // namespace
 
 Tank::Tank(uint32_t id, double x, double y, double rotation) : id_(id), x_(x), y_(y), current_direction_(rotation), set_direction_(rotation), cannon_(id, x, y, current_direction_)
 {
@@ -68,46 +91,13 @@ void Tank::draw(sf::RenderWindow& renderWindow)
 
     // text_.setString("X: " + std::to_string(x_) 
     //     + "\nY:" + std::to_string(y_)
-    //     + "\nD:" + std::to_string(direction_));
+    //     + "\nD:" + std::to_string(current_direction_));
     // text_.setPosition(x_ + 20.f, y_ - 40.f);
     // text_.setCharacterSize(10);
+    // text_.setFillColor(sf::Color::Black);
     // renderWindow.draw(text_);
 
-    if(DEBUG)
-    {
-        // Collision circle
-        sf::CircleShape boundary(TANK_RADIUS, 12);
-        boundary.setFillColor(sf::Color(0, 0, 0, 0));
-        boundary.setOutlineThickness(1);
-        boundary.setOutlineColor(sf::Color(0, 0, 255));
-        boundary.setOrigin(TANK_RADIUS, TANK_RADIUS);
-        boundary.setPosition(x_, y_);
-        renderWindow.draw(boundary);
-
-        // Velocity vectors
-        sf::Vertex velocity_vector[] =
-        {
-            sf::Vertex(sf::Vector2f(x_, y_)),
-            sf::Vertex(sf::Vector2f(x_, y_)+ (velocity_ * 16.0f))
-        };
-        renderWindow.draw(velocity_vector, 2, sf::Lines);
-
-        sf::Vertex velocity_x_vector[] =
-        {
-            sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Red),
-            sf::Vertex(sf::Vector2f(x_+velocity_.x * 16.0f, y_), sf::Color::Red)
-        };
-
-        renderWindow.draw(velocity_x_vector, 2, sf::Lines);
-
-        sf::Vertex velocity_y_vector[] =
-        {
-            sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Green),
-            sf::Vertex(sf::Vector2f(x_, y_+velocity_.y * 16.0f), sf::Color::Green)
-        };
-
-        renderWindow.draw(velocity_y_vector, 2, sf::Lines);
-    }
+    if(DEBUG) drawDebugInfo(renderWindow);
 }
 
 void Tank::set_throtle(double throttle)
@@ -120,39 +110,35 @@ void Tank::set_direction(double direction)
     cannon_.set_rotation(direction);
 }
 
-void Tank::physics(std::vector<Tank*>& tanks)
+void Tank::physics(std::vector<Tank*>& tanks, double timeStep)
 {
+    //Convert current direction to 0..360 range
+    current_direction_ = math::signed_fmod(current_direction_, 360.0);
+
+    double delta = set_direction_ - current_direction_;
+    delta = math::signed_fmod((delta + 180.0), 360.0) - 180.0;
+    // If current direction of movement is different(more than 15deg) than current one cut the throttle
+    if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = 1.0;
+    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
+    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
+
     drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
     drivetrain_force_.y = sin(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
 
-    if (current_direction_ > 360.0) current_direction_ = 0.0;
-    if (current_direction_ < 0.0) current_direction_ = 359.999;
+    braking_force_.x = -velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+    braking_force_.y = -velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
 
-
-    braking_force_.x = -velocity_.x * ROLLING_RESISTANCE_COEEF * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
-    braking_force_.y = -velocity_.y * ROLLING_RESISTANCE_COEEF * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
-
-    double delta = set_direction_ - current_direction_;
-    delta = signed_fmod((delta + 180.0), 360.0) - 180.0;
-    
-    // If current direction of movement is different(more than 15deg) than current one cut the throttle
-    if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = 1.0;
-
-    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED, fabs(delta));
-    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED, fabs(delta));
-
-    velocity_ += drivetrain_force_ + braking_force_;
+    velocity_ += drivetrain_force_ + braking_force_ ;
     velocity_ *= ROLLING_RESISTANCE_COEEF;
 
-    cannon_.physics();
+    cannon_.physics(timeStep);
 
     //Simple circle collision detection code
-
     for (Tank* other_tank : tanks)
     {
         if (other_tank->id_ == id_) continue; // do not check collision with itself.
         
-        double distance_between_tanks = distance(x_, y_, other_tank->x_, other_tank->y_);
+        double distance_between_tanks = math::distance(x_, y_, other_tank->x_, other_tank->y_);
         double sum_of_radius = TANK_RADIUS*2;
 
         if (distance_between_tanks <= sum_of_radius)
@@ -182,6 +168,6 @@ void Tank::physics(std::vector<Tank*>& tanks)
         }
     };
 
-    x_ += velocity_.x;
-    y_ += velocity_.y;
+    x_ += velocity_.x * timeStep;
+    y_ += velocity_.y * timeStep;
 }
