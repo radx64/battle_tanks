@@ -7,9 +7,9 @@
 #include "Math.hpp"
 #include "TextureLibrary.hpp"
 
-constexpr double TANK_BRAKE_FORCE = 0.05;
-constexpr double TANK_ACCELERATION = 10.0;
-constexpr float ROLLING_RESISTANCE_COEEF = 0.99;
+constexpr double TANK_BRAKE_FORCE = 0.1;
+constexpr double TANK_ACCELERATION = 5.0;
+constexpr float ROLLING_RESISTANCE_COEEF = 0.98;
 constexpr double TANK_ROTATION_SPEED = 300.0;
 
 constexpr double TANK_RADIUS = 25;
@@ -102,6 +102,7 @@ void Tank::draw(sf::RenderWindow& renderWindow)
 
 void Tank::set_throtle(double throttle)
 {
+    //FIXME: set_throttle is not beeing used
     set_throttle_ = throttle;
 }
 void Tank::set_direction(double direction)

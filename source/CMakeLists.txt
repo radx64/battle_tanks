@@ -6,6 +6,7 @@ target_sources(game_engine
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/IRenderable.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Math.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextureLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tilemap.hpp
