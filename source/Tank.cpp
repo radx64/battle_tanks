@@ -102,7 +102,6 @@ void Tank::draw(sf::RenderWindow& renderWindow)
 
 void Tank::set_throtle(double throttle)
 {
-    //FIXME: set_throttle is not beeing used
     set_throttle_ = throttle;
 }
 void Tank::set_direction(double direction)
@@ -119,7 +118,7 @@ void Tank::physics(std::vector<Tank*>& tanks, double timeStep)
     double delta = set_direction_ - current_direction_;
     delta = math::signed_fmod((delta + 180.0), 360.0) - 180.0;
     // If current direction of movement is different(more than 15deg) than current one cut the throttle
-    if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = 1.0;
+    if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = set_throttle_;
     if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
     if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
 

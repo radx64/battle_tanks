@@ -17,7 +17,7 @@ constexpr uint32_t WINDOW_WIDTH = 800;
 constexpr uint32_t WINDOW_HEIGHT = 600;
 constexpr uint32_t TANKS_COUNT = 5;
 
-constexpr double timeStep = 1.0/60.0;
+constexpr double timeStep = 1.0/30.0;
 
 void drawTarget(sf::RenderWindow& window, int x, int y)
 {
@@ -66,9 +66,10 @@ int Application()
         TextureLibrary::initialize();
         Tilemap tilemap;
         std::vector<sf::Vector2i> waypoints;
+        sf::Text text;
 
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!");
-        window.setFramerateLimit(60);
+        window.setFramerateLimit(30);
         std::vector<Tank*> tanks;
         std::vector<Navigator*> navigators;
         for (uint8_t i = 0; i < TANKS_COUNT; ++i)
@@ -104,43 +105,43 @@ int Application()
                     }
                 }
             }
-
-            //sf::Clock clock;
+            sf::Clock clock;
             //auto elapsed = clock.getElapsedTime();
+
             window.clear(sf::Color(0, 100, 20));
             tilemap.draw(window);
-
-            //drawTarget(window, mouse_x, mouse_y);
             drawWaypoints(window, waypoints);
+            for (Tank* tank : tanks)
+            {
+                tank->draw(window);
+            }
+            auto draw_time = clock.getElapsedTime();
 
+            clock.restart();
             for(Navigator* navigator : navigators)
             {
                 navigator->navigate();
             }
-
+            auto nav_time = clock.getElapsedTime();
+            clock.restart();
             for (Tank* tank : tanks)
             {
-                // double dist = math::distance(mouse_x, mouse_y, tank->x_, tank->y_);
-
-                // if (dist > 1.0f)
-                // {
-                //     double direction = atan2((double)mouse_y - tank->y_, (double)mouse_x - tank->x_);
-                //     tank->set_throtle(std::min(1.0, dist*0.02));
-                //     tank->set_direction(direction * 180.0 / M_PI);
-                // }
-                // else
-                // {
-                //     tank->set_throtle(0.0f);
-                // }
-
                 tank->physics(tanks, timeStep);
-                tank->draw(window);
                 if (tank->x_ > WINDOW_WIDTH) tank->x_ = -50;
                 if (tank->y_ > WINDOW_HEIGHT) tank->y_ = -50;
                 if (tank->x_ < -50) tank->x_ = WINDOW_WIDTH;
-                if (tank->y_ < -50) tank->y_ = WINDOW_HEIGHT;
-                
+                if (tank->y_ < -50) tank->y_ = WINDOW_HEIGHT; 
             }
+            auto physics_time = clock.getElapsedTime();
+            text.setString("DRAW: " + std::to_string(draw_time.asMicroseconds()) 
+                 + "us\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
+                 + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())+ "us");
+
+            text.setFont(FontLibrary::get("armata"));
+            text.setPosition(20.f, 20.f);
+            text.setCharacterSize(12);
+            text.setFillColor(sf::Color::Black);
+            window.draw(text);
             window.display();
         }
     }

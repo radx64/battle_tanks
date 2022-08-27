@@ -4,9 +4,6 @@
 #include "Tank.hpp"
 #include "Math.hpp"
 
-
-#include <iostream>
-
 class Tank;
 
 class Navigator
@@ -20,7 +17,6 @@ public:
         if(waypoints_.empty())
         {
            tank_.set_throtle(0.0);
-           std::cout <<"IDLE" <<  std::endl; 
            return;
         }
         if(waypoint_id_ >= waypoints_.size()) waypoint_id_ = 0;
@@ -46,6 +42,5 @@ protected:
     std::vector<sf::Vector2i>& waypoints_;
     Tank& tank_;
 };
-
 
 #endif
