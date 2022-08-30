@@ -6,3 +6,4 @@ Sprites sourced from: https://kenney.nl/assets/topdown-tanks-redux
 
 ### Fonts credits
 Font armata source: https://www.1001fonts.com/armata-font.html
+Font glassTTY source: http://sensi.org/~svo/glasstty/

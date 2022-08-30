@@ -3,6 +3,8 @@
 #include <exception>
 #include <iostream>
 #include <vector>
+#include <array>
+#include <numeric>
 
 #include "FontLibrary.hpp"
 #include "Math.hpp"
@@ -18,6 +20,35 @@ constexpr uint32_t WINDOW_HEIGHT = 600;
 constexpr uint32_t TANKS_COUNT = 5;
 
 constexpr double timeStep = 1.0/30.0;
+
+template<int window_size>
+class Average
+{
+public:
+int calculate(int new_value)
+{
+    measurements_[current_index_] = new_value;
+    current_index_++;
+    if (current_index_ >= window_size) current_index_=0;
+
+    return std::accumulate(measurements_.begin(), measurements_.end(), 0) / window_size;
+}
+protected:
+    std::array<int, window_size> measurements_{};
+    size_t current_index_{};
+};
+
+
+void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color)
+{
+    sf::Vertex line[] =
+    {
+        sf::Vertex(sf::Vector2f(x1, y1), color),
+        sf::Vertex(sf::Vector2f(x2, y2), color)
+    };
+
+    window.draw(line, 2, sf::Lines);    
+}
 
 void drawTarget(sf::RenderWindow& window, int x, int y)
 {
@@ -47,14 +78,18 @@ void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoint
         drawTarget(window, waypoint.x, waypoint.y);
         if(last_waypoint)
         {
-            sf::Vertex line[] =
-            {
-                sf::Vertex(sf::Vector2f(last_waypoint->x, last_waypoint->y)),
-                sf::Vertex(sf::Vector2f(waypoint.x, waypoint.y))
-            };
-            window.draw(line, 2, sf::Lines);
+            drawLine(window, last_waypoint->x, last_waypoint->y, waypoint.x, waypoint.y, sf::Color::White);
         }
         last_waypoint = &waypoint;
+    }
+
+    if (waypoints.size() > 2) 
+    {
+        drawLine(window, waypoints.front().x, 
+            waypoints.front().y, 
+            waypoints.back().x, 
+            waypoints.back().y,
+            sf::Color::Red);
     }
 }
 
@@ -67,6 +102,17 @@ int Application()
         Tilemap tilemap;
         std::vector<sf::Vector2i> waypoints;
         sf::Text text;
+
+        text.setFont(FontLibrary::get("glassTTY"));
+        text.setPosition(20.f, 20.f);
+        text.setCharacterSize(20);
+        text.setFillColor(sf::Color::Black);
+
+        sf::Text text2;
+        text2.setFont(FontLibrary::get("glassTTY"));
+        text2.setPosition(160.f, 20.f);
+        text2.setCharacterSize(20);
+        text2.setFillColor(sf::Color::Black);
 
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!");
         window.setFramerateLimit(30);
@@ -83,6 +129,10 @@ int Application()
         int mouse_x{};
         int mouse_y{};
 
+        Average<100> draw_average{};
+        Average<100> physics_average{};
+        Average<100> nav_average{};
+        sf::Clock clock;
         while (window.isOpen())
         {
             sf::Event event;
@@ -103,12 +153,16 @@ int Application()
                     {
                         waypoints.clear();
                     }
+                    if (event.key.code == sf::Keyboard::D)
+                    {
+                        if(!waypoints.empty()) waypoints.pop_back();
+                    }
                 }
             }
-            sf::Clock clock;
-            //auto elapsed = clock.getElapsedTime();
 
-            window.clear(sf::Color(0, 100, 20));
+            window.clear(sf::Color(0, 0, 0));
+
+            clock.restart();
             tilemap.draw(window);
             drawWaypoints(window, waypoints);
             for (Tank* tank : tanks)
@@ -116,7 +170,6 @@ int Application()
                 tank->draw(window);
             }
             auto draw_time = clock.getElapsedTime();
-
             clock.restart();
             for(Navigator* navigator : navigators)
             {
@@ -133,15 +186,17 @@ int Application()
                 if (tank->y_ < -50) tank->y_ = WINDOW_HEIGHT; 
             }
             auto physics_time = clock.getElapsedTime();
-            text.setString("DRAW: " + std::to_string(draw_time.asMicroseconds()) 
+            text.setString("DRAW: " + std::to_string(draw_time.asMicroseconds())
                  + "us\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
-                 + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())+ "us");
+                 + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
+                 + "us");
 
-            text.setFont(FontLibrary::get("armata"));
-            text.setPosition(20.f, 20.f);
-            text.setCharacterSize(12);
-            text.setFillColor(sf::Color::Black);
             window.draw(text);
+            text2.setString("AVG: " + std::to_string(draw_average.calculate(draw_time.asMicroseconds()))
+                + "us\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
+                + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
+                + "us");
+            window.draw(text2);
             window.display();
         }
     }

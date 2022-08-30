@@ -42,7 +42,7 @@ public:
         sprite_.setTexture(TextureLibrary::get(toTextureName(type)));
         sprite_.setPosition(x, y);
     }
-    void draw(sf::RenderWindow& renderWindow)
+    void draw(sf::RenderTexture& renderWindow)
     {
         renderWindow.draw(sprite_);
     }
@@ -68,20 +68,21 @@ class Tilemap
 public:
     Tilemap()
     {
+        tiles_.create(WIDTH * 64, HEIGHT * 64);
         for (int x = 0; x < WIDTH; ++x)
         {
             for(int y = 0; y < HEIGHT; ++y)
             {
-                tiles_.emplace_back(Tile(x * 64, y*64, idToType(tileIds_[y][x])));
+                auto tile = Tile(x * 64, y*64, idToType(tileIds_[y][x]));
+                tile.draw(tiles_);
             }
         }
+        tiles_.display();
     }
     void draw(sf::RenderWindow& renderWindow)
     {
-        for (auto tile : tiles_)
-        {
-            tile.draw(renderWindow);
-        }
+        sf::Sprite texture(tiles_.getTexture());
+        renderWindow.draw(texture);
     }
 
 private:
@@ -98,5 +99,6 @@ private:
         {3,4,3,4,3,4,3,4,3,4,3,4,3,4,3},
         {4,3,4,3,4,3,4,3,4,3,4,3,4,3,4},
     };
-    std::vector<Tile> tiles_;
+    //std::vector<Tile> tiles_;
+    sf::RenderTexture tiles_;
 };

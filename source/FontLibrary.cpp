@@ -10,6 +10,7 @@ void FontLibrary::initFont(const std::string& name, const std::string& path)
 void FontLibrary::initialize()
 {
     initFont("armata", "../fonts/armata.ttf");
+    initFont("glassTTY", "../fonts/Glass_TTY_VT220.ttf");
 }
 
 sf::Font& FontLibrary::get(const std::string& name)
