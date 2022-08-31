@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <cmath>
 
+#include "Context.hpp"
 #include "FontLibrary.hpp"
 #include "Math.hpp"
+#include "Particles.hpp"
 #include "TextureLibrary.hpp"
 
 constexpr double TANK_BRAKE_FORCE = 0.1;
@@ -53,7 +55,13 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     renderWindow.draw(velocity_y_vector, 2, sf::Lines);
 }
 
-Tank::Tank(uint32_t id, double x, double y, double rotation) : id_(id), x_(x), y_(y), current_direction_(rotation), set_direction_(rotation), cannon_(id, x, y, current_direction_)
+Tank::Tank(uint32_t id, double x, double y, double rotation) 
+: id_(id),
+    x_(x),
+    y_(y),
+    cannon_(id, x, y, rotation),
+    current_direction_(rotation),
+    set_direction_(rotation)
 {
     auto& texture = [](const uint32_t id) -> sf::Texture&
     {
@@ -72,7 +80,6 @@ Tank::Tank(uint32_t id, double x, double y, double rotation) : id_(id), x_(x), y
     sf::Vector2u texture_body_size = texture.getSize();
     tank_middle_point_ = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
     sprite_.setOrigin(tank_middle_point_);   
-    text_.setFont(FontLibrary::get("armata"));
 }
 
 void Tank::draw(sf::RenderWindow& renderWindow)
@@ -89,15 +96,13 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     cannon_.y_ = y_;
     cannon_.draw(renderWindow);
 
-    // text_.setString("X: " + std::to_string(x_) 
-    //     + "\nY:" + std::to_string(y_)
-    //     + "\nD:" + std::to_string(current_direction_));
-    // text_.setPosition(x_ + 20.f, y_ - 40.f);
-    // text_.setCharacterSize(10);
-    // text_.setFillColor(sf::Color::Black);
-    // renderWindow.draw(text_);
-
     if(DEBUG) drawDebugInfo(renderWindow);
+
+    sf::Vector2f left_track = math::rotate_point(sf::Vector2f(x_, y_-15.0), current_direction_, sf::Vector2f(x_, y_));
+    sf::Vector2f right_track = math::rotate_point(sf::Vector2f(x_, y_+15.0), current_direction_, sf::Vector2f(x_, y_));
+
+    Context::getParticles().add_particle(left_track.x, left_track.y, current_direction_);
+    Context::getParticles().add_particle(right_track.x, right_track.y, current_direction_);
 }
 
 void Tank::set_throtle(double throttle)

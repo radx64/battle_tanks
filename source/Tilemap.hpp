@@ -99,6 +99,5 @@ private:
         {3,4,3,4,3,4,3,4,3,4,3,4,3,4,3},
         {4,3,4,3,4,3,4,3,4,3,4,3,4,3,4},
     };
-    //std::vector<Tile> tiles_;
     sf::RenderTexture tiles_;
 };

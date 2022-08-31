@@ -15,4 +15,29 @@ double signed_fmod(double a, double n)
     return a - floor(a/n) * n;
 }
 
+double degree_to_radians(double degree)
+{
+  return degree * M_PI / 180.0;
+}
+
+sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, double angle, sf::Vector2f pivot)
+{
+  double radians = degree_to_radians(angle);
+  double s = sin(radians);
+  double c = cos(radians);
+
+  // translate point back to point_to_rotate
+  point_to_rotate.x -= pivot.x;
+  point_to_rotate.y -= pivot.y;
+
+  // rotate point
+  double xnew = point_to_rotate.x * c - point_to_rotate.y * s;
+  double ynew = point_to_rotate.x * s + point_to_rotate.y * c;
+
+  // translate point back
+  point_to_rotate.x = xnew + pivot.x;
+  point_to_rotate.y = ynew + pivot.y;
+  return point_to_rotate;
+}
+
 }  // namespace math

@@ -6,9 +6,12 @@
 #include <array>
 #include <numeric>
 
+#include "Application.hpp"
+#include "Context.hpp"
 #include "FontLibrary.hpp"
 #include "Math.hpp"
 #include "Navigator.hpp"
+#include "Particles.hpp"
 #include "TextureLibrary.hpp"
 #include "Tank.hpp"
 #include "Tilemap.hpp"
@@ -97,6 +100,10 @@ int Application()
 {
     try
     {
+        Particles particles;
+        Context context;
+        context.setParticles(&particles);
+
         FontLibrary::initialize();
         TextureLibrary::initialize();
         Tilemap tilemap;
@@ -152,6 +159,7 @@ int Application()
                     if (event.key.code == sf::Keyboard::C)
                     {
                         waypoints.clear();
+                        Context::getParticles().clear();
                     }
                     if (event.key.code == sf::Keyboard::D)
                     {
@@ -165,6 +173,7 @@ int Application()
             clock.restart();
             tilemap.draw(window);
             drawWaypoints(window, waypoints);
+            particles.draw(window);
             for (Tank* tank : tanks)
             {
                 tank->draw(window);

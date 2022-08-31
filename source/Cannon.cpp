@@ -7,7 +7,11 @@
 
 constexpr double CANNON_ROTATION_SPEED = 600.0;
 
-Cannon::Cannon(uint32_t id, double x, double y, double rotation) : x_(x), y_(y), current_rotation_(rotation)
+Cannon::Cannon(uint32_t id, double x, double y, double rotation) 
+: x_(x),
+    y_(y),
+    current_rotation_(rotation),
+    set_rotation_(rotation)
 {
     auto& texture = [](const uint32_t id) -> sf::Texture&
     {
