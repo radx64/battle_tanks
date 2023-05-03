@@ -12,7 +12,7 @@
 constexpr double TANK_BRAKE_FORCE = 0.1;
 constexpr double TANK_ACCELERATION = 5.0;
 constexpr float ROLLING_RESISTANCE_COEEF = 0.98;
-constexpr double TANK_ROTATION_SPEED = 300.0;
+constexpr double TANK_ROTATION_SPEED = 200.0;
 
 constexpr double TANK_RADIUS = 25;
 constexpr double TANK_MASS = 5;
@@ -55,29 +55,17 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     renderWindow.draw(velocity_y_vector, 2, sf::Lines);
 }
 
-Tank::Tank(uint32_t id, double x, double y, double rotation) 
+Tank::Tank(uint32_t id, double x, double y, double rotation, 
+        std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
 : id_(id),
     x_(x),
     y_(y),
-    cannon_(id, x, y, rotation),
+    cannon_(std::move(cannon)),
     current_direction_(rotation),
     set_direction_(rotation)
 {
-    auto& texture = [](const uint32_t id) -> sf::Texture&
-    {
-        switch (id % 5)
-        {
-            case 0 : return TextureLibrary::get("blue_tank");
-            case 1 : return TextureLibrary::get("red_tank");
-            case 2 : return TextureLibrary::get("green_tank");
-            case 3 : return TextureLibrary::get("sand_tank");
-            case 4 : return TextureLibrary::get("dark_tank");
-            default : return TextureLibrary::get("blue_tank");
-        }
-    }(id);
-
-    sprite_.setTexture(texture);
-    sf::Vector2u texture_body_size = texture.getSize();
+    sprite_.setTexture(tankBody);
+    sf::Vector2u texture_body_size = tankBody.getSize();
     tank_middle_point_ = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
     sprite_.setOrigin(tank_middle_point_);   
 }
@@ -92,9 +80,9 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     sprite_.setColor(sf::Color(255, 255, 255, 255));
     sprite_.setPosition(x_, y_);
     renderWindow.draw(sprite_);
-    cannon_.x_ = x_;
-    cannon_.y_ = y_;
-    cannon_.draw(renderWindow);
+    cannon_->x_ = x_;
+    cannon_->y_ = y_;
+    cannon_->draw(renderWindow);
 
     if(DEBUG) drawDebugInfo(renderWindow);
 
@@ -112,10 +100,10 @@ void Tank::set_throtle(double throttle)
 void Tank::set_direction(double direction)
 {
     set_direction_ = direction;
-    cannon_.set_rotation(direction);
+    cannon_->set_rotation(direction);
 }
 
-void Tank::physics(std::vector<Tank*>& tanks, double timeStep)
+void Tank::physics(std::vector<std::unique_ptr<Tank>>& tanks, double timeStep)
 {
     //Convert current direction to 0..360 range
     current_direction_ = math::signed_fmod(current_direction_, 360.0);
@@ -136,10 +124,10 @@ void Tank::physics(std::vector<Tank*>& tanks, double timeStep)
     velocity_ += drivetrain_force_ + braking_force_ ;
     velocity_ *= ROLLING_RESISTANCE_COEEF;
 
-    cannon_.physics(timeStep);
+    cannon_->physics(timeStep);
 
     //Simple circle collision detection code
-    for (Tank* other_tank : tanks)
+    for (auto& other_tank : tanks)
     {
         if (other_tank->id_ == id_) continue; // do not check collision with itself.
         

@@ -7,26 +7,12 @@
 
 constexpr double CANNON_ROTATION_SPEED = 600.0;
 
-Cannon::Cannon(uint32_t id, double x, double y, double rotation) 
-: x_(x),
+Cannon::Cannon(double x, double y, double rotation, sf::Texture& texture) 
+    : x_(x),
     y_(y),
     current_rotation_(rotation),
     set_rotation_(rotation)
 {
-    auto& texture = [](const uint32_t id) -> sf::Texture&
-    {
-        switch (id % 5)
-        {
-            case 0 : return TextureLibrary::get("blue_cannon");
-            case 1 : return TextureLibrary::get("red_cannon");
-            case 2 : return TextureLibrary::get("green_cannon");
-            case 3 : return TextureLibrary::get("sand_cannon");
-            case 4 : return TextureLibrary::get("dark_cannon");
-            default : return TextureLibrary::get("blue_cannon");
-        }
-    }(id);
-
-
     sprite_.setTexture(texture);
     sf::Vector2u texture_size = texture.getSize();
     sf::Vector2f texture_middle_point(texture_size.x / 2, texture_size.y / 2 + 10);

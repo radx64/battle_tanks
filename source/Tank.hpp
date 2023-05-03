@@ -10,9 +10,10 @@
 class Tank : public IRenderable
 {
 public:
-    Tank(uint32_t id, double x, double y, double rotation);
+    Tank(uint32_t id, double x, double y, double rotation, 
+        std::unique_ptr<Cannon> cannon, sf::Texture& tankBody);
     void draw(sf::RenderWindow& renderWindow) override;
-    void physics(std::vector<Tank*>& tank, double timeStep);
+    void physics(std::vector<std::unique_ptr<Tank>>& tank, double timeStep);
 
     void set_throtle(double throttle);
     void set_direction(double direction);
@@ -24,7 +25,7 @@ public:
     sf::Vector2f drivetrain_force_{};
     sf::Vector2f braking_force_{};
     sf::Sprite sprite_;
-    Cannon cannon_;
+    std::unique_ptr<Cannon> cannon_;
 
 protected:
     void drawDebugInfo(sf::RenderWindow& renderWindow);

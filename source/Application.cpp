@@ -3,98 +3,36 @@
 #include <exception>
 #include <iostream>
 #include <vector>
-#include <array>
-#include <numeric>
+#include <string>
 
 #include "Application.hpp"
 #include "Context.hpp"
+#include "DrawTools.hpp"
 #include "FontLibrary.hpp"
 #include "Math.hpp"
 #include "Navigator.hpp"
 #include "Particles.hpp"
 #include "TextureLibrary.hpp"
 #include "Tank.hpp"
+#include "TankFactory.hpp"
 #include "Tilemap.hpp"
 
 #include <SFML/Graphics.hpp>
 
-constexpr uint32_t WINDOW_WIDTH = 800;
-constexpr uint32_t WINDOW_HEIGHT = 600;
+constexpr uint32_t WINDOW_WIDTH = 1920;
+constexpr uint32_t WINDOW_HEIGHT = 1080;
 constexpr uint32_t TANKS_COUNT = 5;
 
 constexpr double timeStep = 1.0/30.0;
 
-template<int window_size>
-class Average
-{
-public:
-int calculate(int new_value)
-{
-    measurements_[current_index_] = new_value;
-    current_index_++;
-    if (current_index_ >= window_size) current_index_=0;
-
-    return std::accumulate(measurements_.begin(), measurements_.end(), 0) / window_size;
-}
-protected:
-    std::array<int, window_size> measurements_{};
-    size_t current_index_{};
-};
-
-
-void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color)
-{
-    sf::Vertex line[] =
-    {
-        sf::Vertex(sf::Vector2f(x1, y1), color),
-        sf::Vertex(sf::Vector2f(x2, y2), color)
-    };
-
-    window.draw(line, 2, sf::Lines);    
-}
-
-void drawTarget(sf::RenderWindow& window, int x, int y)
-{
-    //target circle
-    sf::CircleShape target(10);
-    target.setFillColor(sf::Color(255, 255, 255));
-    target.setOutlineThickness(2);
-    target.setOutlineColor(sf::Color(250, 10, 10));
-    target.setPosition(x, y);
-    target.setOrigin(10,10);
-    window.draw(target);
-
-    sf::CircleShape target2(2);
-    target2.setFillColor(sf::Color(250, 10, 10));
-    target2.setOutlineThickness(2);
-    target2.setOutlineColor(sf::Color(250, 10, 10));
-    target2.setPosition(x, y);
-    target2.setOrigin(2,2);
-    window.draw(target2);
-}
-
-void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoints)
-{
-    const sf::Vector2i* last_waypoint = nullptr;
-    for(const auto& waypoint : waypoints)
-    {
-        drawTarget(window, waypoint.x, waypoint.y);
-        if(last_waypoint)
-        {
-            drawLine(window, last_waypoint->x, last_waypoint->y, waypoint.x, waypoint.y, sf::Color::White);
-        }
-        last_waypoint = &waypoint;
-    }
-
-    if (waypoints.size() > 2) 
-    {
-        drawLine(window, waypoints.front().x, 
-            waypoints.front().y, 
-            waypoints.back().x, 
-            waypoints.back().y,
-            sf::Color::Red);
-    }
-}
+constexpr std::string_view help_text_string{
+    "=== HELP ===\n"
+    "WASD - moves view\n" 
+    "PgUp/PgDn - zoom\n"  
+    "C - clear all waypoints\n"
+    "F - delete last waypoint\n"
+    "T - clear tracks\n"
+    "Q - quit\n"};
 
 int Application()
 {
@@ -103,90 +41,122 @@ int Application()
         Particles particles;
         Context context;
         context.setParticles(&particles);
+        auto view = sf::View(sf::FloatRect(0.f, 0.f, 1920.f, 1080.f));
+        view.setCenter(1920.f/2.0, 1080.f/2.0);
 
         FontLibrary::initialize();
         TextureLibrary::initialize();
         Tilemap tilemap;
         std::vector<sf::Vector2i> waypoints;
-        sf::Text text;
 
-        text.setFont(FontLibrary::get("glassTTY"));
-        text.setPosition(20.f, 20.f);
-        text.setCharacterSize(20);
-        text.setFillColor(sf::Color::Black);
+        sf::Text help_text;
+        help_text.setFont(FontLibrary::get("armata"));
+        help_text.setCharacterSize(20);
+        help_text.setFillColor(sf::Color::Black);
+        help_text.setString(help_text_string.data());
 
-        sf::Text text2;
-        text2.setFont(FontLibrary::get("glassTTY"));
-        text2.setPosition(160.f, 20.f);
-        text2.setCharacterSize(20);
-        text2.setFillColor(sf::Color::Black);
+        help_text.setPosition(
+            WINDOW_WIDTH/2 - help_text.getGlobalBounds().width/2,
+            WINDOW_HEIGHT/2 - help_text.getGlobalBounds().height/2);
+        bool help_visible{false};
 
-        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!");
-        window.setFramerateLimit(30);
-        std::vector<Tank*> tanks;
-        std::vector<Navigator*> navigators;
+        sf::Text measurements_text;
+        measurements_text.setFont(FontLibrary::get("armata"));
+        measurements_text.setPosition(20.f, 20.f);
+        measurements_text.setCharacterSize(20);
+        measurements_text.setFillColor(sf::Color::Black);
+
+        sf::Text measurements_average_text;
+        measurements_average_text.setFont(FontLibrary::get("armata"));
+        measurements_average_text.setPosition(200.f, 20.f);
+        measurements_average_text.setCharacterSize(20);
+        measurements_average_text.setFillColor(sf::Color::Black);
+
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!", sf::Style::Fullscreen);
+        window.setFramerateLimit(60);
+
+        std::vector<std::unique_ptr<Tank>> tanks;
+        std::vector<std::unique_ptr<Navigator>> navigators;
         for (uint8_t i = 0; i < TANKS_COUNT; ++i)
-        {   
-            const auto tank = new Tank(i, i * 100 + 100, i * 100 + 100, i * 36 + 0);
-            const auto navigator = new Navigator(*tank, waypoints);
-            tanks.push_back(tank);
-            navigators.push_back(navigator);
+        { 
+            const auto x_spawn_position = i * 100 + 100;
+            const auto y_spawn_position = x_spawn_position;
+            const auto spawn_rotation = i * 36; 
+            auto tank = TankFactory::create_instance(static_cast<TankFactory::TankType>(i),
+                x_spawn_position, y_spawn_position, spawn_rotation);
+
+            auto navigator = std::make_unique<Navigator>(*tank, waypoints);
+            tanks.push_back(std::move(tank));
+            navigators.push_back(std::move(navigator));
         }
 
-        int mouse_x{};
-        int mouse_y{};
-
-        Average<100> draw_average{};
-        Average<100> physics_average{};
-        Average<100> nav_average{};
+        constexpr int number_of_measures = 100;
+        math::Average draw_average{number_of_measures};
+        math::Average physics_average{number_of_measures};
+        math::Average nav_average{number_of_measures};
+        math::Average fps_average{number_of_measures};
         sf::Clock clock;
         while (window.isOpen())
         {
             sf::Event event;
             while (window.pollEvent(event))
             {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-                else if (event.type == sf::Event::MouseButtonPressed)
+                switch (event.type)
                 {
-                    mouse_x = event.mouseButton.x;
-                    mouse_y = event.mouseButton.y;
+                    case sf::Event::Closed : {window.close(); break;}
+                    case sf::Event::MouseButtonPressed : 
+                    {
+                        // Get the cursor position in view coordinates
+                        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+                        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
-                    waypoints.emplace_back(sf::Vector2i(mouse_x, mouse_y));
-                }
-                else if (event.type == sf::Event::KeyReleased)
-                {
-                    if (event.key.code == sf::Keyboard::C)
-                    {
-                        waypoints.clear();
-                        Context::getParticles().clear();
+                        waypoints.emplace_back(worldPos);
+                        break;
                     }
-                    if (event.key.code == sf::Keyboard::D)
+                    case sf::Event::KeyReleased : 
                     {
-                        if(!waypoints.empty()) waypoints.pop_back();
+                        switch (event.key.code)
+                        {
+                            case sf::Keyboard::PageUp   :   view.zoom(1.5f); break;
+                            case sf::Keyboard::PageDown :   view.zoom(0.5f); break;
+                            case sf::Keyboard::C        :   waypoints.clear(); break;
+                            case sf::Keyboard::T        :   Context::getParticles().clear(); break; 
+                            case sf::Keyboard::W        :   view.move(0.f,-32.f); break;
+                            case sf::Keyboard::S        :   view.move(0.f,32.f); break;
+                            case sf::Keyboard::A        :   view.move(-32.f,0.f); break;
+                            case sf::Keyboard::D        :   view.move(32.f,0.f); break;    
+                            case sf::Keyboard::F        :   if(!waypoints.empty()) waypoints.pop_back(); break;
+                            case sf::Keyboard::H        :   help_visible = !help_visible; break;
+                            case sf::Keyboard::Q        :   window.close();
+                            default                     :   {}  
+                        }
+                        break;
                     }
+                    default : {}
                 }
             }
-
+            
+            window.setView(view);
             window.clear(sf::Color(0, 0, 0));
 
             clock.restart();
             tilemap.draw(window);
-            drawWaypoints(window, waypoints);
+            drawtools::drawWaypoints(window, waypoints);
             particles.draw(window);
-            for (Tank* tank : tanks)
+            for (auto& tank : tanks)
             {
                 tank->draw(window);
             }
             auto draw_time = clock.getElapsedTime();
+            auto fps = 1000/draw_time.asMilliseconds();
             clock.restart();
-            for(Navigator* navigator : navigators)
+            for(auto& navigator : navigators)
             {
                 navigator->navigate();
             }
             auto nav_time = clock.getElapsedTime();
             clock.restart();
-            for (Tank* tank : tanks)
+            for (auto& tank : tanks)
             {
                 tank->physics(tanks, timeStep);
                 if (tank->x_ > WINDOW_WIDTH) tank->x_ = -50;
@@ -195,23 +165,36 @@ int Application()
                 if (tank->y_ < -50) tank->y_ = WINDOW_HEIGHT; 
             }
             auto physics_time = clock.getElapsedTime();
-            text.setString("DRAW: " + std::to_string(draw_time.asMicroseconds())
+            measurements_text.setString("DRAW: " + std::to_string(draw_time.asMicroseconds())
                  + "us\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
-                 + "us");
+                 + "us\nFPS: "+ std::to_string(fps));
 
-            window.draw(text);
-            text2.setString("AVG: " + std::to_string(draw_average.calculate(draw_time.asMicroseconds()))
+            window.draw(measurements_text);
+            measurements_average_text.setString("AVG: " + std::to_string(draw_average.calculate(draw_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
-                + "us");
-            window.draw(text2);
+                + "us\nAVG: " + std::to_string(fps_average.calculate(fps)));
+            window.draw(measurements_average_text);
+
+            if (help_visible) 
+            {
+                //TODO: need some GUI system later
+                sf::RectangleShape text_background(sf::Vector2f(400,200));
+                text_background.setFillColor(sf::Color(50, 50, 50, 50));
+                text_background.setPosition(
+                    help_text.getGlobalBounds().left,
+                    help_text.getGlobalBounds().top);
+                window.draw(text_background);
+                window.draw(help_text);
+            }
+
             window.display();
         }
     }
     catch (std::exception& e)
     {
-        std::cout << "EXCEPTION: "<<  e.what() << std::endl;
+        std::cout << "EXCEPTION THROWN: "<<  e.what() << std::endl;
         return -1;
     }
 

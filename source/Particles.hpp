@@ -6,14 +6,14 @@
 constexpr auto TRACK_WIDTH = 6;
 constexpr auto TRACK_HEIGHT = 2;
 constexpr auto TRACK_IMPRINT_OPACITY = 50;
-constexpr auto PARTICLE_LAYER_OPACITY = 100;
+constexpr auto PARTICLE_LAYER_OPACITY = 90;
 class Particles
 {
 public:
     Particles()
     {
-        // FIXME: This layer should be resized alongside with window resolution
-        target_.create(800, 600);
+        // FIXME: This layer should be resized alongside window resolution
+        target_.create(1920, 1080);
     }
 
     // Temporary 'particle system' for drawing track imprints
@@ -36,7 +36,7 @@ public:
 
     void clear()
     {
-        target_.clear(sf::Color(0, 0, 0, 0));
+        target_.clear(sf::Color(255,255,255,0));
     }
 
 protected:

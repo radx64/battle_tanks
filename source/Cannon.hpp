@@ -11,7 +11,7 @@ namespace sf
 class Cannon
 {
 public:
-    Cannon(uint32_t id, double x, double y, double rotation);
+    Cannon(double x, double y, double rotation, sf::Texture& texture);
     void draw(sf::RenderWindow& renderWindow);
     void physics(double timeStep);
     void set_rotation(double rotation);

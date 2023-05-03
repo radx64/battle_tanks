@@ -10,12 +10,10 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(warnings "/W4 /WX /EHsc")
 endif()
 
-if (NOT CONFIGURED_ONCE)
-    set(CMAKE_CXX_FLAGS "${warnings}"
-        CACHE STRING "Flags used by the compiler during all build types." FORCE)
-    set(CMAKE_C_FLAGS   "${warnings}"
-        CACHE STRING "Flags used by the compiler during all build types." FORCE)
-endif()
+set(CMAKE_CXX_FLAGS "${warnings} -g -ggdb3"
+    CACHE STRING "Flags used by the compiler during all build types." FORCE)
+set(CMAKE_C_FLAGS   "${warnings}"
+    CACHE STRING "Flags used by the compiler during all build types." FORCE)
 
 add_subdirectory (source)
 

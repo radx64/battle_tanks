@@ -1,6 +1,5 @@
 #include "TextureLibrary.hpp"
 
-
 void TextureLibrary::initTexture(const std::string& name, const std::string& path)
 {
     auto placed_element = textures_.emplace(std::make_pair(name, sf::Texture()));

@@ -1,6 +1,7 @@
 #include "Math.hpp"
 
 #include <cmath>
+#include <cstddef>
 
 namespace math
 {
@@ -38,6 +39,21 @@ sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, double angle, sf::Vector
   point_to_rotate.x = xnew + pivot.x;
   point_to_rotate.y = ynew + pivot.y;
   return point_to_rotate;
+}
+
+Average::Average(const size_t window_size)
+  : window_size_{window_size}
+{
+    measurements_.resize(window_size_);
+}
+
+int Average::calculate(int new_value)
+{
+    measurements_[current_index_] = new_value;
+    current_index_++;
+    if (current_index_ >= window_size_) current_index_=0;
+
+    return std::accumulate(measurements_.begin(), measurements_.end(), 0) / window_size_;
 }
 
 }  // namespace math
