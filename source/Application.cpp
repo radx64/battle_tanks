@@ -132,11 +132,7 @@ int Application()
                             case sf::Keyboard::PageUp   :   camera.zoom_in(); break;
                             case sf::Keyboard::PageDown :   camera.zoom_out(); break;
                             case sf::Keyboard::C        :   waypoints.clear(); break;
-                            case sf::Keyboard::T        :   Context::getParticles().clear(); break; 
-                            case sf::Keyboard::W        :   camera.move(0.f,-64.f); break;
-                            case sf::Keyboard::S        :   camera.move(0.f,64.f); break;
-                            case sf::Keyboard::A        :   camera.move(-64.f,0.f); break;
-                            case sf::Keyboard::D        :   camera.move(64.f,0.f); break;    
+                            case sf::Keyboard::T        :   Context::getParticles().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints.empty()) waypoints.pop_back(); break;
                             case sf::Keyboard::H        :   help_visible = !help_visible; break;
                             case sf::Keyboard::Q        :   window.close();
@@ -144,6 +140,7 @@ int Application()
                         }
                         break;
                     }
+
                     case sf::Event::MouseWheelMoved : 
                     {
                         if (event.mouseWheel.delta > 0) camera.zoom_in();
@@ -153,6 +150,17 @@ int Application()
                 }
             }
             
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) camera.move(0.f,-20.f);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) camera.move(0.f,20.f);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) camera.move(-20.f,0.f);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) camera.move(20.f,0.f);
+
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            if (mousePos.x < 10) {camera.move(-20.f,0.f);}
+            if ((uint32_t)mousePos.x > WINDOW_WIDTH - 10) {camera.move(20.f,0.f);}
+            if (mousePos.y < 10) {camera.move(0.f,-20.f);}
+            if ((uint32_t)mousePos.y > WINDOW_HEIGHT - 10) {camera.move(0.f,20.f);}
+
             camera.physics();
             view.setCenter(camera.get_position());
             view.setSize(camera.get_size());
@@ -176,14 +184,7 @@ int Application()
             }
             auto nav_time = clock.getElapsedTime();
             clock.restart();
-            for (auto& tank : tanks)
-            {
-                tank->physics(tanks, timeStep);
-                // if (tank->x_ > WINDOW_WIDTH) tank->x_ = -5;
-                // if (tank->y_ > WINDOW_HEIGHT) tank->y_ = -5;
-                // if (tank->x_ < -5) tank->x_ = WINDOW_WIDTH;
-                // if (tank->y_ < -5) tank->y_ = WINDOW_HEIGHT; 
-            }
+            for (auto& tank : tanks) tank->physics(tanks, timeStep);
 
             window.setView(window.getDefaultView());
 

@@ -4,8 +4,11 @@
 #include "Tank.hpp"
 #include "Math.hpp"
 
-class Tank;
+//How close to the waypoint to threat as
+constexpr float WAYPOINT_VISITED_DISTANCE = 30.0f; 
 
+//This is a simple class to test driving abilities of tanks.
+//I'll rewrite it to LUA whenever I'll start combining project with some lua interpreter.
 class Navigator
 {
 public:
@@ -25,7 +28,7 @@ public:
 
         double distance = math::distance(current_waypoint.x, current_waypoint.y, tank_.x_, tank_.y_);
 
-        if (distance > 30.0f)
+        if (distance > WAYPOINT_VISITED_DISTANCE)
         {
             double direction = atan2((double)current_waypoint.y - tank_.y_, (double)current_waypoint.x - tank_.x_);
             tank_.set_throtle(std::min(1.0, distance*0.01));

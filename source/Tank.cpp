@@ -10,7 +10,7 @@
 #include "TextureLibrary.hpp"
 
 constexpr double TANK_BRAKE_FORCE = 0.1;
-constexpr double TANK_ACCELERATION = 5.0;
+constexpr double TANK_ACCELERATION = 4.0;
 constexpr float ROLLING_RESISTANCE_COEEF = 0.98;
 constexpr double TANK_ROTATION_SPEED = 200.0;
 
