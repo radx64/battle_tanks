@@ -6,6 +6,7 @@
 #include <string>
 
 #include "Application.hpp"
+#include "Camera.hpp"
 #include "Context.hpp"
 #include "DrawTools.hpp"
 #include "FontLibrary.hpp"
@@ -41,8 +42,14 @@ int Application()
         Particles particles;
         Context context;
         context.setParticles(&particles);
-        auto view = sf::View(sf::FloatRect(0.f, 0.f, 1920.f, 1080.f));
-        view.setCenter(1920.f/2.0, 1080.f/2.0);
+
+        const sf::Vector2f camera_initial_position{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f};
+        const sf::Vector2f camera_initial_size{WINDOW_WIDTH, WINDOW_HEIGHT};
+
+        Camera camera(camera_initial_position, camera_initial_size);
+
+        auto view = sf::View(sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT));
+        view.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
         FontLibrary::initialize();
         TextureLibrary::initialize();
@@ -65,12 +72,17 @@ int Application()
         measurements_text.setPosition(20.f, 20.f);
         measurements_text.setCharacterSize(20);
         measurements_text.setFillColor(sf::Color::Black);
+        measurements_text.setOutlineColor(sf::Color(127,127,127,255));
+        measurements_text.setOutlineThickness(2.f);
+
 
         sf::Text measurements_average_text;
         measurements_average_text.setFont(FontLibrary::get("armata"));
         measurements_average_text.setPosition(200.f, 20.f);
         measurements_average_text.setCharacterSize(20);
         measurements_average_text.setFillColor(sf::Color::Black);
+        measurements_average_text.setOutlineColor(sf::Color(127,127,127,255));
+        measurements_average_text.setOutlineThickness(2.f);
 
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!", sf::Style::Fullscreen);
         window.setFramerateLimit(60);
@@ -117,14 +129,14 @@ int Application()
                     {
                         switch (event.key.code)
                         {
-                            case sf::Keyboard::PageUp   :   view.zoom(1.5f); break;
-                            case sf::Keyboard::PageDown :   view.zoom(0.5f); break;
+                            case sf::Keyboard::PageUp   :   camera.zoom_in(); break;
+                            case sf::Keyboard::PageDown :   camera.zoom_out(); break;
                             case sf::Keyboard::C        :   waypoints.clear(); break;
                             case sf::Keyboard::T        :   Context::getParticles().clear(); break; 
-                            case sf::Keyboard::W        :   view.move(0.f,-32.f); break;
-                            case sf::Keyboard::S        :   view.move(0.f,32.f); break;
-                            case sf::Keyboard::A        :   view.move(-32.f,0.f); break;
-                            case sf::Keyboard::D        :   view.move(32.f,0.f); break;    
+                            case sf::Keyboard::W        :   camera.move(0.f,-64.f); break;
+                            case sf::Keyboard::S        :   camera.move(0.f,64.f); break;
+                            case sf::Keyboard::A        :   camera.move(-64.f,0.f); break;
+                            case sf::Keyboard::D        :   camera.move(64.f,0.f); break;    
                             case sf::Keyboard::F        :   if(!waypoints.empty()) waypoints.pop_back(); break;
                             case sf::Keyboard::H        :   help_visible = !help_visible; break;
                             case sf::Keyboard::Q        :   window.close();
@@ -132,10 +144,18 @@ int Application()
                         }
                         break;
                     }
+                    case sf::Event::MouseWheelMoved : 
+                    {
+                        if (event.mouseWheel.delta > 0) camera.zoom_in();
+                        if (event.mouseWheel.delta < 0) camera.zoom_out();
+                    }
                     default : {}
                 }
             }
             
+            camera.physics();
+            view.setCenter(camera.get_position());
+            view.setSize(camera.get_size());
             window.setView(view);
             window.clear(sf::Color(0, 0, 0));
 
@@ -159,11 +179,14 @@ int Application()
             for (auto& tank : tanks)
             {
                 tank->physics(tanks, timeStep);
-                if (tank->x_ > WINDOW_WIDTH) tank->x_ = -50;
-                if (tank->y_ > WINDOW_HEIGHT) tank->y_ = -50;
-                if (tank->x_ < -50) tank->x_ = WINDOW_WIDTH;
-                if (tank->y_ < -50) tank->y_ = WINDOW_HEIGHT; 
+                // if (tank->x_ > WINDOW_WIDTH) tank->x_ = -5;
+                // if (tank->y_ > WINDOW_HEIGHT) tank->y_ = -5;
+                // if (tank->x_ < -5) tank->x_ = WINDOW_WIDTH;
+                // if (tank->y_ < -5) tank->y_ = WINDOW_HEIGHT; 
             }
+
+            window.setView(window.getDefaultView());
+
             auto physics_time = clock.getElapsedTime();
             measurements_text.setString("DRAW: " + std::to_string(draw_time.asMicroseconds())
                  + "us\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
@@ -188,7 +211,10 @@ int Application()
                 window.draw(text_background);
                 window.draw(help_text);
             }
-
+            // set "gameplay area view" again so mouse coordinates will be calculated properly in next mouse event
+            // this can be calulated also as an offset of camera view, to not switch views back and forward
+            // TODO reimplement this later 
+            window.setView(view);
             window.display();
         }
     }

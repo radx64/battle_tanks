@@ -3,6 +3,7 @@ target_sources(game_engine
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.hpp    
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
@@ -21,6 +22,7 @@ target_sources(game_engine
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Math.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Particles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextureLibrary.cpp
