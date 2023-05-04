@@ -17,6 +17,7 @@ target_sources(game_engine
     ${CMAKE_CURRENT_SOURCE_DIR}/Tilemap.hpp
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.cpp   
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp

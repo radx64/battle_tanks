@@ -6,14 +6,8 @@ class Particles;
 class Context
 {
 public:
-    static Particles& getParticles()
-    {
-        return *particles_;
-    }
-    static void setParticles(Particles* particles)
-    {
-        particles_ = particles;
-    }
+    static Particles& getParticles();
+    static void setParticles(Particles* particles);
 
 protected:
     static Particles* particles_;
