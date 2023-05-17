@@ -3,6 +3,8 @@
 
 #include "IRenderable.hpp"
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
 #include "Cannon.hpp"
@@ -17,6 +19,7 @@ public:
 
     void set_throtle(double throttle);
     void set_direction(double direction);
+    static void set_debug(bool is_enabled); 
 
 public:
     uint32_t id_;
@@ -35,6 +38,7 @@ protected:
     double set_direction_{};
     double set_throttle_{};
     double current_throttle_{};
+    static bool DEBUG_;
 };
 
 

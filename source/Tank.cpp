@@ -9,15 +9,22 @@
 #include "Particles.hpp"
 #include "TextureLibrary.hpp"
 
-constexpr double TANK_BRAKE_FORCE = 0.1;
-constexpr double TANK_ACCELERATION = 4.0;
-constexpr float ROLLING_RESISTANCE_COEEF = 0.98;
-constexpr double TANK_ROTATION_SPEED = 200.0;
+constexpr float TANK_BRAKE_FORCE = 0.1;
+constexpr float TANK_ACCELERATION = 4.0;
+constexpr float ROLLING_RESISTANCE_COEEF = 0.97;
+constexpr float TANK_ROTATION_SPEED = 200.0;
 
 constexpr double TANK_RADIUS = 25;
-constexpr double TANK_MASS = 5;
+constexpr double TANK_MASS = 50;
 
-constexpr bool DEBUG = false;
+//constexpr bool DEBUG = true;
+
+bool Tank::DEBUG_{false};
+
+void Tank::set_debug(bool is_enabled)
+{
+    DEBUG_ = is_enabled;
+}
 
 void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
 {
@@ -30,18 +37,29 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     boundary.setPosition(x_, y_);
     renderWindow.draw(boundary);
 
+    sf::Text debug_text;
+    debug_text.setFont(FontLibrary::get("armata"));
+    debug_text.setPosition(x_ + 40, y_ - 20);
+    debug_text.setCharacterSize(15);
+    debug_text.setFillColor(sf::Color::Black);
+
+    debug_text.setString("SPD: " + std::to_string(fabs(velocity_.x + velocity_.y)) + "\n" + 
+        "ROT: " + std::to_string(current_direction_) + "\n" + 
+        "THR: " + std::to_string(current_throttle_));
+    renderWindow.draw(debug_text);
+
     // Velocity vectors
     sf::Vertex velocity_vector[] =
     {
         sf::Vertex(sf::Vector2f(x_, y_)),
-        sf::Vertex(sf::Vector2f(x_, y_)+ (velocity_ * 16.0f))
+        sf::Vertex(sf::Vector2f(x_, y_)+ (velocity_))
     };
     renderWindow.draw(velocity_vector, 2, sf::Lines);
 
     sf::Vertex velocity_x_vector[] =
     {
         sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Red),
-        sf::Vertex(sf::Vector2f(x_+velocity_.x * 16.0f, y_), sf::Color::Red)
+        sf::Vertex(sf::Vector2f(x_+velocity_.x, y_), sf::Color::Red)
     };
 
     renderWindow.draw(velocity_x_vector, 2, sf::Lines);
@@ -49,7 +67,7 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     sf::Vertex velocity_y_vector[] =
     {
         sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Green),
-        sf::Vertex(sf::Vector2f(x_, y_+velocity_.y * 16.0f), sf::Color::Green)
+        sf::Vertex(sf::Vector2f(x_, y_+velocity_.y), sf::Color::Green)
     };
 
     renderWindow.draw(velocity_y_vector, 2, sf::Lines);
@@ -84,7 +102,7 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     cannon_->y_ = y_;
     cannon_->draw(renderWindow);
 
-    if(DEBUG) drawDebugInfo(renderWindow);
+    if(DEBUG_) drawDebugInfo(renderWindow);
 
     sf::Vector2f left_track = math::rotate_point(sf::Vector2f(x_, y_-15.0), current_direction_, sf::Vector2f(x_, y_));
     sf::Vector2f right_track = math::rotate_point(sf::Vector2f(x_, y_+15.0), current_direction_, sf::Vector2f(x_, y_));
@@ -115,6 +133,7 @@ void Tank::physics(std::vector<std::unique_ptr<Tank>>& tanks, double timeStep)
     if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
     if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
 
+    //TODO add some inertia calculation while accelerating
     drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
     drivetrain_force_.y = sin(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
 

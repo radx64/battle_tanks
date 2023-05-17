@@ -31,6 +31,7 @@ constexpr std::string_view help_text_string{
     "WASD - moves view\n" 
     "PgUp/PgDn - zoom\n"  
     "C - clear all waypoints\n"
+    "F12 - toggle debug draw mode\n"
     "F - delete last waypoint\n"
     "T - clear tracks\n"
     "Q - quit\n"};
@@ -108,6 +109,10 @@ int Application()
         math::Average nav_average{number_of_measures};
         math::Average fps_average{number_of_measures};
         sf::Clock clock;
+
+        bool debug_mode{false};
+        Tank::set_debug(debug_mode);
+
         while (window.isOpen())
         {
             sf::Event event;
@@ -132,6 +137,7 @@ int Application()
                             case sf::Keyboard::PageUp   :   camera.zoom_in(); break;
                             case sf::Keyboard::PageDown :   camera.zoom_out(); break;
                             case sf::Keyboard::C        :   waypoints.clear(); break;
+                            case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::set_debug(debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticles().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints.empty()) waypoints.pop_back(); break;
                             case sf::Keyboard::H        :   help_visible = !help_visible; break;
@@ -143,6 +149,9 @@ int Application()
 
                     case sf::Event::MouseWheelMoved : 
                     {
+                        // TODO: need to recalulate mouse position to viewport coordinates
+                        // so mouse zooming will be smooth and will zoom area where mouse cursor is
+                        camera.set_position(event.mouseWheel.x, event.mouseWheel.y);
                         if (event.mouseWheel.delta > 0) camera.zoom_in();
                         if (event.mouseWheel.delta < 0) camera.zoom_out();
                     }

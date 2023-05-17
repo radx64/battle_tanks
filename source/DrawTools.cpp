@@ -14,6 +14,7 @@ void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Colo
     window.draw(line, 2, sf::Lines);    
 }
 
+
 void drawTarget(sf::RenderWindow& window, int x, int y)
 {
     //target circle
