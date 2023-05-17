@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install dependencies
-      run: sudo apt install cmake g++ libsfml-dev ninja
+      run: sudo apt install cmake g++ libsfml-dev ninja-build
       
     - name: Compile using script
       run: ./compile.sh
