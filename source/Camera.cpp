@@ -1,5 +1,4 @@
 #include "Camera.hpp"
-
 constexpr float MOVE_FACTOR = 0.1;
 constexpr float ZOOM_FACTOR = 0.1;
 
@@ -39,15 +38,32 @@ void Camera::move(const float x_offset, const float y_offset)
     align_boundaries();
 }
 
+// TODO: combine zoom_in and zoom_in (x,y) methods later
 void Camera::zoom_in()
 {
-    if (zoom_level_ < MAX_ZOOM_LEVEL) zoom_level_+=0.5f;
-    else {return;}
+    if (zoom_level_ >= MAX_ZOOM_LEVEL) return;
+    zoom_level_+=0.5f;
 
     target_size_.x = original_size_.x / zoom_level_;
     target_size_.y = original_size_.y / zoom_level_;
     align_boundaries();
 }
+
+void Camera::zoom_in(const float x, const float y)
+{
+    if (zoom_level_ >= MAX_ZOOM_LEVEL) return;
+    zoom_in();
+
+    auto half_of_target_size = target_size_/2.0f;
+
+    const float local_x = x / zoom_level_;
+    const float local_y = y / zoom_level_;
+
+    const float new_position_x  = target_position_.x + (local_x - half_of_target_size.x);
+    const float new_position_y  = target_position_.y + (local_y - half_of_target_size.y);
+    set_position(new_position_x, new_position_y);
+}
+
 
 void Camera::zoom_out()
 {

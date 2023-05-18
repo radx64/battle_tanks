@@ -151,8 +151,7 @@ int Application()
                     {
                         // TODO: need to recalulate mouse position to viewport coordinates
                         // so mouse zooming will be smooth and will zoom area where mouse cursor is
-                        camera.set_position(event.mouseWheel.x, event.mouseWheel.y);
-                        if (event.mouseWheel.delta > 0) camera.zoom_in();
+                        if (event.mouseWheel.delta > 0) camera.zoom_in(event.mouseWheel.x, event.mouseWheel.y);
                         if (event.mouseWheel.delta < 0) camera.zoom_out();
                     }
                     default : {}

@@ -7,6 +7,7 @@ public:
     void set_position(const float x, const float y);
     void move(const float x_offset, const float y_offset);
     void zoom_in();
+    void zoom_in(const float x, const float y);
     void zoom_out();
     const sf::Vector2f& get_position();
     const sf::Vector2f& get_size();
