@@ -17,7 +17,6 @@ void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Colo
 
 void drawTarget(sf::RenderWindow& window, int x, int y)
 {
-    //target circle
     sf::CircleShape target(10);
     target.setFillColor(sf::Color(255, 255, 255));
     target.setOutlineThickness(2);

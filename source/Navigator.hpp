@@ -1,6 +1,8 @@
 #ifndef NAVIGATOR_HPP_
 #define NAVIGATOR_HPP_
 
+#include <cmath>
+
 #include "Tank.hpp"
 #include "Math.hpp"
 
