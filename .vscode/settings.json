@@ -51,7 +51,12 @@
         "concepts": "cpp",
         "list": "cpp",
         "ranges": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "cstring": "cpp",
+        "any": "cpp",
+        "numbers": "cpp",
+        "cinttypes": "cpp",
+        "variant": "cpp"
     },
     "editor.tokenColorCustomizations": {
         "textMateRules": [

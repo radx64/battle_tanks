@@ -1,6 +1,7 @@
 #include <array>
 #include <cmath>
 #include <ostream>
+#include <limits>
 
 #include <gtest/gtest.h>
 
@@ -68,11 +69,16 @@ TEST(DegeeToRadians, shouldConvertNegativeDegree)
     EXPECT_DOUBLE_EQ(expected_result, calculated_result);   
 }
 
-std::ostream& operator<<(std::ostream& os,  const sf::Vector2f& vector)
+namespace sf
 {
-    os <<"sf::Vector2f: ["<< vector.x <<", "<< vector.y << "]";
-    return os;
+// If you can't declare the function in the class it's important that PrintTo()
+// is defined in the SAME namespace that defines Vector2f.  C++'s look-up rules
+// rely on that.
+void PrintTo(const Vector2f& point, std::ostream* os) 
+{
+    *os << "sf::Vector2f:(" << point.x << "," << point.y << ")";
 }
+}  // namespace sf
 
 TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
 {
@@ -80,7 +86,7 @@ TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
     double angle{90.0};
     sf::Vector2f pivot{1.0f, 1.0f};
 
-    sf::Vector2f expected_result{1.0f, 1.0f};
+    sf::Vector2f expected_result{11.0f, 1.0f};
     auto result = math::rotate_point(point, angle, pivot);
 
     EXPECT_EQ(expected_result, result);
