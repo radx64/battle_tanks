@@ -2,7 +2,6 @@ find_package(GTest REQUIRED)
 
 add_executable(battle_tanks_testing 
     main.cpp
-    DummyTest.cpp
     MathTests.cpp
 )
 target_include_directories(battle_tanks_testing
