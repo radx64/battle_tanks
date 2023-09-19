@@ -1,4 +1,5 @@
 add_library(game_engine STATIC)
+
 target_sources(game_engine
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.hpp

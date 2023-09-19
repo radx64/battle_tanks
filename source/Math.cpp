@@ -1,7 +1,7 @@
 #include "Math.hpp"
-
 #include <cmath>
 #include <cstddef>
+#include <stdexcept>
 
 namespace math
 {
@@ -44,6 +44,10 @@ sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, double angle, sf::Vector
 Average::Average(const size_t window_size)
   : window_size_{window_size}
 {
+    if(window_size_ < 2) 
+    {
+      throw std::invalid_argument{"Window size is too small"};
+    }
     measurements_.resize(window_size_);
 }
 
