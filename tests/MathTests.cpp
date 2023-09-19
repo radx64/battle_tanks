@@ -1,7 +1,6 @@
 #include <array>
 #include <cmath>
 #include <ostream>
-#include <limits>
 
 #include <gtest/gtest.h>
 
@@ -86,7 +85,7 @@ TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
     double angle{90.0};
     sf::Vector2f pivot{1.0f, 1.0f};
 
-    sf::Vector2f expected_result{11.0f, 1.0f};
+    sf::Vector2f expected_result{1.0f, 1.0f};
     auto result = math::rotate_point(point, angle, pivot);
 
     EXPECT_EQ(expected_result, result);
