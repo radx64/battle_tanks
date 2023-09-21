@@ -1,4 +1,4 @@
-#include "Particles.hpp"
+#include "graphics/Particles.hpp"
 
 constexpr auto TRACK_WIDTH = 6;
 constexpr auto TRACK_HEIGHT = 2;

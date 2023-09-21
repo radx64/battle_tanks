@@ -12,7 +12,6 @@ Bunch of random ideas to randomly pick up and implement
 ### Visuals
 - [x] Fluid camera support with zoom capabilites
 
-
 ### GUI
 - [ ] Basic subsystem GUI support for spawning windows with some text 
 - [ ] Buttons
@@ -24,10 +23,12 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] Fuel management, pickups
 - [ ] Distance sensors
 
-
 ## Lua API
 - [ ] Some movement basic API (rotate, driving) with lua bindings
 - [ ] Scanner/radar to find other tanks and pickups
 
 ## Others
 - [ ] Address in code TODOs
+- [x] Create UT target and write few crude tests
+- [ ] Build system should split production and test targets to not build UTs in production
+- [ ] Split github actions to run production and UT separately

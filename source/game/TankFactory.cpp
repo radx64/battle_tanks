@@ -1,10 +1,10 @@
-#include "TankFactory.hpp"
+#include "game/TankFactory.hpp"
 
 #include <SFML/Graphics.hpp>
 
-#include "Cannon.hpp"
-#include "Tank.hpp"
-#include "TextureLibrary.hpp"
+#include "game/Cannon.hpp"
+#include "game/Tank.hpp"
+#include "graphics/TextureLibrary.hpp"
 
 uint32_t TankFactory::next_tank_id = 0;
 

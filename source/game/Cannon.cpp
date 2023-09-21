@@ -1,9 +1,9 @@
-#include "Cannon.hpp"
+#include "game/Cannon.hpp"
 
 #include <cmath>
 
-#include "Math.hpp"
-#include "TextureLibrary.hpp"
+#include "graphics/TextureLibrary.hpp"
+#include "math/Math.hpp"
 
 constexpr double CANNON_ROTATION_SPEED = 600.0;
 

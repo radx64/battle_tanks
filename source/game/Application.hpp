@@ -5,12 +5,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Camera.hpp"
-#include "Context.hpp"
-#include "Navigator.hpp"
-#include "Particles.hpp"
-#include "Tank.hpp"
-#include "Tilemap.hpp"
+#include "game/Camera.hpp"
+#include "game/Context.hpp"
+#include "game/Navigator.hpp"
+#include "game/Tank.hpp"
+#include "graphics/Particles.hpp"
+#include "graphics/Tilemap.hpp"
 
 class Application
 {

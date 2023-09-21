@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "source/Math.hpp"
+#include "source/math/Math.hpp"
 
 TEST(Distance, shouldReturnZeroForSinglePoint)
 {

@@ -1,4 +1,4 @@
-#include "TextureLibrary.hpp"
+#include "graphics/TextureLibrary.hpp"
 
 void TextureLibrary::initTexture(const std::string& name, const std::string& path)
 {

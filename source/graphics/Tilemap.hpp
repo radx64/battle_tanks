@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "TextureLibrary.hpp"
+#include "graphics/TextureLibrary.hpp"
 
 namespace {
 

@@ -1,4 +1,5 @@
-#include "Math.hpp"
+#include "math/Math.hpp"
+
 #include <cmath>
 #include <cstddef>
 #include <stdexcept>
@@ -46,7 +47,7 @@ Average::Average(const size_t window_size)
 {
     if(window_size_ < 2) 
     {
-      throw std::invalid_argument{"Window size is too small"};
+      throw std::invalid_argument{"Window size is too small!"};
     }
     measurements_.resize(window_size_);
 }

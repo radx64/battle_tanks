@@ -24,7 +24,10 @@ add_subdirectory(tests)
 
 add_executable(battle_tanks main.cpp)
 target_link_libraries (battle_tanks 
-    game_engine 
+    game_lib
+    graphics_lib
+    math_lib
+    gui_lib
     sfml-graphics 
     sfml-window 
     sfml-system

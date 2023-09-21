@@ -7,12 +7,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Application.hpp"
-#include "DrawTools.hpp"
-#include "FontLibrary.hpp"
-#include "Math.hpp"
-#include "TextureLibrary.hpp"
-#include "TankFactory.hpp"
+#include "game/Application.hpp"
+#include "game/TankFactory.hpp"
+#include "graphics/DrawTools.hpp"
+#include "graphics/FontLibrary.hpp"
+#include "graphics/TextureLibrary.hpp"
+#include "math/Math.hpp"
 
 constexpr uint32_t WINDOW_WIDTH = 1920;
 constexpr uint32_t WINDOW_HEIGHT = 1080;

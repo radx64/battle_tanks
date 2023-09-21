@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#include "Tank.hpp"
-#include "Math.hpp"
+#include "game/Tank.hpp"
+#include "math/Math.hpp"
 
 //How close to the waypoint to threat as
 constexpr float WAYPOINT_VISITED_DISTANCE = 30.0f; 

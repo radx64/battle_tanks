@@ -1,13 +1,13 @@
-#include "Tank.hpp"
+#include "game/Tank.hpp"
 
 #include <algorithm>
 #include <cmath>
 
-#include "Context.hpp"
-#include "FontLibrary.hpp"
-#include "Math.hpp"
-#include "Particles.hpp"
-#include "TextureLibrary.hpp"
+#include "game/Context.hpp"
+#include "graphics/FontLibrary.hpp"
+#include "graphics/Particles.hpp"
+#include "graphics/TextureLibrary.hpp"
+#include "math/Math.hpp"
 
 constexpr float TANK_BRAKE_FORCE = 0.1;
 constexpr float TANK_ACCELERATION = 4.0;

@@ -1,4 +1,4 @@
-#include "Camera.hpp"
+#include "game/Camera.hpp"
 constexpr float MOVE_FACTOR = 0.1;
 constexpr float ZOOM_FACTOR = 0.1;
 

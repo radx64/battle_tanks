@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Cannon.hpp"
+#include "game/Cannon.hpp"
 
 class Tank : public IRenderable
 {
