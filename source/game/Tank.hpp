@@ -9,6 +9,9 @@
 
 #include "game/Cannon.hpp"
 
+namespace game 
+{
+
 class Tank : public IRenderable
 {
 public:
@@ -41,5 +44,6 @@ protected:
     static bool DEBUG_;
 };
 
+}  // namespace game
 
 #endif  // GAME_TANK_HPP_

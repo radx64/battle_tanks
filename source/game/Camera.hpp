@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace game 
+{
+
 class Camera
 {
 public:
@@ -26,5 +29,6 @@ protected:
     float zoom_level_;
 };
 
+}  // namespace game
+
 #endif  // GAME_CAMERA_HPP_
- 

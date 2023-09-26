@@ -1,5 +1,5 @@
-#ifndef GAME_CAPPLICATION_HPP_
-#define GAME_CAPPLICATION_HPP_
+#ifndef GAME_APPLICATION_HPP_
+#define GAME_APPLICATION_HPP_
 
 #include <memory>
 
@@ -11,6 +11,9 @@
 #include "game/Tank.hpp"
 #include "graphics/Particles.hpp"
 #include "graphics/Tilemap.hpp"
+
+namespace game 
+{
 
 class Application
 {
@@ -41,4 +44,6 @@ protected:
     std::vector<std::unique_ptr<Navigator>> navigators_;
 };
 
-#endif  // GAME_CAPPLICATION_HPP_
+}  // namespace game
+
+#endif  // GAME_APPLICATION_HPP_

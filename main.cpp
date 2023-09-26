@@ -2,6 +2,6 @@
 
 int main()
 {
-    Application app;
+    game::Application app;
     return app.run();
 }

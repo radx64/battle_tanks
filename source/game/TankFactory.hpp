@@ -3,8 +3,11 @@
 
 #include <memory>
 
-namespace sf { class Texture;}
-class Tank;
+namespace sf { class Texture; }
+namespace game { class Tank; }
+
+namespace game 
+{
 
 class TankFactory
 {
@@ -18,12 +21,14 @@ public:
         Black
     };
 
-    static std::unique_ptr<Tank> create_instance(const TankType type, double x, double y, double rotation);
+    static std::unique_ptr<Tank> create_instance(const TankFactory::TankType type, double x, double y, double rotation);
 
 protected:
     static sf::Texture& get_tank_texture(const TankType type);
     static sf::Texture& get_cannon_texture(const TankType type);
     static uint32_t next_tank_id;
 };
+
+}  // namespace game
 
 #endif  // GAME_TANK_FACTORY_HPP_

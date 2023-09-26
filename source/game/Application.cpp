@@ -14,6 +14,9 @@
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
 
+namespace game 
+{
+
 constexpr uint32_t WINDOW_WIDTH = 1920;
 constexpr uint32_t WINDOW_HEIGHT = 1080;
 constexpr uint32_t TANKS_COUNT = 5;
@@ -44,7 +47,6 @@ Application::Application()
 
     configureTexts();
 }
-
 
 void Application::configureTexts()
 {
@@ -244,3 +246,5 @@ int Application::run()
 
     return 0;
 }
+
+}  // namespace game

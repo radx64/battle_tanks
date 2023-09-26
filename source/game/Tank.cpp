@@ -9,6 +9,9 @@
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
 
+namespace game 
+{
+
 constexpr float TANK_BRAKE_FORCE = 0.1;
 constexpr float TANK_ACCELERATION = 4.0;
 constexpr float ROLLING_RESISTANCE_COEEF = 0.97;
@@ -183,3 +186,5 @@ void Tank::physics(std::vector<std::unique_ptr<Tank>>& tanks, double timeStep)
     x_ += velocity_.x * timeStep;
     y_ += velocity_.y * timeStep;
 }
+
+}  // namespace game

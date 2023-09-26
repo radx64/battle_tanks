@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace game 
+{
+
 class Cannon
 {
 public:
@@ -17,5 +20,7 @@ public:
     double set_rotation_;
     sf::Sprite sprite_;
 };
+
+}  // namespace game
 
 #endif  // GAME_CANNON_HPP_

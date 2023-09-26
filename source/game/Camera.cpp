@@ -1,4 +1,8 @@
 #include "game/Camera.hpp"
+
+namespace game 
+{
+
 constexpr float MOVE_FACTOR = 0.1;
 constexpr float ZOOM_FACTOR = 0.1;
 
@@ -93,3 +97,5 @@ void Camera::physics()
     const auto zoom_diff = target_size_ - current_size_;
     current_size_ += zoom_diff  * ZOOM_FACTOR;
 }
+
+}  // namespace game

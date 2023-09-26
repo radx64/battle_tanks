@@ -6,7 +6,10 @@
 #include "game/Tank.hpp"
 #include "math/Math.hpp"
 
-//How close to the waypoint to threat as
+namespace game 
+{
+
+//How close to the waypoint to treat as visted
 constexpr float WAYPOINT_VISITED_DISTANCE = 30.0f; 
 
 //This is a simple class to test driving abilities of tanks.
@@ -47,5 +50,7 @@ protected:
     std::vector<sf::Vector2i>& waypoints_;
     Tank& tank_;
 };
+
+}  // namespace game
 
 #endif  // GAME_NAVIGATOR_HPP_

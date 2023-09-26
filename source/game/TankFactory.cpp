@@ -6,9 +6,12 @@
 #include "game/Tank.hpp"
 #include "graphics/TextureLibrary.hpp"
 
+namespace game 
+{
+
 uint32_t TankFactory::next_tank_id = 0;
 
-std::unique_ptr<Tank> TankFactory::create_instance(const TankType type, double x, double y, double rotation)
+std::unique_ptr<Tank> TankFactory::create_instance(const TankFactory::TankType type, double x, double y, double rotation)
 {
     auto cannon = std::make_unique<Cannon>(x, y, rotation, get_cannon_texture(type));
     auto tank = std::make_unique<Tank>(next_tank_id, x, y, rotation, std::move(cannon), get_tank_texture(type));
@@ -41,3 +44,5 @@ sf::Texture& TankFactory::get_cannon_texture(const TankType type)
         default              : return graphics::TextureLibrary::get("blue_cannon");
     }
 };
+
+}  // namespace game

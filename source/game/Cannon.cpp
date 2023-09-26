@@ -5,6 +5,9 @@
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
 
+namespace game 
+{
+
 constexpr double CANNON_ROTATION_SPEED = 600.0;
 
 Cannon::Cannon(double x, double y, double rotation, sf::Texture& texture) 
@@ -44,3 +47,5 @@ void Cannon::physics(double timeStep)
     if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * timeStep, fabs(delta));
     if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * timeStep, fabs(delta));   
 }
+
+}  // namespace game
