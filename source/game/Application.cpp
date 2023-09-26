@@ -38,9 +38,9 @@ Application::Application()
 , view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
 {
     context_.setParticles(&particles_);
-    FontLibrary::initialize();
-    TextureLibrary::initialize();
-    tilemap_ = std::make_unique<Tilemap>();
+    graphics::FontLibrary::initialize();
+    graphics::TextureLibrary::initialize();
+    tilemap_ = std::make_unique<graphics::Tilemap>();
 
     configureTexts();
 }
@@ -48,7 +48,7 @@ Application::Application()
 
 void Application::configureTexts()
 {
-    const auto& current_font = FontLibrary::get("armata");
+    const auto& current_font = graphics::FontLibrary::get("armata");
 
     help_text_.setFont(current_font);
     help_text_.setCharacterSize(20);
@@ -177,7 +177,7 @@ int Application::run()
 
             clock.restart();
             tilemap_->draw(window);
-            drawtools::drawWaypoints(window, waypoints_);
+            graphics::drawtools::drawWaypoints(window, waypoints_);
             particles_.draw(window);
             for (auto& tank : tanks_)
             {

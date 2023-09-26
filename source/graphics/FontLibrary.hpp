@@ -6,6 +6,9 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace graphics
+{
+
 class FontLibrary
 {
 public:
@@ -17,5 +20,7 @@ private:
     static void initFont(const std::string& name, const std::string& path);
     static std::map<std::string, sf::Font> fonts_;
 };
+
+}  // namespace graphics
 
 #endif  // GRAPHICS_FONT_LIBRARY_HPP_

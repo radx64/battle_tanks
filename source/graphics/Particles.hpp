@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace graphics
+{
+
 class Particles
 {
 public:
@@ -15,5 +18,7 @@ public:
 protected:
 sf::RenderTexture target_;
 };
+
+}  // namespace graphics
 
 #endif  // GRAPHICS_PARTICLES_HPP_

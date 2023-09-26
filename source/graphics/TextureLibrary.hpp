@@ -6,6 +6,9 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace graphics
+{
+
 class TextureLibrary
 {
 public:
@@ -17,5 +20,7 @@ private:
     static void initTexture(const std::string& name, const std::string& path);
     static std::map<std::string, sf::Texture> textures_;
 };
+
+}  // namespace graphics
 
 #endif  // GRAPHICS_TEXTURE_LIBRARY_HPP_

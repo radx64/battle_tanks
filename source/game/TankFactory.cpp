@@ -20,12 +20,12 @@ sf::Texture& TankFactory::get_tank_texture(const TankType type)
 {
     switch (type)
     {
-        case TankType::Blue  : return TextureLibrary::get("blue_tank");
-        case TankType::Red   : return TextureLibrary::get("red_tank");
-        case TankType::Green : return TextureLibrary::get("green_tank");
-        case TankType::Sand  : return TextureLibrary::get("sand_tank");
-        case TankType::Black : return TextureLibrary::get("dark_tank");
-        default              : return TextureLibrary::get("blue_tank");
+        case TankType::Blue  : return graphics::TextureLibrary::get("blue_tank");
+        case TankType::Red   : return graphics::TextureLibrary::get("red_tank");
+        case TankType::Green : return graphics::TextureLibrary::get("green_tank");
+        case TankType::Sand  : return graphics::TextureLibrary::get("sand_tank");
+        case TankType::Black : return graphics::TextureLibrary::get("dark_tank");
+        default              : return graphics::TextureLibrary::get("blue_tank");
     }
 };
 
@@ -33,11 +33,11 @@ sf::Texture& TankFactory::get_cannon_texture(const TankType type)
 {
     switch (type)
     {
-        case TankType::Blue  : return TextureLibrary::get("blue_cannon");
-        case TankType::Red   : return TextureLibrary::get("red_cannon");
-        case TankType::Green : return TextureLibrary::get("green_cannon");
-        case TankType::Sand  : return TextureLibrary::get("sand_cannon");
-        case TankType::Black : return TextureLibrary::get("dark_cannon");
-        default              : return TextureLibrary::get("blue_cannon");
+        case TankType::Blue  : return graphics::TextureLibrary::get("blue_cannon");
+        case TankType::Red   : return graphics::TextureLibrary::get("red_cannon");
+        case TankType::Green : return graphics::TextureLibrary::get("green_cannon");
+        case TankType::Sand  : return graphics::TextureLibrary::get("sand_cannon");
+        case TankType::Black : return graphics::TextureLibrary::get("dark_cannon");
+        default              : return graphics::TextureLibrary::get("blue_cannon");
     }
 };

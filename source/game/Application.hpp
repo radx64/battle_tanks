@@ -22,7 +22,7 @@ protected:
     void configureTexts();
     void spawnSomeTanks();
 
-    Particles particles_;
+    graphics::Particles particles_;
     Context context_;
 
     const sf::Vector2f camera_initial_position_;
@@ -30,7 +30,7 @@ protected:
     Camera camera_;
     sf::View view_;
 
-    std::unique_ptr<Tilemap> tilemap_;
+    std::unique_ptr<graphics::Tilemap> tilemap_;
 
     sf::Text help_text_;
     sf::Text measurements_text_;

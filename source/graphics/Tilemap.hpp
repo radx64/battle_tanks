@@ -24,6 +24,9 @@ enum class TileType
 
 }  // namespace
 
+namespace graphics
+{
+
 std::string toTextureName(const TileType type)
 {
     switch(type)
@@ -116,5 +119,7 @@ private:
     };
     sf::RenderTexture tiles_;
 };
+
+}  // namespace graphics
 
 #endif  // GRAPHICS_TILEMAP_HPP_

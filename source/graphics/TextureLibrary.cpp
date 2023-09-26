@@ -1,5 +1,8 @@
 #include "graphics/TextureLibrary.hpp"
 
+namespace graphics
+{
+
 void TextureLibrary::initTexture(const std::string& name, const std::string& path)
 {
     auto placed_element = textures_.emplace(std::make_pair(name, sf::Texture()));
@@ -37,3 +40,5 @@ sf::Texture& TextureLibrary::get(const std::string& name)
 }
 
 std::map<std::string, sf::Texture> TextureLibrary::textures_;
+
+}  // namespace graphics

@@ -1,12 +1,12 @@
 #include "game/Context.hpp"
 
-Particles& Context::getParticles()
+graphics::Particles& Context::getParticles()
 {
     return *particles_;
 }
-void Context::setParticles(Particles* particles)
+void Context::setParticles(graphics::Particles* particles)
 {
     particles_ = particles;
 }
 
-Particles* Context::particles_{nullptr};
+graphics::Particles* Context::particles_{nullptr};

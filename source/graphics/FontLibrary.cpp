@@ -1,5 +1,8 @@
 #include "graphics/FontLibrary.hpp"
 
+namespace graphics
+{
+
 void FontLibrary::initFont(const std::string& name, const std::string& path)
 {
     auto placed_element = fonts_.emplace(std::make_pair(name, sf::Font()));
@@ -22,3 +25,5 @@ sf::Font& FontLibrary::get(const std::string& name)
 }
 
 std::map<std::string, sf::Font> FontLibrary::fonts_;
+
+}  // namespace graphics

@@ -1,5 +1,8 @@
 #include "graphics/Particles.hpp"
 
+namespace graphics
+{
+
 constexpr auto TRACK_WIDTH = 6;
 constexpr auto TRACK_HEIGHT = 2;
 constexpr auto TRACK_IMPRINT_OPACITY = 50;
@@ -33,3 +36,5 @@ void Particles::clear()
 {
     target_.clear(sf::Color(255,255,255,0));
 }
+
+}  // namespace graphics
