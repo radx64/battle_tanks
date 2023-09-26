@@ -1,5 +1,5 @@
-#ifndef PARTICLES_HPP_
-#define PARTICLES_HPP_
+#ifndef GRAPHICS_PARTICLES_HPP_
+#define GRAPHICS_PARTICLES_HPP_
 
 #include <SFML/Graphics.hpp>
 
@@ -16,4 +16,4 @@ protected:
 sf::RenderTexture target_;
 };
 
-#endif  // PARTICLES_HPP_
+#endif  // GRAPHICS_PARTICLES_HPP_

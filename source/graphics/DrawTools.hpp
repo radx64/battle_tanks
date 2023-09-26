@@ -1,5 +1,5 @@
-#ifndef DRAW_TOOLS_HPP_
-#define DRAW_TOOLS_HPP_
+#ifndef GRAPHICS_DRAW_TOOLS_HPP_
+#define GRAPHICS_DRAW_TOOLS_HPP_
 
 #include <vector>
 
@@ -14,4 +14,4 @@ void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoint
 
 }  // namespeace drawtools
 
-#endif  // DRAW_TOOLS_HPP_
+#endif  // GRAPHICS_DRAW_TOOLS_HPP_

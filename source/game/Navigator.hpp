@@ -1,5 +1,5 @@
-#ifndef NAVIGATOR_HPP_
-#define NAVIGATOR_HPP_
+#ifndef GAME_NAVIGATOR_HPP_
+#define GAME_NAVIGATOR_HPP_
 
 #include <cmath>
 
@@ -48,4 +48,4 @@ protected:
     Tank& tank_;
 };
 
-#endif
+#endif  // GAME_NAVIGATOR_HPP_

@@ -1,3 +1,6 @@
+#ifndef GAME_CAMERA_HPP_
+#define GAME_CAMERA_HPP_
+
 #include <SFML/Graphics.hpp>
 
 class Camera
@@ -22,3 +25,6 @@ protected:
     sf::Vector2f target_size_;
     float zoom_level_;
 };
+
+#endif  // GAME_CAMERA_HPP_
+ 

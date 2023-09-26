@@ -1,5 +1,5 @@
-#ifndef TEXTURE_LIBRARY_HPP_
-#define TEXTURE_LIBRARY_HPP_
+#ifndef GRAPHICS_TEXTURE_LIBRARY_HPP_
+#define GRAPHICS_TEXTURE_LIBRARY_HPP_
 
 #include <map>
 #include <string>
@@ -18,4 +18,4 @@ private:
     static std::map<std::string, sf::Texture> textures_;
 };
 
-#endif  //  TEXTURE_LIBRARY_HPP_
+#endif  // GRAPHICS_TEXTURE_LIBRARY_HPP_

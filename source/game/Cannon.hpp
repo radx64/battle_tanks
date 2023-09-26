@@ -1,5 +1,5 @@
-#ifndef CANNON_HPP_
-#define CANNON_HPP_
+#ifndef GAME_CANNON_HPP_
+#define GAME_CANNON_HPP_
 
 #include <SFML/Graphics.hpp>
 
@@ -18,5 +18,4 @@ public:
     sf::Sprite sprite_;
 };
 
-
-#endif
+#endif  // GAME_CANNON_HPP_

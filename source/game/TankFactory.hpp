@@ -1,5 +1,5 @@
-#ifndef TANK_FACTORY_HPP_
-#define TANK_FACTORY_HPP_
+#ifndef GAME_TANK_FACTORY_HPP_
+#define GAME_TANK_FACTORY_HPP_
 
 #include <memory>
 
@@ -26,4 +26,4 @@ protected:
     static uint32_t next_tank_id;
 };
 
-#endif  // TANK_FACTORY_HPP_
+#endif  // GAME_TANK_FACTORY_HPP_

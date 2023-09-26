@@ -1,5 +1,5 @@
-#ifndef CONTEXT_HPP_
-#define CONTEXT_HPP_
+#ifndef GAME_CONTEXT_HPP_
+#define GAME_CONTEXT_HPP_
 
 class Particles;
 
@@ -13,4 +13,4 @@ protected:
     static Particles* particles_;
 };
 
-#endif  // CONTEXT_HPP_
+#endif  // GAME_CONTEXT_HPP_

@@ -1,5 +1,5 @@
-#ifndef MATH_HPP_
-#define MATH_HPP_
+#ifndef MATH_MATH_HPP_
+#define MATH_MATH_HPP_
 
 #include <cstddef>
 #include <numeric>
@@ -28,4 +28,4 @@ protected:
 
 }  // namespace math
 
-#endif  // MATH_HPP_
+#endif  // MATH_MATH_HPP_

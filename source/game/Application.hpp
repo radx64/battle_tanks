@@ -1,5 +1,5 @@
-#ifndef APPLICATION_HPP_
-#define APPLICATION_HPP_
+#ifndef GAME_CAPPLICATION_HPP_
+#define GAME_CAPPLICATION_HPP_
 
 #include <memory>
 
@@ -41,4 +41,4 @@ protected:
     std::vector<std::unique_ptr<Navigator>> navigators_;
 };
 
-#endif  // APPLICATION_HPP_
+#endif  // GAME_CAPPLICATION_HPP_

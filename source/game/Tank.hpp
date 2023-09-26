@@ -1,5 +1,5 @@
-#ifndef TANK_HPP_
-#define TANK_HPP_
+#ifndef GAME_TANK_HPP_
+#define GAME_TANK_HPP_
 
 #include "IRenderable.hpp"
 
@@ -42,4 +42,4 @@ protected:
 };
 
 
-#endif
+#endif  // GAME_TANK_HPP_

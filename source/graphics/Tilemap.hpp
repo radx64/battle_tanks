@@ -1,3 +1,6 @@
+#ifndef GRAPHICS_TILEMAP_HPP_
+#define GRAPHICS_TILEMAP_HPP_
+
 #include <cstdint>
 #include <string>
 
@@ -113,3 +116,5 @@ private:
     };
     sf::RenderTexture tiles_;
 };
+
+#endif  // GRAPHICS_TILEMAP_HPP_
