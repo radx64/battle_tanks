@@ -13,7 +13,7 @@ Bunch of random ideas to randomly pick up and implement
 - [x] Fluid camera support with zoom capabilites
 
 ### GUI
-- [ ] Basic subsystem GUI support for spawning windows with some text 
+- [ ] Basic GUI subsystem support for spawning windows with some text 
 - [ ] Buttons
 - [ ] Closable windows
 

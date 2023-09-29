@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "game/Context.hpp"
-#include "graphics/FontLibrary.hpp"
+#include "gui/FontLibrary.hpp"
 #include "graphics/Particles.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
@@ -41,7 +41,7 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     renderWindow.draw(boundary);
 
     sf::Text debug_text;
-    debug_text.setFont(graphics::FontLibrary::get("armata"));
+    debug_text.setFont(gui::FontLibrary::get("armata"));
     debug_text.setPosition(x_ + 40, y_ - 20);
     debug_text.setCharacterSize(15);
     debug_text.setFillColor(sf::Color::Black);

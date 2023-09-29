@@ -1,17 +1,23 @@
-#include "graphics/FontLibrary.hpp"
+#include "gui/FontLibrary.hpp"
 
-namespace graphics
+namespace gui
 {
+
+void FontLibrary::initDefaultFont()
+{
+    fonts_.emplace(std::make_pair("default", sf::Font()));
+}
 
 void FontLibrary::initFont(const std::string& name, const std::string& path)
 {
     auto placed_element = fonts_.emplace(std::make_pair(name, sf::Font()));
     bool has_loaded = placed_element.first->second.loadFromFile(path);
-    if(not has_loaded) throw std::string("Couldn't load texture file...");
+    if(not has_loaded) throw std::string("Couldn't load font file...");
 }
 
 void FontLibrary::initialize()
 {
+    initDefaultFont();
     initFont("armata", "../fonts/armata.ttf");
     initFont("glassTTY", "../fonts/Glass_TTY_VT220.ttf");
 }
@@ -26,4 +32,4 @@ sf::Font& FontLibrary::get(const std::string& name)
 
 std::map<std::string, sf::Font> FontLibrary::fonts_;
 
-}  // namespace graphics
+}  // namespace gui

@@ -9,8 +9,9 @@
 
 #include "game/Application.hpp"
 #include "game/TankFactory.hpp"
+#include "gui/Label.hpp"
+#include "gui/Window.hpp"
 #include "graphics/DrawTools.hpp"
-#include "graphics/FontLibrary.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
 
@@ -25,7 +26,7 @@ constexpr double timeStep = 1.0/30.0;
 
 constexpr std::string_view help_text_string{
     "=== HELP ===\n"
-    "WASD - moves view_\n" 
+    "WASD - moves view\n" 
     "PgUp/PgDn - zoom\n"  
     "C - clear all waypoints\n"
     "F12 - toggle debug draw mode\n"
@@ -41,7 +42,7 @@ Application::Application()
 , view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
 {
     context_.setParticles(&particles_);
-    graphics::FontLibrary::initialize();
+    gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
 
@@ -50,30 +51,39 @@ Application::Application()
 
 void Application::configureTexts()
 {
-    const auto& current_font = graphics::FontLibrary::get("armata");
+    auto parent_label = std::make_unique<gui::Label>("PARENT_LABEL");
+    parent_label->set_position(sf::Vector2f(100.0f, 200.0f), gui::Alignment::LEFT);
 
-    help_text_.setFont(current_font);
-    help_text_.setCharacterSize(20);
-    help_text_.setFillColor(sf::Color::Black);
-    help_text_.setString(help_text_string.data());
+    auto child_label_1 = new gui::Label("CHILD_LABEL1", parent_label.get());
+    child_label_1->set_position(sf::Vector2f(0.0f, 30.0f), gui::Alignment::RIGHT);  
 
-    help_text_.setPosition(
-        WINDOW_WIDTH/2 - help_text_.getGlobalBounds().width/2,
-        WINDOW_HEIGHT/2 - help_text_.getGlobalBounds().height/2);
+    auto child_label_2 = new gui::Label("CHILD_LABEL2", parent_label.get());
+    child_label_2->set_position(sf::Vector2f(0.0f, 30.0f), gui::Alignment::LEFT);  
 
-    measurements_text_.setFont(current_font);
-    measurements_text_.setPosition(20.f, 20.f);
-    measurements_text_.setCharacterSize(20);
-    measurements_text_.setFillColor(sf::Color::Black);
-    measurements_text_.setOutlineColor(sf::Color(127,127,127,255));
-    measurements_text_.setOutlineThickness(2.f);
+    auto second_level_child_label = new gui::Label("2ND_LEVEL_CHILD_LABEL", child_label_2);
+    second_level_child_label->set_position(sf::Vector2f(0.0f, 30.0f), gui::Alignment::CENTERED);  
 
-    measurements_average_text_.setFont(current_font);
-    measurements_average_text_.setPosition(200.f, 20.f);
-    measurements_average_text_.setCharacterSize(20);
-    measurements_average_text_.setFillColor(sf::Color::Black);
-    measurements_average_text_.setOutlineColor(sf::Color(127,127,127,255));
-    measurements_average_text_.setOutlineThickness(2.f);
+    guiElements_.push_back(std::move(parent_label));
+
+    auto measurements_text = std::make_unique<gui::Label>("");
+    measurements_text->set_position(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
+    measurements_text_handle_ = measurements_text.get();
+    guiElements_.push_back(std::move(measurements_text));
+
+    auto measurements_average_text = std::make_unique<gui::Label>("");
+    measurements_average_text->set_position(sf::Vector2f(200.f, 20.f), gui::Alignment::LEFT);
+    measurements_average_text_handle_ = measurements_average_text.get();
+    guiElements_.push_back(std::move(measurements_average_text));
+
+    auto help_window = std::make_unique<gui::Window>();
+    help_window->set_size(sf::Vector2f(500.0f, 400.0f));
+    help_window->set_position(sf::Vector2f(WINDOW_WIDTH/2, 200.0f), gui::Alignment::CENTERED);
+    help_window_handle_ = help_window.get();
+
+    auto help_text = new gui::Label(help_text_string.data(), help_window.get());
+    help_text->set_position(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
+
+    guiElements_.push_back(std::move(help_window));
 }
 
 void Application::spawnSomeTanks()
@@ -208,32 +218,34 @@ int Application::run()
             window.setView(window.getDefaultView());
 
             auto physics_time = clock.getElapsedTime();
-            measurements_text_.setString("DRAW: " + std::to_string(draw_time)
+            measurements_text_handle_->set_text("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
                  + "us\nFPS: "+ std::to_string(fps));
 
-            window.draw(measurements_text_);
-            measurements_average_text_.setString("AVG: " + std::to_string(draw_average.calculate(draw_time))
+            measurements_average_text_handle_->set_text("AVG: " + std::to_string(draw_average.calculate(draw_time))
                 + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(fps_average.calculate(fps)));
-            window.draw(measurements_average_text_);
 
-            if (help_visible) 
-            {
-                //TODO: need some GUI system later
-                sf::RectangleShape text_background(sf::Vector2f(400,200));
-                text_background.setFillColor(sf::Color(50, 50, 50, 50));
-                text_background.setPosition(
-                    help_text_.getGlobalBounds().left,
-                    help_text_.getGlobalBounds().top);
-                window.draw(text_background);
-                window.draw(help_text_);
-            }
+
+            help_window_handle_->set_visibility(help_visible);
+
             // set "gameplay area view_" again so mouse coordinates will be calculated properly in next mouse event
             // this can be calulated also as an offset of camera view_, to not switch view_s back and forward
             // TODO reimplement this later if needed, delete this todo otherwise
+
+            // Temporary hack for testing objects movement
+            auto position = guiElements_[0]->get_position();
+            position += sf::Vector2f(1.0f, 1.0f);
+            if (position.x > 700.0f) position =  sf::Vector2f(1.0f, 1.0f);
+            guiElements_[0]->set_position(position, gui::Alignment::LEFT);
+
+            for (auto& guiElement : guiElements_)
+            {
+                guiElement->render(window);
+            }
+
             window.setView(view_);
             window.display();
         }

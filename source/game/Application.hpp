@@ -12,6 +12,9 @@
 #include "graphics/Particles.hpp"
 #include "graphics/Tilemap.hpp"
 
+#include "gui/Label.hpp"
+#include "gui/Window.hpp"
+
 namespace game 
 {
 
@@ -36,12 +39,16 @@ protected:
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
     sf::Text help_text_;
-    sf::Text measurements_text_;
-    sf::Text measurements_average_text_;
+
+    gui::Label* measurements_text_handle_;
+    gui::Label* measurements_average_text_handle_;
+    gui::Window* help_window_handle_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Tank>> tanks_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
+
+    std::vector<std::unique_ptr<gui::Element>> guiElements_;
 };
 
 }  // namespace game

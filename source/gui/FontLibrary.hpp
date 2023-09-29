@@ -1,12 +1,12 @@
-#ifndef GRAPHICS_FONT_LIBRARY_HPP_
-#define GRAPHICS_FONT_LIBRARY_HPP_
+#ifndef GUI_FONT_LIBRARY_HPP_
+#define GUI_FONT_LIBRARY_HPP_
 
 #include <map>
 #include <string>
 
 #include <SFML/Graphics.hpp>
 
-namespace graphics
+namespace gui
 {
 
 class FontLibrary
@@ -17,10 +17,11 @@ public:
     static sf::Font& get(const std::string& name);
 
 private:
+    static void initDefaultFont();
     static void initFont(const std::string& name, const std::string& path);
     static std::map<std::string, sf::Font> fonts_;
 };
 
-}  // namespace graphics
+}  // namespace gui
 
-#endif  // GRAPHICS_FONT_LIBRARY_HPP_
+#endif  // GUI_FONT_LIBRARY_HPP_
