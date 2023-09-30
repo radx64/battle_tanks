@@ -8,7 +8,8 @@ target_include_directories(gui_lib
 target_sources(gui_lib
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Alignment.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Element.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Button.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Component.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.hpp
@@ -16,4 +17,3 @@ target_sources(gui_lib
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
 )
-set_property(TARGET gui_lib PROPERTY CXX_STANDARD 17)

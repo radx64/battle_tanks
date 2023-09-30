@@ -2,6 +2,9 @@ set(projectName "battle_tanks")
 cmake_minimum_required (VERSION 3.0)
 project (${projectName})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include(CTest)
 enable_testing()
 

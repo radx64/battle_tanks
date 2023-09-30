@@ -23,4 +23,3 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.cpp
 )
-set_property(TARGET game_lib PROPERTY CXX_STANDARD 17)

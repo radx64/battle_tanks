@@ -39,6 +39,8 @@ protected:
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
     sf::Text help_text_;
+    bool help_visible_{false};
+    bool label_demo_visible_{false};
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
@@ -48,7 +50,7 @@ protected:
     std::vector<std::unique_ptr<Tank>> tanks_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
 
-    std::vector<std::unique_ptr<gui::Element>> guiElements_;
+    std::vector<std::unique_ptr<gui::Component>> guiElements_;
 };
 
 }  // namespace game

@@ -16,5 +16,3 @@ target_sources(graphics_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Particles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextureLibrary.cpp
 )
-
-set_property(TARGET graphics_lib PROPERTY CXX_STANDARD 17)

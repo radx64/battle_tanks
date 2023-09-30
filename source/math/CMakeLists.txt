@@ -11,4 +11,3 @@ target_sources(math_lib
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Math.cpp
 )
-set_property(TARGET math_lib PROPERTY CXX_STANDARD 17)

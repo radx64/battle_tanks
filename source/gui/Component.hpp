@@ -9,16 +9,16 @@ namespace gui
 {
 
 // Notes to document later in some better way
-// Element is basic object type for gui assembly
+// Component is basic object type for gui assembly
 // Root element need to be handled by user
 // Children elements are freed by parent during destruction 
 // You need to render only parent to enable rendering of children
 
-class Element
+class Component
 {
 public:
-    Element(Element* parent)
-    : global_postition_{}
+    Component(Component* parent)
+    : global_position_{}
     , relative_position_{}
     , alignment_ {}
     , parent_{parent}
@@ -31,7 +31,7 @@ public:
         }
     }
 
-    virtual ~Element()
+    virtual ~Component()
     {
         for (auto* child : children_)
         {
@@ -49,6 +49,19 @@ public:
         {
             child->render(renderWindow); 
         }
+    }
+
+    virtual bool on_mouse_update(const sf::Vector2f& mousePosition, bool isLeftClicked) = 0;
+
+    bool update(const sf::Vector2f& mousePosition, bool isLeftClicked)
+    {
+        bool was_mouse_event_processed {false};
+        was_mouse_event_processed = on_mouse_update(mousePosition, isLeftClicked);
+        for (auto child : children_)
+        {
+            if (child->update(mousePosition, isLeftClicked)) was_mouse_event_processed = true;
+        }
+        return was_mouse_event_processed;
     }
 
     virtual float get_width() = 0;
@@ -73,11 +86,11 @@ public:
 
     const sf::Vector2f& get_global_position() const
     {
-        return global_postition_;
+        return global_position_;
     }
 
 protected:
-    void add_child(Element* child)
+    void add_child(Component* child)
     {
         auto found = std::find(children_.cbegin(), children_.cend(), child);
         if (found != children_.cend())
@@ -101,11 +114,11 @@ protected:
 
         if (parent_)
         {
-            global_postition_ = parent_->get_global_position() + relative_position_ + offset;
+            global_position_ = parent_->get_global_position() + relative_position_ + offset;
         }
         else
         {
-            global_postition_ = relative_position_ + offset;
+            global_position_ = relative_position_ + offset;
         }
 
         //TODO can add check if recalculation has changed position of parent to not recalculate childeren
@@ -115,11 +128,11 @@ protected:
         }
     }
 
-    sf::Vector2f global_postition_;
+    sf::Vector2f global_position_;
     sf::Vector2f relative_position_;
     Alignment alignment_;
-    Element* parent_;
-    std::vector<Element*> children_;
+    Component* parent_;
+    std::vector<Component*> children_;
     bool is_visible_;
 };
 

@@ -3,18 +3,18 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Element.hpp"
+#include "gui/Component.hpp"
 #include "gui/FontLibrary.hpp"
 #include "gui/StyleSheet.hpp"
 
 namespace gui
 {
 
-class Label : public Element
+class Label : public Component
 {
 public:
-    Label(const std::string_view& text, Element* parent)
-    : Element(parent)
+    Label(const std::string_view& text, Component* parent)
+    : Component(parent)
     {
         auto style = BasicStyleSheetFactory::create();
         text_.setFont(style.getFont());
@@ -30,7 +30,7 @@ public:
 
     void on_render(sf::RenderWindow& renderWindow) override
     {
-        text_.setPosition(global_postition_);
+        text_.setPosition(global_position_);
         renderWindow.draw(text_);
     }
 
@@ -42,6 +42,13 @@ public:
     void set_text(const sf::String& text)
     {
         text_.setString(text);
+    }
+
+    bool on_mouse_update(const sf::Vector2f& mousePosition, bool isLeftClicked)
+    {
+        (void) mousePosition;
+        (void) isLeftClicked;
+        return false;
     }
 
 protected:

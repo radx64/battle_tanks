@@ -9,6 +9,7 @@
 
 #include "game/Application.hpp"
 #include "game/TankFactory.hpp"
+#include "gui/Button.hpp"
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
 #include "graphics/DrawTools.hpp"
@@ -84,6 +85,20 @@ void Application::configureTexts()
     help_text->set_position(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
 
     guiElements_.push_back(std::move(help_window));
+
+    auto button = std::make_unique<gui::Button>();
+    button->set_position(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
+    button->set_size(sf::Vector2f(150.f, 50.f));
+    button->set_text("Help!");
+    button->on_click([this](){std::cout << "Clicked!\n"; help_visible_ = !help_visible_;});
+    guiElements_.push_back(std::move(button));
+
+    auto demo_label_button = std::make_unique<gui::Button>();
+    demo_label_button->set_position(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
+    demo_label_button->set_size(sf::Vector2f(150.f, 50.f));
+    demo_label_button->set_text("LABEL DEMO!");
+    demo_label_button->on_click([this](){label_demo_visible_ = !label_demo_visible_;});
+    guiElements_.push_back(std::move(demo_label_button));
 }
 
 void Application::spawnSomeTanks()
@@ -109,12 +124,9 @@ int Application::run()
     {
         // TODO: move those member creations to class fields
         view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
-        
-        bool help_visible{false};
 
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!", sf::Style::Fullscreen);
         window.setFramerateLimit(60);
-
 
         constexpr int number_of_measurements = 100;
         math::Average draw_average{number_of_measurements};
@@ -136,14 +148,6 @@ int Application::run()
                 switch (event.type)
                 {
                     case sf::Event::Closed : {window.close(); break;}
-                    case sf::Event::MouseButtonPressed : 
-                    {
-                        // Get the cursor position in view coordinates
-                        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-                        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
-                        waypoints_.emplace_back(worldPos);
-                        break;
-                    }
                     case sf::Event::KeyReleased : 
                     {
                         switch (event.key.code)
@@ -154,7 +158,7 @@ int Application::run()
                             case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::set_debug(debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticles().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
-                            case sf::Keyboard::H        :   help_visible = !help_visible; break;
+                            case sf::Keyboard::H        :   help_visible_ = !help_visible_; break;
                             case sf::Keyboard::Q        :   window.close();
                             default                     :   {}  
                         }
@@ -229,21 +233,45 @@ int Application::run()
                 + "us\nAVG: " + std::to_string(fps_average.calculate(fps)));
 
 
-            help_window_handle_->set_visibility(help_visible);
+            help_window_handle_->set_visibility(help_visible_);
 
             // set "gameplay area view_" again so mouse coordinates will be calculated properly in next mouse event
             // this can be calulated also as an offset of camera view_, to not switch view_s back and forward
             // TODO reimplement this later if needed, delete this todo otherwise
 
             // Temporary hack for testing objects movement
-            auto position = guiElements_[0]->get_position();
-            position += sf::Vector2f(1.0f, 1.0f);
-            if (position.x > 700.0f) position =  sf::Vector2f(1.0f, 1.0f);
-            guiElements_[0]->set_position(position, gui::Alignment::LEFT);
+            if (label_demo_visible_)
+            {
+                guiElements_[0]->set_visibility(true);
+                auto position = guiElements_[0]->get_position();
+                position += sf::Vector2f(1.0f, 1.0f);
+                if (position.x > 700.0f) position =  sf::Vector2f(1.0f, 1.0f);
+                guiElements_[0]->set_position(position, gui::Alignment::LEFT);
+            }
+            else
+            {
+                guiElements_[0]->set_visibility(false);
+            }
+
+            bool wasMouseEventCapturedByGuiSubsystem {false};
 
             for (auto& guiElement : guiElements_)
             {
+                if ( guiElement->update(
+                    sf::Vector2f(sf::Mouse::getPosition(window)), 
+                    sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)))
+                {
+                    wasMouseEventCapturedByGuiSubsystem = true;
+                }
                 guiElement->render(window);
+            }
+
+            if (!wasMouseEventCapturedByGuiSubsystem && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            {
+                // Get the cursor position in view coordinates
+                sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+                sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
+                waypoints_.emplace_back(worldPos);               
             }
 
             window.setView(view_);
