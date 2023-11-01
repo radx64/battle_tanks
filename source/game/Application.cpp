@@ -154,6 +154,8 @@ int Application::run()
         math::Average physics_average{number_of_measurements};
         math::Average nav_average{number_of_measurements};
         math::Average fps_average{number_of_measurements};
+        math::Average gui_average{number_of_measurements};
+
         sf::Clock clock;
 
         bool debug_mode{false};
@@ -239,27 +241,15 @@ int Application::run()
             auto nav_time = clock.getElapsedTime();
             clock.restart();
             for (auto& tank : tanks_) tank->physics(tanks_, timeStep);
+            auto physics_time = clock.getElapsedTime();
 
             window.setView(window.getDefaultView());
-
-            auto physics_time = clock.getElapsedTime();
-            measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
-                 + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
-                 + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
-                 + "us\nFPS: "+ std::to_string(fps));
-
-            measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
-                + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
-                + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
-                + "us\nAVG: " + std::to_string(fps_average.calculate(fps)));
-
-
             help_window_handle_->setVisibility(help_visible_);
 
             // set "gameplay area view_" again so mouse coordinates will be calculated properly in next mouse event
             // this can be calulated also as an offset of camera view_, to not switch view_s back and forward
             // TODO reimplement this later if needed, delete this todo otherwise
-
+            clock.restart();
             // Temporary hack for testing objects movement
             if (label_demo_visible_)
             {
@@ -309,8 +299,22 @@ int Application::run()
             }
 
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
+            auto gui_time = clock.getElapsedTime();
 
             window.setView(view_);
+
+            measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
+                 + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
+                 + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
+                 + "us\nGUI: " + std::to_string(gui_time.asMilliseconds()) 
+                 + "ms\nFPS: "+ std::to_string(fps));
+
+            measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
+                + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
+                + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
+                + "us\nAVG: " + std::to_string(gui_average.calculate(gui_time.asMilliseconds()))
+                + "ms\nAVG: " + std::to_string(fps_average.calculate(fps)));
+
             window.display();
         }
     }
