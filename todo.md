@@ -13,9 +13,11 @@ Bunch of random ideas to randomly pick up and implement
 - [x] Fluid camera support with zoom capabilites
 
 ### GUI
-- [ ] Basic GUI subsystem support for spawning windows with some text 
-- [ ] Buttons
+- [x] Basic GUI subsystem support for spawning windows with some text 
+- [x] Buttons
 - [ ] Closable windows
+- [ ] FIXME Event polling is generating events every render frame
+- [ ] PERFORMANCE Render gui on separate texture and rerender only on change
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing

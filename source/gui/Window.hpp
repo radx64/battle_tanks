@@ -15,6 +15,7 @@ class Window : public Component
 public:
     Window(Component* parent)
     : Component(parent)
+    , killed_{false}
     {
         auto style = BasicStyleSheetFactory::create();    
         shape_.setFillColor(style.getWindowColor());
@@ -29,6 +30,20 @@ public:
     {
         shape_.setSize(size);
         updateGlobalPosition();
+    }
+
+    sf::Vector2f getSize()
+    {
+        return shape_.getSize();
+    }
+
+    bool isInside(const sf::Vector2f point)
+    {
+        auto size = shape_.getSize();
+        auto position = shape_.getPosition();
+
+        return ((point.x >= position.x && point.x < position.x + size.x)
+        && (point.y >= position.y && point.y < position.y + size.y));
     }
 
     void onRender(sf::RenderWindow& renderWindow) override
@@ -49,8 +64,19 @@ public:
         return false;
     }
 
+    void close()
+    {
+        killed_ = true;
+    }
+
+    bool is_dead()
+    {
+        return killed_;
+    }
+
 protected:
     sf::RectangleShape shape_;
+    bool killed_;
 };
 
 }  // namespace gui

@@ -47,6 +47,8 @@ Application::Application()
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
 
+    window_manager_ = std::make_unique<gui::WindowManager>();
+
     configureTexts();
 }
 
@@ -84,13 +86,35 @@ void Application::configureTexts()
     auto help_text = new gui::Label(help_text_string.data(), help_window.get());
     help_text->setPosition(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
 
-    guiElements_.push_back(std::move(help_window));
+    window_manager_->addWindow(std::move(help_window));
+
+    auto second_window = std::make_unique<gui::Window>(); 
+    second_window->setSize(sf::Vector2f(500.0f, 400.0f));
+    second_window->setPosition(sf::Vector2f((WINDOW_WIDTH-100)/2, 300.0f), gui::Alignment::CENTERED);
+
+    auto second_window_close_button = new gui::Button(second_window.get(), "[X]");
+    second_window_close_button->setPosition(sf::Vector2f(5.f, 5.f), gui::Alignment::LEFT);
+    second_window_close_button->setSize(sf::Vector2f(30.f, 30.f));
+    second_window_close_button->onClick([window = second_window.get()](){window->close();});
+
+    window_manager_->addWindow(std::move(second_window));
+
+    auto third_window = std::make_unique<gui::Window>(); 
+    third_window->setSize(sf::Vector2f(500.0f, 400.0f));
+    third_window->setPosition(sf::Vector2f((WINDOW_WIDTH+100)/2, 400.0f), gui::Alignment::CENTERED);
+
+    auto third_window_close_button = new gui::Button(third_window.get(), "[X]");
+    third_window_close_button->setPosition(sf::Vector2f(5.f, 5.f), gui::Alignment::LEFT);
+    third_window_close_button->setSize(sf::Vector2f(30.f, 30.f));
+    third_window_close_button->onClick([window = third_window.get()](){window->close();});
+
+    window_manager_->addWindow(std::move(third_window));
 
     auto button = std::make_unique<gui::Button>();
     button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
     button->setSize(sf::Vector2f(150.f, 50.f));
     button->setText("Help!");
-    button->onClick([this](){std::cout << "Clicked!\n"; help_visible_ = !help_visible_;});
+    button->onClick([this](){help_visible_ = !help_visible_;});
     guiElements_.push_back(std::move(button));
 
     auto demo_label_button = std::make_unique<gui::Button>();
@@ -116,7 +140,6 @@ void Application::spawnSomeTanks()
         navigators_.push_back(std::move(navigator));
     }
 }
-
 
 int Application::run()
 {
@@ -255,19 +278,27 @@ int Application::run()
 
             bool wasMouseEventCapturedByGuiSubsystem {false};
 
+            bool isLeftMouseButtonClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+            auto mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
+
             for (auto& guiElement : guiElements_)
             {
-                if ( guiElement->update(
-                    sf::Vector2f(sf::Mouse::getPosition(window)), 
-                    sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)))
+                if (guiElement->update(mousePosition, isLeftMouseButtonClicked))
                 {
                     wasMouseEventCapturedByGuiSubsystem = true;
                 }
                 guiElement->render(window);
             }
 
-            if (!wasMouseEventCapturedByGuiSubsystem && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            if (window_manager_->update(mousePosition, isLeftMouseButtonClicked))
             {
+                wasMouseEventCapturedByGuiSubsystem = true;
+            }    
+            window_manager_->render(window);
+
+            if (!wasMouseEventCapturedByGuiSubsystem && isLeftMouseButtonClicked)
+            {
+
                 // Get the cursor position in view coordinates
                 sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                 sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);

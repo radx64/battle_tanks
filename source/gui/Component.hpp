@@ -78,6 +78,11 @@ public:
     {
         is_visible_ = is_visible;
     }
+    
+    bool isVisible()
+    {
+        return is_visible_; 
+    }
 
     const sf::Vector2f& getPosition() const
     {
