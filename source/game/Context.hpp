@@ -1,7 +1,6 @@
 #ifndef GAME_CONTEXT_HPP_
 #define GAME_CONTEXT_HPP_
 
-
 namespace graphics{ class Particles; }
 
 namespace game 

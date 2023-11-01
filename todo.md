@@ -16,8 +16,8 @@ Bunch of random ideas to randomly pick up and implement
 - [x] Basic GUI subsystem support for spawning windows with some text 
 - [x] Buttons
 - [ ] Closable windows
-- [ ] FIXME Event polling is generating events every render frame
-- [ ] PERFORMANCE Render gui on separate texture and rerender only on change
+- [ ] FIXME Event polling is generating events every render frame, also creating some nice events would be easier to handle
+- [ ] PERFORMANCE Render gui on separate texture and rerender only on changes
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing

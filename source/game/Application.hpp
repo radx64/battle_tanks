@@ -39,9 +39,9 @@ protected:
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
-    sf::Text help_text_;
     bool help_visible_{false};
     bool label_demo_visible_{false};
+    bool was_last_event_left_click_{false}; // temporary workaround for dumb mouse event polling
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;

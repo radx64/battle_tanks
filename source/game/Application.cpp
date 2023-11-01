@@ -1,15 +1,18 @@
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
 
 #include "game/Application.hpp"
+#include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
 #include "gui/Button.hpp"
+#include "gui/ClosableWindow.hpp"
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
 #include "graphics/DrawTools.hpp"
@@ -24,16 +27,6 @@ constexpr uint32_t WINDOW_HEIGHT = 1080;
 constexpr uint32_t TANKS_COUNT = 5;
 
 constexpr double timeStep = 1.0/30.0;
-
-constexpr std::string_view help_text_string{
-    "=== HELP ===\n"
-    "WASD - moves view\n" 
-    "PgUp/PgDn - zoom\n"  
-    "C - clear all waypoints\n"
-    "F12 - toggle debug draw mode\n"
-    "F - delete last waypoint\n"
-    "T - clear tracks\n"
-    "Q - quit\n"};
 
 
 Application::Application()
@@ -78,35 +71,20 @@ void Application::configureTexts()
     measurements_average_text_handle_ = measurements_average_text.get();
     guiElements_.push_back(std::move(measurements_average_text));
 
-    auto help_window = std::make_unique<gui::Window>();
-    help_window->setSize(sf::Vector2f(500.0f, 400.0f));
-    help_window->setPosition(sf::Vector2f(WINDOW_WIDTH/2, 200.0f), gui::Alignment::CENTERED);
+    auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(WINDOW_WIDTH/2, 200.0f));
     help_window_handle_ = help_window.get();
-
-    auto help_text = new gui::Label(help_text_string.data(), help_window.get());
-    help_text->setPosition(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
 
     window_manager_->addWindow(std::move(help_window));
 
-    auto second_window = std::make_unique<gui::Window>(); 
+    auto second_window = std::make_unique<gui::ClosableWindow>(nullptr); 
     second_window->setSize(sf::Vector2f(500.0f, 400.0f));
     second_window->setPosition(sf::Vector2f((WINDOW_WIDTH-100)/2, 300.0f), gui::Alignment::CENTERED);
 
-    auto second_window_close_button = new gui::Button(second_window.get(), "[X]");
-    second_window_close_button->setPosition(sf::Vector2f(5.f, 5.f), gui::Alignment::LEFT);
-    second_window_close_button->setSize(sf::Vector2f(30.f, 30.f));
-    second_window_close_button->onClick([window = second_window.get()](){window->close();});
-
     window_manager_->addWindow(std::move(second_window));
 
-    auto third_window = std::make_unique<gui::Window>(); 
+    auto third_window = std::make_unique<gui::ClosableWindow>(nullptr); 
     third_window->setSize(sf::Vector2f(500.0f, 400.0f));
     third_window->setPosition(sf::Vector2f((WINDOW_WIDTH+100)/2, 400.0f), gui::Alignment::CENTERED);
-
-    auto third_window_close_button = new gui::Button(third_window.get(), "[X]");
-    third_window_close_button->setPosition(sf::Vector2f(5.f, 5.f), gui::Alignment::LEFT);
-    third_window_close_button->setSize(sf::Vector2f(30.f, 30.f));
-    third_window_close_button->onClick([window = third_window.get()](){window->close();});
 
     window_manager_->addWindow(std::move(third_window));
 
@@ -117,12 +95,32 @@ void Application::configureTexts()
     button->onClick([this](){help_visible_ = !help_visible_;});
     guiElements_.push_back(std::move(button));
 
+
+
     auto demo_label_button = std::make_unique<gui::Button>();
     demo_label_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
     demo_label_button->setSize(sf::Vector2f(150.f, 50.f));
     demo_label_button->setText("LABEL DEMO!");
     demo_label_button->onClick([this](){label_demo_visible_ = !label_demo_visible_;});
     guiElements_.push_back(std::move(demo_label_button));
+
+    auto spawn_window_button = std::make_unique<gui::Button>();
+    spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 400.f), gui::Alignment::LEFT);
+    spawn_window_button->setSize(sf::Vector2f(150.f, 50.f));
+    spawn_window_button->setText("Spawn window!");
+    spawn_window_button->onClick([this](){
+        float random_x = rand() % 100;
+        float random_y = rand() % 100;
+        auto window = std::make_unique<gui::ClosableWindow>(nullptr); 
+        window->setSize(sf::Vector2f(500.0f, 400.0f));
+        window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
+
+        auto hello_world_label = new gui::Label("HELLO WORLD!", window.get());
+        hello_world_label->setPosition(sf::Vector2f(window->getWidth()/2.f, window->getHeight()/2.f), gui::Alignment::CENTERED);  
+
+        window_manager_->addWindow(std::move(window));
+    });
+    guiElements_.push_back(std::move(spawn_window_button));
 }
 
 void Application::spawnSomeTanks()
@@ -278,7 +276,12 @@ int Application::run()
 
             bool wasMouseEventCapturedByGuiSubsystem {false};
 
-            bool isLeftMouseButtonClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+            bool isCurrentMouseEventLeftClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+
+            bool isLeftMouseButtonClicked {false};
+
+            if (not was_last_event_left_click_ and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
+
             auto mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
 
             for (auto& guiElement : guiElements_)
@@ -304,6 +307,8 @@ int Application::run()
                 sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
                 waypoints_.emplace_back(worldPos);               
             }
+
+            was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
 
             window.setView(view_);
             window.display();

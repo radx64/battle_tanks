@@ -11,6 +11,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/HelpWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/IRenderable.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.hpp

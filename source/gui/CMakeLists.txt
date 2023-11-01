@@ -9,6 +9,7 @@ target_sources(gui_lib
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Alignment.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Button.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ClosableWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Component.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.hpp
@@ -16,5 +17,12 @@ target_sources(gui_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Window.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.hpp
     PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Button.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Component.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ClosableWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Label.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.cpp
 )

@@ -5,8 +5,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Component.hpp"
-#include "gui/FontLibrary.hpp"
-#include "gui/StyleSheet.hpp"
+
+namespace gui { class Label; }
 
 namespace gui
 {
@@ -14,87 +14,19 @@ namespace gui
 class Button : public Component
 {
 public:
-    Button(Component* parent, const std::string_view& text)
-    : Component(parent)
-    , wasButtonClicked_(false)
-    {
-        auto style = BasicStyleSheetFactory::create();    
-        shape_.setFillColor(style.getWindowColor());
-        shape_.setOutlineColor(style.getOutlineColor());
-        shape_.setOutlineThickness(style.getOutlineThickness());
-        text_.setFont(style.getFont());
-        text_.setCharacterSize(style.getFontSize());
-        text_.setFillColor(style.getFontColor());
-        text_.setOutlineColor(style.getOutlineColor());
-        text_.setOutlineThickness(style.getOutlineThickness());
-        text_.setString(text.data()); 
-    }
+    Button(Component* parent, const std::string_view& text);
+    Button();
 
-    Button() : Button(nullptr, "")
-    {}
-
-    void setSize(const sf::Vector2f& size)
-    {
-        shape_.setSize(size);
-        updateGlobalPosition();
-    }
-
-    void setText(const sf::String& text)
-    {
-        text_.setString(text);
-    }
-
-    void onRender(sf::RenderWindow& renderWindow) override
-    {
-        shape_.setPosition(global_position_);
-        renderWindow.draw(shape_);
-        
-        text_.setPosition(global_position_);
-        renderWindow.draw(text_);
-    }
-
-    float getWidth() override
-    {
-        return shape_.getGlobalBounds().width;
-    }
-
-    void onClick(std::function<void()> onClickCallback)
-    {
-        on_click_ = onClickCallback;
-    }
-
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
-    {
-        if (shape_.getGlobalBounds().contains(mousePosition))
-        {
-            shape_.setFillColor(sf::Color(255,0,0,255));
-
-            if(isLeftClicked)
-            {
-                shape_.setFillColor(sf::Color(0,0,255,255));     
-            }
-
-            if (isLeftClicked && !wasButtonClicked_)
-            {
-                wasButtonClicked_ = true;
-                if (on_click_) on_click_();
-            }
-            if (!isLeftClicked)
-            {
-                wasButtonClicked_ = false;
-            }
-            return true;
-        }
-        else
-        {
-            shape_.setFillColor(sf::Color(0,255,0,255));
-            return false;
-        }
-    }
-
+    void setSize(const sf::Vector2f& size);
+    void setText(const sf::String& text);
+    void onRender(sf::RenderWindow& renderWindow) override;
+    float getWidth() override;
+    float getHeight() override;
+    void onClick(std::function<void()> onClickCallback);
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
 protected:
     sf::RectangleShape shape_;
-    sf::Text text_;
+    gui::Label* text_;
     bool wasButtonClicked_;
     std::function<void()> on_click_;
 };

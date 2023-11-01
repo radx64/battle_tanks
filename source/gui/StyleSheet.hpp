@@ -12,76 +12,22 @@ namespace gui
 class StyleSheet
 {
 public:
-    StyleSheet() 
-    : font_(gui::FontLibrary::get("default"))
-    , font_size_(20)
-    , font_color_(sf::Color::Black)
-    , outline_color_(sf::Color::Black)
-    , outline_thickness_(0)
-    , window_color_(sf::Color(127, 127, 127, 200))
-    { }
+    StyleSheet();
 
-    sf::Font& getFont() const
-    {
-        return font_;
-    }
-
-    void setFont(const sf::Font& font)
-    {
-        font_ = font;
-    }
-
-    uint32_t getFontSize() const
-    {
-        return font_size_;
-    }
-
-    void setFontSize(const uint32_t size)
-    {
-        font_size_ = size;
-    }
-
-    const sf::Color& getFontColor() const
-    {
-        return font_color_;
-    }
-
-    void setFontColor(const sf::Color& color)
-    {
-        font_color_ = color;
-    }
-
-    const sf::Color& getOutlineColor() const
-    {
-        return outline_color_;
-    }
-
-    void setOutlineColor(const sf::Color& color)
-    {
-        outline_color_ = color;
-    }
-
-    uint32_t getOutlineThickness() const
-    {
-        return outline_thickness_;
-    }
-
-    void setOutlineThickness(const uint32_t thickness)
-    {
-        outline_thickness_ = thickness;
-    }
-
-    const sf::Color& getWindowColor() const
-    {
-        return window_color_;
-    }
-
-    void setWindowColor(const sf::Color& color)
-    {
-        window_color_ = color;
-    }  
-
-
+    sf::Font& getFont() const;
+    void setFont(const sf::Font& font);
+    uint32_t getFontSize() const;
+    void setFontSize(const uint32_t size);
+    const sf::Color& getFontColor() const;
+    void setFontColor(const sf::Color& color);
+    const sf::Color& getOutlineColor() const;
+    void setOutlineColor(const sf::Color& color);
+    uint32_t getOutlineThickness() const;
+    void setOutlineThickness(const uint32_t thickness);
+    const sf::Color& getWindowColor() const;
+    void setWindowColor(const sf::Color& color);
+    const sf::Color& getInactiveWindowColor() const;
+    void setInactiveWindowColor(const sf::Color& color);
 protected:
     sf::Font& font_;
     uint32_t font_size_;
@@ -90,22 +36,13 @@ protected:
     uint32_t outline_thickness_;
 
     sf::Color window_color_;
+    sf::Color window_inactive_color_;
 };
 
 class BasicStyleSheetFactory
 {
 public:
-    static const StyleSheet create()
-    {
-        StyleSheet style;
-        style.setFont(gui::FontLibrary::get("armata"));
-        style.setFontSize(20);
-        style.setFontColor(sf::Color::Black);
-        style.setOutlineColor(sf::Color(127,127,127,255));
-        style.setOutlineThickness(1);
-        style.setWindowColor(sf::Color(200,200,200,200));
-        return style;
-    }
+    static const StyleSheet create();
 };
 
 }  // namespace gui
