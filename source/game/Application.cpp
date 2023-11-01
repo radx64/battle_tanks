@@ -53,51 +53,51 @@ Application::Application()
 void Application::configureTexts()
 {
     auto parent_label = std::make_unique<gui::Label>("PARENT_LABEL");
-    parent_label->set_position(sf::Vector2f(100.0f, 200.0f), gui::Alignment::LEFT);
+    parent_label->setPosition(sf::Vector2f(100.0f, 200.0f), gui::Alignment::LEFT);
 
     auto child_label_1 = new gui::Label("CHILD_LABEL1", parent_label.get());
-    child_label_1->set_position(sf::Vector2f(0.0f, 30.0f), gui::Alignment::RIGHT);  
+    child_label_1->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::RIGHT);  
 
     auto child_label_2 = new gui::Label("CHILD_LABEL2", parent_label.get());
-    child_label_2->set_position(sf::Vector2f(0.0f, 30.0f), gui::Alignment::LEFT);  
+    child_label_2->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::LEFT);  
 
     auto second_level_child_label = new gui::Label("2ND_LEVEL_CHILD_LABEL", child_label_2);
-    second_level_child_label->set_position(sf::Vector2f(0.0f, 30.0f), gui::Alignment::CENTERED);  
+    second_level_child_label->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::CENTERED);  
 
     guiElements_.push_back(std::move(parent_label));
 
     auto measurements_text = std::make_unique<gui::Label>("");
-    measurements_text->set_position(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
+    measurements_text->setPosition(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
     measurements_text_handle_ = measurements_text.get();
     guiElements_.push_back(std::move(measurements_text));
 
     auto measurements_average_text = std::make_unique<gui::Label>("");
-    measurements_average_text->set_position(sf::Vector2f(200.f, 20.f), gui::Alignment::LEFT);
+    measurements_average_text->setPosition(sf::Vector2f(200.f, 20.f), gui::Alignment::LEFT);
     measurements_average_text_handle_ = measurements_average_text.get();
     guiElements_.push_back(std::move(measurements_average_text));
 
     auto help_window = std::make_unique<gui::Window>();
-    help_window->set_size(sf::Vector2f(500.0f, 400.0f));
-    help_window->set_position(sf::Vector2f(WINDOW_WIDTH/2, 200.0f), gui::Alignment::CENTERED);
+    help_window->setSize(sf::Vector2f(500.0f, 400.0f));
+    help_window->setPosition(sf::Vector2f(WINDOW_WIDTH/2, 200.0f), gui::Alignment::CENTERED);
     help_window_handle_ = help_window.get();
 
     auto help_text = new gui::Label(help_text_string.data(), help_window.get());
-    help_text->set_position(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
+    help_text->setPosition(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
 
     guiElements_.push_back(std::move(help_window));
 
     auto button = std::make_unique<gui::Button>();
-    button->set_position(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
-    button->set_size(sf::Vector2f(150.f, 50.f));
-    button->set_text("Help!");
-    button->on_click([this](){std::cout << "Clicked!\n"; help_visible_ = !help_visible_;});
+    button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
+    button->setSize(sf::Vector2f(150.f, 50.f));
+    button->setText("Help!");
+    button->onClick([this](){std::cout << "Clicked!\n"; help_visible_ = !help_visible_;});
     guiElements_.push_back(std::move(button));
 
     auto demo_label_button = std::make_unique<gui::Button>();
-    demo_label_button->set_position(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
-    demo_label_button->set_size(sf::Vector2f(150.f, 50.f));
-    demo_label_button->set_text("LABEL DEMO!");
-    demo_label_button->on_click([this](){label_demo_visible_ = !label_demo_visible_;});
+    demo_label_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
+    demo_label_button->setSize(sf::Vector2f(150.f, 50.f));
+    demo_label_button->setText("LABEL DEMO!");
+    demo_label_button->onClick([this](){label_demo_visible_ = !label_demo_visible_;});
     guiElements_.push_back(std::move(demo_label_button));
 }
 
@@ -108,7 +108,7 @@ void Application::spawnSomeTanks()
         const auto x_spawn_position = i * 100 + 100;
         const auto y_spawn_position = x_spawn_position;
         const auto spawn_rotation = i * 36; 
-        auto tank = TankFactory::create_instance(static_cast<TankFactory::TankType>(i),
+        auto tank = TankFactory::createInstance(static_cast<TankFactory::TankType>(i),
             x_spawn_position, y_spawn_position, spawn_rotation);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
@@ -136,7 +136,7 @@ int Application::run()
         sf::Clock clock;
 
         bool debug_mode{false};
-        Tank::set_debug(debug_mode);
+        Tank::setDebug(debug_mode);
 
         spawnSomeTanks();
 
@@ -152,10 +152,10 @@ int Application::run()
                     {
                         switch (event.key.code)
                         {
-                            case sf::Keyboard::PageUp   :   camera_.zoom_in(); break;
-                            case sf::Keyboard::PageDown :   camera_.zoom_out(); break;
+                            case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
+                            case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
                             case sf::Keyboard::C        :   waypoints_.clear(); break;
-                            case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::set_debug(debug_mode);} break;
+                            case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::setDebug(debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticles().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                             case sf::Keyboard::H        :   help_visible_ = !help_visible_; break;
@@ -167,8 +167,8 @@ int Application::run()
 
                     case sf::Event::MouseWheelMoved : 
                     {
-                        if (event.mouseWheel.delta > 0) camera_.zoom_in(event.mouseWheel.x, event.mouseWheel.y);
-                        if (event.mouseWheel.delta < 0) camera_.zoom_out();
+                        if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
+                        if (event.mouseWheel.delta < 0) camera_.zoomOut();
                     }
                     default : {}
                 }
@@ -186,8 +186,8 @@ int Application::run()
             if ((uint32_t)mousePos.y > WINDOW_HEIGHT - 10) {camera_.move(0.f,20.f);}
 
             camera_.physics();
-            view_.setCenter(camera_.get_position());
-            view_.setSize(camera_.get_size());
+            view_.setCenter(camera_.getPosition());
+            view_.setSize(camera_.getSize());
             window.setView(view_);
             window.clear(sf::Color(0, 0, 0));
 
@@ -222,18 +222,18 @@ int Application::run()
             window.setView(window.getDefaultView());
 
             auto physics_time = clock.getElapsedTime();
-            measurements_text_handle_->set_text("DRAW: " + std::to_string(draw_time)
+            measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
                  + "us\nFPS: "+ std::to_string(fps));
 
-            measurements_average_text_handle_->set_text("AVG: " + std::to_string(draw_average.calculate(draw_time))
+            measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
                 + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(fps_average.calculate(fps)));
 
 
-            help_window_handle_->set_visibility(help_visible_);
+            help_window_handle_->setVisibility(help_visible_);
 
             // set "gameplay area view_" again so mouse coordinates will be calculated properly in next mouse event
             // this can be calulated also as an offset of camera view_, to not switch view_s back and forward
@@ -242,15 +242,15 @@ int Application::run()
             // Temporary hack for testing objects movement
             if (label_demo_visible_)
             {
-                guiElements_[0]->set_visibility(true);
-                auto position = guiElements_[0]->get_position();
+                guiElements_[0]->setVisibility(true);
+                auto position = guiElements_[0]->getPosition();
                 position += sf::Vector2f(1.0f, 1.0f);
                 if (position.x > 700.0f) position =  sf::Vector2f(1.0f, 1.0f);
-                guiElements_[0]->set_position(position, gui::Alignment::LEFT);
+                guiElements_[0]->setPosition(position, gui::Alignment::LEFT);
             }
             else
             {
-                guiElements_[0]->set_visibility(false);
+                guiElements_[0]->setVisibility(false);
             }
 
             bool wasMouseEventCapturedByGuiSubsystem {false};

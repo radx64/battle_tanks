@@ -33,18 +33,18 @@ public:
     Button() : Button(nullptr, "")
     {}
 
-    void set_size(const sf::Vector2f& size)
+    void setSize(const sf::Vector2f& size)
     {
         shape_.setSize(size);
-        update_global_position();
+        updateGlobalPosition();
     }
 
-    void set_text(const sf::String& text)
+    void setText(const sf::String& text)
     {
         text_.setString(text);
     }
 
-    void on_render(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderWindow& renderWindow) override
     {
         shape_.setPosition(global_position_);
         renderWindow.draw(shape_);
@@ -53,21 +53,27 @@ public:
         renderWindow.draw(text_);
     }
 
-    float get_width() override
+    float getWidth() override
     {
         return shape_.getGlobalBounds().width;
     }
 
-    void on_click(std::function<void()> onClickCallback)
+    void onClick(std::function<void()> onClickCallback)
     {
         on_click_ = onClickCallback;
     }
 
-    bool on_mouse_update(const sf::Vector2f& mousePosition, bool isLeftClicked)
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
     {
         if (shape_.getGlobalBounds().contains(mousePosition))
         {
             shape_.setFillColor(sf::Color(255,0,0,255));
+
+            if(isLeftClicked)
+            {
+                shape_.setFillColor(sf::Color(0,0,255,255));     
+            }
+
             if (isLeftClicked && !wasButtonClicked_)
             {
                 wasButtonClicked_ = true;

@@ -24,7 +24,7 @@ constexpr double TANK_MASS = 50;
 
 bool Tank::DEBUG_{false};
 
-void Tank::set_debug(bool is_enabled)
+void Tank::setDebug(bool is_enabled)
 {
     DEBUG_ = is_enabled;
 }
@@ -110,18 +110,18 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     sf::Vector2f left_track = math::rotate_point(sf::Vector2f(x_, y_-15.0), current_direction_, sf::Vector2f(x_, y_));
     sf::Vector2f right_track = math::rotate_point(sf::Vector2f(x_, y_+15.0), current_direction_, sf::Vector2f(x_, y_));
 
-    Context::getParticles().add_particle(left_track.x, left_track.y, current_direction_);
-    Context::getParticles().add_particle(right_track.x, right_track.y, current_direction_);
+    Context::getParticles().addParticle(left_track.x, left_track.y, current_direction_);
+    Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);
 }
 
-void Tank::set_throtle(double throttle)
+void Tank::setThrottle(double throttle)
 {
     set_throttle_ = throttle;
 }
-void Tank::set_direction(double direction)
+void Tank::setDirection(double direction)
 {
     set_direction_ = direction;
-    cannon_->set_rotation(direction);
+    cannon_->setRotation(direction);
 }
 
 void Tank::physics(std::vector<std::unique_ptr<Tank>>& tanks, double timeStep)

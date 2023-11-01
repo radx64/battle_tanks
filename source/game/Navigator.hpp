@@ -24,7 +24,7 @@ public:
     {
         if(waypoints_.empty())
         {
-           tank_.set_throtle(0.0);
+           tank_.setThrottle(0.0);
            return;
         }
         if(waypoint_id_ >= waypoints_.size()) waypoint_id_ = 0;
@@ -36,8 +36,8 @@ public:
         if (distance > WAYPOINT_VISITED_DISTANCE)
         {
             double direction = atan2((double)current_waypoint.y - tank_.y_, (double)current_waypoint.x - tank_.x_);
-            tank_.set_throtle(std::min(1.0, distance*0.01));
-            tank_.set_direction(direction * 180.0 / M_PI);        
+            tank_.setThrottle(std::min(1.0, distance*0.01));
+            tank_.setDirection(direction * 180.0 / M_PI);        
         }
         else
         {

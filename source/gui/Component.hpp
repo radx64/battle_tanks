@@ -27,7 +27,7 @@ public:
     {
         if (parent != nullptr)
         {
-            parent_->add_child(this);
+            parent_->addChild(this);
         }
     }
 
@@ -39,24 +39,24 @@ public:
         }        
     }
 
-    virtual void on_render(sf::RenderWindow& renderWindow) = 0;
+    virtual void onRender(sf::RenderWindow& renderWindow) = 0;
 
     void render(sf::RenderWindow& renderWindow)
     {
         if (!is_visible_) return;
-        on_render(renderWindow);
+        onRender(renderWindow);
         for (auto child : children_)
         {
             child->render(renderWindow); 
         }
     }
 
-    virtual bool on_mouse_update(const sf::Vector2f& mousePosition, bool isLeftClicked) = 0;
+    virtual bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) = 0;
 
     bool update(const sf::Vector2f& mousePosition, bool isLeftClicked)
     {
         bool was_mouse_event_processed {false};
-        was_mouse_event_processed = on_mouse_update(mousePosition, isLeftClicked);
+        was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked);
         for (auto child : children_)
         {
             if (child->update(mousePosition, isLeftClicked)) was_mouse_event_processed = true;
@@ -64,33 +64,33 @@ public:
         return was_mouse_event_processed;
     }
 
-    virtual float get_width() = 0;
+    virtual float getWidth() = 0;
 
-    virtual void set_position(const sf::Vector2f& position, const Alignment alignment)
+    virtual void setPosition(const sf::Vector2f& position, const Alignment alignment)
     {
         if (relative_position_ == position) return;
         relative_position_ = position;
         alignment_ = alignment;
-        update_global_position();
+        updateGlobalPosition();
     }
 
-    void set_visibility(bool is_visible)
+    void setVisibility(bool is_visible)
     {
         is_visible_ = is_visible;
     }
 
-    const sf::Vector2f& get_position() const
+    const sf::Vector2f& getPosition() const
     {
         return relative_position_;
     }
 
-    const sf::Vector2f& get_global_position() const
+    const sf::Vector2f& getGlobalPosition() const
     {
         return global_position_;
     }
 
 protected:
-    void add_child(Component* child)
+    void addChild(Component* child)
     {
         auto found = std::find(children_.cbegin(), children_.cend(), child);
         if (found != children_.cend())
@@ -101,20 +101,20 @@ protected:
         children_.push_back(child);
     }
 
-    void update_global_position()
+    void updateGlobalPosition()
     {
         sf::Vector2f offset{0.0f, 0.0f};
 
         switch (alignment_)
         {
             case (gui::Alignment::LEFT)     : offset.x = 0.0f; break;
-            case (gui::Alignment::RIGHT)    : offset.x = - get_width(); break;
-            case (gui::Alignment::CENTERED) : offset.x = - get_width() / 2.0f; break;
+            case (gui::Alignment::RIGHT)    : offset.x = - getWidth(); break;
+            case (gui::Alignment::CENTERED) : offset.x = - getWidth() / 2.0f; break;
         }
 
         if (parent_)
         {
-            global_position_ = parent_->get_global_position() + relative_position_ + offset;
+            global_position_ = parent_->getGlobalPosition() + relative_position_ + offset;
         }
         else
         {
@@ -124,7 +124,7 @@ protected:
         //TODO can add check if recalculation has changed position of parent to not recalculate childeren
         for (auto& child : children_)
         {
-            child->update_global_position();
+            child->updateGlobalPosition();
         }
     }
 

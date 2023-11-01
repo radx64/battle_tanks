@@ -28,23 +28,23 @@ public:
     Label(const std::string_view& text) : Label(text, nullptr)
     { }
 
-    void on_render(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderWindow& renderWindow) override
     {
         text_.setPosition(global_position_);
         renderWindow.draw(text_);
     }
 
-    float get_width() override
+    float getWidth() override
     {
         return text_.getGlobalBounds().width;
     }
 
-    void set_text(const sf::String& text)
+    void setText(const sf::String& text)
     {
         text_.setString(text);
     }
 
-    bool on_mouse_update(const sf::Vector2f& mousePosition, bool isLeftClicked)
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
     {
         (void) mousePosition;
         (void) isLeftClicked;

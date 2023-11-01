@@ -21,11 +21,11 @@ public:
         Black
     };
 
-    static std::unique_ptr<Tank> create_instance(const TankFactory::TankType type, double x, double y, double rotation);
+    static std::unique_ptr<Tank> createInstance(const TankFactory::TankType type, double x, double y, double rotation);
 
 protected:
-    static sf::Texture& get_tank_texture(const TankType type);
-    static sf::Texture& get_cannon_texture(const TankType type);
+    static sf::Texture& getTankTexture(const TankType type);
+    static sf::Texture& getCannonTexture(const TankType type);
     static uint32_t next_tank_id;
 };
 

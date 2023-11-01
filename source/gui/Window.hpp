@@ -25,24 +25,24 @@ public:
     Window() : Window(nullptr)
     {}
 
-    void set_size(const sf::Vector2f& size)
+    void setSize(const sf::Vector2f& size)
     {
         shape_.setSize(size);
-        update_global_position();
+        updateGlobalPosition();
     }
 
-    void on_render(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderWindow& renderWindow) override
     {
         shape_.setPosition(global_position_);
         renderWindow.draw(shape_);
     }
 
-    float get_width() override
+    float getWidth() override
     {
         return shape_.getGlobalBounds().width;
     }
 
-    bool on_mouse_update(const sf::Vector2f& mousePosition, bool isLeftClicked)
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
     {
         (void) mousePosition;
         (void) isLeftClicked;

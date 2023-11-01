@@ -34,7 +34,7 @@ void Cannon::draw(sf::RenderWindow& renderWindow)
     renderWindow.draw(sprite_);
 }
 
-void Cannon::set_rotation(double rotation)
+void Cannon::setRotation(double rotation)
 {
     set_rotation_ = rotation;
 }

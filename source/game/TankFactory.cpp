@@ -11,15 +11,15 @@ namespace game
 
 uint32_t TankFactory::next_tank_id = 0;
 
-std::unique_ptr<Tank> TankFactory::create_instance(const TankFactory::TankType type, double x, double y, double rotation)
+std::unique_ptr<Tank> TankFactory::createInstance(const TankFactory::TankType type, double x, double y, double rotation)
 {
-    auto cannon = std::make_unique<Cannon>(x, y, rotation, get_cannon_texture(type));
-    auto tank = std::make_unique<Tank>(next_tank_id, x, y, rotation, std::move(cannon), get_tank_texture(type));
+    auto cannon = std::make_unique<Cannon>(x, y, rotation, getCannonTexture(type));
+    auto tank = std::make_unique<Tank>(next_tank_id, x, y, rotation, std::move(cannon), getTankTexture(type));
     next_tank_id++;
     return tank;
 }
 
-sf::Texture& TankFactory::get_tank_texture(const TankType type)
+sf::Texture& TankFactory::getTankTexture(const TankType type)
 {
     switch (type)
     {
@@ -32,7 +32,7 @@ sf::Texture& TankFactory::get_tank_texture(const TankType type)
     }
 };
 
-sf::Texture& TankFactory::get_cannon_texture(const TankType type)
+sf::Texture& TankFactory::getCannonTexture(const TankType type)
 {
     switch (type)
     {

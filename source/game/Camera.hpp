@@ -10,17 +10,17 @@ class Camera
 {
 public:
     Camera(const sf::Vector2f& position, const sf::Vector2f& size);
-    void set_position(const float x, const float y);
+    void setPosition(const float x, const float y);
     void move(const float x_offset, const float y_offset);
-    void zoom_in();
-    void zoom_in(const float x, const float y);
-    void zoom_out();
-    const sf::Vector2f& get_position();
-    const sf::Vector2f& get_size();
+    void zoomIn();
+    void zoomIn(const float x, const float y);
+    void zoomOut();
+    const sf::Vector2f& getPosition();
+    const sf::Vector2f& getSize();
     void physics();
 
 protected:
-    void align_boundaries();
+    void alignBoundaries();
     sf::Vector2f current_position_;
     sf::Vector2f target_position_;
     const sf::Vector2f original_size_;

@@ -20,9 +20,9 @@ public:
     void draw(sf::RenderWindow& renderWindow) override;
     void physics(std::vector<std::unique_ptr<Tank>>& tank, double timeStep);
 
-    void set_throtle(double throttle);
-    void set_direction(double direction);
-    static void set_debug(bool is_enabled); 
+    void setThrottle(double throttle);
+    void setDirection(double direction);
+    static void setDebug(bool is_enabled); 
 
 public:
     uint32_t id_;
