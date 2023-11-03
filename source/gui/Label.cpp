@@ -5,8 +5,7 @@
 namespace gui 
 {
 
-Label::Label(const std::string_view& text, Component* parent)
-: Component(parent)
+Label::Label(const std::string_view& text)
 {
     auto style = BasicStyleSheetFactory::create();
     text_.setFont(style.getFont());
@@ -16,9 +15,6 @@ Label::Label(const std::string_view& text, Component* parent)
     text_.setOutlineThickness(style.getOutlineThickness());
     text_.setString(text.data());       
 }
-
-Label::Label(const std::string_view& text) : Label(text, nullptr)
-{ }
 
 void Label::onRender(sf::RenderWindow& renderWindow)
 {

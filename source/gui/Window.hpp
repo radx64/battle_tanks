@@ -12,7 +12,6 @@ namespace gui
 class Window : public Component
 {
 public:
-    Window(Component* parent);
     Window();
 
     void setSize(const sf::Vector2f& size);

@@ -1,7 +1,8 @@
 #ifndef GAME_HELPWINDOW_HPP_
 #define GAME_HELPWINDOW_HPP_
 
-#include <gui/Alignment.hpp>
+#include "gui/Alignment.hpp"
+#include "gui/Label.hpp"
 #include "gui/Window.hpp"
 
 constexpr std::string_view help_text_string{
@@ -21,13 +22,13 @@ class HelpWindow : public gui::Window
 {
 public:
     HelpWindow(sf::Vector2f position) 
-    : gui::Window(nullptr) 
     {
         setSize(sf::Vector2f(500.0f, 400.0f));
         setPosition(position, gui::Alignment::CENTERED);
 
-        auto help_text = new gui::Label(help_text_string.data(), this);
+        auto help_text = std::make_unique<gui::Label>(help_text_string.data());
         help_text->setPosition(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
+        this->addChild(std::move(help_text));
     }
 };
 

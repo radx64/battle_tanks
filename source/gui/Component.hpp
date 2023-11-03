@@ -17,8 +17,7 @@ namespace gui
 class Component
 {
 public:
-    Component(Component* parent);
-    virtual ~Component();
+    Component();
 
     virtual void onRender(sf::RenderWindow& renderWindow) = 0;
     virtual bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) = 0;
@@ -31,16 +30,15 @@ public:
     bool isVisible();
     const sf::Vector2f& getPosition() const;
     const sf::Vector2f& getGlobalPosition() const;
+    void addChild(std::unique_ptr<Component> child);
 
 protected:
-    void addChild(Component* child);
     void updateGlobalPosition();
-
     sf::Vector2f global_position_;
     sf::Vector2f relative_position_;
     Alignment alignment_;
     Component* parent_;
-    std::vector<Component*> children_;
+    std::vector<std::unique_ptr<Component>> children_;
     bool is_visible_;
 };
 

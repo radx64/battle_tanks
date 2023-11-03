@@ -14,8 +14,8 @@ namespace gui
 class Button : public Component
 {
 public:
-    Button(Component* parent, const std::string_view& text);
-    Button();
+    Button(const std::string_view& text);
+    ~Button();
 
     void setSize(const sf::Vector2f& size);
     void setText(const sf::String& text);
@@ -24,6 +24,7 @@ public:
     float getHeight() override;
     void onClick(std::function<void()> onClickCallback);
     bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
+
 protected:
     sf::RectangleShape shape_;
     gui::Label* text_;

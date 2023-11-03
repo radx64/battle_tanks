@@ -50,14 +50,18 @@ void Application::configureTexts()
     auto parent_label = std::make_unique<gui::Label>("PARENT_LABEL");
     parent_label->setPosition(sf::Vector2f(100.0f, 200.0f), gui::Alignment::LEFT);
 
-    auto child_label_1 = new gui::Label("CHILD_LABEL1", parent_label.get());
+    auto child_label_1 = std::make_unique<gui::Label>("CHILD_LABEL1");
     child_label_1->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::RIGHT);  
 
-    auto child_label_2 = new gui::Label("CHILD_LABEL2", parent_label.get());
+    auto child_label_2 = std::make_unique<gui::Label>("CHILD_LABEL2");
     child_label_2->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::LEFT);  
 
-    auto second_level_child_label = new gui::Label("2ND_LEVEL_CHILD_LABEL", child_label_2);
-    second_level_child_label->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::CENTERED);  
+    auto second_level_child_label = std::make_unique<gui::Label>("2ND_LEVEL_CHILD_LABEL");
+    second_level_child_label->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::CENTERED); 
+
+    child_label_2->addChild(std::move(second_level_child_label));
+    parent_label->addChild(std::move(child_label_1));
+    parent_label->addChild(std::move(child_label_2)); 
 
     guiElements_.push_back(std::move(parent_label));
 
@@ -76,47 +80,43 @@ void Application::configureTexts()
 
     window_manager_->addWindow(std::move(help_window));
 
-    auto second_window = std::make_unique<gui::ClosableWindow>(nullptr); 
+    auto second_window = std::make_unique<gui::ClosableWindow>(); 
     second_window->setSize(sf::Vector2f(500.0f, 400.0f));
     second_window->setPosition(sf::Vector2f((WINDOW_WIDTH-100)/2, 300.0f), gui::Alignment::CENTERED);
 
     window_manager_->addWindow(std::move(second_window));
 
-    auto third_window = std::make_unique<gui::ClosableWindow>(nullptr); 
+    auto third_window = std::make_unique<gui::ClosableWindow>(); 
     third_window->setSize(sf::Vector2f(500.0f, 400.0f));
     third_window->setPosition(sf::Vector2f((WINDOW_WIDTH+100)/2, 400.0f), gui::Alignment::CENTERED);
 
     window_manager_->addWindow(std::move(third_window));
 
-    auto button = std::make_unique<gui::Button>();
+    auto button = std::make_unique<gui::Button>("Help");
     button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
     button->setSize(sf::Vector2f(150.f, 50.f));
-    button->setText("Help!");
     button->onClick([this](){help_visible_ = !help_visible_;});
     guiElements_.push_back(std::move(button));
 
-
-
-    auto demo_label_button = std::make_unique<gui::Button>();
+    auto demo_label_button = std::make_unique<gui::Button>("LABEL DEMO");
     demo_label_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
     demo_label_button->setSize(sf::Vector2f(150.f, 50.f));
-    demo_label_button->setText("LABEL DEMO!");
     demo_label_button->onClick([this](){label_demo_visible_ = !label_demo_visible_;});
     guiElements_.push_back(std::move(demo_label_button));
 
-    auto spawn_window_button = std::make_unique<gui::Button>();
+    auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
     spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 400.f), gui::Alignment::LEFT);
     spawn_window_button->setSize(sf::Vector2f(150.f, 50.f));
-    spawn_window_button->setText("Spawn window!");
     spawn_window_button->onClick([this](){
         float random_x = rand() % 100;
         float random_y = rand() % 100;
-        auto window = std::make_unique<gui::ClosableWindow>(nullptr); 
+        auto window = std::make_unique<gui::ClosableWindow>(); 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
 
-        auto hello_world_label = new gui::Label("HELLO WORLD!", window.get());
-        hello_world_label->setPosition(sf::Vector2f(window->getWidth()/2.f, window->getHeight()/2.f), gui::Alignment::CENTERED);  
+        auto hello_world_label = std::make_unique<gui::Label>("..:: HELLO WORLD! ::..");
+        hello_world_label->setPosition(sf::Vector2f(window->getWidth()/2.f, window->getHeight()/2.f), gui::Alignment::CENTERED);
+        window->addChild(std::move(hello_world_label));
 
         window_manager_->addWindow(std::move(window));
     });
@@ -149,7 +149,13 @@ int Application::run()
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!", sf::Style::Fullscreen);
         window.setFramerateLimit(60);
 
-        constexpr int number_of_measurements = 100;
+        auto quit_button = std::make_unique<gui::Button>("Quit");
+        quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
+        quit_button->setSize(sf::Vector2f(150.f, 50.f));
+        quit_button->onClick([&window](){window.close();});
+        guiElements_.push_back(std::move(quit_button));
+
+        constexpr int number_of_measurements = 20;
         math::Average draw_average{number_of_measurements};
         math::Average physics_average{number_of_measurements};
         math::Average nav_average{number_of_measurements};

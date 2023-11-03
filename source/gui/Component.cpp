@@ -3,33 +3,21 @@
 namespace gui
 {
 
-Component::Component(Component* parent)
+Component::Component()
 : global_position_{}
 , relative_position_{}
 , alignment_ {}
-, parent_{parent}
+, parent_{nullptr}
 , children_ {}
 , is_visible_ {true}
 {
-    if (parent != nullptr)
-    {
-        parent_->addChild(this);
-    }
-}
-
-Component::~Component()
-{
-    for (auto* child : children_)
-    {
-        delete child;
-    }        
 }
 
 void Component::render(sf::RenderWindow& renderWindow)
 {
     if (!is_visible_) return;
     onRender(renderWindow);
-    for (auto child : children_)
+    for (auto& child : children_)
     {
         child->render(renderWindow); 
     }
@@ -39,7 +27,7 @@ bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
     bool was_mouse_event_processed {false};
     was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked);
-    for (auto child : children_)
+    for (auto& child : children_)
     {
         if (child->update(mousePosition, isLeftClicked)) was_mouse_event_processed = true;
     }
@@ -74,15 +62,17 @@ const sf::Vector2f& Component::getGlobalPosition() const
     return global_position_;
 }
 
-void Component::addChild(Component* child)
+void Component::addChild(std::unique_ptr<Component> child)
 {
     auto found = std::find(children_.cbegin(), children_.cend(), child);
     if (found != children_.cend())
     {
         return;
     }
+    child->parent_ = this;
+    child->updateGlobalPosition();
 
-    children_.push_back(child);
+    children_.push_back(std::move(child));
 }
 
 void Component::updateGlobalPosition()

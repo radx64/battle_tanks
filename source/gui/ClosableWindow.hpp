@@ -9,7 +9,7 @@ namespace gui
 class ClosableWindow : public Window
 {
 public:
-    ClosableWindow(Component* parent);
+    ClosableWindow();
 };
 
 }  // namespace gui

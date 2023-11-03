@@ -11,7 +11,6 @@ namespace gui
 class Label : public Component
 {
 public:
-    Label(const std::string_view& text, Component* parent);
     Label(const std::string_view& text);
 
     void onRender(sf::RenderWindow& renderWindow) override;

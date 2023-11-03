@@ -5,19 +5,19 @@
 
 namespace gui
 {
-Button::Button(Component* parent, const std::string_view& text)
-: Component(parent)
-, wasButtonClicked_(false)
+Button::Button(const std::string_view& text)
+: wasButtonClicked_(false)
 {
     auto style = BasicStyleSheetFactory::create();    
     shape_.setFillColor(style.getWindowColor());
     shape_.setOutlineColor(style.getOutlineColor());
     shape_.setOutlineThickness(style.getOutlineThickness()); 
-    text_ = new gui::Label(text, this);
+    auto text_ptr = std::make_unique <gui::Label>(text);
+    text_ = text_ptr.get();
+    this->addChild(std::move(text_ptr));
 }
 
-Button::Button() : Button(nullptr, "")
-{}
+Button::~Button() = default;
 
 void Button::setSize(const sf::Vector2f& size)
 {

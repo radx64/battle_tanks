@@ -7,9 +7,8 @@
 namespace gui
 {
 
-Window::Window(Component* parent)
-: Component(parent)
-, killed_{false}
+Window::Window()
+: killed_{false}
 , focused_{false}
 , style_(BasicStyleSheetFactory::create())
 {   
@@ -17,9 +16,6 @@ Window::Window(Component* parent)
     shape_.setOutlineColor(style_.getOutlineColor());
     shape_.setOutlineThickness(style_.getOutlineThickness());
 }
-
-Window::Window() : Window(nullptr)
-{}
 
 void Window::setSize(const sf::Vector2f& size)
 {
