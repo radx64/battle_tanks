@@ -33,6 +33,7 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
             active_window_handle_ = windows_.back().get(); 
             active_window_handle_->focus();
             if (window_it == windows_.end()) return;
+            continue;
         }
         window->render(renderWindow);
     }
