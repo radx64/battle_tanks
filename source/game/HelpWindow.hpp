@@ -6,7 +6,6 @@
 #include "gui/Window.hpp"
 
 constexpr std::string_view help_text_string{
-    "=== HELP ===\n"
     "WASD - moves view\n" 
     "PgUp/PgDn - zoom\n"  
     "C - clear all waypoints\n"

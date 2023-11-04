@@ -74,16 +74,12 @@ void Application::configureTexts()
     measurements_average_text_handle_ = measurements_average_text.get();
     guiElements_.push_back(std::move(measurements_average_text));
 
-    auto second_window = std::make_unique<gui::Window>(); 
-    second_window->setSize(sf::Vector2f(500.f, 400.f));
-    second_window->setPosition(sf::Vector2f(500.f, 500.f), gui::Alignment::LEFT);
-    window_manager_->addWindow(std::move(second_window));
-
     auto button = std::make_unique<gui::Button>("Help");
     button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
     button->setSize(sf::Vector2f(150.f, 50.f));
     button->onClick([this](){
         auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(WINDOW_WIDTH/2, 600.0f));
+        help_window->setTitle("Help");
         window_manager_->addWindow(std::move(help_window));
     });
     guiElements_.push_back(std::move(button));
@@ -107,6 +103,7 @@ void Application::configureTexts()
         auto hello_world_label = std::make_unique<gui::Label>("..:: HELLO WORLD! ::..");
         hello_world_label->setPosition(sf::Vector2f(window->getSize() / 2.f), gui::Alignment::CENTERED);
         window->addChild(std::move(hello_world_label));
+        window->setTitle("Oh my gosh");
 
         window_manager_->addWindow(std::move(window));
     });

@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Button.hpp"
+#include "gui/Label.hpp"
 #include "gui/Component.hpp"
 
 constexpr auto  TOP_BAR_WIDTH = 20.f;
@@ -29,6 +30,10 @@ Window::Window()
 
     top_bar_.setOutlineColor(style_.getOutlineColor());
     top_bar_.setOutlineThickness(style_.getOutlineThickness());
+
+    auto title_text = std::make_unique<gui::Label>("");
+    title_text_handle_ = title_text.get();
+    this->addChild(std::move(title_text));
 }
 
 void Window::setSize(const sf::Vector2f& size)
@@ -45,6 +50,11 @@ void Window::setSize(const sf::Vector2f& size)
     Component::setSize(size);
 }
 
+void Window::setTitle(const std::string_view& text)
+{
+    title_text_handle_->setText(text.data());
+}
+
 void Window::setPosition(const sf::Vector2f& position, const Alignment alignment)
 {
     Component::setPosition(position, alignment);
@@ -52,6 +62,9 @@ void Window::setPosition(const sf::Vector2f& position, const Alignment alignment
     auto background_position = Component::getGlobalPosition();
     background_position.y += TOP_BAR_WIDTH;
     background_.setPosition(background_position);
+
+    sf::Vector2f tile_text_position {getSize().x/2.f, TOP_BAR_WIDTH / 2.f};
+    title_text_handle_->setPosition(tile_text_position, gui::Alignment::CENTERED);
 }
 
 bool Window::isInside(const sf::Vector2f point)

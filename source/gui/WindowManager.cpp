@@ -35,11 +35,17 @@ bool WindowManager::update(const sf::Vector2f& mousePosition, bool isLeftClicked
 {
     auto window_it = windows_.begin();
 
+    bool has_any_window_captured_mouse_event{false};
+
     while(window_it != windows_.end())
     {
         Window* window = (*window_it).get();
 
-        if (window->hasFocus()) window->update(mousePosition, isLeftClicked);
+
+        if (window->hasFocus()) 
+        {
+            has_any_window_captured_mouse_event = window->update(mousePosition, isLeftClicked);
+        }
 
         if (window->isDead())
         {
@@ -51,7 +57,7 @@ bool WindowManager::update(const sf::Vector2f& mousePosition, bool isLeftClicked
         else
         {
             if (not window->isVisible()) continue;
-            if (isLeftClicked && window->isInside(mousePosition))
+            if (isLeftClicked && window->isInside(mousePosition)&& not has_any_window_captured_mouse_event)
             {
                 if (active_window_handle_) active_window_handle_->defocus();
                 active_window_handle_ = window; 
@@ -64,7 +70,7 @@ bool WindowManager::update(const sf::Vector2f& mousePosition, bool isLeftClicked
         }
     }
 
-    return false;
+    return has_any_window_captured_mouse_event;
 }
 
 }  // namespace gui

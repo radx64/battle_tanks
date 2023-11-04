@@ -6,6 +6,7 @@
 #include "gui/Component.hpp"
 #include "gui/StyleSheet.hpp"
 
+namespace gui { class Label; }
 namespace gui
 {
 
@@ -16,6 +17,7 @@ public:
 
     void setSize(const sf::Vector2f& size) override;
     void setPosition(const sf::Vector2f& position, const Alignment alignment) override;
+    void setTitle(const std::string_view& text);
     bool isInside(const sf::Vector2f point);
     void onRender(sf::RenderWindow& renderWindow) override;
     bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
@@ -28,6 +30,7 @@ public:
 protected:
     sf::RectangleShape background_;
     sf::RectangleShape top_bar_;
+    gui::Label* title_text_handle_;
     bool killed_;
     bool focused_;
     StyleSheet style_;
