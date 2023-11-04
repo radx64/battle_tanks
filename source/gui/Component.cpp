@@ -4,8 +4,7 @@ namespace gui
 {
 
 Component::Component()
-: global_position_{}
-, relative_position_{}
+: local_position_{}
 , alignment_ {}
 , parent_{nullptr}
 , children_ {}
@@ -36,10 +35,20 @@ bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
 
 void Component::setPosition(const sf::Vector2f& position, const Alignment alignment)
 {
-    if (relative_position_ == position) return;
-    relative_position_ = position;
+    local_position_ = position;
     alignment_ = alignment;
     updateGlobalPosition();
+}
+
+sf::Vector2f Component::getSize()
+{
+    return sf::Vector2f{bounds_.width, bounds_.height};
+}
+
+void Component::setSize(const sf::Vector2f& position)
+{
+    bounds_.width = position.x;
+    bounds_.height = position.y;
 }
 
 void Component::setVisibility(bool is_visible)
@@ -52,14 +61,14 @@ bool Component::isVisible()
     return is_visible_; 
 }
 
-const sf::Vector2f& Component::getPosition() const
+const sf::Vector2f Component::getPosition() const
 {
-    return relative_position_;
+    return local_position_;
 }
 
-const sf::Vector2f& Component::getGlobalPosition() const
+const sf::Vector2f Component::getGlobalPosition() const
 {
-    return global_position_;
+    return sf::Vector2f{bounds_.left, bounds_.top};
 }
 
 void Component::addChild(std::unique_ptr<Component> child)
@@ -71,7 +80,6 @@ void Component::addChild(std::unique_ptr<Component> child)
     }
     child->parent_ = this;
     child->updateGlobalPosition();
-
     children_.push_back(std::move(child));
 }
 
@@ -82,24 +90,32 @@ void Component::updateGlobalPosition()
     switch (alignment_)
     {
         case (gui::Alignment::LEFT)     : offset.x = 0.0f; break;
-        case (gui::Alignment::RIGHT)    : offset.x = - getWidth(); break;
-        case (gui::Alignment::CENTERED) : offset.x = - getWidth() / 2.0f; offset.y = - getHeight() / 2.0f;  break;
+        case (gui::Alignment::RIGHT)    : offset.x = - bounds_.width; break;
+        case (gui::Alignment::CENTERED) : offset.x = - bounds_.width / 2.0f; offset.y = - bounds_.height / 2.0f;  break;
     }
+
+    sf::Vector2f global_bounds_position {};
 
     if (parent_)
     {
-        global_position_ = parent_->getGlobalPosition() + relative_position_ + offset;
+        global_bounds_position = parent_->getGlobalPosition() + getPosition() + offset;
     }
     else
     {
-        global_position_ = relative_position_ + offset;
+        global_bounds_position = getPosition() + offset;
     }
+
+    bounds_.left = global_bounds_position.x;
+    bounds_.top = global_bounds_position.y;
 
     //TODO can add check if recalculation has changed position of parent to not recalculate childeren
     for (auto& child : children_)
     {
+        // children can peek parent position for own calculations so remember to update parent firs
         child->updateGlobalPosition();
     }
+
+
 }
 
 }  // namespace gui

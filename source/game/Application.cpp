@@ -12,7 +12,6 @@
 #include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
 #include "gui/Button.hpp"
-#include "gui/ClosableWindow.hpp"
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
 #include "graphics/DrawTools.hpp"
@@ -75,27 +74,18 @@ void Application::configureTexts()
     measurements_average_text_handle_ = measurements_average_text.get();
     guiElements_.push_back(std::move(measurements_average_text));
 
-    auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(WINDOW_WIDTH/2, 200.0f));
-    help_window_handle_ = help_window.get();
-
-    window_manager_->addWindow(std::move(help_window));
-
-    auto second_window = std::make_unique<gui::ClosableWindow>(); 
-    second_window->setSize(sf::Vector2f(500.0f, 400.0f));
-    second_window->setPosition(sf::Vector2f((WINDOW_WIDTH-100)/2, 300.0f), gui::Alignment::CENTERED);
-
+    auto second_window = std::make_unique<gui::Window>(); 
+    second_window->setSize(sf::Vector2f(500.f, 400.f));
+    second_window->setPosition(sf::Vector2f(500.f, 500.f), gui::Alignment::LEFT);
     window_manager_->addWindow(std::move(second_window));
-
-    auto third_window = std::make_unique<gui::ClosableWindow>(); 
-    third_window->setSize(sf::Vector2f(500.0f, 400.0f));
-    third_window->setPosition(sf::Vector2f((WINDOW_WIDTH+100)/2, 400.0f), gui::Alignment::CENTERED);
-
-    window_manager_->addWindow(std::move(third_window));
 
     auto button = std::make_unique<gui::Button>("Help");
     button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
     button->setSize(sf::Vector2f(150.f, 50.f));
-    button->onClick([this](){help_visible_ = !help_visible_;});
+    button->onClick([this](){
+        auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(WINDOW_WIDTH/2, 600.0f));
+        window_manager_->addWindow(std::move(help_window));
+    });
     guiElements_.push_back(std::move(button));
 
     auto demo_label_button = std::make_unique<gui::Button>("LABEL DEMO");
@@ -110,12 +100,12 @@ void Application::configureTexts()
     spawn_window_button->onClick([this](){
         float random_x = rand() % 100;
         float random_y = rand() % 100;
-        auto window = std::make_unique<gui::ClosableWindow>(); 
+        auto window = std::make_unique<gui::Window>(); 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
 
         auto hello_world_label = std::make_unique<gui::Label>("..:: HELLO WORLD! ::..");
-        hello_world_label->setPosition(sf::Vector2f(window->getWidth()/2.f, window->getHeight()/2.f), gui::Alignment::CENTERED);
+        hello_world_label->setPosition(sf::Vector2f(window->getSize() / 2.f), gui::Alignment::CENTERED);
         window->addChild(std::move(hello_world_label));
 
         window_manager_->addWindow(std::move(window));
@@ -146,13 +136,13 @@ int Application::run()
         // TODO: move those member creations to class fields
         view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
-        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Battle tanks!", sf::Style::Fullscreen);
-        window.setFramerateLimit(60);
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24), "Battle tanks!", sf::Style::Fullscreen);
+        window.setFramerateLimit(30);
 
         auto quit_button = std::make_unique<gui::Button>("Quit");
         quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
         quit_button->setSize(sf::Vector2f(150.f, 50.f));
-        quit_button->onClick([&window](){window.close();});
+        quit_button->onClick([&window](){std::cout << "Quitting...\n"; window.close();});
         guiElements_.push_back(std::move(quit_button));
 
         constexpr int number_of_measurements = 20;
@@ -187,7 +177,6 @@ int Application::run()
                             case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::setDebug(debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticles().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
-                            case sf::Keyboard::H        :   help_visible_ = !help_visible_; break;
                             case sf::Keyboard::Q        :   window.close();
                             default                     :   {}  
                         }
@@ -250,7 +239,6 @@ int Application::run()
             auto physics_time = clock.getElapsedTime();
 
             window.setView(window.getDefaultView());
-            help_window_handle_->setVisibility(help_visible_);
 
             // set "gameplay area view_" again so mouse coordinates will be calculated properly in next mouse event
             // this can be calulated also as an offset of camera view_, to not switch view_s back and forward
@@ -276,7 +264,7 @@ int Application::run()
 
             bool isLeftMouseButtonClicked {false};
 
-            if (not was_last_event_left_click_ and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
+            if ((not was_last_event_left_click_) and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
 
             auto mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
 

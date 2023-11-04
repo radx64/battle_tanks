@@ -14,8 +14,6 @@ public:
     Label(const std::string_view& text);
 
     void onRender(sf::RenderWindow& renderWindow) override;
-    float getWidth() override;
-    float getHeight() override;
     void setText(const sf::String& text);
     bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
 

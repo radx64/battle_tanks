@@ -13,28 +13,21 @@ Label::Label(const std::string_view& text)
     text_.setFillColor(style.getFontColor());
     text_.setOutlineColor(style.getOutlineColor());
     text_.setOutlineThickness(style.getOutlineThickness());
-    text_.setString(text.data());       
+    setText(text.data()); 
 }
 
 void Label::onRender(sf::RenderWindow& renderWindow)
 {
-    text_.setPosition(global_position_);
+    text_.setPosition(Component::getGlobalPosition());
     renderWindow.draw(text_);
-}
-
-float Label::getWidth()
-{
-    return text_.getGlobalBounds().width;
-}
-
-float Label::getHeight()
-{
-    return text_.getGlobalBounds().height;
 }
 
 void Label::setText(const sf::String& text)
 {
     text_.setString(text);
+    bounds_.width = text_.getGlobalBounds().width;
+    bounds_.height = text_.getGlobalBounds().height;
+    Component::updateGlobalPosition();
 }
 
 bool Label::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)

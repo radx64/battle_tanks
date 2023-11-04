@@ -14,12 +14,10 @@ class Window : public Component
 public:
     Window();
 
-    void setSize(const sf::Vector2f& size);
-    sf::Vector2f getSize();
+    void setSize(const sf::Vector2f& size) override;
+    void setPosition(const sf::Vector2f& position, const Alignment alignment) override;
     bool isInside(const sf::Vector2f point);
     void onRender(sf::RenderWindow& renderWindow) override;
-    float getWidth() override;
-    float getHeight() override;
     bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
     void close();
     bool isDead();
@@ -28,7 +26,8 @@ public:
     bool hasFocus();
 
 protected:
-    sf::RectangleShape shape_;
+    sf::RectangleShape background_;
+    sf::RectangleShape top_bar_;
     bool killed_;
     bool focused_;
     StyleSheet style_;

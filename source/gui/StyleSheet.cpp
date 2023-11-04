@@ -14,6 +14,8 @@ StyleSheet::StyleSheet()
 , outline_thickness_(0)
 , window_color_(sf::Color(127, 127, 127, 200))
 , window_inactive_color_(sf::Color(100, 100, 100, 200))
+, window_top_bar_color_(sf::Color(100, 100, 100, 255))
+, window_inanctive_top_bar_color_(sf::Color(100, 100, 100, 255))
 { }
 
 sf::Font& StyleSheet::getFont() const
@@ -86,9 +88,29 @@ void StyleSheet::setInactiveWindowColor(const sf::Color& color)
     window_inactive_color_ = color;
 }  
 
+const sf::Color& StyleSheet::getTopBarWindowColor() const
+{
+    return window_top_bar_color_;
+}
+
+void StyleSheet::setTopBarWindowColor(const sf::Color& color)
+{
+    window_top_bar_color_ = color;
+}
+
+const sf::Color& StyleSheet::getInactiveTopBarWindowColor() const
+{
+    return window_inanctive_top_bar_color_;
+}
+
+void StyleSheet::setInactiveTopBarWindowColor(const sf::Color& color)
+{
+    window_inanctive_top_bar_color_ = color;
+}
+
 const StyleSheet BasicStyleSheetFactory::create()
 {
-    StyleSheet style;
+    static StyleSheet style;
     style.setFont(gui::FontLibrary::get("armata"));
     style.setFontSize(14);
     style.setFontColor(sf::Color::Black);
@@ -96,6 +118,8 @@ const StyleSheet BasicStyleSheetFactory::create()
     style.setOutlineThickness(1);
     style.setWindowColor(sf::Color(200,200,200,200));
     style.setInactiveWindowColor(sf::Color(100,100,100,200));
+    style.setTopBarWindowColor(sf::Color(230,100,100,255));
+    style.setInactiveTopBarWindowColor(sf::Color(130,100,100,255));
     return style;
 }
 

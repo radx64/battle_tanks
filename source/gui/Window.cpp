@@ -1,8 +1,13 @@
 #include "gui/Window.hpp"
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
+#include "gui/Button.hpp"
 #include "gui/Component.hpp"
+
+constexpr auto  TOP_BAR_WIDTH = 20.f;
 
 namespace gui
 {
@@ -12,45 +17,52 @@ Window::Window()
 , focused_{false}
 , style_(BasicStyleSheetFactory::create())
 {   
-    shape_.setFillColor(style_.getInactiveWindowColor());
-    shape_.setOutlineColor(style_.getOutlineColor());
-    shape_.setOutlineThickness(style_.getOutlineThickness());
+    background_.setFillColor(style_.getInactiveWindowColor());
+    background_.setOutlineColor(style_.getOutlineColor());
+    background_.setOutlineThickness(style_.getOutlineThickness());
+
+    auto close_button = std::make_unique<gui::Button>("X");
+    close_button->setPosition(sf::Vector2f(0.f, 0.f), gui::Alignment::LEFT);
+    close_button->setSize(sf::Vector2f(20.f, TOP_BAR_WIDTH));
+    close_button->onClick([window = this](){window->close();});
+    this->addChild(std::move(close_button));
+
+    top_bar_.setOutlineColor(style_.getOutlineColor());
+    top_bar_.setOutlineThickness(style_.getOutlineThickness());
 }
 
 void Window::setSize(const sf::Vector2f& size)
 {
-    shape_.setSize(size);
-    updateGlobalPosition();
+    auto top_bar_size = size;
+    top_bar_size.y = TOP_BAR_WIDTH;
+
+    auto background_size = size;
+    background_size.y = size.y - TOP_BAR_WIDTH;
+
+    top_bar_.setSize(top_bar_size);
+    background_.setSize(background_size);
+
+    Component::setSize(size);
 }
 
-sf::Vector2f Window::getSize()
+void Window::setPosition(const sf::Vector2f& position, const Alignment alignment)
 {
-    return shape_.getSize();
+    Component::setPosition(position, alignment);
+    top_bar_.setPosition(Component::getGlobalPosition());
+    auto background_position = Component::getGlobalPosition();
+    background_position.y += TOP_BAR_WIDTH;
+    background_.setPosition(background_position);
 }
 
 bool Window::isInside(const sf::Vector2f point)
 {
-    auto size = shape_.getSize();
-    auto position = shape_.getPosition();
-
-    return ((point.x >= position.x && point.x < position.x + size.x)
-        && (point.y >= position.y && point.y < position.y + size.y));
+    return bounds_.contains(point);
 }
 
 void Window::onRender(sf::RenderWindow& renderWindow)
 {
-    shape_.setPosition(global_position_);
-    renderWindow.draw(shape_);
-}
-
-float Window::getWidth()
-{
-    return shape_.getGlobalBounds().width;
-}
-
-float Window::getHeight()
-{
-    return shape_.getGlobalBounds().height;
+    renderWindow.draw(background_);
+    renderWindow.draw(top_bar_);
 }
 
 bool Window::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
@@ -73,13 +85,15 @@ bool Window::isDead()
 void Window::focus()
 {
     focused_ = true;
-    shape_.setFillColor(style_.getWindowColor());
+    background_.setFillColor(style_.getWindowColor());
+    top_bar_.setFillColor(style_.getTopBarWindowColor());
 }
 
 void Window::defocus()
 {
     focused_ = false;
-    shape_.setFillColor(style_.getInactiveWindowColor());
+    background_.setFillColor(style_.getInactiveWindowColor());
+    top_bar_.setFillColor(style_.getInactiveTopBarWindowColor());
 }
 
 bool Window::hasFocus()

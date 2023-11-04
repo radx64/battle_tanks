@@ -3,15 +3,17 @@
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
 
+#include <iostream>
+
 namespace gui
 {
 Button::Button(const std::string_view& text)
 : wasButtonClicked_(false)
 {
     auto style = BasicStyleSheetFactory::create();    
-    shape_.setFillColor(style.getWindowColor());
-    shape_.setOutlineColor(style.getOutlineColor());
-    shape_.setOutlineThickness(style.getOutlineThickness()); 
+    background_.setFillColor(style.getWindowColor());
+    background_.setOutlineColor(style.getOutlineColor());
+    background_.setOutlineThickness(style.getOutlineThickness()); 
     auto text_ptr = std::make_unique <gui::Label>(text);
     text_ = text_ptr.get();
     this->addChild(std::move(text_ptr));
@@ -21,7 +23,8 @@ Button::~Button() = default;
 
 void Button::setSize(const sf::Vector2f& size)
 {
-    shape_.setSize(size);
+    background_.setSize(size);
+    Component::setSize(size);
     updateGlobalPosition();
 }
 
@@ -32,20 +35,11 @@ void Button::setText(const sf::String& text)
 
 void Button::onRender(sf::RenderWindow& renderWindow)
 {
-    shape_.setPosition(global_position_);
-    renderWindow.draw(shape_);
+    background_.setPosition(Component::getGlobalPosition());
+    renderWindow.draw(background_);
     
-    text_->setPosition(sf::Vector2f(getWidth()/2.f, getHeight()/2.f), gui::Alignment::CENTERED);
-}
-
-float Button::getWidth()
-{
-    return shape_.getGlobalBounds().width;
-}
-
-float Button::getHeight()
-{
-    return shape_.getGlobalBounds().height;
+    //FIXME: this should not be called here as position should be recalculated on changes not every renderframe
+    text_->setPosition(getSize() / 2.f, gui::Alignment::CENTERED);
 }
 
 void Button::onClick(std::function<void()> onClickCallback)
@@ -55,13 +49,13 @@ void Button::onClick(std::function<void()> onClickCallback)
 
 bool Button::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
-    if (shape_.getGlobalBounds().contains(mousePosition))
+    if (background_.getGlobalBounds().contains(mousePosition))
     {
-        shape_.setFillColor(sf::Color(255,0,0,255));
+        background_.setFillColor(sf::Color(255,0,0,255));
 
         if(isLeftClicked)
         {
-            shape_.setFillColor(sf::Color(0,0,255,255));     
+            background_.setFillColor(sf::Color(0,0,255,255));     
         }
 
         if (isLeftClicked && !wasButtonClicked_)
@@ -77,7 +71,7 @@ bool Button::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked
     }
     else
     {
-        shape_.setFillColor(sf::Color(0,255,0,255));
+        background_.setFillColor(sf::Color(0,255,0,255));
         return false;
     }
 }

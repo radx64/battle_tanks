@@ -39,19 +39,16 @@ protected:
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
-    bool help_visible_{false};
     bool label_demo_visible_{false};
-    bool was_last_event_left_click_{false}; // temporary workaround for dumb mouse event polling
+    bool was_last_event_left_click_{true}; // temporary workaround for dumb mouse event polling
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
-    gui::Window* help_window_handle_;
     std::unique_ptr<gui::WindowManager> window_manager_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Tank>> tanks_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
-
     std::vector<std::unique_ptr<gui::Component>> guiElements_;
 };
 

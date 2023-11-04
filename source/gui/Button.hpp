@@ -20,13 +20,11 @@ public:
     void setSize(const sf::Vector2f& size);
     void setText(const sf::String& text);
     void onRender(sf::RenderWindow& renderWindow) override;
-    float getWidth() override;
-    float getHeight() override;
     void onClick(std::function<void()> onClickCallback);
     bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
 
 protected:
-    sf::RectangleShape shape_;
+    sf::RectangleShape background_;
     gui::Label* text_;
     bool wasButtonClicked_;
     std::function<void()> on_click_;

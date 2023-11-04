@@ -9,6 +9,8 @@
 namespace gui
 {
 
+// This is a crude stylesheet for GUI styling
+// I'll replace it with something more sophisticated later
 class StyleSheet
 {
 public:
@@ -28,6 +30,10 @@ public:
     void setWindowColor(const sf::Color& color);
     const sf::Color& getInactiveWindowColor() const;
     void setInactiveWindowColor(const sf::Color& color);
+    const sf::Color& getTopBarWindowColor() const;
+    void setTopBarWindowColor(const sf::Color& color);
+    const sf::Color& getInactiveTopBarWindowColor() const;
+    void setInactiveTopBarWindowColor(const sf::Color& color);
 protected:
     sf::Font& font_;
     uint32_t font_size_;
@@ -37,6 +43,8 @@ protected:
 
     sf::Color window_color_;
     sf::Color window_inactive_color_;
+    sf::Color window_top_bar_color_;
+    sf::Color window_inanctive_top_bar_color_;
 };
 
 class BasicStyleSheetFactory
