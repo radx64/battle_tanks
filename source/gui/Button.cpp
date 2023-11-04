@@ -3,8 +3,6 @@
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
 namespace gui
 {
 Button::Button(const std::string_view& text)
