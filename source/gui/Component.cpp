@@ -25,11 +25,14 @@ void Component::render(sf::RenderWindow& renderWindow)
 bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
     bool was_mouse_event_processed {false};
-    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked);
     for (auto& child : children_)
     {
-        if (child->update(mousePosition, isLeftClicked)) was_mouse_event_processed = true;
+        was_mouse_event_processed = child->update(mousePosition, isLeftClicked);
+        if (was_mouse_event_processed) return true; // child has catched the mouse event
     }
+
+    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked); // this component has catched the mouse event
+
     return was_mouse_event_processed;
 }
 
@@ -49,6 +52,7 @@ void Component::setSize(const sf::Vector2f& position)
 {
     bounds_.width = position.x;
     bounds_.height = position.y;
+    updateGlobalPosition();
 }
 
 void Component::setVisibility(bool is_visible)

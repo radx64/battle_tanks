@@ -42,7 +42,7 @@ bool WindowManager::update(const sf::Vector2f& mousePosition, bool isLeftClicked
         Window* window = (*window_it).get();
 
 
-        if (window->hasFocus()) 
+        if (window->isFocused()) 
         {
             has_any_window_captured_mouse_event = window->update(mousePosition, isLeftClicked);
         }
@@ -57,7 +57,7 @@ bool WindowManager::update(const sf::Vector2f& mousePosition, bool isLeftClicked
         else
         {
             if (not window->isVisible()) continue;
-            if (isLeftClicked && window->isInside(mousePosition)&& not has_any_window_captured_mouse_event)
+            if (isLeftClicked && window->isInside(mousePosition) && not has_any_window_captured_mouse_event )
             {
                 if (active_window_handle_) active_window_handle_->defocus();
                 active_window_handle_ = window; 

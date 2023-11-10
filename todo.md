@@ -15,9 +15,13 @@ Bunch of random ideas to randomly pick up and implement
 ### GUI
 - [x] Basic GUI subsystem support for spawning windows with some text 
 - [x] Buttons
-- [ ] Closable windows
-- [ ] FIXME Event polling is generating events every render frame, also creating some nice events would be easier to handle
-- [ ] PERFORMANCE Render gui on separate texture and rerender only on changes
+- [x] Closable windows
+- [x] Resizable windows
+    - [x] 🐛: You can close window while resizing by passing cursor over close button 
+    - [x] 🐛: When window is first resized and then dragged it jumps to some offset position (like where topbar was before resize)
+    - [X] 🐛: Window focusing is not working properly after resizing 
+- [ ] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
+- [ ] 🏎️ Render gui on separate texture and rerender only on changes
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing
@@ -30,7 +34,7 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] Scanner/radar to find other tanks and pickups
 
 ## Others
-- [ ] Address in code TODOs
+- [ ] Address in code TODOs and FIXMEs :) meh
 - [x] Create UT target and write few crude tests
 - [ ] Build system should split production and test targets to not build UTs in production
 - [ ] Split github actions to run production and UT separately
