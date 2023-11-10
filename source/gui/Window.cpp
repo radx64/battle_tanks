@@ -16,6 +16,7 @@ namespace gui
 Window::Window()
 : killed_{false}
 , focused_{false}
+, dragging_{false}
 , style_(BasicStyleSheetFactory::create())
 {   
     background_.setFillColor(style_.getInactiveWindowColor());
@@ -72,6 +73,11 @@ bool Window::isInside(const sf::Vector2f point)
     return bounds_.contains(point);
 }
 
+bool Window::isInsideTopBar(const sf::Vector2f point)
+{
+    return top_bar_.getGlobalBounds().contains(point);
+}
+
 void Window::onRender(sf::RenderWindow& renderWindow)
 {
     renderWindow.draw(background_);
@@ -80,8 +86,24 @@ void Window::onRender(sf::RenderWindow& renderWindow)
 
 bool Window::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
-    (void) mousePosition;
-    (void) isLeftClicked;
+    if (isInsideTopBar(mousePosition) and (not dragging_) and isLeftClicked) // mouse clicked
+    {
+        dragging_ = true; 
+        dragging_offset_ = getPosition() -  mousePosition;
+    }
+
+
+    if (not isLeftClicked && dragging_) // mouse released
+    {
+        dragging_ = false;
+    } 
+
+    if (dragging_)
+    {
+        setPosition(mousePosition + dragging_offset_, alignment_);
+        return true;
+    }
+
     return false;
 }
 

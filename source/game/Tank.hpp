@@ -17,6 +17,8 @@ class Tank : public IRenderable
 public:
     Tank(uint32_t id, double x, double y, double rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody);
+    virtual ~Tank() = default;
+
     void draw(sf::RenderWindow& renderWindow) override;
     void physics(std::vector<std::unique_ptr<Tank>>& tank, double timeStep);
 

@@ -111,7 +111,7 @@ void Component::updateGlobalPosition()
     //TODO can add check if recalculation has changed position of parent to not recalculate childeren
     for (auto& child : children_)
     {
-        // children can peek parent position for own calculations so remember to update parent firs
+        // children can peek parent position for own calculations so remember to update parent first
         child->updateGlobalPosition();
     }
 

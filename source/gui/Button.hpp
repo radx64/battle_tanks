@@ -17,11 +17,11 @@ public:
     Button(const std::string_view& text);
     ~Button();
 
-    void setSize(const sf::Vector2f& size);
+    void setSize(const sf::Vector2f& size) override;
     void setText(const sf::String& text);
     void onRender(sf::RenderWindow& renderWindow) override;
     void onClick(std::function<void()> onClickCallback);
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override;
 
 protected:
     sf::RectangleShape background_;

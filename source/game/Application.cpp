@@ -21,8 +21,8 @@
 namespace game 
 {
 
-constexpr uint32_t WINDOW_WIDTH = 1920;
-constexpr uint32_t WINDOW_HEIGHT = 1080;
+constexpr uint32_t WINDOW_WIDTH = 1280;
+constexpr uint32_t WINDOW_HEIGHT = 1024;
 constexpr uint32_t TANKS_COUNT = 5;
 
 constexpr double timeStep = 1.0/30.0;
@@ -133,7 +133,7 @@ int Application::run()
         // TODO: move those member creations to class fields
         view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
-        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24), "Battle tanks!", sf::Style::Fullscreen);
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24), "Battle tanks!", sf::Style::Default);
         window.setFramerateLimit(30);
 
         auto quit_button = std::make_unique<gui::Button>("Quit");
@@ -273,8 +273,12 @@ int Application::run()
                 }
                 guiElement->render(window);
             }
+            // FIXME: isLeftMouseButtonClicked fires only once (for gui i need proper state of mouse every frame)
+            //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
+            //  I need to have proper mouse state every frame.
 
-            if (window_manager_->update(mousePosition, isLeftMouseButtonClicked))
+
+            if (window_manager_->update(mousePosition, isCurrentMouseEventLeftClicked))
             {
                 wasMouseEventCapturedByGuiSubsystem = true;
             }    

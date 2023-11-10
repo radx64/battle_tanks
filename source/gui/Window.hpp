@@ -20,7 +20,7 @@ public:
     void setTitle(const std::string_view& text);
     bool isInside(const sf::Vector2f point);
     void onRender(sf::RenderWindow& renderWindow) override;
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override;
     void close();
     bool isDead();
     void focus();
@@ -28,11 +28,15 @@ public:
     bool hasFocus();
 
 protected:
+    bool isInsideTopBar(const sf::Vector2f point);
+
     sf::RectangleShape background_;
     sf::RectangleShape top_bar_;
     gui::Label* title_text_handle_;
     bool killed_;
     bool focused_;
+    bool dragging_;
+    sf::Vector2f dragging_offset_;
     StyleSheet style_;
 };
 

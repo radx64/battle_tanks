@@ -15,7 +15,7 @@ public:
 
     void onRender(sf::RenderWindow& renderWindow) override;
     void setText(const sf::String& text);
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked);
+    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override;
 
 protected:
     sf::Text text_;
