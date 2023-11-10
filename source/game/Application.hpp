@@ -35,7 +35,7 @@ protected:
     const sf::Vector2f camera_initial_position_;
     const sf::Vector2f camera_initial_size_;
     Camera camera_;
-    sf::View view_;
+    sf::View camera_view_;
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 

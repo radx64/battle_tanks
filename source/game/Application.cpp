@@ -32,7 +32,7 @@ Application::Application()
 : camera_initial_position_{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f}
 , camera_initial_size_{WINDOW_WIDTH, WINDOW_HEIGHT}
 , camera_{camera_initial_position_, camera_initial_size_}
-, view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
+, camera_view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
 {
     context_.setParticles(&particles_);
     gui::FontLibrary::initialize();
@@ -131,9 +131,9 @@ int Application::run()
     try
     {
         // TODO: move those member creations to class fields
-        view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
+        camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
-        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24), "Battle tanks!", sf::Style::Default);
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24), "Battle tanks!", sf::Style::Resize);
         window.setFramerateLimit(30);
 
         auto quit_button = std::make_unique<gui::Button>("Quit");
@@ -163,7 +163,12 @@ int Application::run()
             {
                 switch (event.type)
                 {
-                    case sf::Event::Closed : {window.close(); break;}
+                    case sf::Event::Closed : { window.close(); break; }
+                    case sf::Event::Resized : 
+                    { 
+                        sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                        window.setView(sf::View(visibleArea));
+                    }   
                     case sf::Event::KeyReleased : 
                     {
                         switch (event.key.code)
@@ -194,17 +199,20 @@ int Application::run()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) camera_.move(-20.f,0.f);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) camera_.move(20.f,0.f);
 
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            if (mousePos.x < 10) {camera_.move(-20.f,0.f);}
-            if ((uint32_t)mousePos.x > WINDOW_WIDTH - 10) {camera_.move(20.f,0.f);}
-            if (mousePos.y < 10) {camera_.move(0.f,-20.f);}
-            if ((uint32_t)mousePos.y > WINDOW_HEIGHT - 10) {camera_.move(0.f,20.f);}
-
             camera_.physics();
-            view_.setCenter(camera_.getPosition());
-            view_.setSize(camera_.getSize());
-            window.setView(view_);
+            camera_view_.setCenter(camera_.getPosition());
+            camera_view_.setSize(camera_.getSize());
+
+            window.setView(camera_view_);
             window.clear(sf::Color(0, 0, 0));
+
+            auto mousePosition = sf::Mouse::getPosition(window);
+            auto mousePositionInCamera = window.mapPixelToCoords(mousePosition);
+            
+            if (mousePosition.x < 10) {camera_.move(-20.f,0.f);}
+            if ((uint32_t)mousePosition.x > WINDOW_WIDTH - 10) {camera_.move(20.f,0.f);}
+            if (mousePosition.y < 10) {camera_.move(0.f,-20.f);}
+            if ((uint32_t)mousePosition.y > WINDOW_HEIGHT - 10) {camera_.move(0.f,20.f);}
 
             clock.restart();
             tilemap_->draw(window);
@@ -237,9 +245,12 @@ int Application::run()
 
             window.setView(window.getDefaultView());
 
-            // set "gameplay area view_" again so mouse coordinates will be calculated properly in next mouse event
-            // this can be calulated also as an offset of camera view_, to not switch view_s back and forward
+            auto mousePositionInGUI = window.mapPixelToCoords(mousePosition);
+
+            // set "gameplay area camera_view_" again so mouse coordinates will be calculated properly in next mouse event
+            // this can be calulated also as an offset of camera camera_view_, to not switch view_s back and forward
             // TODO reimplement this later if needed, delete this todo otherwise
+            
             clock.restart();
             // Temporary hack for testing objects movement
             if (label_demo_visible_)
@@ -263,11 +274,9 @@ int Application::run()
 
             if ((not was_last_event_left_click_) and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
 
-            auto mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
-
             for (auto& guiElement : guiElements_)
             {
-                if (guiElement->update(mousePosition, isLeftMouseButtonClicked))
+                if (guiElement->update(mousePositionInGUI, isLeftMouseButtonClicked))
                 {
                     wasMouseEventCapturedByGuiSubsystem = true;
                 }
@@ -277,8 +286,7 @@ int Application::run()
             //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
             //  I need to have proper mouse state every frame.
 
-
-            if (window_manager_->update(mousePosition, isCurrentMouseEventLeftClicked))
+            if (window_manager_->update(mousePositionInGUI, isCurrentMouseEventLeftClicked))
             {
                 wasMouseEventCapturedByGuiSubsystem = true;
             }    
@@ -286,17 +294,12 @@ int Application::run()
 
             if (!wasMouseEventCapturedByGuiSubsystem && isLeftMouseButtonClicked)
             {
-
-                // Get the cursor position in view coordinates
-                sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-                sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
-                waypoints_.emplace_back(worldPos);               
+                waypoints_.emplace_back(mousePositionInCamera);               
             }
 
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
             auto gui_time = clock.getElapsedTime();
 
-            window.setView(view_);
 
             measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
