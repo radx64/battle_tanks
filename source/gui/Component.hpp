@@ -21,23 +21,31 @@ class Component
 public:
     Component();
     virtual ~Component() = default;
-
+    
+    //TODO: Those two methods should be protected
     virtual void onRender(sf::RenderWindow& renderWindow) = 0;
     virtual bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) = 0;
+    
     void render(sf::RenderWindow& renderWindow);
     bool update(const sf::Vector2f& mousePosition, bool isLeftClicked);
 
     virtual sf::Vector2f getSize();
     virtual void setSize(const sf::Vector2f& position);
+    virtual void onParentSizeChange(const sf::Vector2f& parent_size);
+
     void setVisibility(bool is_visible);
     bool isVisible();
+
     const sf::Vector2f getPosition() const;
     virtual void setPosition(const sf::Vector2f& position, const Alignment alignment);
+    virtual void onParentPositionChange(const sf::Vector2f& parent_position);
+    
     const sf::Vector2f getGlobalPosition() const;
-    void addChild(std::unique_ptr<Component> child);
+    virtual void addChild(std::unique_ptr<Component> child);
 
 protected:
     void updateGlobalPosition();
+    size_t getChildrenCount() const;
     sf::Vector2f local_position_;   // offset from parent position
     sf::FloatRect bounds_;          // bounds box in global space position
     Alignment alignment_;

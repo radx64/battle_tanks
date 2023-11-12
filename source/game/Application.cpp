@@ -13,6 +13,7 @@
 #include "game/TankFactory.hpp"
 #include "gui/Button.hpp"
 #include "gui/Label.hpp"
+#include "gui/Layout.hpp"
 #include "gui/Window.hpp"
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
@@ -94,15 +95,40 @@ void Application::configureTexts()
     spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 400.f), gui::Alignment::LEFT);
     spawn_window_button->setSize(sf::Vector2f(150.f, 50.f));
     spawn_window_button->onClick([this](){
-        float random_x = rand() % 100;
-        float random_y = rand() % 100;
+        float random_x = rand() % 200;
+        float random_y = rand() % 200;
         auto window = std::make_unique<gui::Window>(); 
+
+        auto horizontal_layout = std::make_unique<gui::HorizontalLayout>();
+        auto hello = std::make_unique<gui::Button>("HELLO");
+        auto world = std::make_unique<gui::Button>("WORLD");
+
+        horizontal_layout->addComponent(std::move(hello));
+        horizontal_layout->addComponent(std::move(world));
+
+        // auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
+        // auto testing = std::make_unique<gui::Button>("TESTING");
+        // auto things = std::make_unique<gui::Button>("THINGS");
+
+        // horizontal_layout2->addComponent(std::move(testing));
+        // horizontal_layout2->addComponent(std::move(things));
+
+       // auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+
+        // vertical_layout->addComponent(std::move(horizontal_layout));
+        // vertical_layout->addComponent(std::move(horizontal_layout2));
+
+        //vertical_layout->addComponent(std::move(hello));
+        //vertical_layout->addComponent(std::move(world));
+
+        //window->addChild(std::move(vertical_layout));
+
+        //window->addChild(std::move(horizontal_layout));
+
+        window->addComponent(std::move(horizontal_layout));
+
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
-
-        auto hello_world_label = std::make_unique<gui::Label>("..:: HELLO WORLD! ::..");
-        hello_world_label->setPosition(sf::Vector2f(window->getSize() / 2.f), gui::Alignment::CENTERED);
-        window->addChild(std::move(hello_world_label));
         window->setTitle("Oh my gosh");
 
         window_manager_->addWindow(std::move(window));

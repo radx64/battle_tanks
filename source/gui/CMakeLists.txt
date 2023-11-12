@@ -12,6 +12,7 @@ target_sources(gui_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Component.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Layout.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Window.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.hpp

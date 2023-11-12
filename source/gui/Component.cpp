@@ -25,13 +25,20 @@ void Component::render(sf::RenderWindow& renderWindow)
 bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
     bool was_mouse_event_processed {false};
-    for (auto& child : children_)
+    
+    // Its important to send update events in reverse order
+    // as if child is rendered on top of another
+    // it's better if topmost child captures event first
+    // so it will not be send to back layer ones
+    for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
     {
-        was_mouse_event_processed = child->update(mousePosition, isLeftClicked);
-        if (was_mouse_event_processed) return true; // child has catched the mouse event
+        was_mouse_event_processed = (*child)->update(mousePosition, isLeftClicked);
+         // child has catched the mouse event
+        if (was_mouse_event_processed) return true;
     }
 
-    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked); // this component has catched the mouse event
+    // this component has catched the mouse event
+    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked); 
 
     return was_mouse_event_processed;
 }
@@ -41,6 +48,11 @@ void Component::setPosition(const sf::Vector2f& position, const Alignment alignm
     local_position_ = position;
     alignment_ = alignment;
     updateGlobalPosition();
+
+    for (auto& child : children_)
+    {
+        child->onParentPositionChange(position);
+    }
 }
 
 sf::Vector2f Component::getSize()
@@ -48,12 +60,22 @@ sf::Vector2f Component::getSize()
     return sf::Vector2f{bounds_.width, bounds_.height};
 }
 
-void Component::setSize(const sf::Vector2f& position)
+void Component::setSize(const sf::Vector2f& size)
 {
-    bounds_.width = position.x;
-    bounds_.height = position.y;
+    bounds_.width = size.x;
+    bounds_.height = size.y;
     updateGlobalPosition();
+
+    for (auto& child : children_)
+    {
+        child->onParentSizeChange(size);
+    }
 }
+
+void Component::onParentSizeChange(const sf::Vector2f& parent_size)
+{
+    static_cast<void>(parent_size);
+};
 
 void Component::setVisibility(bool is_visible)
 {
@@ -69,6 +91,11 @@ const sf::Vector2f Component::getPosition() const
 {
     return local_position_;
 }
+
+void Component::onParentPositionChange(const sf::Vector2f& parent_position)
+{
+    static_cast<void>(parent_position);
+};
 
 const sf::Vector2f Component::getGlobalPosition() const
 {
@@ -118,8 +145,11 @@ void Component::updateGlobalPosition()
         // children can peek parent position for own calculations so remember to update parent first
         child->updateGlobalPosition();
     }
+}
 
-
+size_t Component::getChildrenCount() const
+{
+    return children_.size();
 }
 
 }  // namespace gui
