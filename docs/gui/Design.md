@@ -1,6 +1,18 @@
 Design
 =====
 
+- [Design](#design)
+  - [Component](#component)
+  - [Window](#window)
+  - [Button](#button)
+  - [Label](#label)
+  - [WindowManager](#windowmanager)
+  - [Stylesheet](#stylesheet)
+- [Dependencies](#dependencies)
+- [Drawing](#drawing)
+- [Event processing](#event-processing)
+
+
 ## Component
 It is a abstract base class for all other gui components
 Implements basic objects suppport with childs aggregation and it's lifetime management
@@ -54,7 +66,14 @@ Window --> StyleSheet
 Button --> StyleSheet
 Label --> StyleSheet
 
-
 @enduml
 
 ```
+# Drawing
+Currently components draw themselve on sfml render target.
+Consider moving it to separate texture and redraw those only when needed to boost performance.
+
+# Event processing
+
+There is a hierarchy how mouse events are beeing processed.
+If user clicks on given component it iterates over all its children to check if any of them captures the event. If captured, event is not processed further. If any child has not captured the event, event is processed with component itself.

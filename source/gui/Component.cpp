@@ -7,6 +7,7 @@ Component::Component()
 : local_position_{}
 , alignment_ {}
 , parent_{nullptr}
+, can_children_process_events_{true}
 , children_ {}
 , is_visible_ {true}
 {
@@ -26,19 +27,23 @@ bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
     bool was_mouse_event_processed {false};
     
+    
     // Its important to send update events in reverse order
     // as if child is rendered on top of another
     // it's better if topmost child captures event first
     // so it will not be send to back layer ones
-    for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
+    if (can_children_process_events_)
     {
-        was_mouse_event_processed = (*child)->update(mousePosition, isLeftClicked);
-         // child has catched the mouse event
-        if (was_mouse_event_processed) return true;
+        for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
+        {
+            was_mouse_event_processed = (*child)->update(mousePosition, isLeftClicked);
+            // child has catched the mouse event
+            if (was_mouse_event_processed) return true;
+        }
     }
 
     // this component has catched the mouse event
-    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked); 
+    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked);
 
     return was_mouse_event_processed;
 }
@@ -151,5 +156,15 @@ size_t Component::getChildrenCount() const
 {
     return children_.size();
 }
+
+void Component::disableChildrenEvents()
+{
+    can_children_process_events_ = false;
+}
+void Component::enableChildrenEvents()
+{
+    can_children_process_events_ = true;
+}
+
 
 }  // namespace gui

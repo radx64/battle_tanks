@@ -88,13 +88,13 @@ bool Window::isState(const Window::State& state)
 bool Window::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
 {
     // If mouse clicked on top bar and was not yet dragging window
-    if (isInsideTopBar(mousePosition) and (not isState(State::Dragging)) and isLeftClicked)
+    if (isInsideTopBar(mousePosition) and (isState(State::Idle)) and isLeftClicked)
     {
         state_ = State::Dragging; 
         dragging_offset_ = getPosition() -  mousePosition;
     }
 
-    if (isInsideResizeThingy(mousePosition) and (not isState(State::Resizing)) and isLeftClicked)
+    if (isInsideResizeThingy(mousePosition) and (isState(State::Idle)) and isLeftClicked)
     {
         state_ = State::Resizing;
     }
@@ -102,17 +102,20 @@ bool Window::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked
     // If mouse was released when dragging or resizing window
     if (not isLeftClicked and (isState(State::Dragging) or isState(State::Resizing)))
     {
+        enableChildrenEvents();
         state_ = State::Idle;
     } 
 
     if (isState(State::Dragging))
     {
+        disableChildrenEvents();
         setPosition(mousePosition + dragging_offset_, alignment_);
         return EVENT_PROCESSED;
     }
 
     if (isState(State::Resizing))
     {
+        disableChildrenEvents();
         auto window_top_left_corner = getGlobalPosition();
         auto old_window_size = getSize();
         auto new_window_size = mousePosition - window_top_left_corner + sf::Vector2f{RESIZE_THINGY_SIZE, RESIZE_THINGY_SIZE}/2.f;

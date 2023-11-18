@@ -43,6 +43,9 @@ public:
     const sf::Vector2f getGlobalPosition() const;
     virtual void addChild(std::unique_ptr<Component> child);
 
+    void disableChildrenEvents();
+    void enableChildrenEvents();
+
 protected:
     void updateGlobalPosition();
     size_t getChildrenCount() const;
@@ -50,6 +53,7 @@ protected:
     sf::FloatRect bounds_;          // bounds box in global space position
     Alignment alignment_;
     Component* parent_;
+    bool can_children_process_events_;
     std::vector<std::unique_ptr<Component>> children_;
     bool is_visible_;
 };
