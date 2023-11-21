@@ -50,7 +50,10 @@ protected:
 class BasicStyleSheetFactory
 {
 public:
-    static const StyleSheet create();
+    static const StyleSheet& instance();
+
+private:
+    static StyleSheet* stylesheet_;
 };
 
 }  // namespace gui

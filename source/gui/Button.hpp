@@ -21,12 +21,15 @@ public:
     void setText(const sf::String& text);
     void onRender(sf::RenderWindow& renderWindow) override;
     void onClick(std::function<void()> onClickCallback);
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override;
+
+    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const event::MouseButtonPressed& mousePressedEvent) override;
+    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
 
 protected:
     sf::RectangleShape background_;
     gui::Label* text_;
-    bool wasButtonClicked_;
+    bool isButtonHoldDown_;
     std::function<void()> on_click_;
 };
 

@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -11,12 +12,13 @@
 #include "game/Application.hpp"
 #include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
+#include "graphics/DrawTools.hpp"
+#include "graphics/TextureLibrary.hpp"
 #include "gui/Button.hpp"
+#include "gui/Event.hpp"
 #include "gui/Label.hpp"
 #include "gui/Layout.hpp"
 #include "gui/Window.hpp"
-#include "graphics/DrawTools.hpp"
-#include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
 
 namespace game 
@@ -103,6 +105,9 @@ void Application::configureTexts()
         auto hello = std::make_unique<gui::Button>("HELLO");
         auto world = std::make_unique<gui::Button>("WORLD");
 
+        hello->onClick([](){std::cout << "Hello?" << std::endl;});
+        world->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
+
         horizontal_layout->addComponent(std::move(hello));
         horizontal_layout->addComponent(std::move(world));
 
@@ -120,10 +125,6 @@ void Application::configureTexts()
 
         //vertical_layout->addComponent(std::move(hello));
         //vertical_layout->addComponent(std::move(world));
-
-        //window->addChild(std::move(vertical_layout));
-
-        //window->addChild(std::move(horizontal_layout));
 
         window->addComponent(std::move(horizontal_layout));
 
@@ -159,7 +160,10 @@ int Application::run()
         // TODO: move those member creations to class fields
         camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
-        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24), "Battle tanks!", sf::Style::Resize);
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!");
+
+        auto desktop = sf::VideoMode::getDesktopMode();
+        window.setPosition(sf::Vector2i(desktop.width/2 - window.getSize().x/2, desktop.height/2 - window.getSize().y/2));
         window.setFramerateLimit(30);
 
         auto quit_button = std::make_unique<gui::Button>("Quit");
@@ -278,8 +282,9 @@ int Application::run()
             {
                 guiElements_[0]->setVisibility(true);
                 auto position = guiElements_[0]->getPosition();
-                position += sf::Vector2f(1.0f, 1.0f);
-                if (position.x > 700.0f) position =  sf::Vector2f(1.0f, 1.0f);
+                position.x += 1.0f;
+                position.y = (sin(position.x / 20.f) * 100.f) + 300.f;
+                if (position.x > 1000.0f) position =  sf::Vector2f(1.0f, 1.0f);
                 guiElements_[0]->setPosition(position, gui::Alignment::LEFT);
             }
             else
@@ -287,40 +292,90 @@ int Application::run()
                 guiElements_[0]->setVisibility(false);
             }
 
-            bool wasMouseEventCapturedByGuiSubsystem {false};
-
             bool isCurrentMouseEventLeftClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 
             bool isLeftMouseButtonClicked {false};
 
             if ((not was_last_event_left_click_) and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
 
-            for (auto& guiElement : guiElements_)
+            // TODO This event generation should be reworked to some state machine pattern
+            // also some event queue would be nice
+            // For now this hacky approach is enough for some basic concept testing
+            std::optional<gui::event::MouseMoved> mouseMovedEvent;
+            std::optional<gui::event::MouseButtonPressed> mousePressedEvent;
+            std::optional<gui::event::MouseButtonReleased> mouseReleaseEvent;
+
+            if (last_mouse_in_gui_position_ != mousePositionInGUI)
             {
-                if (guiElement->update(mousePositionInGUI, isLeftMouseButtonClicked))
+                mouseMovedEvent = gui::event::MouseMoved{.position 
+                    = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
+            }
+
+            auto currentLeftClickEventStatus = gui::EventStatus{gui::EventStatus::NotConsumed};
+
+
+            if (not was_last_event_left_click_ and isCurrentMouseEventLeftClicked )
+            {
+                mousePressedEvent = gui::event::MouseButtonPressed{
+                    .button = gui::event::MouseButton::Left, 
+                    .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
+
+            }
+
+            if (was_last_event_left_click_ and not isCurrentMouseEventLeftClicked )
+            {
+                mouseReleaseEvent = gui::event::MouseButtonReleased{
+                    .button = gui::event::MouseButton::Left, 
+                    .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
+            }
+
+
+            for (auto& guiElement : guiElements_)
+            {   
+                // TODO: consider checking if mouse movement was caputred by free gui elements
+                // or these should be added to window manager on some "special window"
+                if (mouseMovedEvent) guiElement->receive(mouseMovedEvent.value());
+                if (mousePressedEvent) 
                 {
-                    wasMouseEventCapturedByGuiSubsystem = true;
+                    auto result = guiElement->receive(mousePressedEvent.value());
+                    if (result == gui::EventStatus::Consumed)
+                    {
+                        currentLeftClickEventStatus = result;
+                    }
                 }
+
+                if (mouseReleaseEvent) guiElement->receive(mouseReleaseEvent.value());
+
                 guiElement->render(window);
             }
+
+
             // FIXME: isLeftMouseButtonClicked fires only once (for gui i need proper state of mouse every frame)
             //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
             //  I need to have proper mouse state every frame.
-
-            if (window_manager_->update(mousePositionInGUI, isCurrentMouseEventLeftClicked))
+            if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
+            if (mousePressedEvent) 
             {
-                wasMouseEventCapturedByGuiSubsystem = true;
-            }    
+                auto result = window_manager_->receive(mousePressedEvent.value());
+                if (result == gui::EventStatus::Consumed)
+                {
+                    currentLeftClickEventStatus = result;
+                }
+            }
+            if (mouseReleaseEvent) window_manager_->receive(mouseReleaseEvent.value());
             window_manager_->render(window);
 
-            if (!wasMouseEventCapturedByGuiSubsystem && isLeftMouseButtonClicked)
+            // I'm integrating new event system in components so this code looks very messy.
+            // I'll clean it when everything will switch on EventReceiver methods
+            if (currentLeftClickEventStatus == gui::EventStatus::NotConsumed 
+                and isLeftMouseButtonClicked)
             {
                 waypoints_.emplace_back(mousePositionInCamera);               
             }
 
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
+            last_mouse_in_gui_position_ = mousePositionInGUI;
             auto gui_time = clock.getElapsedTime();
-
 
             measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())

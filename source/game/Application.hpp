@@ -40,7 +40,9 @@ protected:
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
     bool label_demo_visible_{false};
+
     bool was_last_event_left_click_{true}; // temporary workaround for dumb mouse event polling
+    sf::Vector2f last_mouse_in_gui_position_{};
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;

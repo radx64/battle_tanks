@@ -6,9 +6,9 @@
 namespace gui
 {
 Button::Button(const std::string_view& text)
-: wasButtonClicked_(false)
+: isButtonHoldDown_(false)
 {
-    auto style = BasicStyleSheetFactory::create();    
+    auto style = BasicStyleSheetFactory::instance();    
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
     background_.setOutlineThickness(style.getOutlineThickness()); 
@@ -45,33 +45,55 @@ void Button::onClick(std::function<void()> onClickCallback)
     on_click_ = onClickCallback;
 }
 
-bool Button::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
+EventStatus Button::on(const event::MouseMoved& mouseMovedEvent)
 {
+    if (isButtonHoldDown_) return gui::EventStatus::NotConsumed;
+
+    auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+
     if (background_.getGlobalBounds().contains(mousePosition))
     {
-        background_.setFillColor(sf::Color(255,0,0,255));
-
-        if(isLeftClicked)
-        {
-            background_.setFillColor(sf::Color(0,0,255,255));     
-        }
-
-        if (isLeftClicked && !wasButtonClicked_)
-        {
-            wasButtonClicked_ = true;
-            if (on_click_) on_click_();
-        }
-        if (!isLeftClicked)
-        {
-            wasButtonClicked_ = false;
-        }
-        return true;
+        background_.setFillColor(sf::Color(255,0,0,255)); 
     }
     else
     {
-        background_.setFillColor(sf::Color(0,255,0,255));
-        return false;
+        background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
     }
+
+    // Don't need to consume this event as this only updates visuals
+    return gui::EventStatus::NotConsumed;
+}
+
+EventStatus Button::on(const event::MouseButtonPressed& mousePressedEvent)
+{
+    auto mousePosition = sf::Vector2f{mousePressedEvent.position.x, mousePressedEvent.position.y};
+    bool isLeftClicked = mousePressedEvent.button == gui::event::MouseButton::Left;
+
+    if (isLeftClicked and background_.getGlobalBounds().contains(mousePosition))
+    {
+        background_.setFillColor(sf::Color(0,0,255,255));
+        if (not isButtonHoldDown_ and on_click_) 
+        {
+            isButtonHoldDown_ = true; 
+            on_click_();  
+        }
+        return gui::EventStatus::Consumed;
+    }
+    return gui::EventStatus::NotConsumed;
+}
+
+EventStatus Button::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+{
+    if (not isButtonHoldDown_) return gui::EventStatus::NotConsumed;
+    bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
+
+    if (isLeftReleased)
+    {
+        isButtonHoldDown_ = false;
+        background_.setFillColor(sf::Color(0,255,0,255));
+        return gui::EventStatus::Consumed;
+    }
+    return gui::EventStatus::NotConsumed;
 }
 
 }  // namespace gui

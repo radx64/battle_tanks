@@ -108,19 +108,25 @@ void StyleSheet::setInactiveTopBarWindowColor(const sf::Color& color)
     window_inanctive_top_bar_color_ = color;
 }
 
-const StyleSheet BasicStyleSheetFactory::create()
+const StyleSheet& BasicStyleSheetFactory::instance()
 {
-    static StyleSheet style;
-    style.setFont(gui::FontLibrary::get("armata"));
-    style.setFontSize(14);
-    style.setFontColor(sf::Color::Black);
-    style.setOutlineColor(sf::Color(127,127,127,255));
-    style.setOutlineThickness(1);
-    style.setWindowColor(sf::Color(200,200,200,200));
-    style.setInactiveWindowColor(sf::Color(100,100,100,200));
-    style.setTopBarWindowColor(sf::Color(230,100,100,255));
-    style.setInactiveTopBarWindowColor(sf::Color(130,100,100,255));
-    return style;
+    if (stylesheet_) return *stylesheet_;
+    else
+    {
+        stylesheet_ = new StyleSheet();
+        stylesheet_->setFont(gui::FontLibrary::get("armata"));
+        stylesheet_->setFontSize(14);
+        stylesheet_->setFontColor(sf::Color::Black);
+        stylesheet_->setOutlineColor(sf::Color(127,127,127,255));
+        stylesheet_->setOutlineThickness(1);
+        stylesheet_->setWindowColor(sf::Color(200,200,200,200));
+        stylesheet_->setInactiveWindowColor(sf::Color(100,100,100,200));
+        stylesheet_->setTopBarWindowColor(sf::Color(230,100,100,255));
+        stylesheet_->setInactiveTopBarWindowColor(sf::Color(130,100,100,255));
+        return *stylesheet_;
+    }
 }
+
+StyleSheet* BasicStyleSheetFactory::stylesheet_= nullptr;
 
 }  // namespace gui

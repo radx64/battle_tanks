@@ -23,11 +23,11 @@ void Component::render(sf::RenderWindow& renderWindow)
     }
 }
 
-bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
+template <typename T>
+EventStatus Component::processEvent(const T& event)
 {
-    bool was_mouse_event_processed {false};
-    
-    
+    auto eventStatus = EventStatus::NotConsumed;
+
     // Its important to send update events in reverse order
     // as if child is rendered on top of another
     // it's better if topmost child captures event first
@@ -36,16 +36,41 @@ bool Component::update(const sf::Vector2f& mousePosition, bool isLeftClicked)
     {
         for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
         {
-            was_mouse_event_processed = (*child)->update(mousePosition, isLeftClicked);
-            // child has catched the mouse event
-            if (was_mouse_event_processed) return true;
+            eventStatus = (*child)->receive(event);
+            if (eventStatus == EventStatus::Consumed) return EventStatus::Consumed;
         }
     }
 
-    // this component has catched the mouse event
-    was_mouse_event_processed = onMouseUpdate(mousePosition, isLeftClicked);
+    return this->on(event);
+}
 
-    return was_mouse_event_processed;
+EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
+{
+    return processEvent(mouseMovedEvent);
+}
+EventStatus Component::receive(const event::MouseButtonPressed& mousePressedEvent)
+{
+    return processEvent(mousePressedEvent);
+}
+EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+{
+    return processEvent(mouseButtonReleasedEvent);
+}
+
+EventStatus Component::on(const event::MouseMoved& mouseMovedEvent)
+{
+    UNUSED(mouseMovedEvent);
+    return EventStatus::NotConsumed;
+}
+EventStatus Component::on(const event::MouseButtonPressed& mousePressedEvent)
+{
+    UNUSED(mousePressedEvent);
+    return EventStatus::NotConsumed;
+}
+EventStatus Component::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+{
+    UNUSED(mouseButtonReleasedEvent);
+    return EventStatus::NotConsumed;
 }
 
 void Component::setPosition(const sf::Vector2f& position, const Alignment alignment)

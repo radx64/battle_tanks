@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Alignment.hpp"
+#include "gui/EventReceiver.hpp"
 
 namespace gui
 {
@@ -16,7 +17,7 @@ namespace gui
 // Children elements are freed by parent during destruction 
 // You need to render only parent to enable rendering of children
 
-class Component
+class Component : public EventReceiver
 {
 public:
     Component();
@@ -24,10 +25,8 @@ public:
     
     //TODO: Those two methods should be protected
     virtual void onRender(sf::RenderWindow& renderWindow) = 0;
-    virtual bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) = 0;
     
     void render(sf::RenderWindow& renderWindow);
-    bool update(const sf::Vector2f& mousePosition, bool isLeftClicked);
 
     virtual sf::Vector2f getSize();
     virtual void setSize(const sf::Vector2f& position);
@@ -46,7 +45,23 @@ public:
     void disableChildrenEvents();
     void enableChildrenEvents();
 
+    virtual EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
+    virtual EventStatus receive(const event::MouseButtonPressed& mousePressedEvent) override final;
+    virtual EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override final;
+
 protected:
+    // those on methods should be overrided to define handling of mouse events
+    // those are called when component receives an event
+    // first forwards it to it's children
+    // and then handles it itself
+    // so this is some kind bubbling mechanism
+    virtual EventStatus on(const event::MouseMoved& mouseMovedEvent);
+    virtual EventStatus on(const event::MouseButtonPressed& mousePressedEvent);
+    virtual EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent);
+
+    template <typename T>
+    EventStatus processEvent(const T& event);
+
     void updateGlobalPosition();
     size_t getChildrenCount() const;
     sf::Vector2f local_position_;   // offset from parent position

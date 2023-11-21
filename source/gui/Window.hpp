@@ -10,8 +10,6 @@
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
 constexpr auto TOP_BAR_WIDTH = 20.f;
 constexpr auto RESIZE_THINGY_SIZE = 20.f;
 
@@ -23,11 +21,10 @@ class WindowPanel : public Component
 {
 public:
     WindowPanel()
-    : style_(BasicStyleSheetFactory::create())
     {
-        background_.setFillColor(style_.getInactiveWindowColor());
-        background_.setOutlineColor(style_.getOutlineColor());
-        background_.setOutlineThickness(style_.getOutlineThickness());
+        background_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
+        background_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+        background_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
     }
 
     void onParentSizeChange(const sf::Vector2f& parent_size) override
@@ -72,21 +69,14 @@ public:
         renderWindow.draw(background_);
     }
 
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override
-    {
-        static_cast<void>(mousePosition);
-        static_cast<void>(isLeftClicked);
-        return false;
-    }
-
     void onFocus()
     {
-        background_.setFillColor(style_.getWindowColor());
+        background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
     }
 
     void onFocusLost()
     {
-        background_.setFillColor(style_.getInactiveWindowColor());
+        background_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
     }
 
 protected:
@@ -98,10 +88,9 @@ class TopBar : public Component
 {
 public:
     TopBar()
-    : style_(BasicStyleSheetFactory::create())
     {
-        top_bar_.setOutlineColor(style_.getOutlineColor());
-        top_bar_.setOutlineThickness(style_.getOutlineThickness());
+        top_bar_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+        top_bar_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
 
         // TODO add layout component for button and title text
         auto close_button = std::make_unique<gui::Button>("X");
@@ -131,12 +120,6 @@ public:
     void onRender(sf::RenderWindow& renderWindow) override
     {
         renderWindow.draw(top_bar_);
-    }
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override
-    {
-        static_cast<void>(mousePosition);
-        static_cast<void>(isLeftClicked);
-        return false;
     }
 
     void onParentSizeChange(const sf::Vector2f& parent_size) override
@@ -172,12 +155,12 @@ public:
 
     void onFocus()
     {
-        top_bar_.setFillColor(style_.getTopBarWindowColor());
+        top_bar_.setFillColor(BasicStyleSheetFactory::instance().getTopBarWindowColor());
     }
 
     void onFocusLost()
     {
-        top_bar_.setFillColor(style_.getInactiveTopBarWindowColor());
+        top_bar_.setFillColor(BasicStyleSheetFactory::instance().getInactiveTopBarWindowColor());
     }
 
     bool isInside(const sf::Vector2f point)
@@ -188,7 +171,6 @@ public:
 protected:
     gui::Label* title_text_handle_;
     sf::RectangleShape top_bar_;
-    gui::StyleSheet style_;
     std::function<void()> closeButtonAction_;
 };
 
@@ -196,15 +178,14 @@ class BottomBar : public Component
 {
 public:
     BottomBar()
-    : style_(BasicStyleSheetFactory::create())
     {
-        background_.setFillColor(style_.getInactiveWindowColor());
-        background_.setOutlineColor(style_.getOutlineColor());
-        background_.setOutlineThickness(style_.getOutlineThickness());
+        background_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
+        background_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+        background_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
 
-        resize_thingy_.setOutlineColor(style_.getOutlineColor());
-        resize_thingy_.setOutlineThickness(style_.getOutlineThickness());
-        resize_thingy_.setFillColor(style_.getInactiveWindowColor());
+        resize_thingy_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+        resize_thingy_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
+        resize_thingy_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
 
         resize_thingy_.setSize(sf::Vector2f{RESIZE_THINGY_SIZE, RESIZE_THINGY_SIZE});
     }
@@ -213,12 +194,6 @@ public:
     {
         renderWindow.draw(background_);
         renderWindow.draw(resize_thingy_);
-    }
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override
-    {
-        static_cast<void>(mousePosition);
-        static_cast<void>(isLeftClicked);
-        return false;
     }
 
     void onParentSizeChange(const sf::Vector2f& parent_size) override
@@ -261,12 +236,12 @@ public:
 
     void onFocus()
     {
-        background_.setFillColor(style_.getWindowColor());
+        background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
     }
 
     void onFocusLost()
     {
-        background_.setFillColor(style_.getInactiveWindowColor());
+        background_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
     }
 
     bool isInsideResizeThingy(const sf::Vector2f point)
@@ -274,11 +249,9 @@ public:
         return resize_thingy_.getGlobalBounds().contains(point);
     }
 
-
 protected:
     sf::RectangleShape resize_thingy_;
     sf::RectangleShape background_;
-    gui::StyleSheet style_;
 };
 
 class Window : public Component
@@ -290,7 +263,6 @@ public:
     void setTitle(const std::string_view& text);
     bool isInside(const sf::Vector2f point);
     void onRender(sf::RenderWindow& renderWindow) override;
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override;
     void close();
     bool isDead() const;
     void focus();
@@ -313,13 +285,15 @@ protected:
     bool isInsideTopBar(const sf::Vector2f point);
     bool isInsideResizeThingy(const sf::Vector2f point);
     bool isState(const Window::State& state);
-    void updateResizeThingy();
+
+    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
     bool killed_;
     bool focused_;
     State state_;
     sf::Vector2f dragging_offset_;
-    gui::StyleSheet style_;
 
     //TODO: weak_ptrs maybe?
     gui::TopBar* top_bar_handle_;

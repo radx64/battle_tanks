@@ -21,7 +21,6 @@ Window::Window()
 : killed_{false}
 , focused_{false}
 , state_{State::Idle}
-, style_(BasicStyleSheetFactory::create())
 {   
     auto top_bar = std::make_unique<gui::TopBar>();
 
@@ -85,32 +84,87 @@ bool Window::isState(const Window::State& state)
     return state_ == state;
 }
 
-bool Window::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
+void Window::close()
 {
+    setVisibility(false);
+    killed_ = true;
+}
+
+bool Window::isDead() const
+{
+    return killed_;
+}
+
+void Window::focus()
+{
+    focused_ = true;
+    //enableChildrenEvents();
+    top_bar_handle_->onFocus();
+    window_panel_handle_->onFocus();
+    bottom_bar_handle_->onFocus();
+}
+
+void Window::defocus()
+{
+    focused_ = false;
+    //disableChildrenEvents();
+    top_bar_handle_->onFocusLost();
+    window_panel_handle_->onFocusLost();
+    bottom_bar_handle_->onFocusLost();
+    state_ = State::Idle;
+}
+
+bool Window::isFocused() const
+{
+    return focused_;
+}
+
+EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+{
+    auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+
     // If mouse clicked on top bar and was not yet dragging window
-    if (isInsideTopBar(mousePosition) and (isState(State::Idle)) and isLeftClicked)
+    if (isInsideTopBar(mousePosition) and isState(State::Idle))
     {
         state_ = State::Dragging; 
+        disableChildrenEvents();
         dragging_offset_ = getPosition() -  mousePosition;
+        return gui::EventStatus::Consumed;
     }
 
-    if (isInsideResizeThingy(mousePosition) and (isState(State::Idle)) and isLeftClicked)
+    if (isInsideResizeThingy(mousePosition) and isState(State::Idle))
     {
         state_ = State::Resizing;
+        disableChildrenEvents();
+        return gui::EventStatus::Consumed;
     }
 
-    // If mouse was released when dragging or resizing window
-    if (not isLeftClicked and (isState(State::Dragging) or isState(State::Resizing)))
+    return gui::EventStatus::NotConsumed;
+}
+
+EventStatus Window::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+{
+    UNUSED(mouseButtonReleasedEvent);
+
+    if (state_ != State::Idle) 
     {
-        enableChildrenEvents();
         state_ = State::Idle;
-    } 
+        enableChildrenEvents();
+        return gui::EventStatus::Consumed;
+    }
+
+    return gui::EventStatus::NotConsumed;
+}
+
+EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
+{
+    auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
     if (isState(State::Dragging))
     {
         disableChildrenEvents();
         setPosition(mousePosition + dragging_offset_, alignment_);
-        return EVENT_PROCESSED;
+        return gui::EventStatus::Consumed;
     }
 
     if (isState(State::Resizing))
@@ -145,45 +199,11 @@ bool Window::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked
                 break;
             }
         }
-
         // If currently resizing window process the mouse event
-        return EVENT_PROCESSED;
-        
+        return gui::EventStatus::Consumed;
     }
 
-    return EVENT_NOT_PROCESSED;
-}
-
-void Window::close()
-{
-    killed_ = true;
-}
-
-bool Window::isDead() const
-{
-    return killed_;
-}
-
-void Window::focus()
-{
-    focused_ = true;
-    top_bar_handle_->onFocus();
-    window_panel_handle_->onFocus();
-    bottom_bar_handle_->onFocus();
-}
-
-void Window::defocus()
-{
-    focused_ = false;
-    top_bar_handle_->onFocusLost();
-    window_panel_handle_->onFocusLost();
-    bottom_bar_handle_->onFocusLost();
-    state_ = State::Idle;
-}
-
-bool Window::isFocused() const
-{
-    return focused_;
+    return gui::EventStatus::NotConsumed;
 }
 
 }  // namespace gui

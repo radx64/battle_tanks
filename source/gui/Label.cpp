@@ -7,7 +7,7 @@ namespace gui
 
 Label::Label(const std::string_view& text)
 {
-    auto style = BasicStyleSheetFactory::create();
+    auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());
     text_.setCharacterSize(style.getFontSize());
     text_.setFillColor(style.getFontColor());
@@ -28,13 +28,6 @@ void Label::setText(const sf::String& text)
     bounds_.width = text_.getGlobalBounds().width;
     bounds_.height = text_.getGlobalBounds().height;
     Component::updateGlobalPosition();
-}
-
-bool Label::onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked)
-{
-    (void) mousePosition;
-    (void) isLeftClicked;
-    return false;
 }
 
 }  // namespace gui

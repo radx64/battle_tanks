@@ -4,8 +4,6 @@
 #include "gui/Alignment.hpp"
 #include "gui/Component.hpp"
 
-#include <iostream>
-
 namespace gui
 {
 
@@ -16,12 +14,6 @@ public:
     void onRender(sf::RenderWindow& renderWindow) override
     {
         static_cast<void>(renderWindow);
-    }
-    bool onMouseUpdate(const sf::Vector2f& mousePosition, bool isLeftClicked) override
-    {
-        static_cast<void>(mousePosition);
-        static_cast<void>(isLeftClicked);
-        return false;
     }
 };
 

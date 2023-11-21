@@ -10,6 +10,8 @@ target_sources(gui_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Alignment.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Button.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Component.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Event.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/EventReceiver.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Layout.hpp
