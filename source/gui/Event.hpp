@@ -39,6 +39,14 @@ namespace gui::event
         MousePosition position;
     };
 
+    struct MouseEntered
+    {
+    };
+
+    struct MouseLeft
+    {
+    };
+
 }  // namespace gui::event
 
 #endif  // GUI_EVENT_HPP_

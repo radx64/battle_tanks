@@ -7,9 +7,12 @@
 namespace gui
 {
 
-WindowManager::WindowManager()
+WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
 : active_window_handle_ {nullptr}
-{}
+{
+    main_window_ = std::make_unique<MainWindow>();
+    main_window_->setSize(mainWindowSize);
+}
 
 void WindowManager::addWindow(std::unique_ptr<Window> window)
 {
@@ -24,11 +27,17 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
 
 void WindowManager::render(sf::RenderWindow& renderWindow)
 {
-    for (auto window_it = windows_.end(); window_it != windows_.begin();)
+    main_window_->render(renderWindow);
+    
+    for (auto window = windows_.rbegin(); window != windows_.rend(); ++window  )
     {
-        --window_it;
-        (*window_it)->render(renderWindow);
+        (*window)->render(renderWindow);
     }
+}
+
+MainWindow* WindowManager::mainWindow()
+{
+    return main_window_.get();
 }
 
 EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
@@ -46,7 +55,7 @@ EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonP
 
     while(window_it != windows_.end())
     {
-        Window* window = (*window_it).get();
+        auto window = (*window_it).get();
 
         if (window->isDead())
         {
@@ -70,6 +79,7 @@ EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonP
 
         active_window_handle_->receive(mouseButtonPressedEvent);
         
+        // FIXME: I'm checking twice if window is dead (see top of this method)
         if (active_window_handle_->isDead())
         {
             windows_.remove_if([this](auto& window){ return window.get() == active_window_handle_;});
@@ -80,26 +90,83 @@ EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonP
         window_it++;
     }
 
-    return gui::EventStatus::NotConsumed;
+    return main_window_->receive(mouseButtonPressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
 {
-    for (auto& window : windows_)
+    auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+
+    gui::EventStatus status {EventStatus::NotConsumed};
+
+    bool hasAnyWindowReceivedMouseEnterEvent{false};
+
+    for (auto window = windows_.begin(); window != windows_.end(); ++window)
     {
-        auto result = window->receive(mouseMovedEvent);
-        if (result == gui::EventStatus::Consumed) return result;
+        if (hasAnyWindowReceivedMouseEnterEvent)
+        {
+            if ((*window)->wasMouseInside())
+            {
+                (*window)->receive(event::MouseLeft{});
+            }
+            continue;
+        }
+
+        // FIXME refactor this loop body to reduce number of if statements
+        bool isMouseInside = (*window)->isInside(mousePosition);
+        bool wasMouseInside = (*window)->wasMouseInside();
+
+        // Mouse still in active window
+        if (wasMouseInside and isMouseInside)
+        {
+            hasAnyWindowReceivedMouseEnterEvent = true;
+        }
+
+        if (not wasMouseInside and isMouseInside and not hasAnyWindowReceivedMouseEnterEvent)
+        {
+            hasAnyWindowReceivedMouseEnterEvent = true;
+            (*window)->receive(event::MouseEntered{});
+        }
+
+        if (wasMouseInside and not isMouseInside)
+        {
+            (*window)->receive(event::MouseLeft{});
+        }
+
+        // Send move events to window only if mouse is over or window is beeing dragged/resized
+        if ((*window)->isInside(mousePosition) or (not (*window)->isIdle()))
+        {
+            auto current_window_status = (*window)->receive(mouseMovedEvent);
+
+            if (current_window_status == gui::EventStatus::Consumed) 
+            {
+                status = current_window_status;
+                break; // Stop processing rest of the windows if current one consumed mouse event
+            }
+        }
     }
 
-    return gui::EventStatus::NotConsumed;
+    if (status == EventStatus::NotConsumed)
+    {
+        status = main_window_->receive(mouseMovedEvent);
+    }
+
+    return status;
 }
 
 EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
+    EventStatus result{EventStatus::NotConsumed};
+
     //Forward event to active window
     if (active_window_handle_ && active_window_handle_->isFocused())
     {
-        return active_window_handle_->receive(mouseButtonReleasedEvent);
+        result = active_window_handle_->receive(mouseButtonReleasedEvent);
+    }
+
+    if (result ==  EventStatus::NotConsumed)
+    {
+        return main_window_->receive(mouseButtonReleasedEvent);
     }
 
     //There is no active window

@@ -42,13 +42,21 @@ Application::Application()
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
 
-    window_manager_ = std::make_unique<gui::WindowManager>();
+    window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{WINDOW_WIDTH, WINDOW_HEIGHT});
 
     configureTexts();
 }
 
 void Application::configureTexts()
 {
+    auto demo_button_1 = std::make_unique<gui::Button>("TEST");
+    demo_button_1->setPosition(sf::Vector2f(100.f, 200.f), gui::Alignment::LEFT);
+    demo_button_1->setSize(sf::Vector2f{200.f, 200.f});
+    demo_button_1->onClick([](){std::cout << "TEST" <<std::endl;});
+
+    test_floating_button_handle_ = demo_button_1.get();
+    window_manager_->mainWindow()->addChild(std::move(demo_button_1));
+
     auto parent_label = std::make_unique<gui::Label>("PARENT_LABEL");
     parent_label->setPosition(sf::Vector2f(100.0f, 200.0f), gui::Alignment::LEFT);
 
@@ -64,18 +72,20 @@ void Application::configureTexts()
     child_label_2->addChild(std::move(second_level_child_label));
     parent_label->addChild(std::move(child_label_1));
     parent_label->addChild(std::move(child_label_2)); 
-
-    guiElements_.push_back(std::move(parent_label));
+    
+    window_manager_->mainWindow()->addChild(std::move(parent_label));
 
     auto measurements_text = std::make_unique<gui::Label>("");
     measurements_text->setPosition(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
     measurements_text_handle_ = measurements_text.get();
-    guiElements_.push_back(std::move(measurements_text));
+
+    window_manager_->mainWindow()->addChild(std::move(measurements_text));
 
     auto measurements_average_text = std::make_unique<gui::Label>("");
     measurements_average_text->setPosition(sf::Vector2f(200.f, 20.f), gui::Alignment::LEFT);
     measurements_average_text_handle_ = measurements_average_text.get();
-    guiElements_.push_back(std::move(measurements_average_text));
+
+    window_manager_->mainWindow()->addChild(std::move(measurements_average_text));
 
     auto button = std::make_unique<gui::Button>("Help");
     button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
@@ -85,13 +95,14 @@ void Application::configureTexts()
         help_window->setTitle("Help");
         window_manager_->addWindow(std::move(help_window));
     });
-    guiElements_.push_back(std::move(button));
+
+    window_manager_->mainWindow()->addChild(std::move(button));
 
     auto demo_label_button = std::make_unique<gui::Button>("LABEL DEMO");
     demo_label_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
     demo_label_button->setSize(sf::Vector2f(150.f, 50.f));
     demo_label_button->onClick([this](){label_demo_visible_ = !label_demo_visible_;});
-    guiElements_.push_back(std::move(demo_label_button));
+    window_manager_->mainWindow()->addChild(std::move(demo_label_button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
     spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 400.f), gui::Alignment::LEFT);
@@ -127,6 +138,8 @@ void Application::configureTexts()
         //vertical_layout->addComponent(std::move(world));
 
         window->addComponent(std::move(horizontal_layout));
+        //hello->setSize(sf::Vector2f{30.f,30.f});
+        //window->addComponent(std::move(hello));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
@@ -134,7 +147,7 @@ void Application::configureTexts()
 
         window_manager_->addWindow(std::move(window));
     });
-    guiElements_.push_back(std::move(spawn_window_button));
+    window_manager_->mainWindow()->addChild(std::move(spawn_window_button));
 }
 
 void Application::spawnSomeTanks()
@@ -170,7 +183,7 @@ int Application::run()
         quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
         quit_button->setSize(sf::Vector2f(150.f, 50.f));
         quit_button->onClick([&window](){std::cout << "Quitting...\n"; window.close();});
-        guiElements_.push_back(std::move(quit_button));
+        window_manager_->mainWindow()->addChild(std::move(quit_button));
 
         constexpr int number_of_measurements = 20;
         math::Average draw_average{number_of_measurements};
@@ -280,16 +293,16 @@ int Application::run()
             // Temporary hack for testing objects movement
             if (label_demo_visible_)
             {
-                guiElements_[0]->setVisibility(true);
-                auto position = guiElements_[0]->getPosition();
+                test_floating_button_handle_->setVisibility(true);
+                auto position = test_floating_button_handle_->getPosition();
                 position.x += 1.0f;
                 position.y = (sin(position.x / 20.f) * 100.f) + 300.f;
                 if (position.x > 1000.0f) position =  sf::Vector2f(1.0f, 1.0f);
-                guiElements_[0]->setPosition(position, gui::Alignment::LEFT);
+                test_floating_button_handle_->setPosition(position, gui::Alignment::LEFT);
             }
             else
             {
-                guiElements_[0]->setVisibility(false);
+                test_floating_button_handle_->setVisibility(false);
             }
 
             bool isCurrentMouseEventLeftClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
@@ -329,31 +342,9 @@ int Application::run()
                     .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
             }
 
-
-            for (auto& guiElement : guiElements_)
-            {   
-                // TODO: consider checking if mouse movement was caputred by free gui elements
-                // or these should be added to window manager on some "special window"
-                if (mouseMovedEvent) guiElement->receive(mouseMovedEvent.value());
-                if (mousePressedEvent) 
-                {
-                    auto result = guiElement->receive(mousePressedEvent.value());
-                    if (result == gui::EventStatus::Consumed)
-                    {
-                        currentLeftClickEventStatus = result;
-                    }
-                }
-
-                if (mouseReleaseEvent) guiElement->receive(mouseReleaseEvent.value());
-
-                guiElement->render(window);
-            }
-
-
             // FIXME: isLeftMouseButtonClicked fires only once (for gui i need proper state of mouse every frame)
             //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
             //  I need to have proper mouse state every frame.
-            if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
             if (mousePressedEvent) 
             {
                 auto result = window_manager_->receive(mousePressedEvent.value());
@@ -363,6 +354,9 @@ int Application::run()
                 }
             }
             if (mouseReleaseEvent) window_manager_->receive(mouseReleaseEvent.value());
+            
+            if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
+            
             window_manager_->render(window);
 
             // I'm integrating new event system in components so this code looks very messy.

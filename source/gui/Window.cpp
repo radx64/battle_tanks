@@ -45,6 +45,7 @@ Window::Window()
     Component::addChild(std::move(window_panel));
 
     auto bottom_bar = std::make_unique<gui::BottomBar>();
+    bottom_bar->setSize(getSize());
     bottom_bar_handle_ = bottom_bar.get();
     Component::addChild(std::move(bottom_bar));
 }
@@ -57,11 +58,6 @@ void Window::setSize(const sf::Vector2f& size)
 void Window::setTitle(const std::string_view& text)
 {
     top_bar_handle_->setTitle(text);
-}
-
-bool Window::isInside(const sf::Vector2f point)
-{
-    return bounds_.contains(point);
 }
 
 bool Window::isInsideTopBar(const sf::Vector2f point)
@@ -79,7 +75,7 @@ void Window::onRender(sf::RenderWindow& renderWindow)
     static_cast<void>(renderWindow);
 }
 
-bool Window::isState(const Window::State& state)
+bool Window::isState(const Window::State& state) const
 {
     return state_ == state;
 }
@@ -98,7 +94,6 @@ bool Window::isDead() const
 void Window::focus()
 {
     focused_ = true;
-    //enableChildrenEvents();
     top_bar_handle_->onFocus();
     window_panel_handle_->onFocus();
     bottom_bar_handle_->onFocus();
@@ -107,7 +102,6 @@ void Window::focus()
 void Window::defocus()
 {
     focused_ = false;
-    //disableChildrenEvents();
     top_bar_handle_->onFocusLost();
     window_panel_handle_->onFocusLost();
     bottom_bar_handle_->onFocusLost();

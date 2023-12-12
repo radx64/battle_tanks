@@ -46,8 +46,6 @@ protected:
 
         auto child_size = getChildSize(layout_size);
 
-        // std::cout << "child width " <<child_width << std::endl;
-        // std::cout << "layout_size width " <<layout_size.x << std::endl;
         size_t child_index{0};
         for (auto& child : children_)
         {
@@ -55,8 +53,8 @@ protected:
 
             // ignore alignment left for now (i will remove it later)
             // as using such layouts is a better idea
-            child->setSize(child_size);
             child->setPosition(child_position, Alignment::LEFT);
+            child->setSize(child_size);
             child_index++;
         }
     }
@@ -64,10 +62,20 @@ protected:
     void onParentSizeChange(const sf::Vector2f& parent_size) override
     {
         // set layout size to it's parent size
+        // FIXME: Maybe this setSize should be decided by parent?
         Component::setSize(parent_size);
         // recalculate childen to resize them
         recalculateChildrenBounds();
     }
+
+    void onParentPositionChange(const sf::Vector2f& parent_position) override
+    {
+        UNUSED(parent_position);
+        // FIXME: Is it really needed. Position change of a parent should move layout
+        // and it's children but sizes should stay the same
+        recalculateChildrenBounds();
+    }
+
 
 };
 
@@ -113,7 +121,6 @@ protected:
     {
         float child_x = 0.f;
         float child_y = child_index * child_size.y;
-        std::cout << child_y << std::endl;
         return sf::Vector2f{child_x, child_y};
     }
 };

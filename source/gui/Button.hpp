@@ -18,13 +18,16 @@ public:
     ~Button();
 
     void setSize(const sf::Vector2f& size) override;
+    void setPosition(const sf::Vector2f& position, const Alignment alignment) override;
+    void onParentPositionChange(const sf::Vector2f& parent_position) override;
     void setText(const sf::String& text);
     void onRender(sf::RenderWindow& renderWindow) override;
     void onClick(std::function<void()> onClickCallback);
 
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
     EventStatus on(const event::MouseButtonPressed& mousePressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
+    EventStatus on(const event::MouseLeft& mouseLeftEvent) override;
 
 protected:
     sf::RectangleShape background_;
