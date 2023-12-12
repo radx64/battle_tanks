@@ -95,7 +95,6 @@ void Application::configureTexts()
         help_window->setTitle("Help");
         window_manager_->addWindow(std::move(help_window));
     });
-
     window_manager_->mainWindow()->addChild(std::move(button));
 
     auto demo_label_button = std::make_unique<gui::Button>("LABEL DEMO");
