@@ -10,7 +10,9 @@
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
 
-constexpr auto TOP_BAR_WIDTH = 20.f;
+#include <iostream>
+
+constexpr auto TOP_BAR_HEIGHT = 20.f;
 constexpr auto RESIZE_THINGY_SIZE = 20.f;
 
 namespace gui { class Label; }
@@ -46,7 +48,7 @@ public:
         static_cast<void>(size);
 
         auto panel_size = parent_->getSize();
-        panel_size.y = panel_size.y - TOP_BAR_WIDTH - RESIZE_THINGY_SIZE;
+        panel_size.y = panel_size.y - TOP_BAR_HEIGHT - RESIZE_THINGY_SIZE;
 
         Component::setSize(panel_size);
         auto background_size = panel_size;
@@ -57,7 +59,7 @@ public:
     void setPosition(const sf::Vector2f& position, const Alignment alignment) override
     {
         static_cast<void>(position);
-        auto panel_position = sf::Vector2f{0.f, TOP_BAR_WIDTH};
+        auto panel_position = sf::Vector2f{0.f, TOP_BAR_HEIGHT};
 
         //FIXME position should be offset by top bar
         Component::setPosition(panel_position, alignment);
@@ -89,17 +91,18 @@ class TopBar : public Component
 public:
     TopBar()
     {
-        top_bar_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
-        top_bar_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
+        top_bar_shape_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+        top_bar_shape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
 
         // TODO add layout component for button and title text
         auto close_button = std::make_unique<gui::Button>("X");
-        close_button->setPosition(sf::Vector2f(0.f, 0.f), gui::Alignment::LEFT);
-        close_button->setSize(sf::Vector2f(20.f, TOP_BAR_WIDTH));
+        //close_button->setPosition(sf::Vector2f(0.f, 0.f), gui::Alignment::LEFT);
+        close_button->setSize(sf::Vector2f(20.f, TOP_BAR_HEIGHT));
         close_button->onClick([this]()
         {
             if (closeButtonAction_) closeButtonAction_();
         });
+        close_button_ptr_ = close_button.get();   
         addChild(std::move(close_button));
 
         auto title_text = std::make_unique<gui::Label>("");
@@ -119,13 +122,16 @@ public:
 
     void onRender(sf::RenderWindow& renderWindow) override
     {
-        renderWindow.draw(top_bar_);
+        renderWindow.draw(top_bar_shape_);
     }
 
     void onParentSizeChange(const sf::Vector2f& parent_size) override
     {
         //FIXME this is probably wrong as only renderable has proper size
         setSize(parent_size);
+
+        auto parent_width = parent_->getSize().x;
+        close_button_ptr_->setPosition(sf::Vector2f{parent_width - 20.f, 0.f}, alignment_);
     }
 
     void onParentPositionChange(const sf::Vector2f& parent_position) override
@@ -139,38 +145,39 @@ public:
     {
         Component::setSize(size);
         auto top_bar_size = size;
-        top_bar_size.y = TOP_BAR_WIDTH;
-        top_bar_.setSize(top_bar_size);
+        top_bar_size.y = TOP_BAR_HEIGHT;
+        top_bar_shape_.setSize(top_bar_size);
     }
 
     void setPosition(const sf::Vector2f& position, const Alignment alignment) override
     {
         Component::setPosition(position, alignment);
-        top_bar_.setPosition(Component::getGlobalPosition());
+        top_bar_shape_.setPosition(Component::getGlobalPosition());
 
         const auto window_size = getSize();
-        sf::Vector2f tile_text_position {window_size.x/2.f, TOP_BAR_WIDTH / 2.f};
+        sf::Vector2f tile_text_position {window_size.x/2.f, TOP_BAR_HEIGHT / 2.f};
         title_text_handle_->setPosition(tile_text_position, gui::Alignment::CENTERED);
     }
 
     void onFocus()
     {
-        top_bar_.setFillColor(BasicStyleSheetFactory::instance().getTopBarWindowColor());
+        top_bar_shape_.setFillColor(BasicStyleSheetFactory::instance().getTopBarWindowColor());
     }
 
     void onFocusLost()
     {
-        top_bar_.setFillColor(BasicStyleSheetFactory::instance().getInactiveTopBarWindowColor());
+        top_bar_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveTopBarWindowColor());
     }
 
     bool isInside(const sf::Vector2f point)
     {
-        return top_bar_.getGlobalBounds().contains(point);
+        return top_bar_shape_.getGlobalBounds().contains(point);
     }
 
 protected:
     gui::Label* title_text_handle_;
-    sf::RectangleShape top_bar_;
+    sf::RectangleShape top_bar_shape_;
+    gui::Button* close_button_ptr_;
     std::function<void()> closeButtonAction_;
 };
 
@@ -198,7 +205,6 @@ public:
 
     void onParentSizeChange(const sf::Vector2f& parent_size) override
     {
-        //FIXME this is probably wrong as only renderable has proper size
         setSize(parent_size);
     }
 
@@ -254,6 +260,22 @@ protected:
     sf::RectangleShape background_;
 };
 
+
+// Class for main application window layer
+// It should always be as a backlayer
+// Can be used to place GUI components
+// on screen
+// Can't be move
+// It's size is application window size  
+class MainWindow : public Component
+{
+public:
+    void onRender(sf::RenderWindow& renderWindow) override
+    {
+        UNUSED(renderWindow);
+    }
+};
+
 class Window : public Component
 {
 public:
@@ -261,13 +283,17 @@ public:
 
     void setSize(const sf::Vector2f& size) override;
     void setTitle(const std::string_view& text);
-    bool isInside(const sf::Vector2f point);
     void onRender(sf::RenderWindow& renderWindow) override;
     void close();
     bool isDead() const;
     void focus();
     void defocus();
     bool isFocused() const;
+
+    bool isIdle() const
+    {
+        return isState(Window::State::Idle);
+    }
 
     void addComponent(std::unique_ptr<Component> component)
     {
@@ -281,10 +307,9 @@ protected:
         Dragging,
         Resizing
     };
-
+    bool isState(const Window::State& state) const;
     bool isInsideTopBar(const sf::Vector2f point);
     bool isInsideResizeThingy(const sf::Vector2f point);
-    bool isState(const Window::State& state);
 
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;

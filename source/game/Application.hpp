@@ -46,12 +46,13 @@ protected:
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
+    gui::Button* test_floating_button_handle_;
     std::unique_ptr<gui::WindowManager> window_manager_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Tank>> tanks_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
-    std::vector<std::unique_ptr<gui::Component>> guiElements_;
+    //std::vector<std::unique_ptr<gui::Component>> guiElements_;
 };
 
 }  // namespace game
