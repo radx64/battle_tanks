@@ -21,7 +21,7 @@ public:
     void setPosition(const sf::Vector2f& position, const Alignment alignment) override;
     void onParentPositionChange(const sf::Vector2f& parent_position) override;
     void setText(const sf::String& text);
-    void onRender(sf::RenderWindow& renderWindow) override;
+    void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
 
     EventStatus on(const event::MouseButtonPressed& mousePressedEvent) override;

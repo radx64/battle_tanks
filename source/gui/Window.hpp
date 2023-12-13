@@ -66,7 +66,7 @@ public:
         background_.setPosition(Component::getGlobalPosition());
     }
 
-    void onRender(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderTexture& renderWindow) override
     {
         renderWindow.draw(background_);
     }
@@ -120,7 +120,7 @@ public:
         title_text_handle_->setText(text.data());
     }
 
-    void onRender(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderTexture& renderWindow) override
     {
         renderWindow.draw(top_bar_shape_);
     }
@@ -197,7 +197,7 @@ public:
         resize_thingy_.setSize(sf::Vector2f{RESIZE_THINGY_SIZE, RESIZE_THINGY_SIZE});
     }
 
-    void onRender(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderTexture& renderWindow) override
     {
         renderWindow.draw(background_);
         renderWindow.draw(resize_thingy_);
@@ -270,7 +270,7 @@ protected:
 class MainWindow : public Component
 {
 public:
-    void onRender(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderTexture& renderWindow) override
     {
         UNUSED(renderWindow);
     }
@@ -283,7 +283,7 @@ public:
 
     void setSize(const sf::Vector2f& size) override;
     void setTitle(const std::string_view& text);
-    void onRender(sf::RenderWindow& renderWindow) override;
+    void onRender(sf::RenderTexture& renderWindow) override;
     void close();
     bool isDead() const;
     void focus();

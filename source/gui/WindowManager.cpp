@@ -12,6 +12,7 @@ WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
 {
     main_window_ = std::make_unique<MainWindow>();
     main_window_->setSize(mainWindowSize);
+    render_texture_.create(mainWindowSize.x, mainWindowSize.y);
 }
 
 WindowManager::~WindowManager() = default;
@@ -29,12 +30,16 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
 
 void WindowManager::render(sf::RenderWindow& renderWindow)
 {
-    main_window_->render(renderWindow);
+    render_texture_.clear(sf::Color{0,0,0,0});
+    main_window_->render(render_texture_);
     
     for (auto window = windows_.rbegin(); window != windows_.rend(); ++window  )
     {
-        (*window)->render(renderWindow);
+        (*window)->render(render_texture_);
     }
+    render_texture_.display();
+    sf::Sprite texture(render_texture_.getTexture());
+    renderWindow.draw(texture);
 }
 
 MainWindow* WindowManager::mainWindow()

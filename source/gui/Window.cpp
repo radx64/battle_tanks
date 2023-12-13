@@ -66,7 +66,7 @@ bool Window::isInsideResizeThingy(const sf::Vector2f point)
     return bottom_bar_handle_->isInsideResizeThingy(point);
 }
 
-void Window::onRender(sf::RenderWindow& renderWindow)
+void Window::onRender(sf::RenderTexture& renderWindow)
 {
     static_cast<void>(renderWindow);
 }

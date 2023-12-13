@@ -52,9 +52,9 @@ void Button::setText(const sf::String& text)
     text_->setText(text);
 }
 
-void Button::onRender(sf::RenderWindow& renderWindow)
+void Button::onRender(sf::RenderTexture& renderTexture)
 {
-    renderWindow.draw(background_);
+    renderTexture.draw(background_);
 }
 
 void Button::onClick(std::function<void()> onClickCallback)

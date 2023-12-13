@@ -3,7 +3,7 @@
 namespace gui
 {
 
-void Layout::onRender(sf::RenderWindow& renderWindow)
+void Layout::onRender(sf::RenderTexture& renderWindow)
 {
     static_cast<void>(renderWindow);
 }

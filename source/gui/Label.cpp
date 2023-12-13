@@ -16,7 +16,7 @@ Label::Label(const std::string_view& text)
     setText(text.data()); 
 }
 
-void Label::onRender(sf::RenderWindow& renderWindow)
+void Label::onRender(sf::RenderTexture& renderWindow)
 {
     text_.setPosition(Component::getGlobalPosition());
     renderWindow.draw(text_);

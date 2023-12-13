@@ -25,9 +25,9 @@ public:
     virtual ~Component() = default;
     
     //TODO: Those two methods should be protected
-    virtual void onRender(sf::RenderWindow& renderWindow) = 0;
+    virtual void onRender(sf::RenderTexture& renderTexture) = 0;
     
-    void render(sf::RenderWindow& renderWindow);
+    void render(sf::RenderTexture& renderTexture);
 
     virtual sf::Vector2f getSize();
     // TODO: introduce onSizeChange instead of overriding setSize()

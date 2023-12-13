@@ -5,10 +5,12 @@ namespace gui
 
 namespace
 {
+
 sf::Vector2f toVector2f(const event::MousePosition& position)
 {
     return sf::Vector2f{position.x, position.y};
 }
+
 }
 
 
@@ -23,13 +25,13 @@ Component::Component()
 {
 }
 
-void Component::render(sf::RenderWindow& renderWindow)
+void Component::render(sf::RenderTexture& renderTexture)
 {
     if (!is_visible_) return;
-    onRender(renderWindow);
+    onRender(renderTexture);
     for (auto& child : children_)
     {
-        child->render(renderWindow); 
+        child->render(renderTexture); 
     }
 }
 

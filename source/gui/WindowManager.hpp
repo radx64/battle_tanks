@@ -33,6 +33,7 @@ protected:
     std::list<std::unique_ptr<Window>> windows_;
     Window* active_window_handle_;
     std::unique_ptr<MainWindow> main_window_;
+    sf::RenderTexture render_texture_;
 };
 
 }  // namespace gui

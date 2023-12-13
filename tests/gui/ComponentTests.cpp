@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <SFML/Graphics.hpp>
+
 #include "gui/Component.hpp"
 
 #define UNUSED(x) static_cast<void>(x)
@@ -18,7 +20,7 @@ public:
     }
 
     MOCK_METHOD(void, render_mock, ());
-    void onRender(sf::RenderWindow& renderWindow) override
+    void onRender(sf::RenderTexture& renderWindow) override
     {
         UNUSED(renderWindow);
         render_mock();
@@ -87,14 +89,14 @@ TEST(ComponentShould, callOnRenderMethodOnlyWhenComponentIsVisible)
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
     auto sut_ptr = sut_.get();
 
-    sf::RenderWindow renderWindow;
+    sf::RenderTexture guiRenderTexture;
     EXPECT_CALL(*sut_ptr, render_mock()).Times(1);
     sut_->setVisibility(true);
-    sut_->render(renderWindow);
+    sut_->render(guiRenderTexture);
 
     EXPECT_CALL(*sut_ptr, render_mock()).Times(0);
     sut_->setVisibility(false);
-    sut_->render(renderWindow);
+    sut_->render(guiRenderTexture);
 }
 
 /*********************
@@ -124,7 +126,7 @@ TEST(ComponentShould, renderChildrenOnlyWhenComponentItselfIsVisible)
     sut_->addChild(std::move(child_1));
     sut_->addChild(std::move(child_2));
 
-    sf::RenderWindow renderWindow;
+    sf::RenderTexture renderWindow;
     EXPECT_CALL(*sut_ptr, render_mock()).Times(1);
     EXPECT_CALL(*child_1_ptr, render_mock()).Times(1);
     EXPECT_CALL(*child_2_ptr, render_mock()).Times(1);

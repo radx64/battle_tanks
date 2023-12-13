@@ -13,7 +13,7 @@ class Label : public Component
 public:
     Label(const std::string_view& text);
 
-    void onRender(sf::RenderWindow& renderWindow) override;
+    void onRender(sf::RenderTexture& renderWindow) override;
     void setText(const sf::String& text);
 
 protected:

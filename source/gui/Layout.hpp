@@ -11,7 +11,7 @@ class Layout : public Component
 {
 public:
     Layout() = default;
-    void onRender(sf::RenderWindow& renderWindow) override;
+    void onRender(sf::RenderTexture& renderWindow) override;
 };
 
 class BaseLineLayout : public Layout
