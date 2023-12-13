@@ -10,10 +10,6 @@
 
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
-
-constexpr bool EVENT_PROCESSED = true;
-constexpr bool EVENT_NOT_PROCESSED = false;
-
 namespace gui
 {
 

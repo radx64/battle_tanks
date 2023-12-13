@@ -20,6 +20,7 @@ public:
     using EventReceiver::receive;    // to unshadow EventReceiver not overloaded methods
 
     WindowManager(const sf::Vector2f& mainWindowSize);
+    virtual ~WindowManager();
     void addWindow(std::unique_ptr<Window> window);
     void render(sf::RenderWindow& renderWindow);
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;

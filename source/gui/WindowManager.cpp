@@ -14,6 +14,8 @@ WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
     main_window_->setSize(mainWindowSize);
 }
 
+WindowManager::~WindowManager() = default;
+
 void WindowManager::addWindow(std::unique_ptr<Window> window)
 {
     if (active_window_handle_)
