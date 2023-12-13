@@ -89,7 +89,14 @@ TEST(ComponentShould, callOnRenderMethodOnlyWhenComponentIsVisible)
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
     auto sut_ptr = sut_.get();
 
+    sf::ContextSettings settings;
+    settings.majorVersion = 3;
+    settings.minorVersion = 2;
+    settings.attributeFlags = sf::ContextSettings::Core;
+
     sf::RenderTexture guiRenderTexture;
+    guiRenderTexture.create(100, 100, settings);
+    
     EXPECT_CALL(*sut_ptr, render_mock()).Times(1);
     sut_->setVisibility(true);
     sut_->render(guiRenderTexture);
