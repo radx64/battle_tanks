@@ -16,5 +16,10 @@ PRIVATE
     math_lib
 )
 
+if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
+    include(CodeCoverage)
+    setup_target_for_coverage(battle_tanks_testing_math_coverage battle_tanks_testing_math coverage_math)
+endif() #CMAKE_BUILD_TYPE STREQUAL "Coverage"
+
 add_test(NAME battle_tanks_testing_math
          COMMAND battle_tanks_testing_math)

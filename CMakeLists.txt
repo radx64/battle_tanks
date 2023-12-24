@@ -2,6 +2,8 @@ set(projectName "battle_tanks")
 cmake_minimum_required (VERSION 3.0)
 project (${projectName})
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -22,8 +24,14 @@ set(CMAKE_CXX_FLAGS "${warnings} -g -ggdb3"
 set(CMAKE_C_FLAGS   "${warnings}"
     CACHE STRING "Flags used by the compiler during all build types." FORCE)
 
+option(BUILD_TESTS "Build tests" OFF)
+
 add_subdirectory(source)
-add_subdirectory(tests)
+
+if(BUILD_TESTS)
+    message(STATUS "Building tests is enabled")
+    add_subdirectory(tests)
+endif()
 
 add_executable(battle_tanks main.cpp)
 target_link_libraries (battle_tanks 

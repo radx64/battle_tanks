@@ -19,5 +19,10 @@ PRIVATE
     gui_lib
 )
 
+if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
+    include(CodeCoverage)
+    setup_target_for_coverage(battle_tanks_testing_gui_coverage battle_tanks_testing_gui coverage_gui)
+endif() #CMAKE_BUILD_TYPE STREQUAL "Coverage"
+
 add_test(NAME battle_tanks_testing_gui
          COMMAND battle_tanks_testing_gui)
