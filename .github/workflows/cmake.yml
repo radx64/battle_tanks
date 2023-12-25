@@ -38,8 +38,8 @@ jobs:
 
     - name: Build tests
       working-directory: ${{github.workspace}}/build
-      run: cmake -DBUILD_TESTS=ON ${{github.workspace}}
-
+      run: cmake -GNinja -DBUILD_TESTS=ON ${{github.workspace}} && ninja
+      
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
