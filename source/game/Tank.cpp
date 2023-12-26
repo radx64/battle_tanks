@@ -14,13 +14,10 @@ namespace game
 
 constexpr float TANK_BRAKE_FORCE = 0.1;
 constexpr float TANK_ACCELERATION = 4.0;
-constexpr float ROLLING_RESISTANCE_COEEF = 0.97;
 constexpr float TANK_ROTATION_SPEED = 200.0;
 
 constexpr double TANK_RADIUS = 25;
 constexpr double TANK_MASS = 50;
-
-//constexpr bool DEBUG = true;
 
 bool Tank::DEBUG_{false};
 
@@ -78,12 +75,11 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
 
 Tank::Tank(uint32_t id, double x, double y, double rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
-: id_(id),
-    x_(x),
-    y_(y),
-    cannon_(std::move(cannon)),
-    current_direction_(rotation),
-    set_direction_(rotation)
+: RigidBody(id, x, y, TANK_RADIUS, TANK_MASS)
+, id_(id)
+, cannon_(std::move(cannon))
+, current_direction_(rotation)
+, set_direction_(rotation)
 {
     sprite_.setTexture(tankBody);
     sf::Vector2u texture_body_size = tankBody.getSize();
@@ -124,8 +120,9 @@ void Tank::setDirection(double direction)
     cannon_->setRotation(direction);
 }
 
-void Tank::physics(std::vector<std::unique_ptr<Tank>>& tanks, double timeStep)
+void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, double timeStep)
 {
+    (void) objects;
     //Convert current direction to 0..360 range
     current_direction_ = math::signed_fmod(current_direction_, 360.0);
 
@@ -144,47 +141,8 @@ void Tank::physics(std::vector<std::unique_ptr<Tank>>& tanks, double timeStep)
     braking_force_.y = -velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
 
     velocity_ += drivetrain_force_ + braking_force_ ;
-    velocity_ *= ROLLING_RESISTANCE_COEEF;
 
     cannon_->physics(timeStep);
-
-    //Simple circle collision detection code
-    for (auto& other_tank : tanks)
-    {
-        if (other_tank->id_ == id_) continue; // do not check collision with itself.
-        
-        double distance_between_tanks = math::distance(x_, y_, other_tank->x_, other_tank->y_);
-        double sum_of_radius = TANK_RADIUS*2;
-
-        if (distance_between_tanks <= sum_of_radius)
-        { 
-            //Collision detected here
-            //Calculating hit vectors
-            double nx = (other_tank->x_ - x_) / distance_between_tanks;
-            double ny = (other_tank->y_ - y_) / distance_between_tanks;
-            double p = 2*(velocity_.x * nx + velocity_.y * ny
-                - other_tank->velocity_.x * nx - other_tank->velocity_.y * ny) / (TANK_MASS * 2);
-
-            sf::Vector2f tankCollisionVelocity = sf::Vector2f(
-                (float)(velocity_.x - p * TANK_MASS * nx),
-                (float)(velocity_.y - p * TANK_MASS * ny));
-            
-            sf::Vector2f otherTankCollisionVelocity = sf::Vector2f(
-                (float)(other_tank->velocity_.x + p * TANK_MASS * nx),
-                (float)(other_tank->velocity_.y + p * TANK_MASS * ny));
-
-            velocity_ = tankCollisionVelocity;
-            other_tank->velocity_ = otherTankCollisionVelocity;
-
-            // Solve static collision to not have on one object on top of each other.
-            double tanks_overlap = 0.5f  * (distance_between_tanks - TANK_RADIUS - TANK_RADIUS);
-            x_ -= tanks_overlap * (x_ - other_tank->x_) / distance_between_tanks;
-            y_ -= tanks_overlap * (y_ - other_tank->y_) / distance_between_tanks;
-        }
-    };
-
-    x_ += velocity_.x * timeStep;
-    y_ += velocity_.y * timeStep;
 }
 
 }  // namespace game

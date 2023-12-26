@@ -28,6 +28,10 @@ void TextureLibrary::initialize()
     initTexture("sand_2",  "../sprites/tileSand1.png");
     initTexture("grass_sand_NS", "../sprites/tileGrass_transitionS.png");
     initTexture("grass_sand_SN", "../sprites/tileGrass_transitionN.png");
+    initTexture("barrel_red", "../sprites/barrelRed_top.png");
+    initTexture("barrel_rust", "../sprites/barrelRust_top.png");
+    initTexture("barrel_green", "../sprites/barrelGreen_top.png");
+    initTexture("barrel_black", "../sprites/barrelBlack_top.png");
 }
 
 sf::Texture& TextureLibrary::get(const std::string& name)

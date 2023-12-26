@@ -10,6 +10,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "game/Application.hpp"
+#include "game/Barrel.hpp"
+#include "game/BarrelFactory.hpp"
 #include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
 #include "graphics/DrawTools.hpp"
@@ -27,8 +29,21 @@ namespace game
 constexpr uint32_t WINDOW_WIDTH = 1280;
 constexpr uint32_t WINDOW_HEIGHT = 1024;
 constexpr uint32_t TANKS_COUNT = 5;
+constexpr uint32_t BARRELS_COUNT = 10;
 
 constexpr double timeStep = 1.0/30.0;
+
+uint32_t calculate_fps(uint32_t draw_time)
+{
+    if (draw_time > 1)
+    {
+        return 1000.f/static_cast<float>(draw_time);
+    }
+    else
+    {
+        return 1000;
+    }    
+}
 
 
 Application::Application()
@@ -36,19 +51,30 @@ Application::Application()
 , camera_initial_size_{WINDOW_WIDTH, WINDOW_HEIGHT}
 , camera_{camera_initial_position_, camera_initial_size_}
 , camera_view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
+, window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!")
 {
     context_.setParticles(&particles_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
-
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{WINDOW_WIDTH, WINDOW_HEIGHT});
+    auto desktop = sf::VideoMode::getDesktopMode();
+    window_.setPosition(sf::Vector2i(desktop.width/2 - window_.getSize().x/2, desktop.height/2 - window_.getSize().y/2));
+    window_.setFramerateLimit(30);
 
-    configureTexts();
+    camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
+
+    configureGUI();
 }
 
-void Application::configureTexts()
-{
+void Application::configureGUI()
+{   
+    auto quit_button = std::make_unique<gui::Button>("Quit");
+    quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
+    quit_button->setSize(sf::Vector2f(150.f, 50.f));
+    quit_button->onClick([this](){std::cout << "Quitting...\n"; window_.close();});
+    window_manager_->mainWindow()->addChild(std::move(quit_button));
+
     auto demo_button_1 = std::make_unique<gui::Button>("TEST");
     demo_button_1->setPosition(sf::Vector2f(100.f, 200.f), gui::Alignment::LEFT);
     demo_button_1->setSize(sf::Vector2f{200.f, 200.f});
@@ -156,12 +182,32 @@ void Application::spawnSomeTanks()
         const auto x_spawn_position = i * 100 + 100;
         const auto y_spawn_position = x_spawn_position;
         const auto spawn_rotation = i * 36; 
-        auto tank = TankFactory::createInstance(static_cast<TankFactory::TankType>(i),
+        auto tank = TankFactory::create(static_cast<TankFactory::TankType>(i),
             x_spawn_position, y_spawn_position, spawn_rotation);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
-        tanks_.push_back(std::move(tank));
+
+        // Temporary solution for storing IRenderable and RigidBody pointers
+        // TODO: consider different objects hierarchy
+        drawableObjects_.push_back(tank.get());
+        gameObjects_.push_back(std::move(tank));
         navigators_.push_back(std::move(navigator));
+    }
+}
+
+void Application::spawnSomeBarrels()
+{
+    for (uint32_t i = 0; i < BARRELS_COUNT; ++i)
+    { 
+        const auto x_spawn_position = i * 25 + 650;
+        const auto y_spawn_position = x_spawn_position;
+        auto barrel = BarrelFactory::create(static_cast<BarrelFactory::BarrelType>(i % 4),
+            x_spawn_position, y_spawn_position);
+
+        // Temporary solution for storing IRenderable and RigidBody pointers
+        // TODO: consider different objects hierarchy
+        drawableObjects_.push_back(barrel.get());
+        gameObjects_.push_back(std::move(barrel));
     }
 }
 
@@ -170,21 +216,8 @@ int Application::run()
     try
     {
         // TODO: move those member creations to class fields
-        camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
-        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!");
-
-        auto desktop = sf::VideoMode::getDesktopMode();
-        window.setPosition(sf::Vector2i(desktop.width/2 - window.getSize().x/2, desktop.height/2 - window.getSize().y/2));
-        window.setFramerateLimit(30);
-
-        auto quit_button = std::make_unique<gui::Button>("Quit");
-        quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
-        quit_button->setSize(sf::Vector2f(150.f, 50.f));
-        quit_button->onClick([&window](){std::cout << "Quitting...\n"; window.close();});
-        window_manager_->mainWindow()->addChild(std::move(quit_button));
-
-        constexpr int number_of_measurements = 20;
+        constexpr int number_of_measurements = 10;
         math::Average draw_average{number_of_measurements};
         math::Average physics_average{number_of_measurements};
         math::Average nav_average{number_of_measurements};
@@ -197,15 +230,16 @@ int Application::run()
         Tank::setDebug(debug_mode);
 
         spawnSomeTanks();
+        spawnSomeBarrels();
 
-        while (window.isOpen())
+        while (window_.isOpen())
         {
             sf::Event event;
-            while (window.pollEvent(event))
+            while (window_.pollEvent(event))
             {
                 switch (event.type)
                 {
-                    case sf::Event::Closed : { window.close(); break; } 
+                    case sf::Event::Closed : { window_.close(); break; } 
                     case sf::Event::KeyReleased : 
                     {
                         switch (event.key.code)
@@ -216,7 +250,7 @@ int Application::run()
                             case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::setDebug(debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticles().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
-                            case sf::Keyboard::Q        :   window.close();
+                            case sf::Keyboard::Q        :   window_.close();
                             default                     :   {}  
                         }
                         break;
@@ -240,11 +274,11 @@ int Application::run()
             camera_view_.setCenter(camera_.getPosition());
             camera_view_.setSize(camera_.getSize());
 
-            window.setView(camera_view_);
-            window.clear(sf::Color(0, 0, 0));
+            window_.setView(camera_view_);
+            window_.clear(sf::Color(0, 0, 0));
 
-            auto mousePosition = sf::Mouse::getPosition(window);
-            auto mousePositionInCamera = window.mapPixelToCoords(mousePosition);
+            auto mousePosition = sf::Mouse::getPosition(window_);
+            auto mousePositionInCamera = window_.mapPixelToCoords(mousePosition);
             
             if (mousePosition.x < 10) {camera_.move(-20.f,0.f);}
             if ((uint32_t)mousePosition.x > WINDOW_WIDTH - 10) {camera_.move(20.f,0.f);}
@@ -252,24 +286,15 @@ int Application::run()
             if ((uint32_t)mousePosition.y > WINDOW_HEIGHT - 10) {camera_.move(0.f,20.f);}
 
             clock.restart();
-            tilemap_->draw(window);
-            graphics::drawtools::drawWaypoints(window, waypoints_);
-            particles_.draw(window);
-            for (auto& tank : tanks_)
+            tilemap_->draw(window_);
+            graphics::drawtools::drawWaypoints(window_, waypoints_);
+            particles_.draw(window_);
+            for (auto& object : drawableObjects_)
             {
-                tank->draw(window);
+                object->draw(window_);
             }
             auto draw_time = clock.getElapsedTime().asMilliseconds();
-            uint32_t fps{};
-
-            if (draw_time > 1)
-            {
-                fps = 1000.0/static_cast<double>(draw_time);
-            }
-            else
-            {
-                fps = 1000;
-            }
+            uint32_t fps = calculate_fps(draw_time);
             clock.restart();
             for(auto& navigator : navigators_)
             {
@@ -277,12 +302,12 @@ int Application::run()
             }
             auto nav_time = clock.getElapsedTime();
             clock.restart();
-            for (auto& tank : tanks_) tank->physics(tanks_, timeStep);
+            for (auto& object : gameObjects_) object->physics(gameObjects_, timeStep);
             auto physics_time = clock.getElapsedTime();
 
-            window.setView(window.getDefaultView());
+            window_.setView(window_.getDefaultView());
 
-            auto mousePositionInGUI = window.mapPixelToCoords(mousePosition);
+            auto mousePositionInGUI = window_.mapPixelToCoords(mousePosition);
 
             // set "gameplay area camera_view_" again so mouse coordinates will be calculated properly in next mouse event
             // this can be calulated also as an offset of camera camera_view_, to not switch view_s back and forward
@@ -356,7 +381,7 @@ int Application::run()
             
             if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
             
-            window_manager_->render(window);
+            window_manager_->render(window_);
 
             // I'm integrating new event system in components so this code looks very messy.
             // I'll clean it when everything will switch on EventReceiver methods
@@ -382,7 +407,7 @@ int Application::run()
                 + "us\nAVG: " + std::to_string(gui_average.calculate(gui_time.asMilliseconds()))
                 + "ms\nAVG: " + std::to_string(fps_average.calculate(fps)));
 
-            window.display();
+            window_.display();
         }
     }
     catch (std::exception& e)

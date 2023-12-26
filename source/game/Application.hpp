@@ -8,7 +8,10 @@
 #include "game/Camera.hpp"
 #include "game/Context.hpp"
 #include "game/Navigator.hpp"
+#include "game/RigidBody.hpp"
 #include "game/Tank.hpp"
+#include "game/IRenderable.hpp"
+
 #include "graphics/Particles.hpp"
 #include "graphics/Tilemap.hpp"
 
@@ -26,8 +29,9 @@ public:
     int run();
     
 protected:
-    void configureTexts();
+    void configureGUI();
     void spawnSomeTanks();
+    void spawnSomeBarrels();
 
     graphics::Particles particles_;
     Context context_;
@@ -47,12 +51,13 @@ protected:
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
     gui::Button* test_floating_button_handle_;
+    sf::RenderWindow window_;
     std::unique_ptr<gui::WindowManager> window_manager_;
 
     std::vector<sf::Vector2i> waypoints_;
-    std::vector<std::unique_ptr<Tank>> tanks_;
+    std::vector<game::IRenderable*> drawableObjects_;
+    std::vector<std::unique_ptr<RigidBody>> gameObjects_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
-    //std::vector<std::unique_ptr<gui::Component>> guiElements_;
 };
 
 }  // namespace game

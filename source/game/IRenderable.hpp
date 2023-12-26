@@ -8,6 +8,7 @@ namespace game
 
 class IRenderable
 {
+public:
     virtual void draw(sf::RenderWindow& renderWindow) = 0;
 };
 
