@@ -26,8 +26,8 @@
 namespace game 
 {
 
-constexpr uint32_t WINDOW_WIDTH = 1280;
-constexpr uint32_t WINDOW_HEIGHT = 1024;
+constexpr uint32_t WINDOW_WIDTH = 1920;
+constexpr uint32_t WINDOW_HEIGHT = 1000;
 constexpr uint32_t TANKS_COUNT = 5;
 constexpr uint32_t BARRELS_COUNT = 10;
 

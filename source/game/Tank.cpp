@@ -18,6 +18,7 @@ constexpr float TANK_ROTATION_SPEED = 200.0;
 
 constexpr double TANK_RADIUS = 25;
 constexpr double TANK_MASS = 50;
+constexpr float GROUND_DRAG_COEEF = 0.97;
 
 bool Tank::DEBUG_{false};
 
@@ -75,7 +76,7 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
 
 Tank::Tank(uint32_t id, double x, double y, double rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
-: RigidBody(id, x, y, TANK_RADIUS, TANK_MASS)
+: RigidBody(id, x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF)
 , id_(id)
 , cannon_(std::move(cannon))
 , current_direction_(rotation)

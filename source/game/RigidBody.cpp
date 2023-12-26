@@ -5,14 +5,15 @@
 namespace game
 {
 
-constexpr float SLIDE_RESSISTANCE_COEEF = 0.97;
+constexpr float SPRING_COLLISION_COEEF = 1.75;
 
-RigidBody::RigidBody(uint32_t id, double x, double y,  double radius, double mass)
+RigidBody::RigidBody(uint32_t id, double x, double y,  double radius, double mass, float ground_drag_cooef)
 : id_(id)
 , x_(x)
 , y_(y)
 , radius_(radius)
 , mass_(mass)
+, ground_drag_cooef_(ground_drag_cooef)
 {}
 
 void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, double timeStep)
@@ -34,7 +35,7 @@ void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, double
             // Calculating hit vectors
             double nx = (other_object->x_ - x_) / distance_between_objects;
             double ny = (other_object->y_ - y_) / distance_between_objects;
-            double p = 2*(velocity_.x * nx + velocity_.y * ny
+            double p = SPRING_COLLISION_COEEF * (velocity_.x * nx + velocity_.y * ny
                 - other_object->velocity_.x * nx - other_object->velocity_.y * ny) / (mass_ + other_object->mass_);
 
             sf::Vector2f objectCollisionVelocity = sf::Vector2f(
@@ -49,7 +50,7 @@ void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, double
             other_object->velocity_ = otherObjectCollisionVelocity;
 
             // Solve static collision to not have on one object on top of each other.
-            double objects_overlap = 0.5f  * (distance_between_objects - radius_ - other_object->radius_);
+            double objects_overlap = 1.0f  * (distance_between_objects - radius_ - other_object->radius_);
             x_ -= objects_overlap * (x_ - other_object->x_) / distance_between_objects;
             y_ -= objects_overlap * (y_ - other_object->y_) / distance_between_objects;
         }
@@ -57,7 +58,7 @@ void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, double
 
 
     // Calculate current position based on calculated velocities
-    velocity_ *= SLIDE_RESSISTANCE_COEEF;
+    velocity_ *= ground_drag_cooef_;
 
     x_ += velocity_.x * timeStep;
     y_ += velocity_.y * timeStep;

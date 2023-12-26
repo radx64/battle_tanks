@@ -6,11 +6,13 @@ namespace game
 {
 
 constexpr double BARREL_RADIUS = 12;
-constexpr double BARREL_MASS = 10;
+constexpr double BARREL_MASS = 2;
+
+constexpr float GROUND_DRAG_COEEF = 0.93;
 
 
 Barrel::Barrel(uint32_t id, double x, double y, sf::Texture& barrelBody)
-: RigidBody(id, x, y, BARREL_RADIUS, BARREL_MASS)
+: RigidBody(id, x, y, BARREL_RADIUS, BARREL_MASS, GROUND_DRAG_COEEF)
 {
     sprite_.setTexture(barrelBody);
     sf::Vector2u texture_body_size = barrelBody.getSize();

@@ -12,7 +12,7 @@ namespace game
 class RigidBody
 {
 public:
-    RigidBody(uint32_t id, double x, double y, double radius, double mass);
+    RigidBody(uint32_t id, double x, double y, double radius, double mass, float ground_drag_cooef);
     virtual ~RigidBody() = default;
     void physics(std::vector<std::unique_ptr<RigidBody>>& objects, double timeStep);
 
@@ -24,6 +24,7 @@ public:
     double y_{};
     double radius_;
     double mass_;
+    float ground_drag_cooef_;
 
 protected:
     virtual void onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, double timeStep);
