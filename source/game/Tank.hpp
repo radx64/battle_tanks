@@ -15,14 +15,14 @@ namespace game
 class Tank : public IRenderable, public RigidBody
 {
 public:
-    Tank(uint32_t id, double x, double y, double rotation, 
+    Tank(uint32_t id, float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody);
     virtual ~Tank() = default;
 
     void draw(sf::RenderWindow& renderWindow) override;
 
-    void setThrottle(double throttle);
-    void setDirection(double direction);
+    void setThrottle(float throttle);
+    void setDirection(float direction);
     static void setDebug(bool is_enabled); 
 
     uint32_t id_;
@@ -35,14 +35,14 @@ public:
 protected:
     void drawDebugInfo(sf::RenderWindow& renderWindow);
 
-    void onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, double timeStep) override;
+    void onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep) override;
 
     sf::Vector2f tank_middle_point_;
 
-    double current_direction_{};
-    double set_direction_{};
-    double set_throttle_{};
-    double current_throttle_{};
+    float current_direction_{};
+    float set_direction_{};
+    float set_throttle_{};
+    float current_throttle_{};
     static bool DEBUG_;
 };
 

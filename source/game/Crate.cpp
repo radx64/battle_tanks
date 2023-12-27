@@ -1,15 +1,16 @@
-#include "game/Barrel.hpp"
+#include "game/Crate.hpp"
 
 #include <SFML/Graphics.hpp>
 
 namespace game
 {
 
-constexpr float CRATE_RADIUS = 12;
-constexpr float CRATE_MASS = 2;
-constexpr float GROUND_DRAG_COEEF = 0.93;
+constexpr float CRATE_RADIUS = 14;
+constexpr float CRATE_MASS = 1;
+constexpr float GROUND_DRAG_COEEF = 0.85;
 
-Barrel::Barrel(uint32_t id, float x, float y, sf::Texture& barrelBody)
+
+Crate::Crate(uint32_t id, float x, float y, sf::Texture& barrelBody)
 : RigidBody(id, x, y, CRATE_RADIUS, CRATE_MASS, GROUND_DRAG_COEEF)
 {
     sprite_.setTexture(barrelBody);
@@ -18,7 +19,7 @@ Barrel::Barrel(uint32_t id, float x, float y, sf::Texture& barrelBody)
     sprite_.setOrigin(middle_point);
 }
 
-void Barrel::draw(sf::RenderWindow& renderWindow)
+void Crate::draw(sf::RenderWindow& renderWindow)
 {
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 4, y_+ 4);

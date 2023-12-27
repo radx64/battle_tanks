@@ -9,10 +9,11 @@
 
 namespace math
 {
-double distance(double x1, double y1, double x2, double y2);
-double signed_fmod(double a, double n);
-double degree_to_radians(double degree);
-sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, double angle, sf::Vector2f pivot);
+float distance(float x1, float y1, float x2, float y2);
+
+float signed_fmod(float a, float n);
+float degree_to_radians(float degree);
+sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, float angle, sf::Vector2f pivot);
 
 class Average
 {

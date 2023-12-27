@@ -20,7 +20,7 @@ public:
         Black
     };
 
-    static std::unique_ptr<Barrel> create(const BarrelFactory::BarrelType type, double x, double y);
+    static std::unique_ptr<Barrel> create(const BarrelFactory::BarrelType type, float x, float y);
 
 protected:
     static sf::Texture& getBarrelTexture(const BarrelType type);

@@ -11,7 +11,7 @@ class Particles
 public:
     Particles();
     // Temporary 'particle system' for drawing track imprints
-    void addParticle(const int x, const int y, const double angle);
+    void addParticle(const int x, const int y, const float angle);
     void draw(sf::RenderWindow& renderWindow);
     void clear();
 

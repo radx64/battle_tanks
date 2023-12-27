@@ -9,15 +9,15 @@ namespace game
 class Cannon
 {
 public:
-    Cannon(double x, double y, double rotation, sf::Texture& texture);
+    Cannon(float x, float y, float rotation, sf::Texture& texture);
     void draw(sf::RenderWindow& renderWindow);
-    void physics(double timeStep);
-    void setRotation(double rotation);
+    void physics(float timeStep);
+    void setRotation(float rotation);
 
-    double x_;
-    double y_;
-    double current_rotation_;
-    double set_rotation_;
+    float x_;
+    float y_;
+    float current_rotation_;
+    float set_rotation_;
     sf::Sprite sprite_;
 };
 

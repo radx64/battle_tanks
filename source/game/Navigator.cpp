@@ -26,11 +26,11 @@ void Navigator::navigate()
     
     const auto& current_waypoint = waypoints_[waypoint_id_];
 
-    double distance = math::distance(current_waypoint.x, current_waypoint.y, tank_.x_, tank_.y_);
+    float distance = math::distance(current_waypoint.x, current_waypoint.y, tank_.x_, tank_.y_);
 
     if (distance > WAYPOINT_VISITED_DISTANCE)
     {
-        double direction = atan2((double)current_waypoint.y - tank_.y_, (double)current_waypoint.x - tank_.x_);
+        float direction = atan2((float)current_waypoint.y - tank_.y_, (float)current_waypoint.x - tank_.x_);
         tank_.setThrottle(std::min(1.0, distance*0.01));
         tank_.setDirection(direction * 180.0 / M_PI);        
     }

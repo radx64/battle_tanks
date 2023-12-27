@@ -11,7 +11,7 @@ namespace game
 
 uint32_t TankFactory::next_tank_id = 0;
 
-std::unique_ptr<Tank> TankFactory::create(const TankFactory::TankType type, double x, double y, double rotation)
+std::unique_ptr<Tank> TankFactory::create(const TankFactory::TankType type, float x, float y, float rotation)
 {
     auto cannon = std::make_unique<Cannon>(x, y, rotation, getCannonTexture(type));
     auto tank = std::make_unique<Tank>(next_tank_id, x, y, rotation, std::move(cannon), getTankTexture(type));

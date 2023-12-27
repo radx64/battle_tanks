@@ -12,6 +12,8 @@
 #include "game/Application.hpp"
 #include "game/Barrel.hpp"
 #include "game/BarrelFactory.hpp"
+#include "game/Crate.hpp"
+#include "game/CrateFactory.hpp"
 #include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
 #include "graphics/DrawTools.hpp"
@@ -30,8 +32,9 @@ constexpr uint32_t WINDOW_WIDTH = 1920;
 constexpr uint32_t WINDOW_HEIGHT = 1000;
 constexpr uint32_t TANKS_COUNT = 5;
 constexpr uint32_t BARRELS_COUNT = 10;
+constexpr uint32_t CRATES_COUNT = 10;
 
-constexpr double timeStep = 1.0/30.0;
+constexpr float timeStep = 1.0/30.0;
 
 uint32_t calculate_fps(uint32_t draw_time)
 {
@@ -195,7 +198,7 @@ void Application::spawnSomeTanks()
     }
 }
 
-void Application::spawnSomeBarrels()
+void Application::spawnSomeBarrelsAndCrates()
 {
     for (uint32_t i = 0; i < BARRELS_COUNT; ++i)
     { 
@@ -209,6 +212,20 @@ void Application::spawnSomeBarrels()
         drawableObjects_.push_back(barrel.get());
         gameObjects_.push_back(std::move(barrel));
     }
+
+    for (uint32_t i = 0; i < CRATES_COUNT; ++i)
+    { 
+        const auto x_spawn_position = i * 40 + 250;
+        const auto y_spawn_position = x_spawn_position;
+        auto crate = CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
+            x_spawn_position, y_spawn_position);
+
+        // Temporary solution for storing IRenderable and RigidBody pointers
+        // TODO: consider different objects hierarchy
+        drawableObjects_.push_back(crate.get());
+        gameObjects_.push_back(std::move(crate));
+    }
+  
 }
 
 int Application::run()
@@ -230,7 +247,7 @@ int Application::run()
         Tank::setDebug(debug_mode);
 
         spawnSomeTanks();
-        spawnSomeBarrels();
+        spawnSomeBarrelsAndCrates();
 
         while (window_.isOpen())
         {
@@ -383,6 +400,8 @@ int Application::run()
             
             window_manager_->render(window_);
 
+            auto gui_time = clock.getElapsedTime();
+            
             // I'm integrating new event system in components so this code looks very messy.
             // I'll clean it when everything will switch on EventReceiver methods
             if (currentLeftClickEventStatus == gui::EventStatus::NotConsumed 
@@ -393,7 +412,6 @@ int Application::run()
 
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
             last_mouse_in_gui_position_ = mousePositionInGUI;
-            auto gui_time = clock.getElapsedTime();
 
             measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())

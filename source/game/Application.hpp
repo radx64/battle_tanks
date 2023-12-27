@@ -31,7 +31,7 @@ public:
 protected:
     void configureGUI();
     void spawnSomeTanks();
-    void spawnSomeBarrels();
+    void spawnSomeBarrelsAndCrates();
 
     graphics::Particles particles_;
     Context context_;

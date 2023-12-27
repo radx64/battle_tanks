@@ -8,9 +8,9 @@
 namespace game 
 {
 
-constexpr double CANNON_ROTATION_SPEED = 600.0;
+constexpr float CANNON_ROTATION_SPEED = 600.0;
 
-Cannon::Cannon(double x, double y, double rotation, sf::Texture& texture) 
+Cannon::Cannon(float x, float y, float rotation, sf::Texture& texture) 
     : x_(x),
     y_(y),
     current_rotation_(rotation),
@@ -34,18 +34,18 @@ void Cannon::draw(sf::RenderWindow& renderWindow)
     renderWindow.draw(sprite_);
 }
 
-void Cannon::setRotation(double rotation)
+void Cannon::setRotation(float rotation)
 {
     set_rotation_ = rotation;
 }
 
-void Cannon::physics(double timeStep)
+void Cannon::physics(float timeStep)
 {
-    double delta = set_rotation_ - current_rotation_;
+    float delta = set_rotation_ - current_rotation_;
     delta = math::signed_fmod((delta + 180.0), 360.0) - 180.0;
 
-    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * timeStep, fabs(delta));
-    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * timeStep, fabs(delta));   
+    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * timeStep, std::fabs(delta));
+    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * timeStep, std::fabs(delta));   
 }
 
 }  // namespace game

@@ -12,26 +12,28 @@ void TextureLibrary::initTexture(const std::string& name, const std::string& pat
 
 void TextureLibrary::initialize()
 {
-    initTexture("blue_tank",    "../sprites/tankBody_blue_outline.png");
-    initTexture("red_tank",    "../sprites/tankBody_red_outline.png");
-    initTexture("green_tank",    "../sprites/tankBody_green_outline.png");
-    initTexture("sand_tank",    "../sprites/tankBody_sand_outline.png");
-    initTexture("dark_tank",    "../sprites/tankBody_dark_outline.png");
-    initTexture("blue_cannon",  "../sprites/tankBlue_barrel1_outline.png");
-    initTexture("red_cannon",  "../sprites/tankRed_barrel1_outline.png");
-    initTexture("green_cannon",  "../sprites/tankGreen_barrel1_outline.png");
-    initTexture("sand_cannon",  "../sprites/tankSand_barrel1_outline.png");
-    initTexture("dark_cannon",  "../sprites/tankDark_barrel1_outline.png");
-    initTexture("grass_1",  "../sprites/tileGrass1.png");
-    initTexture("grass_2",  "../sprites/tileGrass2.png");
-    initTexture("sand_1",  "../sprites/tileSand1.png");
-    initTexture("sand_2",  "../sprites/tileSand1.png");
-    initTexture("grass_sand_NS", "../sprites/tileGrass_transitionS.png");
-    initTexture("grass_sand_SN", "../sprites/tileGrass_transitionN.png");
-    initTexture("barrel_red", "../sprites/barrelRed_top.png");
-    initTexture("barrel_rust", "../sprites/barrelRust_top.png");
-    initTexture("barrel_green", "../sprites/barrelGreen_top.png");
-    initTexture("barrel_black", "../sprites/barrelBlack_top.png");
+    initTexture("blue_tank",        "../sprites/tankBody_blue_outline.png");
+    initTexture("red_tank",         "../sprites/tankBody_red_outline.png");
+    initTexture("green_tank",       "../sprites/tankBody_green_outline.png");
+    initTexture("sand_tank",        "../sprites/tankBody_sand_outline.png");
+    initTexture("dark_tank",        "../sprites/tankBody_dark_outline.png");
+    initTexture("blue_cannon",      "../sprites/tankBlue_barrel1_outline.png");
+    initTexture("red_cannon",       "../sprites/tankRed_barrel1_outline.png");
+    initTexture("green_cannon",     "../sprites/tankGreen_barrel1_outline.png");
+    initTexture("sand_cannon",      "../sprites/tankSand_barrel1_outline.png");
+    initTexture("dark_cannon",      "../sprites/tankDark_barrel1_outline.png");
+    initTexture("grass_1",          "../sprites/tileGrass1.png");
+    initTexture("grass_2",          "../sprites/tileGrass2.png");
+    initTexture("sand_1",           "../sprites/tileSand1.png");
+    initTexture("sand_2",           "../sprites/tileSand1.png");
+    initTexture("grass_sand_NS",    "../sprites/tileGrass_transitionS.png");
+    initTexture("grass_sand_SN",    "../sprites/tileGrass_transitionN.png");
+    initTexture("barrel_red",       "../sprites/barrelRed_top.png");
+    initTexture("barrel_rust",      "../sprites/barrelRust_top.png");
+    initTexture("barrel_green",     "../sprites/barrelGreen_top.png");
+    initTexture("barrel_black",     "../sprites/barrelBlack_top.png");
+    initTexture("crate_wood",       "../sprites/crateWood.png");
+    initTexture("crate_metal",      "../sprites/crateMetal.png");
 }
 
 sf::Texture& TextureLibrary::get(const std::string& name)

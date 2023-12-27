@@ -11,7 +11,7 @@ namespace game
 // TODO create proper global object instanceId generator
 uint32_t BarrelFactory::next_barrel_id = 1000;
 
-std::unique_ptr<Barrel> BarrelFactory::create(const BarrelFactory::BarrelType type, double x, double y)
+std::unique_ptr<Barrel> BarrelFactory::create(const BarrelFactory::BarrelType type, float x, float y)
 {
     auto tank = std::make_unique<Barrel>(next_barrel_id, x, y, getBarrelTexture(type));
     next_barrel_id++;

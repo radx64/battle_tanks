@@ -7,34 +7,34 @@
 namespace math
 {
 
-double distance(double x1, double y1, double x2, double y2)
+float distance(float x1, float y1, float x2, float y2)
 {
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
-double signed_fmod(double a, double n)
+float signed_fmod(float a, float n)
 {
     return a - floor(a/n) * n;
 }
 
-double degree_to_radians(double degree)
+float degree_to_radians(float degree)
 {
-  return degree * M_PI / 180.0;
+  return degree * M_PI / 180.0f;
 }
 
-sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, double angle, sf::Vector2f pivot)
+sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, float angle, sf::Vector2f pivot)
 {
-  double radians = degree_to_radians(angle);
-  double s = sin(radians);
-  double c = cos(radians);
+  float radians = degree_to_radians(angle);
+  float s = std::sin(radians);
+  float c = std::cos(radians);
 
   // translate point back to point_to_rotate
   point_to_rotate.x -= pivot.x;
   point_to_rotate.y -= pivot.y;
 
   // rotate point
-  double xnew = point_to_rotate.x * c - point_to_rotate.y * s;
-  double ynew = point_to_rotate.x * s + point_to_rotate.y * c;
+  float xnew = point_to_rotate.x * c - point_to_rotate.y * s;
+  float ynew = point_to_rotate.x * s + point_to_rotate.y * c;
 
   // translate point back
   point_to_rotate.x = xnew + pivot.x;

@@ -15,7 +15,7 @@ Particles::Particles()
 }
 
 // Temporary 'particle system' for drawing track imprints
-void Particles::addParticle(const int x, const int y, const double angle)
+void Particles::addParticle(const int x, const int y, const float angle)
 {
     sf::RectangleShape rectangle(sf::Vector2f(TRACK_HEIGHT, TRACK_WIDTH));
     rectangle.setPosition(sf::Vector2f(x, y));

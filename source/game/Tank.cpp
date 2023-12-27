@@ -13,11 +13,11 @@ namespace game
 {
 
 constexpr float TANK_BRAKE_FORCE = 0.1;
-constexpr float TANK_ACCELERATION = 4.0;
+constexpr float TANK_ACCELERATION = 6.0;
 constexpr float TANK_ROTATION_SPEED = 200.0;
 
-constexpr double TANK_RADIUS = 25;
-constexpr double TANK_MASS = 50;
+constexpr float TANK_RADIUS = 25;
+constexpr float TANK_MASS = 50;
 constexpr float GROUND_DRAG_COEEF = 0.97;
 
 bool Tank::DEBUG_{false};
@@ -74,7 +74,7 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     renderWindow.draw(velocity_y_vector, 2, sf::Lines);
 }
 
-Tank::Tank(uint32_t id, double x, double y, double rotation, 
+Tank::Tank(uint32_t id, float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
 : RigidBody(id, x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF)
 , id_(id)
@@ -111,28 +111,28 @@ void Tank::draw(sf::RenderWindow& renderWindow)
     Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);
 }
 
-void Tank::setThrottle(double throttle)
+void Tank::setThrottle(float throttle)
 {
     set_throttle_ = throttle;
 }
-void Tank::setDirection(double direction)
+void Tank::setDirection(float direction)
 {
     set_direction_ = direction;
     cannon_->setRotation(direction);
 }
 
-void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, double timeStep)
+void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep)
 {
     (void) objects;
     //Convert current direction to 0..360 range
     current_direction_ = math::signed_fmod(current_direction_, 360.0);
 
-    double delta = set_direction_ - current_direction_;
+    float delta = set_direction_ - current_direction_;
     delta = math::signed_fmod((delta + 180.0), 360.0) - 180.0;
     // If current direction of movement is different(more than 15deg) than current one cut the throttle
     if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = set_throttle_;
-    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
-    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, fabs(delta)) ;
+    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
+    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
 
     //TODO add some inertia calculation while accelerating
     drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
@@ -141,7 +141,7 @@ void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, double ti
     braking_force_.x = -velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
     braking_force_.y = -velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
 
-    velocity_ += drivetrain_force_ + braking_force_ ;
+    applyForce(drivetrain_force_ + braking_force_);
 
     cannon_->physics(timeStep);
 }

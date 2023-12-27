@@ -21,7 +21,7 @@ public:
         Black
     };
 
-    static std::unique_ptr<Tank> create(const TankFactory::TankType type, double x, double y, double rotation);
+    static std::unique_ptr<Tank> create(const TankFactory::TankType type, float x, float y, float rotation);
 
 protected:
     static sf::Texture& getTankTexture(const TankType type);

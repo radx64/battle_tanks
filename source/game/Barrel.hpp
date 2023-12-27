@@ -12,7 +12,7 @@ namespace game
 class Barrel : public IRenderable, public RigidBody
 {
 public:
-    Barrel(uint32_t id, double x, double y, sf::Texture& barrelBody);
+    Barrel(uint32_t id, float x, float y, sf::Texture& barrelBody);
     virtual ~Barrel() = default;
     void draw(sf::RenderWindow& renderWindow) override;
 
@@ -22,4 +22,4 @@ protected:
 
 }  // namespace game
 
-#endif  // GAME_BARREL_HPP
+#endif  // GAME_BARREL_HPP_
