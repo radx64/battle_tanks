@@ -5,7 +5,7 @@
 namespace game
 {
 
-constexpr float CRATE_RADIUS = 14;
+constexpr float CRATE_RADIUS = 16;
 constexpr float CRATE_MASS = 1;
 constexpr float GROUND_DRAG_COEEF = 0.85;
 
@@ -21,6 +21,7 @@ Crate::Crate(uint32_t id, float x, float y, sf::Texture& barrelBody)
 
 void Crate::draw(sf::RenderWindow& renderWindow)
 {
+    sprite_.setRotation(angle_);
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 4, y_+ 4);
     renderWindow.draw(sprite_);

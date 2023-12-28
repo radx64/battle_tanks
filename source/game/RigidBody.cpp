@@ -1,14 +1,20 @@
 #include "RigidBody.hpp"
 
-#include "math/Math.hpp"
+#include <cmath>
 
+#include "math/Math.hpp"
 namespace game
 {
 
 constexpr float SPRING_COLLISION_COEEF = 1.75;  // simulate bouciness of collision
 
+constexpr float TANGENT_VELOCITY_SCALING_FACTOR = 25.f;
+
 RigidBody::RigidBody(uint32_t id, float x, float y,  float radius, float mass, float ground_drag_cooef)
-: id_(id)
+: velocity_{}
+, angle_(0.f)
+, angular_velocity_(0.f)
+, id_(id)
 , x_(x)
 , y_(y)
 , radius_(radius)
@@ -38,6 +44,12 @@ void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, float 
             float p = SPRING_COLLISION_COEEF * (velocity_.x * nx + velocity_.y * ny
                 - other_object->velocity_.x * nx - other_object->velocity_.y * ny) / (mass_ + other_object->mass_);
 
+            // Additional angular velocity based on the point of collision
+            // So objects rotate when hit
+            float tangentVelocity = nx * distance_between_objects * std::sin(math::degree_to_radians(angle_)) - ny * distance_between_objects * std::cos(math::degree_to_radians(angle_));
+            angular_velocity_ += TANGENT_VELOCITY_SCALING_FACTOR * tangentVelocity / radius_;
+            other_object->angular_velocity_ -= tangentVelocity / other_object->radius_;
+
             sf::Vector2f objectCollisionVelocity = sf::Vector2f(
                 (velocity_.x - p * other_object->mass_ * nx),
                 (velocity_.y - p * other_object->mass_ * ny));
@@ -58,6 +70,15 @@ void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, float 
 
     // Calculate current position based on calculated velocities
     velocity_ *= ground_drag_cooef_;
+    angular_velocity_ *= ground_drag_cooef_;
+    
+    if (std::fabs(angular_velocity_) < 0.01f)
+    {
+        angular_velocity_ = 0.0f; 
+    }
+
+    angle_ += angular_velocity_ * timeStep;
+    angle_ = std::fmod(angle_, 360.f);
 
     x_ += velocity_.x * timeStep;
     y_ += velocity_.y * timeStep;

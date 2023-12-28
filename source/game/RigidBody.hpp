@@ -18,7 +18,8 @@ public:
 
 public:
     sf::Vector2f velocity_;
-    float rotational_velocity_;
+    float angle_;
+    float angular_velocity_;
 
     uint32_t id_;
     float x_{};

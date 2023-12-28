@@ -123,6 +123,11 @@ void Tank::setDirection(float direction)
 
 void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep)
 {
+    // TODO Tanks now does not use rotational speed for rotation 
+    // so to other collisions to work it is important to not pass fake angular velociy
+    // on contacts
+    angular_velocity_ = 0;
+
     (void) objects;
     //Convert current direction to 0..360 range
     current_direction_ = math::signed_fmod(current_direction_, 360.0);

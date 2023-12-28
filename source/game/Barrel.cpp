@@ -20,6 +20,7 @@ Barrel::Barrel(uint32_t id, float x, float y, sf::Texture& barrelBody)
 
 void Barrel::draw(sf::RenderWindow& renderWindow)
 {
+    sprite_.setRotation(angle_);
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 4, y_+ 4);
     renderWindow.draw(sprite_);

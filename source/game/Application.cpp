@@ -202,8 +202,8 @@ void Application::spawnSomeBarrelsAndCrates()
 {
     for (uint32_t i = 0; i < BARRELS_COUNT; ++i)
     { 
-        const auto x_spawn_position = i * 25 + 650;
-        const auto y_spawn_position = x_spawn_position;
+        const auto x_spawn_position = i * 30 + 500;
+        const auto y_spawn_position = x_spawn_position - 400;
         auto barrel = BarrelFactory::create(static_cast<BarrelFactory::BarrelType>(i % 4),
             x_spawn_position, y_spawn_position);
 
@@ -213,10 +213,10 @@ void Application::spawnSomeBarrelsAndCrates()
         gameObjects_.push_back(std::move(barrel));
     }
 
-    for (uint32_t i = 0; i < CRATES_COUNT; ++i)
+    for (uint32_t i = BARRELS_COUNT; i < CRATES_COUNT + BARRELS_COUNT; ++i)
     { 
-        const auto x_spawn_position = i * 40 + 250;
-        const auto y_spawn_position = x_spawn_position;
+        const auto x_spawn_position = i * 30 + 500;
+        const auto y_spawn_position = x_spawn_position - 400;
         auto crate = CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
             x_spawn_position, y_spawn_position);
 
