@@ -11,6 +11,34 @@ namespace game
 
 uint32_t TankFactory::next_tank_id = 0;
 
+namespace {
+sf::Texture& getTankTexture(const TankFactory::TankType type)
+{
+    switch (type)
+    {
+        case TankFactory::TankType::Blue  : return graphics::TextureLibrary::get("blue_tank");
+        case TankFactory::TankType::Red   : return graphics::TextureLibrary::get("red_tank");
+        case TankFactory::TankType::Green : return graphics::TextureLibrary::get("green_tank");
+        case TankFactory::TankType::Sand  : return graphics::TextureLibrary::get("sand_tank");
+        case TankFactory::TankType::Black : return graphics::TextureLibrary::get("dark_tank");
+        default                           : return graphics::TextureLibrary::get("blue_tank");
+    }
+};
+
+sf::Texture& getCannonTexture(const TankFactory::TankType type)
+{
+    switch (type)
+    {
+        case TankFactory::TankType::Blue  : return graphics::TextureLibrary::get("blue_cannon");
+        case TankFactory::TankType::Red   : return graphics::TextureLibrary::get("red_cannon");
+        case TankFactory::TankType::Green : return graphics::TextureLibrary::get("green_cannon");
+        case TankFactory::TankType::Sand  : return graphics::TextureLibrary::get("sand_cannon");
+        case TankFactory::TankType::Black : return graphics::TextureLibrary::get("dark_cannon");
+        default                           : return graphics::TextureLibrary::get("blue_cannon");
+    }
+};
+}  // namespace
+
 std::unique_ptr<Tank> TankFactory::create(const TankFactory::TankType type, float x, float y, float rotation)
 {
     auto cannon = std::make_unique<Cannon>(x, y, rotation, getCannonTexture(type));
@@ -18,31 +46,5 @@ std::unique_ptr<Tank> TankFactory::create(const TankFactory::TankType type, floa
     next_tank_id++;
     return tank;
 }
-
-sf::Texture& TankFactory::getTankTexture(const TankType type)
-{
-    switch (type)
-    {
-        case TankType::Blue  : return graphics::TextureLibrary::get("blue_tank");
-        case TankType::Red   : return graphics::TextureLibrary::get("red_tank");
-        case TankType::Green : return graphics::TextureLibrary::get("green_tank");
-        case TankType::Sand  : return graphics::TextureLibrary::get("sand_tank");
-        case TankType::Black : return graphics::TextureLibrary::get("dark_tank");
-        default              : return graphics::TextureLibrary::get("blue_tank");
-    }
-};
-
-sf::Texture& TankFactory::getCannonTexture(const TankType type)
-{
-    switch (type)
-    {
-        case TankType::Blue  : return graphics::TextureLibrary::get("blue_cannon");
-        case TankType::Red   : return graphics::TextureLibrary::get("red_cannon");
-        case TankType::Green : return graphics::TextureLibrary::get("green_cannon");
-        case TankType::Sand  : return graphics::TextureLibrary::get("sand_cannon");
-        case TankType::Black : return graphics::TextureLibrary::get("dark_cannon");
-        default              : return graphics::TextureLibrary::get("blue_cannon");
-    }
-};
 
 }  // namespace game

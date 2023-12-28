@@ -3,7 +3,6 @@
 
 #include <memory>
 
-namespace sf { class Texture; }
 namespace game { class Crate; }
 
 namespace game 
@@ -21,7 +20,6 @@ public:
     static std::unique_ptr<Crate> create(const CrateFactory::CrateType type, float x, float y);
 
 protected:
-    static sf::Texture& getCrateTexture(const CrateType type);
     static uint32_t next_crate_id;
 };
 

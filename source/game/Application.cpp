@@ -17,6 +17,7 @@
 #include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
 #include "game/Tree.hpp"
+#include "game/TreeFactory.hpp"
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "gui/Button.hpp"
@@ -210,12 +211,9 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     }
 
     constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 4;
-    
-    //FIXME for a god sake implement some id generator because this will blow off half of my face in a future
-    constexpr size_t TREE_ID_PREFIX = 9000;
 
-    using Type = game::Tree::Type;
-    const auto tree_types = std::vector<game::Tree::Type> 
+    using Type = game::TreeFactory::TreeType;
+    const auto tree_types = std::vector<Type> 
     {
         Type::Brown_Large, 
         Type::Brown_Small, 
@@ -230,8 +228,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
 
             const auto x_position = rand() % WINDOW_WIDTH;
             const auto y_position = rand() % WINDOW_HEIGHT;
-
-            auto tree = std::make_unique<game::Tree>(TREE_ID_PREFIX + i, x_position, y_position, tree_type);
+            auto tree = game::TreeFactory::create(tree_type, x_position, y_position);
 
             // TODO: consider different objects hierarchy
             drawableObjects_.push_back(tree.get());

@@ -3,7 +3,6 @@
 
 #include <memory>
 
-namespace sf { class Texture; }
 namespace game { class Barrel; }
 
 namespace game 
@@ -23,7 +22,6 @@ public:
     static std::unique_ptr<Barrel> create(const BarrelFactory::BarrelType type, float x, float y);
 
 protected:
-    static sf::Texture& getBarrelTexture(const BarrelType type);
     static uint32_t next_barrel_id;
 };
 

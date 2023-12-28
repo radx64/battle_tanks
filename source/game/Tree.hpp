@@ -12,16 +12,7 @@ namespace game
 class Tree : public IRenderable, public RigidBody
 {
 public:
-
-    enum class Type
-    {
-        Green_Small,
-        Green_Large,
-        Brown_Small,
-        Brown_Large
-    };
-
-    Tree(uint32_t id, float x, float y, const Type& treeType);
+    Tree(uint32_t id, float x, float y, sf::Texture& treeBody, float treeTrunkRadius);
     virtual ~Tree() = default;
     void draw(sf::RenderWindow& renderWindow) override;
 

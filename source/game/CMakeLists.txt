@@ -22,6 +22,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tree.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TreeFactory.hpp
 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
@@ -37,4 +38,5 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tree.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TreeFactory.cpp
 )
