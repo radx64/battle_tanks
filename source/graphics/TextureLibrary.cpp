@@ -34,6 +34,10 @@ void TextureLibrary::initialize()
     initTexture("barrel_black",     "../sprites/barrelBlack_top.png");
     initTexture("crate_wood",       "../sprites/crateWood.png");
     initTexture("crate_metal",      "../sprites/crateMetal.png");
+    initTexture("tree_green_small", "../sprites/treeGreen_small.png");
+    initTexture("tree_green_large", "../sprites/treeGreen_large.png");
+    initTexture("tree_brown_small", "../sprites/treeBrown_small.png");
+    initTexture("tree_brown_large", "../sprites/treeBrown_large.png");
 }
 
 sf::Texture& TextureLibrary::get(const std::string& name)

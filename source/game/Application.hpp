@@ -31,7 +31,7 @@ public:
 protected:
     void configureGUI();
     void spawnSomeTanks();
-    void spawnSomeBarrelsAndCrates();
+    void spawnSomeBarrelsAndCratesAndTress();
 
     graphics::Particles particles_;
     Context context_;
@@ -43,7 +43,7 @@ protected:
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
-    bool label_demo_visible_{false};
+    bool floating_button_demo_visible_{false};
 
     bool was_last_event_left_click_{true}; // temporary workaround for dumb mouse event polling
     sf::Vector2f last_mouse_in_gui_position_{};

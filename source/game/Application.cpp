@@ -16,6 +16,7 @@
 #include "game/CrateFactory.hpp"
 #include "game/HelpWindow.hpp"
 #include "game/TankFactory.hpp"
+#include "game/Tree.hpp"
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "gui/Button.hpp"
@@ -30,9 +31,9 @@ namespace game
 
 constexpr uint32_t WINDOW_WIDTH = 1920;
 constexpr uint32_t WINDOW_HEIGHT = 1000;
-constexpr uint32_t TANKS_COUNT = 5;
-constexpr uint32_t BARRELS_COUNT = 10;
-constexpr uint32_t CRATES_COUNT = 10;
+constexpr size_t TANKS_COUNT = 5;
+constexpr size_t BARRELS_COUNT = 10;
+constexpr size_t CRATES_COUNT = 10;
 
 constexpr float timeStep = 1.0/30.0;
 
@@ -86,24 +87,6 @@ void Application::configureGUI()
     test_floating_button_handle_ = demo_button_1.get();
     window_manager_->mainWindow()->addChild(std::move(demo_button_1));
 
-    auto parent_label = std::make_unique<gui::Label>("PARENT_LABEL");
-    parent_label->setPosition(sf::Vector2f(100.0f, 200.0f), gui::Alignment::LEFT);
-
-    auto child_label_1 = std::make_unique<gui::Label>("CHILD_LABEL1");
-    child_label_1->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::RIGHT);  
-
-    auto child_label_2 = std::make_unique<gui::Label>("CHILD_LABEL2");
-    child_label_2->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::LEFT);  
-
-    auto second_level_child_label = std::make_unique<gui::Label>("2ND_LEVEL_CHILD_LABEL");
-    second_level_child_label->setPosition(sf::Vector2f(0.0f, 30.0f), gui::Alignment::CENTERED); 
-
-    child_label_2->addChild(std::move(second_level_child_label));
-    parent_label->addChild(std::move(child_label_1));
-    parent_label->addChild(std::move(child_label_2)); 
-    
-    window_manager_->mainWindow()->addChild(std::move(parent_label));
-
     auto measurements_text = std::make_unique<gui::Label>("");
     measurements_text->setPosition(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
     measurements_text_handle_ = measurements_text.get();
@@ -126,11 +109,11 @@ void Application::configureGUI()
     });
     window_manager_->mainWindow()->addChild(std::move(button));
 
-    auto demo_label_button = std::make_unique<gui::Button>("LABEL DEMO");
-    demo_label_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
-    demo_label_button->setSize(sf::Vector2f(150.f, 50.f));
-    demo_label_button->onClick([this](){label_demo_visible_ = !label_demo_visible_;});
-    window_manager_->mainWindow()->addChild(std::move(demo_label_button));
+    auto demo_button = std::make_unique<gui::Button>("BUTTON DEMO");
+    demo_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
+    demo_button->setSize(sf::Vector2f(150.f, 50.f));
+    demo_button->onClick([this](){floating_button_demo_visible_ = !floating_button_demo_visible_;});
+    window_manager_->mainWindow()->addChild(std::move(demo_button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
     spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 400.f), gui::Alignment::LEFT);
@@ -180,7 +163,7 @@ void Application::configureGUI()
 
 void Application::spawnSomeTanks()
 {
-    for (uint32_t i = 0; i < TANKS_COUNT; ++i)
+    for (size_t i = 0; i < TANKS_COUNT; ++i)
     { 
         const auto x_spawn_position = i * 100 + 100;
         const auto y_spawn_position = x_spawn_position;
@@ -198,9 +181,9 @@ void Application::spawnSomeTanks()
     }
 }
 
-void Application::spawnSomeBarrelsAndCrates()
+void Application::spawnSomeBarrelsAndCratesAndTress()
 {
-    for (uint32_t i = 0; i < BARRELS_COUNT; ++i)
+    for (size_t i = 0; i < BARRELS_COUNT; ++i)
     { 
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
@@ -213,7 +196,7 @@ void Application::spawnSomeBarrelsAndCrates()
         gameObjects_.push_back(std::move(barrel));
     }
 
-    for (uint32_t i = BARRELS_COUNT; i < CRATES_COUNT + BARRELS_COUNT; ++i)
+    for (size_t i = BARRELS_COUNT; i < CRATES_COUNT + BARRELS_COUNT; ++i)
     { 
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
@@ -225,7 +208,36 @@ void Application::spawnSomeBarrelsAndCrates()
         drawableObjects_.push_back(crate.get());
         gameObjects_.push_back(std::move(crate));
     }
-  
+
+    constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 4;
+    
+    //FIXME for a god sake implement some id generator because this will blow off half of my face in a future
+    constexpr size_t TREE_ID_PREFIX = 9000;
+
+    using Type = game::Tree::Type;
+    const auto tree_types = std::vector<game::Tree::Type> 
+    {
+        Type::Brown_Large, 
+        Type::Brown_Small, 
+        Type::Green_Large,
+        Type::Green_Small
+    };
+
+    for (const auto& tree_type : tree_types)
+    {
+        for (size_t i = 0; i < NUMBER_OF_TREES_OF_EACH_TYPE; ++i)
+        {
+
+            const auto x_position = rand() % WINDOW_WIDTH;
+            const auto y_position = rand() % WINDOW_HEIGHT;
+
+            auto tree = std::make_unique<game::Tree>(TREE_ID_PREFIX + i, x_position, y_position, tree_type);
+
+            // TODO: consider different objects hierarchy
+            drawableObjects_.push_back(tree.get());
+            gameObjects_.push_back(std::move(tree)); 
+        }
+    }
 }
 
 int Application::run()
@@ -247,7 +259,7 @@ int Application::run()
         Tank::setDebug(debug_mode);
 
         spawnSomeTanks();
-        spawnSomeBarrelsAndCrates();
+        spawnSomeBarrelsAndCratesAndTress();
 
         while (window_.isOpen())
         {
@@ -332,7 +344,7 @@ int Application::run()
             
             clock.restart();
             // Temporary hack for testing objects movement
-            if (label_demo_visible_)
+            if (floating_button_demo_visible_)
             {
                 test_floating_button_handle_->setVisibility(true);
                 auto position = test_floating_button_handle_->getPosition();
