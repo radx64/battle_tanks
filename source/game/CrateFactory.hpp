@@ -18,9 +18,6 @@ public:
     };
 
     static std::unique_ptr<Crate> create(const CrateFactory::CrateType type, float x, float y);
-
-protected:
-    static uint32_t next_crate_id;
 };
 
 }  // namespace game

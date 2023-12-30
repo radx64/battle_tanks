@@ -18,7 +18,7 @@ namespace game
 class Crate : public IRenderable, public RigidBody
 {
 public:
-    Crate(uint32_t id, float x, float y, sf::Texture& barrelBody);
+    Crate(float x, float y, sf::Texture& barrelBody);
     virtual ~Crate() = default;
     void draw(sf::RenderWindow& renderWindow) override;
 

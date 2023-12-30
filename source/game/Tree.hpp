@@ -12,7 +12,7 @@ namespace game
 class Tree : public IRenderable, public RigidBody
 {
 public:
-    Tree(uint32_t id, float x, float y, sf::Texture& treeBody, float treeTrunkRadius);
+    Tree(float x, float y, sf::Texture& treeBody, float treeTrunkRadius);
     virtual ~Tree() = default;
     void draw(sf::RenderWindow& renderWindow) override;
 

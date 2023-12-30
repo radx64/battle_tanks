@@ -4,9 +4,10 @@
 #include <cmath>
 
 #include "game/Context.hpp"
-#include "gui/FontLibrary.hpp"
+#include "game/InstanceIdGenerator.hpp"
 #include "graphics/Particles.hpp"
 #include "graphics/TextureLibrary.hpp"
+#include "gui/FontLibrary.hpp"
 #include "math/Math.hpp"
 
 namespace game 
@@ -74,10 +75,9 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
     renderWindow.draw(velocity_y_vector, 2, sf::Lines);
 }
 
-Tank::Tank(uint32_t id, float x, float y, float rotation, 
+Tank::Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
-: RigidBody(id, x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF)
-, id_(id)
+: RigidBody(InstanceIdGenerator::getId(), x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF)
 , cannon_(std::move(cannon))
 , current_direction_(rotation)
 , set_direction_(rotation)

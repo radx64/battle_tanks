@@ -20,9 +20,6 @@ public:
     };
 
     static std::unique_ptr<Barrel> create(const BarrelFactory::BarrelType type, float x, float y);
-
-protected:
-    static uint32_t next_barrel_id;
 };
 
 }  // namespace game

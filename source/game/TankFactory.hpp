@@ -21,9 +21,6 @@ public:
     };
 
     static std::unique_ptr<Tank> create(const TankFactory::TankType type, float x, float y, float rotation);
-
-protected:
-    static uint32_t next_tank_id;
 };
 
 }  // namespace game

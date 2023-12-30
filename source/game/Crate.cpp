@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "game/InstanceIdGenerator.hpp"
+
 namespace game
 {
 
@@ -10,8 +12,8 @@ constexpr float CRATE_MASS = 1;
 constexpr float GROUND_DRAG_COEEF = 0.85;
 
 
-Crate::Crate(uint32_t id, float x, float y, sf::Texture& barrelBody)
-: RigidBody(id, x, y, CRATE_RADIUS, CRATE_MASS, GROUND_DRAG_COEEF)
+Crate::Crate(float x, float y, sf::Texture& barrelBody)
+: RigidBody(InstanceIdGenerator::getId(), x, y, CRATE_RADIUS, CRATE_MASS, GROUND_DRAG_COEEF)
 {
     sprite_.setTexture(barrelBody);
     sf::Vector2u texture_body_size = barrelBody.getSize();

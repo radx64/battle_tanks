@@ -8,9 +8,6 @@
 namespace game 
 {
 
-// TODO create proper global object instanceId generator
-uint32_t CrateFactory::next_crate_id = 2000;
-
 namespace 
 {
 sf::Texture& getCrateTexture(const CrateFactory::CrateType type)
@@ -26,9 +23,8 @@ sf::Texture& getCrateTexture(const CrateFactory::CrateType type)
 
 std::unique_ptr<Crate> CrateFactory::create(const CrateFactory::CrateType type, float x, float y)
 {
-    auto tank = std::make_unique<Crate>(next_crate_id, x, y, getCrateTexture(type));
-    next_crate_id++;
-    return tank;
+    auto crate = std::make_unique<Crate>(x, y, getCrateTexture(type));
+    return crate;
 }
 
 }  // namespace game

@@ -8,9 +8,6 @@
 namespace game 
 {
 
-// TODO create proper global object instanceId generator
-uint32_t BarrelFactory::next_barrel_id = 1000;
-
 namespace
 {
 sf::Texture& getBarrelTexture(const BarrelFactory::BarrelType type)
@@ -28,9 +25,8 @@ sf::Texture& getBarrelTexture(const BarrelFactory::BarrelType type)
 
 std::unique_ptr<Barrel> BarrelFactory::create(const BarrelFactory::BarrelType type, float x, float y)
 {
-    auto tank = std::make_unique<Barrel>(next_barrel_id, x, y, getBarrelTexture(type));
-    next_barrel_id++;
-    return tank;
+    auto barrel = std::make_unique<Barrel>(x, y, getBarrelTexture(type));
+    return barrel;
 }
 
 }  // namespace game

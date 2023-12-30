@@ -21,9 +21,6 @@ public:
     };
 
     static std::unique_ptr<Tree> create(const TreeFactory::TreeType type, float x, float y);
-
-protected:
-    static uint32_t next_tree_id;
 };
 
 }  // namespace game

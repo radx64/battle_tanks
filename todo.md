@@ -3,9 +3,9 @@ Bunch of random ideas to randomly pick up and implement
 
 ## Engine
 ### Physics
-- [ ] Circle based basic collisions
-- [ ] Rigid body simulation generalization to simulate other objects than tanks (still circle based)
-- [ ] AABB box collisions
+- [x] Circle based basic collisions
+- [x] Rigid body simulation generalization to simulate other objects than tanks (still circle based)
+- [ ] AABB/OBB box collisions
 - [ ] Variable time step in physics calulcations
 - [ ] Ray casting for collisions with objects (for further sensors implementation)
 
@@ -19,12 +19,12 @@ Bunch of random ideas to randomly pick up and implement
 - [x] Resizable windows
     - [x] 🐛: You can close window while resizing by passing cursor over close button 
     - [x] 🐛: When window is first resized and then dragged it jumps to some offset position (like where topbar was before resize)
-    - [X] 🐛: Window focusing is not working properly after resizing
+    - [x] 🐛: Window focusing is not working properly after resizing
 - [ ] Some basic dynamic layout support like (consider removing alignment variable in position in favour of layout):
-  - [ ] Horizontal
-  - [ ] Vertical
+  - [x] Horizontal
+  - [x] Vertical
   - [ ] Box (like 2x2 grid)
-- [ ] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
+- [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 
 ## Gameplay

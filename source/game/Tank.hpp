@@ -15,7 +15,7 @@ namespace game
 class Tank : public IRenderable, public RigidBody
 {
 public:
-    Tank(uint32_t id, float x, float y, float rotation, 
+    Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody);
     virtual ~Tank() = default;
 
@@ -24,8 +24,6 @@ public:
     void setThrottle(float throttle);
     void setDirection(float direction);
     static void setDebug(bool is_enabled); 
-
-    uint32_t id_;
 
     sf::Vector2f drivetrain_force_{};
     sf::Vector2f braking_force_{};

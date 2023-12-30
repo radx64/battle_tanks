@@ -4,14 +4,16 @@
 
 #include "graphics/TextureLibrary.hpp"
 
+#include "game/InstanceIdGenerator.hpp"
+
 namespace game
 {
 
 constexpr float GROUND_DRAG_COEEF = 0.1f;
 constexpr float TREE_MASS = 999999.f;
 
-Tree::Tree(uint32_t id, float x, float y, sf::Texture& treeBody, float treeTrunkRadius)
-: RigidBody(id, x, y, treeTrunkRadius, TREE_MASS, GROUND_DRAG_COEEF)
+Tree::Tree(float x, float y, sf::Texture& treeBody, float treeTrunkRadius)
+: RigidBody(InstanceIdGenerator::getId(), x, y, treeTrunkRadius, TREE_MASS, GROUND_DRAG_COEEF)
 {
 
     sprite_.setTexture(treeBody);

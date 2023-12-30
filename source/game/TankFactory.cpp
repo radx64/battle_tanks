@@ -9,8 +9,6 @@
 namespace game 
 {
 
-uint32_t TankFactory::next_tank_id = 0;
-
 namespace {
 sf::Texture& getTankTexture(const TankFactory::TankType type)
 {
@@ -42,8 +40,7 @@ sf::Texture& getCannonTexture(const TankFactory::TankType type)
 std::unique_ptr<Tank> TankFactory::create(const TankFactory::TankType type, float x, float y, float rotation)
 {
     auto cannon = std::make_unique<Cannon>(x, y, rotation, getCannonTexture(type));
-    auto tank = std::make_unique<Tank>(next_tank_id, x, y, rotation, std::move(cannon), getTankTexture(type));
-    next_tank_id++;
+    auto tank = std::make_unique<Tank>(x, y, rotation, std::move(cannon), getTankTexture(type));
     return tank;
 }
 
