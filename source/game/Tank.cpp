@@ -77,7 +77,7 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
 
 Tank::Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
-: RigidBody(InstanceIdGenerator::getId(), x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF)
+: RigidBody(InstanceIdGenerator::getId(), x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF, RigidBody::Type::DYNAMIC)
 , cannon_(std::move(cannon))
 , current_direction_(rotation)
 , set_direction_(rotation)

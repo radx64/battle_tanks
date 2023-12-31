@@ -13,7 +13,7 @@ constexpr float GROUND_DRAG_COEEF = 0.85;
 
 
 Crate::Crate(float x, float y, sf::Texture& barrelBody)
-: RigidBody(InstanceIdGenerator::getId(), x, y, CRATE_RADIUS, CRATE_MASS, GROUND_DRAG_COEEF)
+: RigidBody(InstanceIdGenerator::getId(), x, y, CRATE_RADIUS, CRATE_MASS, GROUND_DRAG_COEEF, RigidBody::Type::DYNAMIC)
 {
     sprite_.setTexture(barrelBody);
     sf::Vector2u texture_body_size = barrelBody.getSize();

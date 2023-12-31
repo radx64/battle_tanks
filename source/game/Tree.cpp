@@ -13,7 +13,7 @@ constexpr float GROUND_DRAG_COEEF = 0.1f;
 constexpr float TREE_MASS = 999999.f;
 
 Tree::Tree(float x, float y, sf::Texture& treeBody, float treeTrunkRadius)
-: RigidBody(InstanceIdGenerator::getId(), x, y, treeTrunkRadius, TREE_MASS, GROUND_DRAG_COEEF)
+: RigidBody(InstanceIdGenerator::getId(), x, y, treeTrunkRadius, TREE_MASS, GROUND_DRAG_COEEF, RigidBody::Type::STATIC)
 {
 
     sprite_.setTexture(treeBody);
