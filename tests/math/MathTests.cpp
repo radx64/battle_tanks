@@ -10,35 +10,89 @@ TEST(Distance, shouldReturnZeroForSinglePoint)
 {
     float expected_distance = 0.0;
     float calculated_distance = math::distance(2.0, 3.0, 2.0, 3.0);
-    EXPECT_DOUBLE_EQ(expected_distance, calculated_distance);
+    EXPECT_FLOAT_EQ(expected_distance, calculated_distance);
 }
 
 TEST(Distance, shouldReturnProperValues)
 {
     float expected_distance = 1.4142135623730951;
     float calculated_distance = math::distance(0.0, 0.0, 1.0, 1.0);
-    EXPECT_DOUBLE_EQ(expected_distance, calculated_distance);
+    EXPECT_FLOAT_EQ(expected_distance, calculated_distance);
 }
 
 TEST(Distance, shouldWorkForNegativeCoordinates)
 {
     float expected_distance = 1.4142135623730951;
     float calculated_distance = math::distance(0.0, 0.0, -1.0, -1.0);
-    EXPECT_DOUBLE_EQ(expected_distance, calculated_distance);
+    EXPECT_FLOAT_EQ(expected_distance, calculated_distance);
+}
+
+TEST(DotProduct, shouldCalculateForPositiveVectors)
+{
+    float expected_result = 5.f;
+    float dotProduct = math::dot_product(1.0, 1.0, 2.0, 3.0);
+    EXPECT_FLOAT_EQ(expected_result, dotProduct);
+}
+
+TEST(DotProduct, shouldCalculateForNegativeVectors)
+{
+    float expected_result = -9.f;
+    float dotProduct = math::dot_product(1.0, 1.0, -2.0, -7.0);
+    EXPECT_FLOAT_EQ(expected_result, dotProduct);
+}
+
+TEST(CrossProduct, shouldCalculateForPositiveVectors)
+{
+    float expected_result = 1.f;
+    float crossProduct = math::cross_product(1.0, 1.0, 2.0, 3.0);
+    EXPECT_FLOAT_EQ(expected_result, crossProduct);
+}
+
+TEST(CrossProduct, shouldCalculateForNegativeVectors)
+{
+    float expected_result = -5.f;
+    float crossProduct = math::cross_product(1.0, 1.0, -2.0, -7.0);
+    EXPECT_FLOAT_EQ(expected_result, crossProduct);
+}
+
+TEST(NormalizeVector, shouldReturnItsLengthBeforeNormalization)
+{
+    float expected_length = 2.f * std::sqrt(2.f);
+    sf::Vector2f vector = {2.f, 2.f};
+    float length =  math::normalize_vector(vector);
+    EXPECT_FLOAT_EQ(expected_length, length);
+}
+
+TEST(NormalizeVector, shouldNormalizeVectorWithPositiveValues)
+{
+    sf::Vector2f vector = {2.f, 2.f};
+    sf::Vector2f expected_vector = {0.707107f, 0.707107f};
+    math::normalize_vector(vector);
+    EXPECT_FLOAT_EQ(expected_vector.x, vector.x);
+    EXPECT_FLOAT_EQ(expected_vector.y, vector.y);
+}
+
+TEST(NormalizeVector, shouldNormalizeVectorWithNegativeValues)
+{
+    sf::Vector2f vector = {2.f, -5.f};
+    sf::Vector2f expected_vector = {0.37139067f, -0.92847669f};
+    math::normalize_vector(vector);
+    EXPECT_FLOAT_EQ(expected_vector.x, vector.x);
+    EXPECT_FLOAT_EQ(expected_vector.y, vector.y);
 }
 
 TEST(SignedFmod, shouldReturnRemainderOfDivisionWithProperSignForNegatives)
 {
     float expected_result = -5.0;
     float calculated_result = math::signed_fmod(-25.0, -20.0);
-    EXPECT_DOUBLE_EQ(expected_result, calculated_result);
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);
 }
 
 TEST(SignedFmod, shouldReturnRemainderOfDivisionWithProperSignForPositives)
 {
     float expected_result = 5.0;
     float calculated_result = math::signed_fmod(25.0, 20.0);
-    EXPECT_DOUBLE_EQ(expected_result, calculated_result);
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);
 }
 
 TEST(SignedFmod, shouldReturnNanIfSecondParameterApproachesTowardsZero)
@@ -47,25 +101,25 @@ TEST(SignedFmod, shouldReturnNanIfSecondParameterApproachesTowardsZero)
     EXPECT_TRUE(std::isnan(calculated_result));    
 }
 
-TEST(DegeeToRadians, shouldConvertZeroDegree)
+TEST(DegreeToRadians, shouldConvertZeroDegree)
 {
     float expected_result = 0.0;
     float calculated_result = math::degree_to_radians(0.0);
-    EXPECT_DOUBLE_EQ(expected_result, calculated_result);   
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
-TEST(DegeeToRadians, shouldConvertPositiveDegree)
+TEST(DegreeToRadians, shouldConvertPositiveDegree)
 {
     float expected_result = 2.0943951023931953;
     float calculated_result = math::degree_to_radians(120.0);
-    EXPECT_DOUBLE_EQ(expected_result, calculated_result);   
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
-TEST(DegeeToRadians, shouldConvertNegativeDegree)
+TEST(DegreeToRadians, shouldConvertNegativeDegree)
 {
     float expected_result = -0.52359877559829882;
     float calculated_result = math::degree_to_radians(-30.0);
-    EXPECT_DOUBLE_EQ(expected_result, calculated_result);   
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
 namespace sf
