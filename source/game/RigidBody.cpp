@@ -4,14 +4,57 @@
 
 #include "math/Math.hpp"
 
-#include <iostream>
-
 namespace game
 {
 
 constexpr float SPRING_COLLISION_COEEF = 1.75;  // simulate bouciness of collision
 
-constexpr float TANGENT_VELOCITY_SCALING_FACTOR = 500.f;
+constexpr float TANGENT_VELOCITY_SCALING_FACTOR = 50.f;
+
+struct CollisionResult
+{
+    float tangentVelocity_;     // velocity added to angular velocity of an object
+    float impact_;              // linear collision force
+    float nx_;                  // normal hit vector x coordinate
+    float ny_;                  // normal hit vector y coordinate
+};
+
+CollisionResult processObjectsCollsion(RigidBody* object, RigidBody* other_object)
+{
+   float distance_between_objects = math::distance(object->x_, object->y_, 
+        other_object->x_, other_object->y_);
+    // Collision detected here
+    // Calculating hit vectors
+    float nx = (other_object->x_ - object->x_) / distance_between_objects;
+    float ny = (other_object->y_ - object->y_) / distance_between_objects;
+    float impact = SPRING_COLLISION_COEEF * (
+        math::dot_product(object->velocity_.x, object->velocity_.y, nx, ny)
+        - math::dot_product(other_object->velocity_.x, other_object->velocity_.y, nx, ny)) 
+        / (object->mass_ + other_object->mass_);
+
+    // Additional angular velocity based on the point of collision
+    // So objects rotate when hit
+    auto relativeVelocity = object->velocity_ - other_object->velocity_;
+    float velocityVectorLength = math::normalize_vector(relativeVelocity);
+    float dotProduct = math::dot_product(nx, ny, relativeVelocity.x, relativeVelocity.y);
+    // TODO: Consider adding mass and impact momentum to this tangent velocity later
+    float tangentVelocity =  velocityVectorLength * dotProduct * TANGENT_VELOCITY_SCALING_FACTOR;
+
+    // This cross product is used to determine rotation direction of the angular momentum    
+    float crossProduct = math::cross_product(
+        object->velocity_.x, 
+        object->velocity_.y,
+        other_object->velocity_.x, 
+        other_object->velocity_.y);
+
+    if (crossProduct > 0) tangentVelocity = tangentVelocity * -1.f;
+
+    return CollisionResult{
+        .tangentVelocity_ = tangentVelocity, 
+        .impact_ = impact, 
+        .nx_ = nx,
+        .ny_ = ny};
+}
 
 RigidBody::RigidBody(uint32_t id, float x, float y,  float radius, float mass, float ground_drag_cooef,
     RigidBody::Type type)
@@ -27,58 +70,41 @@ RigidBody::RigidBody(uint32_t id, float x, float y,  float radius, float mass, f
 , type_(type)
 {}
 
+
 void RigidBody::processStaticAndDynamicObjectsCollsion(RigidBody* static_object, RigidBody* dynamic_object)
 {
-    (void) static_object;
-    (void) dynamic_object;
+    auto collisionResult = processObjectsCollsion(static_object, dynamic_object);
 
+    dynamic_object->angular_velocity_ -= collisionResult.tangentVelocity_  / dynamic_object->radius_;
+
+    sf::Vector2f normalVector{collisionResult.nx_,collisionResult.ny_};
+    math::normalize_vector(normalVector);
+
+    float relativeSpeed = math::dot_product(
+        dynamic_object->velocity_.x, dynamic_object->velocity_.y,
+        normalVector.x, normalVector.y);
+
+    float impulse = 2.0f * relativeSpeed;
+
+    dynamic_object->velocity_ = dynamic_object->velocity_ - normalVector * impulse ;
 }
 
 void RigidBody::processDynamicObjectsCollsion(RigidBody* dynamic_object, RigidBody* other_dynamic_object)
-{
-    float distance_between_objects = math::distance(dynamic_object->x_, dynamic_object->y_, 
-        other_dynamic_object->x_, other_dynamic_object->y_);
-    // Collision detected here
-    // Calculating hit vectors
-    float nx = (other_dynamic_object->x_ - dynamic_object->x_) / distance_between_objects;
-    float ny = (other_dynamic_object->y_ - dynamic_object->y_) / distance_between_objects;
-    float p = SPRING_COLLISION_COEEF * (
-        dynamic_object->velocity_.x * nx +dynamic_object->velocity_.y * ny 
-        - other_dynamic_object->velocity_.x * nx - other_dynamic_object->velocity_.y * ny) 
-        / (dynamic_object->mass_ + other_dynamic_object->mass_);
+{ 
+    auto collisionResult = processObjectsCollsion(dynamic_object, other_dynamic_object);
 
-    // Additional angular velocity based on the point of collision
-    // So objects rotate when hit
-
-    // FIXME: There is something wrong in this tangent velocity formula.
-    // In circle collision rotation of a circle should not matter thus angle should
-    // not be needed (only relative position of circles, point of contact and their velocities)
-    // I need to investigate it further
-    // float tangentVelocity = nx * distance_between_objects * std::sin(math::degree_to_radians(dynamic_object->angle_)) 
-    //     - ny * distance_between_objects * std::cos(math::degree_to_radians(dynamic_object->angle_));
-    // For now I will hardcode this as a constant velocity just for testing purposes
-
-    float tangentVelocity =  TANGENT_VELOCITY_SCALING_FACTOR;
-
-    // This cross product is to determine rotation direction of the angular momentum    
-    float crossProduct = 
-        dynamic_object->velocity_.x  * other_dynamic_object->velocity_.y 
-        - dynamic_object->velocity_.y  * other_dynamic_object->velocity_.x;
-
-    if (crossProduct > 0) tangentVelocity = tangentVelocity * -1.f;
-
-    angular_velocity_ += tangentVelocity / dynamic_object->radius_;
-    other_dynamic_object->angular_velocity_ -= tangentVelocity / other_dynamic_object->radius_;
+    dynamic_object->angular_velocity_ += collisionResult.tangentVelocity_ / dynamic_object->radius_;
+    other_dynamic_object->angular_velocity_ -= collisionResult.tangentVelocity_  / other_dynamic_object->radius_;
 
     sf::Vector2f objectCollisionVelocity = sf::Vector2f(
-        (dynamic_object->velocity_.x - p * other_dynamic_object->mass_ * nx),
-        (dynamic_object->velocity_.y - p * other_dynamic_object->mass_ * ny));
+        (dynamic_object->velocity_.x - collisionResult.impact_ * other_dynamic_object->mass_ * collisionResult.nx_),
+        (dynamic_object->velocity_.y - collisionResult.impact_ * other_dynamic_object->mass_ * collisionResult.ny_));
     
     dynamic_object->velocity_ = objectCollisionVelocity;
 
     sf::Vector2f otherObjectCollisionVelocity = sf::Vector2f(
-        (other_dynamic_object->velocity_.x + p * dynamic_object->mass_ * nx),
-        (other_dynamic_object->velocity_.y + p * dynamic_object->mass_ * ny));
+        (other_dynamic_object->velocity_.x + collisionResult.impact_ * dynamic_object->mass_ * collisionResult.nx_),
+        (other_dynamic_object->velocity_.y + collisionResult.impact_ * dynamic_object->mass_ * collisionResult.ny_));
     other_dynamic_object->velocity_ = otherObjectCollisionVelocity;
 }
 

@@ -10,7 +10,9 @@
 namespace math
 {
 float distance(float x1, float y1, float x2, float y2);
-
+float dot_product(float x1, float y1, float x2, float y2);
+float cross_product(float x1, float y1, float x2, float y2);
+float normalize_vector(sf::Vector2f& vector);
 float signed_fmod(float a, float n);
 float degree_to_radians(float degree);
 sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, float angle, sf::Vector2f pivot);

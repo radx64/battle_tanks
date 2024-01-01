@@ -32,7 +32,7 @@ namespace game
 
 constexpr uint32_t WINDOW_WIDTH = 1920;
 constexpr uint32_t WINDOW_HEIGHT = 1000;
-constexpr size_t TANKS_COUNT = 1;
+constexpr size_t TANKS_COUNT = 5;
 constexpr size_t BARRELS_COUNT = 10;
 constexpr size_t CRATES_COUNT = 10;
 
@@ -210,7 +210,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         gameObjects_.push_back(std::move(crate));
     }
 
-    constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 4;
+    constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 8;
 
     using Type = game::TreeFactory::TreeType;
     const auto tree_types = std::vector<Type> 

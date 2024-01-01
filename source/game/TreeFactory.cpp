@@ -36,11 +36,23 @@ float getTreeTrunkRadius(const TreeFactory::TreeType type)
     };
 }
 
+float getTreeHeight(const TreeFactory::TreeType type)
+{
+    switch (type)
+    {
+        case TreeFactory::TreeType::Brown_Large    : return 16;
+        case TreeFactory::TreeType::Brown_Small    : return 8;
+        case TreeFactory::TreeType::Green_Large    : return 16;
+        case TreeFactory::TreeType::Green_Small    : return 8;
+        default                                    : return 8;
+    };
+}
+
 } // namespace
 
 std::unique_ptr<Tree> TreeFactory::create(const TreeFactory::TreeType type, float x, float y)
 {
-    auto tank = std::make_unique<Tree>(x, y, getTreeTexture(type), getTreeTrunkRadius(type));
+    auto tank = std::make_unique<Tree>(x, y, getTreeHeight(type), getTreeTexture(type), getTreeTrunkRadius(type));
     return tank;
 }
 }  // namespace game

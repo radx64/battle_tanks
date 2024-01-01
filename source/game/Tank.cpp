@@ -18,7 +18,7 @@ constexpr float TANK_ACCELERATION = 6.0;
 constexpr float TANK_ROTATION_SPEED = 200.0;
 
 constexpr float TANK_RADIUS = 25;
-constexpr float TANK_MASS = 50;
+constexpr float TANK_MASS = 5000;
 constexpr float GROUND_DRAG_COEEF = 0.97;
 
 bool Tank::DEBUG_{false};

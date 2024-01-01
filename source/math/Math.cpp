@@ -9,12 +9,29 @@ namespace math
 
 float distance(float x1, float y1, float x2, float y2)
 {
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
+float dot_product(float x1, float y1, float x2, float y2)
+{
+  return x1 * x2 + y1 * y2;
+}
+
+float cross_product(float x1, float y1, float x2, float y2)
+{
+  return x1 * y2 - y1 * x2;
+}
+
+float normalize_vector(sf::Vector2f& vector)
+{
+  float norm = std::sqrt(vector.x * vector.x + vector.y * vector.y); 
+  if (norm != 0.f) vector /= norm;
+  return norm;
 }
 
 float signed_fmod(float a, float n)
 {
-    return a - floor(a/n) * n;
+  return a - floor(a/n) * n;
 }
 
 float degree_to_radians(float degree)

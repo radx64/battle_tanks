@@ -35,6 +35,7 @@ sf::Texture& getCannonTexture(const TankFactory::TankType type)
         default                           : return graphics::TextureLibrary::get("blue_cannon");
     }
 };
+
 }  // namespace
 
 std::unique_ptr<Tank> TankFactory::create(const TankFactory::TankType type, float x, float y, float rotation)

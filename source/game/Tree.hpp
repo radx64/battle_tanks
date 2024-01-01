@@ -12,12 +12,13 @@ namespace game
 class Tree : public IRenderable, public RigidBody
 {
 public:
-    Tree(float x, float y, sf::Texture& treeBody, float treeTrunkRadius);
+    Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrunkRadius);
     virtual ~Tree() = default;
     void draw(sf::RenderWindow& renderWindow) override;
 
 protected:
     sf::Sprite sprite_;
+    float height_;
 };
 
 }  // namespace game
