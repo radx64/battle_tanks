@@ -11,6 +11,9 @@
 #include "game/RigidBody.hpp"
 #include "game/Tank.hpp"
 #include "game/IRenderable.hpp"
+#include "game/FpsCounter.hpp"
+#include "game/FpsLimiter.hpp"
+
 
 #include "graphics/Particles.hpp"
 #include "graphics/Tilemap.hpp"
@@ -35,6 +38,8 @@ protected:
 
     graphics::Particles particles_;
     Context context_;
+    game::FpsCounter fpsCounter_;
+    game::FpsLimiter fpsLimiter_;
 
     const sf::Vector2f camera_initial_position_;
     const sf::Vector2f camera_initial_size_;

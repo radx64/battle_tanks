@@ -38,19 +38,6 @@ constexpr size_t CRATES_COUNT = 10;
 
 constexpr float timeStep = 1.0/30.0;
 
-uint32_t calculate_fps(uint32_t draw_time)
-{
-    if (draw_time > 1)
-    {
-        return 1000.f/static_cast<float>(draw_time);
-    }
-    else
-    {
-        return 1000;
-    }    
-}
-
-
 Application::Application()
 : camera_initial_position_{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f}
 , camera_initial_size_{WINDOW_WIDTH, WINDOW_HEIGHT}
@@ -242,7 +229,7 @@ int Application::run()
     try
     {
         // TODO: move those member creations to class fields
-
+        // And create some proper profiler class not that
         constexpr int number_of_measurements = 10;
         math::Average draw_average{number_of_measurements};
         math::Average physics_average{number_of_measurements};
@@ -260,6 +247,8 @@ int Application::run()
 
         while (window_.isOpen())
         {
+            fpsLimiter_.startNewFrame();
+            fpsCounter_.startMeasurement();
             sf::Event event;
             while (window_.pollEvent(event))
             {
@@ -311,7 +300,6 @@ int Application::run()
             if (mousePosition.y < 10) {camera_.move(0.f,-20.f);}
             if ((uint32_t)mousePosition.y > WINDOW_HEIGHT - 10) {camera_.move(0.f,20.f);}
 
-            clock.restart();
             tilemap_->draw(window_);
             graphics::drawtools::drawWaypoints(window_, waypoints_);
             particles_.draw(window_);
@@ -320,7 +308,6 @@ int Application::run()
                 object->draw(window_);
             }
             auto draw_time = clock.getElapsedTime().asMilliseconds();
-            uint32_t fps = calculate_fps(draw_time);
             clock.restart();
             for(auto& navigator : navigators_)
             {
@@ -421,18 +408,19 @@ int Application::run()
 
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
             last_mouse_in_gui_position_ = mousePositionInGUI;
-
+            fpsLimiter_.wait();
+            fpsCounter_.endMeasurement();
             measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
                  + "us\nGUI: " + std::to_string(gui_time.asMilliseconds()) 
-                 + "ms\nFPS: "+ std::to_string(fps));
+                 + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps()));
 
             measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
                 + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
                 + "us\nAVG: " + std::to_string(gui_average.calculate(gui_time.asMilliseconds()))
-                + "ms\nAVG: " + std::to_string(fps_average.calculate(fps)));
+                + "ms\nAVG: " + std::to_string(fps_average.calculate(fpsCounter_.getFps())));
 
             window_.display();
         }

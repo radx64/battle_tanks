@@ -15,6 +15,8 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HelpWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/IRenderable.hpp
