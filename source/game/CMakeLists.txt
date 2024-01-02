@@ -36,6 +36,8 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
