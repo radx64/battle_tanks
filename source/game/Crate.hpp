@@ -3,10 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/Renderer.hpp"
-#include "game/RigidBody.hpp"
-
-#include "game/CrateRenderer.hpp"
+#include "game/GameObject.hpp"
 
 namespace game
 {
@@ -17,16 +14,11 @@ namespace game
 // to support more complex convex shapes ( like box 🤣 )
 // Need to check SAT theorem which migh help solving that
 
-class Crate : public Renderer, public RigidBody
+class Crate : public GameObject
 {
 public:
     Crate(float x, float y, sf::Texture& barrelBody);
     virtual ~Crate() = default;
-    void draw(sf::RenderWindow& renderWindow) override;
-
-protected:
-    sf::Sprite sprite_;
-    CrateRenderer renderer_;
 };
 
 }  // namespace game

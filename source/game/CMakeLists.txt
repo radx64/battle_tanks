@@ -13,6 +13,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelRenderer.hpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.hpp
@@ -40,12 +41,14 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelRenderer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp   
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateRenderer.cpp    
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp

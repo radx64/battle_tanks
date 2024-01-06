@@ -17,7 +17,7 @@ public:
     void zoomOut();
     const sf::Vector2f& getPosition();
     const sf::Vector2f& getSize();
-    void physics();
+    void update();
 
 protected:
     void alignBoundaries();

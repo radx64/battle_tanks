@@ -12,6 +12,7 @@ class TankRenderer : public Renderer
 public:
     TankRenderer(Tank* tank, sf::Texture& tankBody);
     void draw(sf::RenderWindow& renderWindow);
+    void drawDebugInfo(sf::RenderWindow& renderWindow);
 
 protected:
     Tank* tank_;

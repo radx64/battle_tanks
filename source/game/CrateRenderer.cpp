@@ -14,13 +14,14 @@ CrateRenderer::CrateRenderer(Crate* crate, sf::Texture& crateBody)
 
 void CrateRenderer::draw(sf::RenderWindow& renderWindow)
 {
-    crateSprite_.setRotation(crate_->rotation_);
+    auto crateRigidBody = crate_->getRigidBody();
+    crateSprite_.setRotation(crateRigidBody.rotation_);
     crateSprite_.setColor(sf::Color(10, 10, 10, 127));
-    crateSprite_.setPosition(crate_->x_ + 4, crate_->y_+ 4);
+    crateSprite_.setPosition(crateRigidBody.x_ + 4, crateRigidBody.y_+ 4);
     renderWindow.draw(crateSprite_);
 
     crateSprite_.setColor(sf::Color(255, 255, 255, 255));
-    crateSprite_.setPosition(crate_->x_, crate_->y_);
+    crateSprite_.setPosition(crateRigidBody.x_, crateRigidBody.y_);
     renderWindow.draw(crateSprite_);
 }
 

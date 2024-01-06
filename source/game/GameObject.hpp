@@ -1,8 +1,13 @@
 #ifndef GAME_GAME_OBJECT_HPP_
 #define GAME_GAME_OBJECT_HPP_
 
+#include <memory>
+
+#include "game/Renderer.hpp"
+#include "game/RigidBody.hpp"
+
 namespace game {class World;}
-namespace game {class Renderer;}
+
 namespace sf {class RenderWindow;}
 
 namespace game
@@ -11,20 +16,18 @@ namespace game
 class GameObject
 {
 public:
+    GameObject() = default;
+    virtual ~GameObject() = default;
+    void draw(sf::RenderWindow& renderWindow, float timeStep);
+    void update(game::World& world, float timeStep);
+    RigidBody& getRigidBody();
+    Renderer& getRenderer();
 
-    void draw(sf::RenderWindow& renderWindow, float timeStep)
-    {
-        (void) timeStep;
-        if (renderer_)  renderer_->draw(renderWindow); // TODO add timeStep 
-    }
-    void update(game::World& world, float timeStep)
-    {
-        (void) world;
-        (void) timeStep;     
-    }
-
+    // This can be reimplemented for custom object behaviour every update step
+    virtual void onUpdate(game::World& world, float timeStep);
 
     std::unique_ptr<Renderer> renderer_;
+    std::unique_ptr<RigidBody> rigid_body_;
 };
 
 

@@ -3,24 +3,19 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/BarrelRenderer.hpp"
-#include "game/Renderer.hpp"
-#include "game/RigidBody.hpp"
-
+#include "game/GameObject.hpp"
 
 namespace game
 {
 
-class Barrel : public Renderer, public RigidBody
+class Barrel : public GameObject
 {
 public:
     Barrel(float x, float y, sf::Texture& barrelBody);
     virtual ~Barrel() = default;
-    void draw(sf::RenderWindow& renderWindow) override;
-
-protected:
-    BarrelRenderer renderer_;
 };
+
+
 
 }  // namespace game
 

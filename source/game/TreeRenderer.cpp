@@ -14,13 +14,14 @@ TreeRenderer::TreeRenderer(Tree* tree, sf::Texture& treeBody)
 
 void TreeRenderer::draw(sf::RenderWindow& renderWindow)
 {
-    treeSprite_.setRotation(tree_->rotation_);
+    auto treeRigidBody = tree_->getRigidBody();
+    treeSprite_.setRotation(treeRigidBody.rotation_);
     treeSprite_.setColor(sf::Color(10, 10, 10, 127));
-    treeSprite_.setPosition(tree_->x_ + tree_->height_, tree_->y_+ tree_->height_);
+    treeSprite_.setPosition(treeRigidBody.x_ + tree_->height_, treeRigidBody.y_+ tree_->height_);
     renderWindow.draw(treeSprite_);
 
     treeSprite_.setColor(sf::Color(255, 255, 255, 255));
-    treeSprite_.setPosition(tree_->x_, tree_->y_);
+    treeSprite_.setPosition(treeRigidBody.x_, treeRigidBody.y_);
     renderWindow.draw(treeSprite_);
 }
 

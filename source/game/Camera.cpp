@@ -89,7 +89,7 @@ const sf::Vector2f& Camera::getSize()
     return current_size_;
 }
 
-void Camera::physics()
+void Camera::update()
 {
     const auto position_diff = target_position_ - current_position_;
     current_position_ += position_diff  * MOVE_FACTOR;

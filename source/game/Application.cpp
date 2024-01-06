@@ -44,6 +44,7 @@ Application::Application()
 , camera_{camera_initial_position_, camera_initial_size_}
 , camera_view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
 , window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!")
+, collision_solver_(world_)
 {
     context_.setParticles(&particles_);
     gui::FontLibrary::initialize();
@@ -160,11 +161,7 @@ void Application::spawnSomeTanks()
             x_spawn_position, y_spawn_position, spawn_rotation);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
-
-        // Temporary solution for storing Renderer and RigidBody pointers
-        // TODO: consider different objects hierarchy
-        drawableObjects_.push_back(tank.get());
-        gameObjects_.push_back(std::move(tank));
+        world_.objects_.push_back(std::move(tank));
         navigators_.push_back(std::move(navigator));
     }
 }
@@ -178,23 +175,18 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         auto barrel = BarrelFactory::create(static_cast<BarrelFactory::BarrelType>(i % 4),
             x_spawn_position, y_spawn_position);
 
-        // Temporary solution for storing Renderer and RigidBody pointers
-        // TODO: consider different objects hierarchy
-        drawableObjects_.push_back(barrel.get());
-        gameObjects_.push_back(std::move(barrel));
+        world_.objects_.emplace_back(BarrelFactory::create(
+            static_cast<BarrelFactory::BarrelType>(i % 4),
+            x_spawn_position, y_spawn_position));
     }
 
     for (size_t i = BARRELS_COUNT; i < CRATES_COUNT + BARRELS_COUNT; ++i)
     { 
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
-        auto crate = CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
-            x_spawn_position, y_spawn_position);
 
-        // Temporary solution for storing Renderer and RigidBody pointers
-        // TODO: consider different objects hierarchy
-        drawableObjects_.push_back(crate.get());
-        gameObjects_.push_back(std::move(crate));
+        world_.objects_.emplace_back(CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
+            x_spawn_position, y_spawn_position));
     }
 
     constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 8;
@@ -212,14 +204,9 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     {
         for (size_t i = 0; i < NUMBER_OF_TREES_OF_EACH_TYPE; ++i)
         {
-
             const auto x_position = rand() % WINDOW_WIDTH;
             const auto y_position = rand() % WINDOW_HEIGHT;
-            auto tree = game::TreeFactory::create(tree_type, x_position, y_position);
-
-            // TODO: consider different objects hierarchy
-            drawableObjects_.push_back(tree.get());
-            gameObjects_.push_back(std::move(tree)); 
+            world_.objects_.emplace_back(game::TreeFactory::create(tree_type, x_position, y_position));
         }
     }
 }
@@ -285,7 +272,7 @@ int Application::run()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) camera_.move(-20.f,0.f);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) camera_.move(20.f,0.f);
 
-            camera_.physics();
+            camera_.update();
             camera_view_.setCenter(camera_.getPosition());
             camera_view_.setSize(camera_.getSize());
 
@@ -303,10 +290,12 @@ int Application::run()
             tilemap_->draw(window_);
             graphics::drawtools::drawWaypoints(window_, waypoints_);
             particles_.draw(window_);
-            for (auto& object : drawableObjects_)
+
+            for (auto& object : world_.objects_)
             {
-                object->draw(window_);
+                object->draw(window_, timeStep);
             }
+
             auto draw_time = clock.getElapsedTime().asMilliseconds();
             clock.restart();
             for(auto& navigator : navigators_)
@@ -315,7 +304,11 @@ int Application::run()
             }
             auto nav_time = clock.getElapsedTime();
             clock.restart();
-            for (auto& object : gameObjects_) object->physics(gameObjects_, timeStep);
+
+            for (auto& object : world_.objects_) object->update(world_, timeStep);
+
+            collision_solver_.evaluateCollisions();
+
             auto physics_time = clock.getElapsedTime();
 
             window_.setView(window_.getDefaultView());

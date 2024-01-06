@@ -5,9 +5,9 @@
 
 #include "game/Context.hpp"
 #include "game/InstanceIdGenerator.hpp"
+#include "game/TankRenderer.hpp"
 #include "graphics/Particles.hpp"
 #include "graphics/TextureLibrary.hpp"
-#include "gui/FontLibrary.hpp"
 #include "math/Math.hpp"
 
 namespace game 
@@ -28,78 +28,28 @@ void Tank::setDebug(bool is_enabled)
     DEBUG_ = is_enabled;
 }
 
-void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
-{
-    // Collision circle
-    sf::CircleShape boundary(TANK_RADIUS, 12);
-    boundary.setFillColor(sf::Color(0, 0, 0, 0));
-    boundary.setOutlineThickness(1);
-    boundary.setOutlineColor(sf::Color(0, 0, 255));
-    boundary.setOrigin(TANK_RADIUS, TANK_RADIUS);
-    boundary.setPosition(x_, y_);
-    renderWindow.draw(boundary);
-
-    sf::Text debug_text;
-    debug_text.setFont(gui::FontLibrary::get("armata"));
-    debug_text.setPosition(x_ + 40, y_ - 20);
-    debug_text.setCharacterSize(15);
-    debug_text.setFillColor(sf::Color::Black);
-
-    debug_text.setString("SPD: " + std::to_string(fabs(velocity_.x + velocity_.y)) + "\n" + 
-        "ROT: " + std::to_string(current_direction_) + "\n" + 
-        "THR: " + std::to_string(current_throttle_));
-    renderWindow.draw(debug_text);
-
-    // Velocity vectors
-    sf::Vertex velocity_vector[] =
-    {
-        sf::Vertex(sf::Vector2f(x_, y_)),
-        sf::Vertex(sf::Vector2f(x_, y_)+ (velocity_))
-    };
-    renderWindow.draw(velocity_vector, 2, sf::Lines);
-
-    sf::Vertex velocity_x_vector[] =
-    {
-        sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Red),
-        sf::Vertex(sf::Vector2f(x_+velocity_.x, y_), sf::Color::Red)
-    };
-
-    renderWindow.draw(velocity_x_vector, 2, sf::Lines);
-
-    sf::Vertex velocity_y_vector[] =
-    {
-        sf::Vertex(sf::Vector2f(x_, y_), sf::Color::Green),
-        sf::Vertex(sf::Vector2f(x_, y_+velocity_.y), sf::Color::Green)
-    };
-
-    renderWindow.draw(velocity_y_vector, 2, sf::Lines);
-}
-
 Tank::Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
-: RigidBody(InstanceIdGenerator::getId(), x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF, RigidBody::Type::DYNAMIC)
-, current_direction_(rotation)
+: current_direction_(rotation)
 , cannon_(std::move(cannon))
 , set_direction_(rotation)
-, renderer_(this, tankBody)
-{  
-}
-
-void Tank::draw(sf::RenderWindow& renderWindow)
 {
-    renderer_.draw(renderWindow);
-    
-    if(DEBUG_) drawDebugInfo(renderWindow);
+    renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
-    /* TODO Consider moving code below to update method when introduced */
-    sf::Vector2f left_track = math::rotate_point(sf::Vector2f(x_, y_-15.0),
-        current_direction_, sf::Vector2f(x_, y_));
-    sf::Vector2f right_track = math::rotate_point(sf::Vector2f(x_, y_+15.0),
-        current_direction_, sf::Vector2f(x_, y_));
-
-    Context::getParticles().addParticle(left_track.x, left_track.y, current_direction_);
-    Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);
+    rigid_body_ = std::make_unique<RigidBody>(
+        InstanceIdGenerator::getId(), 
+        x, y, TANK_RADIUS,
+        TANK_MASS, 
+        GROUND_DRAG_COEEF, 
+        RigidBody::Type::DYNAMIC);
 }
+
+// void Tank::draw(sf::RenderWindow& renderWindow)
+// {
+//     renderer_.draw(renderWindow);
+
+//     if(DEBUG_) drawDebugInfo(renderWindow);
+// }
 
 void Tank::setThrottle(float throttle)
 {
@@ -111,14 +61,17 @@ void Tank::setDirection(float direction)
     cannon_->setRotation(direction);
 }
 
-void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep)
+void Tank::onUpdate(game::World& world, float timeStep)
 {
+    (void) world;
+
+    auto& tankRigidBody = getRigidBody();
+
     // TODO Tanks now does not use rotational speed for rotation 
     // so to other collisions to work it is important to not pass fake angular velociy
     // on contacts
-    angular_velocity_ = 0;
+    tankRigidBody.angular_velocity_ = 0;
 
-    (void) objects;
     //Convert current direction to 0..360 range
     current_direction_ = math::signed_fmod(current_direction_, 360.0);
 
@@ -133,12 +86,23 @@ void Tank::onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, float tim
     drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
     drivetrain_force_.y = sin(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
 
-    braking_force_.x = -velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
-    braking_force_.y = -velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+    braking_force_.x = -tankRigidBody.velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+    braking_force_.y = -tankRigidBody.velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
 
-    applyForce(drivetrain_force_ + braking_force_);
+    tankRigidBody.applyForce(drivetrain_force_ + braking_force_);
 
     cannon_->physics(timeStep);
+
+    if ((tankRigidBody.velocity_.x > 0.1) or (tankRigidBody.velocity_.y > 0.1))
+    {
+        sf::Vector2f left_track = math::rotate_point(sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_-15.0),
+            current_direction_, sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_));
+        sf::Vector2f right_track = math::rotate_point(sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_+15.0),
+            current_direction_, sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_));
+
+        Context::getParticles().addParticle(left_track.x, left_track.y, current_direction_);
+        Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);
+    }
 }
 
 }  // namespace game

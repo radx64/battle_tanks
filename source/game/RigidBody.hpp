@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace game {class World;}
+
 namespace game
 {
 
@@ -22,7 +24,9 @@ public:
     RigidBody(uint32_t id, float x, float y, float radius, float mass, float ground_drag_cooef,
         Type type);
     virtual ~RigidBody() = default;
-    void physics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep);
+    //void physics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep);
+    void update(float timeStep);
+    void applyForce(sf::Vector2f force);
 
 public:
     sf::Vector2f velocity_;
@@ -35,14 +39,7 @@ public:
     float radius_;
     float mass_;
     float ground_drag_cooef_;
-
-protected:
-    virtual void onPhysics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep);
-    void applyForce(sf::Vector2f force);
-    void processStaticAndDynamicObjectsCollsion(RigidBody* static_object, RigidBody* dynamic_object);
-    void processDynamicObjectsCollsion(RigidBody* dynamic_object, RigidBody* other_dynamic_object);
     Type type_;
-
 };
 
 }  // namespace game
