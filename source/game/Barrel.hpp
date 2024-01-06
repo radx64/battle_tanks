@@ -3,13 +3,15 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/IRenderable.hpp"
+#include "game/BarrelRenderer.hpp"
+#include "game/Renderer.hpp"
 #include "game/RigidBody.hpp"
+
 
 namespace game
 {
 
-class Barrel : public IRenderable, public RigidBody
+class Barrel : public Renderer, public RigidBody
 {
 public:
     Barrel(float x, float y, sf::Texture& barrelBody);
@@ -17,7 +19,7 @@ public:
     void draw(sf::RenderWindow& renderWindow) override;
 
 protected:
-    sf::Sprite sprite_;
+    BarrelRenderer renderer_;
 };
 
 }  // namespace game

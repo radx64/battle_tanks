@@ -10,9 +10,10 @@
 #include "game/Navigator.hpp"
 #include "game/RigidBody.hpp"
 #include "game/Tank.hpp"
-#include "game/IRenderable.hpp"
+#include "game/Renderer.hpp"
 #include "game/FpsCounter.hpp"
 #include "game/FpsLimiter.hpp"
+#include "game/World.hpp"
 
 
 #include "graphics/Particles.hpp"
@@ -60,9 +61,10 @@ protected:
     std::unique_ptr<gui::WindowManager> window_manager_;
 
     std::vector<sf::Vector2i> waypoints_;
-    std::vector<game::IRenderable*> drawableObjects_;
+    std::vector<game::Renderer*> drawableObjects_;
     std::vector<std::unique_ptr<RigidBody>> gameObjects_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
+    game::World world_;
 };
 
 }  // namespace game

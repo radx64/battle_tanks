@@ -78,34 +78,24 @@ void Tank::drawDebugInfo(sf::RenderWindow& renderWindow)
 Tank::Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
 : RigidBody(InstanceIdGenerator::getId(), x, y, TANK_RADIUS, TANK_MASS, GROUND_DRAG_COEEF, RigidBody::Type::DYNAMIC)
-, cannon_(std::move(cannon))
 , current_direction_(rotation)
+, cannon_(std::move(cannon))
 , set_direction_(rotation)
-{
-    sprite_.setTexture(tankBody);
-    sf::Vector2u texture_body_size = tankBody.getSize();
-    tank_middle_point_ = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
-    sprite_.setOrigin(tank_middle_point_);   
+, renderer_(this, tankBody)
+{  
 }
 
 void Tank::draw(sf::RenderWindow& renderWindow)
 {
-    sprite_.setColor(sf::Color(10, 10, 10, 127));
-    sprite_.setPosition(x_ + 8, y_+ 8);
-    sprite_.setRotation(current_direction_ - 90.f);
-    renderWindow.draw(sprite_);
-
-    sprite_.setColor(sf::Color(255, 255, 255, 255));
-    sprite_.setPosition(x_, y_);
-    renderWindow.draw(sprite_);
-    cannon_->x_ = x_;
-    cannon_->y_ = y_;
-    cannon_->draw(renderWindow);
-
+    renderer_.draw(renderWindow);
+    
     if(DEBUG_) drawDebugInfo(renderWindow);
 
-    sf::Vector2f left_track = math::rotate_point(sf::Vector2f(x_, y_-15.0), current_direction_, sf::Vector2f(x_, y_));
-    sf::Vector2f right_track = math::rotate_point(sf::Vector2f(x_, y_+15.0), current_direction_, sf::Vector2f(x_, y_));
+    /* TODO Consider moving code below to update method when introduced */
+    sf::Vector2f left_track = math::rotate_point(sf::Vector2f(x_, y_-15.0),
+        current_direction_, sf::Vector2f(x_, y_));
+    sf::Vector2f right_track = math::rotate_point(sf::Vector2f(x_, y_+15.0),
+        current_direction_, sf::Vector2f(x_, y_));
 
     Context::getParticles().addParticle(left_track.x, left_track.y, current_direction_);
     Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);

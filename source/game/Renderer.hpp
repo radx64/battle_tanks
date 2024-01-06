@@ -1,12 +1,12 @@
-#ifndef GAME_IRENDERABLE_HPP_
-#define GAME_IRENDERABLE_HPP_
+#ifndef GAME_RENDERER_HPP_
+#define GAME_RENDERER_HPP_
 
 #include <SFML/Graphics.hpp>
 
 namespace game 
 {
 
-class IRenderable
+class Renderer
 {
 public:
     virtual void draw(sf::RenderWindow& renderWindow) = 0;
@@ -14,4 +14,4 @@ public:
 
 }  // namespace game
 
-#endif  // GAME_IRENDERABLE_HPP_
+#endif  // GAME_RENDERER_HPP_

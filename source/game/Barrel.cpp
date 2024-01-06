@@ -13,23 +13,12 @@ constexpr float GROUND_DRAG_COEEF = 0.93;
 
 Barrel::Barrel(float x, float y, sf::Texture& barrelBody)
 : RigidBody(InstanceIdGenerator::getId(), x, y, CRATE_RADIUS, CRATE_MASS, GROUND_DRAG_COEEF, RigidBody::Type::DYNAMIC)
-{
-    sprite_.setTexture(barrelBody);
-    sf::Vector2u texture_body_size = barrelBody.getSize();
-    auto middle_point = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
-    sprite_.setOrigin(middle_point);
-}
+, renderer_(this, barrelBody)
+{ }
 
 void Barrel::draw(sf::RenderWindow& renderWindow)
 {
-    sprite_.setRotation(angle_);
-    sprite_.setColor(sf::Color(10, 10, 10, 127));
-    sprite_.setPosition(x_ + 4, y_+ 4);
-    renderWindow.draw(sprite_);
-
-    sprite_.setColor(sf::Color(255, 255, 255, 255));
-    sprite_.setPosition(x_, y_);
-    renderWindow.draw(sprite_);
+    renderer_.draw(renderWindow);
 }
 
 }  // namespace game

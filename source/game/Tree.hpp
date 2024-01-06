@@ -3,22 +3,23 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/IRenderable.hpp"
+#include "game/Renderer.hpp"
 #include "game/RigidBody.hpp"
-
+#include "game/TreeRenderer.hpp"
 namespace game
 {
 
-class Tree : public IRenderable, public RigidBody
+class Tree : public Renderer, public RigidBody
 {
 public:
     Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrunkRadius);
     virtual ~Tree() = default;
     void draw(sf::RenderWindow& renderWindow) override;
 
-protected:
-    sf::Sprite sprite_;
     float height_;
+
+protected:
+    TreeRenderer renderer_;
 };
 
 }  // namespace game

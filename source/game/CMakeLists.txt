@@ -10,32 +10,40 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Barrel.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BarrelRenderer.hpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CrateRenderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HelpWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/IRenderable.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TankRenderer.hpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Tree.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TreeFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TreeRenderer.hpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/World.hpp
 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Barrel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BarrelRenderer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp   
     ${CMAKE_CURRENT_SOURCE_DIR}/Cannon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CrateRenderer.cpp    
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
@@ -43,6 +51,8 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TankRenderer.cpp     
     ${CMAKE_CURRENT_SOURCE_DIR}/Tree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TreeFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TreeRenderer.cpp 
 )

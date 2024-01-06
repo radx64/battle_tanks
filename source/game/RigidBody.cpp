@@ -59,7 +59,7 @@ CollisionResult processObjectsCollsion(RigidBody* object, RigidBody* other_objec
 RigidBody::RigidBody(uint32_t id, float x, float y,  float radius, float mass, float ground_drag_cooef,
     RigidBody::Type type)
 : velocity_{}
-, angle_(0.f)
+, rotation_(0.f)
 , angular_velocity_(0.f)
 , id_(id)
 , x_(x)
@@ -167,8 +167,8 @@ void RigidBody::physics(std::vector<std::unique_ptr<RigidBody>>& objects, float 
         angular_velocity_ = 0.0f; 
     }
 
-    angle_ += angular_velocity_ * timeStep;
-    angle_ = std::fmod(angle_, 360.f);
+    rotation_ += angular_velocity_ * timeStep;
+    rotation_ = std::fmod(rotation_, 360.f);
 
     x_ += velocity_.x * timeStep;
     y_ += velocity_.y * timeStep;

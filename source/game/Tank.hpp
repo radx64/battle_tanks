@@ -6,13 +6,14 @@
 #include <SFML/Graphics.hpp>
 
 #include "game/Cannon.hpp"
-#include "game/IRenderable.hpp"
+#include "game/Renderer.hpp"
 #include "game/RigidBody.hpp"
+#include "game/TankRenderer.hpp"
 
 namespace game 
 {
 
-class Tank : public IRenderable, public RigidBody
+class Tank : public Renderer, public RigidBody
 {
 public:
     Tank(float x, float y, float rotation, 
@@ -25,6 +26,7 @@ public:
     void setDirection(float direction);
     static void setDebug(bool is_enabled); 
 
+    float current_direction_{};
     sf::Vector2f drivetrain_force_{};
     sf::Vector2f braking_force_{};
     sf::Sprite sprite_;
@@ -37,11 +39,11 @@ protected:
 
     sf::Vector2f tank_middle_point_;
 
-    float current_direction_{};
     float set_direction_{};
     float set_throttle_{};
     float current_throttle_{};
     static bool DEBUG_;
+    TankRenderer renderer_;
 };
 
 }  // namespace game

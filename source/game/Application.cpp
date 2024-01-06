@@ -161,7 +161,7 @@ void Application::spawnSomeTanks()
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
 
-        // Temporary solution for storing IRenderable and RigidBody pointers
+        // Temporary solution for storing Renderer and RigidBody pointers
         // TODO: consider different objects hierarchy
         drawableObjects_.push_back(tank.get());
         gameObjects_.push_back(std::move(tank));
@@ -178,7 +178,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         auto barrel = BarrelFactory::create(static_cast<BarrelFactory::BarrelType>(i % 4),
             x_spawn_position, y_spawn_position);
 
-        // Temporary solution for storing IRenderable and RigidBody pointers
+        // Temporary solution for storing Renderer and RigidBody pointers
         // TODO: consider different objects hierarchy
         drawableObjects_.push_back(barrel.get());
         gameObjects_.push_back(std::move(barrel));
@@ -191,7 +191,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         auto crate = CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
             x_spawn_position, y_spawn_position);
 
-        // Temporary solution for storing IRenderable and RigidBody pointers
+        // Temporary solution for storing Renderer and RigidBody pointers
         // TODO: consider different objects hierarchy
         drawableObjects_.push_back(crate.get());
         gameObjects_.push_back(std::move(crate));
@@ -408,8 +408,7 @@ int Application::run()
 
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
             last_mouse_in_gui_position_ = mousePositionInGUI;
-            fpsLimiter_.wait();
-            fpsCounter_.endMeasurement();
+
             measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
@@ -423,6 +422,8 @@ int Application::run()
                 + "ms\nAVG: " + std::to_string(fps_average.calculate(fpsCounter_.getFps())));
 
             window_.display();
+            fpsLimiter_.wait();
+            fpsCounter_.endMeasurement();
         }
     }
     catch (std::exception& e)
