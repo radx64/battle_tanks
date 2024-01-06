@@ -93,7 +93,7 @@ void Tank::onUpdate(game::World& world, float timeStep)
 
     cannon_->physics(timeStep);
 
-    if ((tankRigidBody.velocity_.x > 0.1) or (tankRigidBody.velocity_.y > 0.1))
+    if ((std::fabs(tankRigidBody.velocity_.x) > 0.01) or (std::fabs(tankRigidBody.velocity_.y) > 0.01))
     {
         sf::Vector2f left_track = math::rotate_point(sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_-15.0),
             current_direction_, sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_));

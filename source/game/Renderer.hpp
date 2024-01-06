@@ -9,6 +9,7 @@ namespace game
 class Renderer
 {
 public:
+    virtual ~Renderer() = default;
     virtual void draw(sf::RenderWindow& renderWindow) = 0;
 };
 
