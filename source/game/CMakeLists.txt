@@ -8,6 +8,9 @@ target_include_directories(game_lib
 target_sources(game_lib
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Bullet.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BulletFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BulletRenderer.hpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Barrel.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelFactory.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelRenderer.hpp 
@@ -36,6 +39,9 @@ target_sources(game_lib
 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Bullet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BulletFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BulletRenderer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/Barrel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BarrelRenderer.cpp 

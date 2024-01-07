@@ -38,6 +38,7 @@ void TextureLibrary::initialize()
     initTexture("tree_green_large", "../sprites/treeGreen_large.png");
     initTexture("tree_brown_small", "../sprites/treeBrown_small.png");
     initTexture("tree_brown_large", "../sprites/treeBrown_large.png");
+    initTexture("bullet_dark",      "../sprites/bulletDark1_outline.png");
 }
 
 sf::Texture& TextureLibrary::get(const std::string& name)

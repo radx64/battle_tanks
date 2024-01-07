@@ -18,7 +18,6 @@ protected:
     sf::Sprite barrelSprite_;
 };
 
-
 }  // namespace game 
 
 #endif  // GAME_BARREL_RENDERER_HPP_

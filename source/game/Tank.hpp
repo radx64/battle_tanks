@@ -34,6 +34,7 @@ protected:
     sf::Vector2f tank_middle_point_;
     float set_direction_{};
     float set_throttle_{};
+    float lifetime_{};
 };
 
 }  // namespace game

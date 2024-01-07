@@ -47,6 +47,7 @@ Application::Application()
 , collision_solver_(world_)
 {
     context_.setParticles(&particles_);
+    context_.setWorld(&world_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
@@ -305,7 +306,17 @@ int Application::run()
             auto nav_time = clock.getElapsedTime();
             clock.restart();
 
-            for (auto& object : world_.objects_) object->update(world_, timeStep);
+            // TODO I can't use references here as in update method
+            // clients can add objects to world
+            // and vector reealoc can mess those references
+            // so for now I keeping pointers but in a future maybe 
+            // objects to be "created" should be stored separately
+            // and then added to world at the end of a game loop iteration
+            for (size_t index = 0; index < world_.objects_.size(); ++index )
+            {
+                GameObject* object = world_.objects_[index].get();
+                object->update(world_, timeStep);
+            }
 
             collision_solver_.evaluateCollisions();
 
@@ -406,7 +417,8 @@ int Application::run()
                  + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
                  + "us\nGUI: " + std::to_string(gui_time.asMilliseconds()) 
-                 + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps()));
+                 + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
+                 + "\nObjects count: " + std::to_string(world_.objects_.size()));
 
             measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
                 + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))

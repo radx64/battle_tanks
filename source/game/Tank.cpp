@@ -6,6 +6,7 @@
 #include "game/Context.hpp"
 #include "game/InstanceIdGenerator.hpp"
 #include "game/TankRenderer.hpp"
+#include "game/World.hpp"
 #include "graphics/Particles.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
@@ -44,13 +45,6 @@ Tank::Tank(float x, float y, float rotation,
         RigidBody::Type::DYNAMIC);
 }
 
-// void Tank::draw(sf::RenderWindow& renderWindow)
-// {
-//     renderer_.draw(renderWindow);
-
-//     if(DEBUG_) drawDebugInfo(renderWindow);
-// }
-
 void Tank::setThrottle(float throttle)
 {
     set_throttle_ = throttle;
@@ -65,12 +59,14 @@ void Tank::onUpdate(game::World& world, float timeStep)
 {
     (void) world;
 
-    auto& tankRigidBody = getRigidBody();
+    lifetime_ += timeStep;
+
+    auto& tank_rigid_body = getRigidBody();
 
     // TODO Tanks now does not use rotational speed for rotation 
     // so to other collisions to work it is important to not pass fake angular velociy
     // on contacts
-    tankRigidBody.angular_velocity_ = 0;
+    tank_rigid_body.angular_velocity_ = 0;
 
     //Convert current direction to 0..360 range
     current_direction_ = math::signed_fmod(current_direction_, 360.0);
@@ -86,23 +82,28 @@ void Tank::onUpdate(game::World& world, float timeStep)
     drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
     drivetrain_force_.y = sin(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
 
-    braking_force_.x = -tankRigidBody.velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
-    braking_force_.y = -tankRigidBody.velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+    braking_force_.x = -tank_rigid_body.velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
+    braking_force_.y = -tank_rigid_body.velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
 
-    tankRigidBody.applyForce(drivetrain_force_ + braking_force_);
+    tank_rigid_body.applyForce(drivetrain_force_ + braking_force_);
 
     cannon_->physics(timeStep);
 
-    if ((std::fabs(tankRigidBody.velocity_.x) > 0.01) or (std::fabs(tankRigidBody.velocity_.y) > 0.01))
+    if ((std::fabs(tank_rigid_body.velocity_.x) > 0.01) or (std::fabs(tank_rigid_body.velocity_.y) > 0.01))
     {
-        sf::Vector2f left_track = math::rotate_point(sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_-15.0),
-            current_direction_, sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_));
-        sf::Vector2f right_track = math::rotate_point(sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_+15.0),
-            current_direction_, sf::Vector2f(tankRigidBody.x_, tankRigidBody.y_));
+        sf::Vector2f left_track = math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_-15.0),
+            current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
+        sf::Vector2f right_track = math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
+            current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
         Context::getParticles().addParticle(left_track.x, left_track.y, current_direction_);
         Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);
     }
+
+    // Testing bullet shooting
+    // Cannon has some reload timer so trying to fire every update
+    // is fine 🤣
+    cannon_->fire();
 }
 
 }  // namespace game
