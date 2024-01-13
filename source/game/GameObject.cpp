@@ -11,6 +11,20 @@ namespace sf {class RenderWindow;}
 namespace game
 {
 
+GameObject::GameObject()
+: is_dead_{false}
+{}
+
+bool GameObject::isDead()
+{
+    return is_dead_;
+}
+
+void GameObject::kill()
+{
+    is_dead_ = true;
+}
+
 void GameObject::draw(sf::RenderWindow& renderWindow, float timeStep)
 {
     (void) timeStep;

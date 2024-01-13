@@ -13,6 +13,11 @@ class Bullet : public GameObject
 public:
     Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBody);
     virtual ~Bullet() = default;
+
+protected:
+    void onUpdate(game::World& world, float timeStep) override;
+
+    float lifetime_;
 };
 
 }  // namespace game

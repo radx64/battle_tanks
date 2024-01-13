@@ -46,7 +46,7 @@ Application::Application()
 , window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!")
 , collision_solver_(world_)
 {
-    context_.setParticles(&particles_);
+    context_.setParticleSystem(&particleSystem_);
     context_.setWorld(&world_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
@@ -162,7 +162,7 @@ void Application::spawnSomeTanks()
             x_spawn_position, y_spawn_position, spawn_rotation);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
-        world_.objects_.push_back(std::move(tank));
+        world_.spawnObject(std::move(tank));
         navigators_.push_back(std::move(navigator));
     }
 }
@@ -176,7 +176,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         auto barrel = BarrelFactory::create(static_cast<BarrelFactory::BarrelType>(i % 4),
             x_spawn_position, y_spawn_position);
 
-        world_.objects_.emplace_back(BarrelFactory::create(
+        world_.spawnObject(BarrelFactory::create(
             static_cast<BarrelFactory::BarrelType>(i % 4),
             x_spawn_position, y_spawn_position));
     }
@@ -186,7 +186,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
 
-        world_.objects_.emplace_back(CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
+        world_.spawnObject(CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
             x_spawn_position, y_spawn_position));
     }
 
@@ -207,7 +207,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         {
             const auto x_position = rand() % WINDOW_WIDTH;
             const auto y_position = rand() % WINDOW_HEIGHT;
-            world_.objects_.emplace_back(game::TreeFactory::create(tree_type, x_position, y_position));
+            world_.spawnObject(game::TreeFactory::create(tree_type, x_position, y_position));
         }
     }
 }
@@ -235,6 +235,9 @@ int Application::run()
 
         while (window_.isOpen())
         {
+            world_.update();
+            particleSystem_.update(timeStep);
+
             fpsLimiter_.startNewFrame();
             fpsCounter_.startMeasurement();
             sf::Event event;
@@ -251,7 +254,7 @@ int Application::run()
                             case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
                             case sf::Keyboard::C        :   waypoints_.clear(); break;
                             case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::setDebug(debug_mode);} break;
-                            case sf::Keyboard::T        :   Context::getParticles().clear(); break;
+                            case sf::Keyboard::T        :   Context::getParticleSystem().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                             case sf::Keyboard::Q        :   window_.close();
                             default                     :   {}  
@@ -290,12 +293,17 @@ int Application::run()
 
             tilemap_->draw(window_);
             graphics::drawtools::drawWaypoints(window_, waypoints_);
-            particles_.draw(window_);
+            particleSystem_.drawTracks(window_);
 
-            for (auto& object : world_.objects_)
+            for (auto& object : world_.objects())
             {
-                object->draw(window_, timeStep);
+                if (object.get() != nullptr)
+                {
+                    object->draw(window_, timeStep);
+                } 
             }
+
+            particleSystem_.draw(window_);
 
             auto draw_time = clock.getElapsedTime().asMilliseconds();
             clock.restart();
@@ -312,10 +320,16 @@ int Application::run()
             // so for now I keeping pointers but in a future maybe 
             // objects to be "created" should be stored separately
             // and then added to world at the end of a game loop iteration
-            for (size_t index = 0; index < world_.objects_.size(); ++index )
+
+            const auto& world_objects = world_.objects();
+
+            for (size_t index = 0; index < world_objects.size(); ++index )
             {
-                GameObject* object = world_.objects_[index].get();
-                object->update(world_, timeStep);
+                GameObject* object = world_objects[index].get();
+                if (object != nullptr)
+                {
+                    object->update(world_, timeStep);
+                }             
             }
 
             collision_solver_.evaluateCollisions();
@@ -418,7 +432,7 @@ int Application::run()
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
                  + "us\nGUI: " + std::to_string(gui_time.asMilliseconds()) 
                  + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
-                 + "\nObjects count: " + std::to_string(world_.objects_.size()));
+                 + "\nObjects count: " + std::to_string(world_.objects().size()));
 
             measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
                 + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))

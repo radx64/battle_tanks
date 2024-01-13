@@ -1,5 +1,7 @@
 #include "game/CollisionSolver.hpp"
 
+#include <cmath>
+
 #include "math/Math.hpp"
 #include "game/World.hpp"
 
@@ -11,7 +13,7 @@ namespace
 
 constexpr float SPRING_COLLISION_COEEF = 1.75;  // simulate bouciness of collision
 
-constexpr float TANGENT_VELOCITY_SCALING_FACTOR = 50.f;
+constexpr float TANGENT_VELOCITY_SCALING_FACTOR = 25.f;
 
 struct CollisionResult
 {
@@ -62,7 +64,7 @@ void processStaticAndDynamicObjectsCollsion(RigidBody& static_object, RigidBody&
 {
     auto collisionResult = processObjectsCollsion(static_object, dynamic_object);
 
-    dynamic_object.angular_velocity_ -= collisionResult.tangentVelocity_  / dynamic_object.radius_;
+    dynamic_object.angular_velocity_ -= collisionResult.tangentVelocity_ / dynamic_object.radius_;
 
     sf::Vector2f normalVector{collisionResult.nx_,collisionResult.ny_};
     math::normalize_vector(normalVector);
@@ -71,8 +73,11 @@ void processStaticAndDynamicObjectsCollsion(RigidBody& static_object, RigidBody&
         dynamic_object.velocity_.x, dynamic_object.velocity_.y,
         normalVector.x, normalVector.y);
 
-    float impulse = 2.0f * relativeSpeed;
+    float impulse = 1.0f * relativeSpeed;
 
+    // FIXME: There is some bug in above formula for small radiuses on low speeds
+    // dynamic object can stick to static object instead of bounce off
+    // I need to investigate it further.
     dynamic_object.velocity_ = dynamic_object.velocity_ - normalVector * impulse ;
 }
 
@@ -108,7 +113,7 @@ void solveCollsion(GameObject& object, GameObject& other_object)
 
     if (distance_between_objects >= sum_of_radius)
     {
-        return ;  // no collsion
+        return;  // no collsion
     }
 
     if (rigid_body.type_ == RigidBody::Type::STATIC)
@@ -136,7 +141,7 @@ void solveCollsion(GameObject& object, GameObject& other_object)
         }
 
         // Solve static collision to not have on one object on top of each other.
-        float objects_overlap = 1.0 * (distance_between_objects - rigid_body.radius_ - other_rigid_body.radius_);
+        float objects_overlap = 1.001 * (distance_between_objects - rigid_body.radius_ - other_rigid_body.radius_);
         rigid_body.x_ -= objects_overlap * (rigid_body.x_ - other_rigid_body.x_) / distance_between_objects;
         rigid_body.y_ -= objects_overlap * (rigid_body.y_ - other_rigid_body.y_) / distance_between_objects;
     }
@@ -151,7 +156,7 @@ CollisionSolver::CollisionSolver(World& world)
 
 void CollisionSolver::evaluateCollisions()
 {
-    auto& gameObjects = world_.objects_;
+    auto& gameObjects = world_.objects();
     for (size_t i = 0; i < gameObjects.size(); ++i)
     {
         for (size_t j = i + 1; j < gameObjects.size(); ++j) 

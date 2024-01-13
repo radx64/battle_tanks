@@ -7,7 +7,7 @@
 #include "game/InstanceIdGenerator.hpp"
 #include "game/TankRenderer.hpp"
 #include "game/World.hpp"
-#include "graphics/Particles.hpp"
+#include "graphics/ParticleSystem.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
 
@@ -96,8 +96,8 @@ void Tank::onUpdate(game::World& world, float timeStep)
         sf::Vector2f right_track = math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
-        Context::getParticles().addParticle(left_track.x, left_track.y, current_direction_);
-        Context::getParticles().addParticle(right_track.x, right_track.y, current_direction_);
+        Context::getParticleSystem().addTrackImprint(left_track.x, left_track.y, current_direction_);
+        Context::getParticleSystem().addTrackImprint(right_track.x, right_track.y, current_direction_);
     }
 
     // Testing bullet shooting

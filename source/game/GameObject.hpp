@@ -16,18 +16,24 @@ namespace game
 class GameObject
 {
 public:
-    GameObject() = default;
+    GameObject();
     virtual ~GameObject() = default;
     void draw(sf::RenderWindow& renderWindow, float timeStep);
     void update(game::World& world, float timeStep);
     RigidBody& getRigidBody();
     Renderer& getRenderer();
 
+    bool isDead();
+    void kill();
+
     // This can be reimplemented for custom object behaviour every update step
     virtual void onUpdate(game::World& world, float timeStep);
 
     std::unique_ptr<Renderer> renderer_;
     std::unique_ptr<RigidBody> rigid_body_;
+
+protected:
+    bool is_dead_;
 };
 
 

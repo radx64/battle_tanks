@@ -5,7 +5,9 @@
 #include "game/Bullet.hpp"
 #include "game/BulletFactory.hpp"
 #include "game/Context.hpp"
+#include "game/particles/Explosion.hpp"
 #include "game/World.hpp"
+#include "graphics/ParticleSystem.hpp"
 #include "math/Math.hpp"
 
 namespace game 
@@ -15,7 +17,7 @@ constexpr float CANNON_ROTATION_SPEED = 600.0;
 constexpr float CANNON_COOLDOWN = 5.0f;
 constexpr float CANNON_SPRITE_ROTATION_OFFSET = 90.f;
 constexpr float CANNON_LENGTH = 30.f;
-constexpr float BULLET_SPEED = 300.f;
+constexpr float BULLET_SPEED = 400.f;
 
 Cannon::Cannon(float x, float y, float rotation, sf::Texture& texture) 
     : x_(x),
@@ -63,10 +65,18 @@ void Cannon::fire()
     {
         sf::Vector2f bullet_spawn_offset = math::rotate_point(sf::Vector2f{CANNON_LENGTH, 0.f}, current_rotation_, sf::Vector2f{0.f, 0.f});
 
-        auto bullet = BulletFactory::create(BulletFactory::BulletType::Dark,
-            x_ + bullet_spawn_offset.x , y_ + bullet_spawn_offset.y, current_rotation_, BULLET_SPEED);
+        auto bullet_x = x_ + bullet_spawn_offset.x;
+        auto bullet_y = y_ + bullet_spawn_offset.y;
 
-        Context::getWorld().objects_.push_back(std::move(bullet));
+        auto bullet = BulletFactory::create(BulletFactory::BulletType::Dark,
+           bullet_x , bullet_y, current_rotation_, BULLET_SPEED);
+
+        Context::getWorld().spawnObject(std::move(bullet));
+
+        auto explosion = std::make_unique<game::particles::Explosion>(bullet_x, bullet_y);
+
+        Context::getParticleSystem().addParticle(std::move(explosion));
+
         cooldown_ = 0.f;
     }
 }

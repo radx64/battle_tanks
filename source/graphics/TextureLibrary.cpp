@@ -39,6 +39,11 @@ void TextureLibrary::initialize()
     initTexture("tree_brown_small", "../sprites/treeBrown_small.png");
     initTexture("tree_brown_large", "../sprites/treeBrown_large.png");
     initTexture("bullet_dark",      "../sprites/bulletDark1_outline.png");
+    initTexture("explosion_smoke_1","../sprites/explosionSmoke1.png");
+    initTexture("explosion_smoke_2","../sprites/explosionSmoke2.png");
+    initTexture("explosion_smoke_3","../sprites/explosionSmoke3.png");
+    initTexture("explosion_smoke_4","../sprites/explosionSmoke4.png");
+    initTexture("explosion_smoke_5","../sprites/explosionSmoke5.png");
 }
 
 sf::Texture& TextureLibrary::get(const std::string& name)

@@ -3,13 +3,13 @@
 namespace game 
 {
 
-graphics::Particles& Context::getParticles()
+graphics::ParticleSystem& Context::getParticleSystem()
 {
-    return *particles_;
+    return *particleSystem_;
 }
-void Context::setParticles(graphics::Particles* particles)
+void Context::setParticleSystem(graphics::ParticleSystem* particles)
 {
-    particles_ = particles;
+    particleSystem_ = particles;
 }
 
 game::World& Context::getWorld()
@@ -22,7 +22,7 @@ void Context::setWorld(game::World* world)
     world_ = world;
 }
 
-graphics::Particles* Context::particles_{nullptr};
+graphics::ParticleSystem* Context::particleSystem_{nullptr};
 game::World* Context::world_{nullptr};
 
 }  // namespace game

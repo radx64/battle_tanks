@@ -16,7 +16,7 @@
 #include "game/Tank.hpp"
 #include "game/World.hpp"
 
-#include "graphics/Particles.hpp"
+#include "graphics/ParticleSystem.hpp"
 #include "graphics/Tilemap.hpp"
 
 #include "gui/Label.hpp"
@@ -37,7 +37,7 @@ protected:
     void spawnSomeTanks();
     void spawnSomeBarrelsAndCratesAndTress();
 
-    graphics::Particles particles_;
+    graphics::ParticleSystem particleSystem_;
     Context context_;
     game::FpsCounter fpsCounter_;
     game::FpsLimiter fpsLimiter_;

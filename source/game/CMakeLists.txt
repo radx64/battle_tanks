@@ -36,6 +36,8 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/TreeFactory.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TreeRenderer.hpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/World.hpp
+    
+    ${CMAKE_CURRENT_SOURCE_DIR}/particles/Explosion.hpp
 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
@@ -51,7 +53,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Crate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CrateFactory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/CrateRenderer.cpp    
+    ${CMAKE_CURRENT_SOURCE_DIR}/CrateRenderer.cpp   
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
@@ -64,4 +66,6 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Tree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TreeFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TreeRenderer.cpp 
-)
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/particles/Explosion.cpp  
+    )
