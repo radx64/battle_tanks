@@ -98,4 +98,9 @@ void Camera::update()
     current_size_ += zoom_diff  * ZOOM_FACTOR;
 }
 
+float Camera::getZoom()
+{
+    return  original_size_.x / current_size_.x;
+}
+
 }  // namespace game

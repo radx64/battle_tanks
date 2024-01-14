@@ -3,7 +3,7 @@
 
 namespace graphics { class ParticleSystem; }
 namespace game { class World; }
-
+namespace game { class Camera; }
 namespace game 
 {
     
@@ -16,9 +16,13 @@ public:
     static game::World& getWorld();
     static void setWorld(game::World* world);
 
+    static game::Camera& getCamera();
+    static void setCamera(game::Camera* camera);
+
 protected:
     static graphics::ParticleSystem* particleSystem_;
     static game::World* world_;
+    static game::Camera* camera_;
 };
 
 }  // namespace game

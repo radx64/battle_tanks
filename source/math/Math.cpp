@@ -59,6 +59,16 @@ sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, float angle, sf::Vector2
   return point_to_rotate;
 }
 
+sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t)
+{
+  return a + (b - a) * t; 
+}
+
+float lerp(const float a, const float b, float t)
+{
+  return a + (b - a) * t; 
+}
+
 Average::Average(const size_t window_size)
   : window_size_{window_size}
 {

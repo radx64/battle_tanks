@@ -22,7 +22,18 @@ void Context::setWorld(game::World* world)
     world_ = world;
 }
 
+game::Camera& Context::getCamera()
+{
+    return *camera_;
+}
+
+void Context::setCamera(game::Camera* camera)
+{
+    camera_ = camera;
+}
+
 graphics::ParticleSystem* Context::particleSystem_{nullptr};
 game::World* Context::world_{nullptr};
+game::Camera* Context::camera_{nullptr};
 
 }  // namespace game

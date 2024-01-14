@@ -18,6 +18,7 @@ public:
     const sf::Vector2f& getPosition();
     const sf::Vector2f& getSize();
     void update();
+    float getZoom();
 
 protected:
     void alignBoundaries();

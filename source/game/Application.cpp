@@ -47,6 +47,7 @@ Application::Application()
 {
     context_.setParticleSystem(&particleSystem_);
     context_.setWorld(&world_);
+    context_.setCamera(&camera_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();

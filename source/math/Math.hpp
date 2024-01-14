@@ -16,7 +16,8 @@ float normalize_vector(sf::Vector2f& vector);
 float signed_fmod(float a, float n);
 float degree_to_radians(float degree);
 sf::Vector2f rotate_point(sf::Vector2f point_to_rotate, float angle, sf::Vector2f pivot);
-
+sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t);
+float lerp(const float a, const float b, float t);
 class Average
 {
 public:
