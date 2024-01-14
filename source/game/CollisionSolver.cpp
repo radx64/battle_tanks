@@ -73,7 +73,7 @@ void processStaticAndDynamicObjectsCollsion(RigidBody& static_object, RigidBody&
         dynamic_object.velocity_.x, dynamic_object.velocity_.y,
         normalVector.x, normalVector.y);
 
-    float impulse = 1.0f * relativeSpeed;
+    float impulse = 2.0f * relativeSpeed;
 
     // FIXME: There is some bug in above formula for small radiuses on low speeds
     // dynamic object can stick to static object instead of bounce off
@@ -116,6 +116,8 @@ void solveCollsion(GameObject& object, GameObject& other_object)
         return;  // no collsion
     }
 
+    float objects_overlap = (distance_between_objects - rigid_body.radius_ - other_rigid_body.radius_);
+
     if (rigid_body.type_ == RigidBody::Type::STATIC)
     {
         if (other_rigid_body.type_ == RigidBody::Type::STATIC)
@@ -126,6 +128,9 @@ void solveCollsion(GameObject& object, GameObject& other_object)
         else /* other object Type::Dynamic */
         {
             processStaticAndDynamicObjectsCollsion(rigid_body, other_rigid_body);
+
+            other_rigid_body.x_ += objects_overlap * (rigid_body.x_ - other_rigid_body.x_) / distance_between_objects;
+            other_rigid_body.y_ += objects_overlap * (rigid_body.y_ - other_rigid_body.y_) / distance_between_objects;
         }
 
     } 
@@ -134,16 +139,20 @@ void solveCollsion(GameObject& object, GameObject& other_object)
         if (other_rigid_body.type_ == RigidBody::Type::STATIC)
         {
             processStaticAndDynamicObjectsCollsion(other_rigid_body, rigid_body);
+            
+            rigid_body.x_ -= objects_overlap * (rigid_body.x_ - other_rigid_body.x_) / distance_between_objects;
+            rigid_body.y_ -= objects_overlap * (rigid_body.y_ - other_rigid_body.y_) / distance_between_objects;
         } 
         else /* other object Type::Dynamic */
         {
             processDynamicObjectsCollsion(rigid_body, other_rigid_body);
-        }
 
-        // Solve static collision to not have on one object on top of each other.
-        float objects_overlap = 1.001 * (distance_between_objects - rigid_body.radius_ - other_rigid_body.radius_);
-        rigid_body.x_ -= objects_overlap * (rigid_body.x_ - other_rigid_body.x_) / distance_between_objects;
-        rigid_body.y_ -= objects_overlap * (rigid_body.y_ - other_rigid_body.y_) / distance_between_objects;
+            rigid_body.x_ -= 0.5f * objects_overlap * (rigid_body.x_ - other_rigid_body.x_) / distance_between_objects;
+            rigid_body.y_ -= 0.5f * objects_overlap * (rigid_body.y_ - other_rigid_body.y_) / distance_between_objects;
+
+            other_rigid_body.x_ += 0.5f * objects_overlap * (rigid_body.x_ - other_rigid_body.x_) / distance_between_objects;
+            other_rigid_body.y_ += 0.5f * objects_overlap * (rigid_body.y_ - other_rigid_body.y_) / distance_between_objects;
+        }
     }
 }
 

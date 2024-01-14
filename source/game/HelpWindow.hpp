@@ -9,7 +9,8 @@ constexpr std::string_view help_text_string{
     "WASD - moves view\n" 
     "PgUp/PgDn - zoom\n"  
     "C - clear all waypoints\n"
-    "F12 - toggle debug draw mode\n"
+    "F11 - toggle RIGID BODY debug mode\n"
+    "F12 - toggle TANK debug mode\n"
     "F - delete last waypoint\n"
     "T - clear tracks\n"
     "Q - quit\n"};

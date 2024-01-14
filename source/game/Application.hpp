@@ -54,6 +54,8 @@ protected:
     bool was_last_event_left_click_{true}; // temporary workaround for dumb mouse event polling
     sf::Vector2f last_mouse_in_gui_position_{};
 
+    bool rigid_body_debug_{false};
+
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
     gui::Button* test_floating_button_handle_;

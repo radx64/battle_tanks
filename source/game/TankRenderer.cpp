@@ -44,15 +44,6 @@ void TankRenderer::drawDebugInfo(sf::RenderWindow& renderWindow)
     auto y = tank_->getRigidBody().y_;
     auto velocity = tank_->getRigidBody().velocity_;
 
-    // Collision circle
-    sf::CircleShape boundary(tank_->getRigidBody().radius_, 12);
-    boundary.setFillColor(sf::Color(0, 0, 0, 0));
-    boundary.setOutlineThickness(1);
-    boundary.setOutlineColor(sf::Color(0, 0, 255));
-    boundary.setOrigin(tank_->getRigidBody().radius_, tank_->getRigidBody().radius_);
-    boundary.setPosition(x, y);
-    renderWindow.draw(boundary);
-
     sf::Text debug_text;
     debug_text.setFont(gui::FontLibrary::get("armata"));
     debug_text.setPosition(x + 40, y - 20);
@@ -63,30 +54,6 @@ void TankRenderer::drawDebugInfo(sf::RenderWindow& renderWindow)
         "ROT: " + std::to_string(tank_->current_direction_) + "\n" + 
         "THR: " + std::to_string(tank_->current_throttle_));
     renderWindow.draw(debug_text);
-
-    // Velocity vectors
-    sf::Vertex velocity_vector[] =
-    {
-        sf::Vertex(sf::Vector2f(x, y)),
-        sf::Vertex(sf::Vector2f(x, y)+ (velocity))
-    };
-    renderWindow.draw(velocity_vector, 2, sf::Lines);
-
-    sf::Vertex velocity_x_vector[] =
-    {
-        sf::Vertex(sf::Vector2f(x, y), sf::Color::Red),
-        sf::Vertex(sf::Vector2f(x+velocity.x, y), sf::Color::Red)
-    };
-
-    renderWindow.draw(velocity_x_vector, 2, sf::Lines);
-
-    sf::Vertex velocity_y_vector[] =
-    {
-        sf::Vertex(sf::Vector2f(x, y), sf::Color::Green),
-        sf::Vertex(sf::Vector2f(x, y+velocity.y), sf::Color::Green)
-    };
-
-    renderWindow.draw(velocity_y_vector, 2, sf::Lines);
 }
 
 }  // namespace game

@@ -29,6 +29,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankRenderer.hpp 
@@ -60,6 +61,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TankRenderer.cpp     

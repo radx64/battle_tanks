@@ -8,8 +8,8 @@
 namespace game 
 {
 
-constexpr float SMALL_TREE_TRUNK_RADIUS = 8.f;
-constexpr float LARGE_TREE_TRUNK_RADIUS = 16.f;
+constexpr float SMALL_TREE_TRUNK_RADIUS = 5.f;
+constexpr float LARGE_TREE_TRUNK_RADIUS = 10.f;
 
 namespace {
 sf::Texture& getTreeTexture(const TreeFactory::TreeType type)

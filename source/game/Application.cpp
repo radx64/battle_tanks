@@ -15,6 +15,7 @@
 #include "game/Crate.hpp"
 #include "game/CrateFactory.hpp"
 #include "game/HelpWindow.hpp"
+#include "game/RigidBodyDebugRenderer.hpp"
 #include "game/TankFactory.hpp"
 #include "game/Tree.hpp"
 #include "game/TreeFactory.hpp"
@@ -227,8 +228,8 @@ int Application::run()
 
         sf::Clock clock;
 
-        bool debug_mode{false};
-        Tank::setDebug(debug_mode);
+        bool tank_debug_mode{false};
+        Tank::setDebug(tank_debug_mode);
 
         spawnSomeTanks();
         spawnSomeBarrelsAndCratesAndTress();
@@ -253,7 +254,8 @@ int Application::run()
                             case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
                             case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
                             case sf::Keyboard::C        :   waypoints_.clear(); break;
-                            case sf::Keyboard::F12      :   {debug_mode=!debug_mode; Tank::setDebug(debug_mode);} break;
+                            case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
+                            case sf::Keyboard::F12      :   {tank_debug_mode=!tank_debug_mode; Tank::setDebug(tank_debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticleSystem().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                             case sf::Keyboard::Q        :   window_.close();
@@ -304,6 +306,11 @@ int Application::run()
             }
 
             particleSystem_.draw(window_);
+
+            if (rigid_body_debug_)
+            {
+                game::RigidBodyDebugRenderer::debug(world_, window_);
+            }
 
             auto draw_time = clock.getElapsedTime().asMilliseconds();
             clock.restart();
