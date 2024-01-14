@@ -37,8 +37,6 @@ constexpr size_t TANKS_COUNT = 5;
 constexpr size_t BARRELS_COUNT = 10;
 constexpr size_t CRATES_COUNT = 10;
 
-constexpr float timeStep = 1.0/30.0;
-
 Application::Application()
 : camera_initial_position_{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f}
 , camera_initial_size_{WINDOW_WIDTH, WINDOW_HEIGHT}
@@ -237,7 +235,7 @@ int Application::run()
         while (window_.isOpen())
         {
             world_.update();
-            particleSystem_.update(timeStep);
+            particleSystem_.update(timeStep_);
 
             fpsLimiter_.startNewFrame();
             fpsCounter_.startMeasurement();
@@ -254,6 +252,9 @@ int Application::run()
                             case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
                             case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
                             case sf::Keyboard::C        :   waypoints_.clear(); break;
+                            case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
+                            case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
+                            case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
                             case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
                             case sf::Keyboard::F12      :   {tank_debug_mode=!tank_debug_mode; Tank::setDebug(tank_debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticleSystem().clear(); break;
@@ -301,7 +302,7 @@ int Application::run()
             {
                 if (object.get() != nullptr)
                 {
-                    object->draw(window_, timeStep);
+                    object->draw(window_, timeStep_);
                 } 
             }
 
@@ -335,7 +336,7 @@ int Application::run()
                 GameObject* object = world_objects[index].get();
                 if (object != nullptr)
                 {
-                    object->update(world_, timeStep);
+                    object->update(world_, timeStep_);
                 }             
             }
 

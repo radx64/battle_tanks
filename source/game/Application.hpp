@@ -55,6 +55,7 @@ protected:
     sf::Vector2f last_mouse_in_gui_position_{};
 
     bool rigid_body_debug_{false};
+    float timeStep_{1.0f/30.f};
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
