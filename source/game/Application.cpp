@@ -10,15 +10,15 @@
 #include <SFML/Graphics.hpp>
 
 #include "game/Application.hpp"
-#include "game/Barrel.hpp"
-#include "game/BarrelFactory.hpp"
-#include "game/Crate.hpp"
-#include "game/CrateFactory.hpp"
+#include "game/entity/barrel/Barrel.hpp"
+#include "game/entity/barrel/BarrelFactory.hpp"
+#include "game/entity/crate/Crate.hpp"
+#include "game/entity/crate/CrateFactory.hpp"
+#include "game/entity/tank/TankFactory.hpp"
+#include "game/entity/tree/Tree.hpp"
+#include "game/entity/tree/TreeFactory.hpp"
 #include "game/HelpWindow.hpp"
 #include "game/RigidBodyDebugRenderer.hpp"
-#include "game/TankFactory.hpp"
-#include "game/Tree.hpp"
-#include "game/TreeFactory.hpp"
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "gui/Button.hpp"
@@ -43,10 +43,10 @@ Application::Application()
 , camera_{camera_initial_position_, camera_initial_size_}
 , camera_view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
 , window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!")
-, collision_solver_(world_)
+, collision_solver_(scene_)
 {
     context_.setParticleSystem(&particleSystem_);
-    context_.setWorld(&world_);
+    context_.setScene(&scene_);
     context_.setCamera(&camera_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
@@ -54,8 +54,6 @@ Application::Application()
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{WINDOW_WIDTH, WINDOW_HEIGHT});
     auto desktop = sf::VideoMode::getDesktopMode();
     window_.setPosition(sf::Vector2i(desktop.width/2 - window_.getSize().x/2, desktop.height/2 - window_.getSize().y/2));
-    window_.setFramerateLimit(30);
-
     camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
     configureGUI();
@@ -114,14 +112,14 @@ void Application::configureGUI()
         auto window = std::make_unique<gui::Window>(); 
 
         auto horizontal_layout = std::make_unique<gui::HorizontalLayout>();
-        auto hello = std::make_unique<gui::Button>("HELLO");
-        auto world = std::make_unique<gui::Button>("WORLD");
+        auto hello_button = std::make_unique<gui::Button>("HELLO");
+        auto world_button = std::make_unique<gui::Button>("WORLD");
 
-        hello->onClick([](){std::cout << "Hello?" << std::endl;});
-        world->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
+        hello_button->onClick([](){std::cout << "Hello?" << std::endl;});
+        world_button->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
 
-        horizontal_layout->addComponent(std::move(hello));
-        horizontal_layout->addComponent(std::move(world));
+        horizontal_layout->addComponent(std::move(hello_button));
+        horizontal_layout->addComponent(std::move(world_button));
 
         // auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
         // auto testing = std::make_unique<gui::Button>("TESTING");
@@ -135,12 +133,12 @@ void Application::configureGUI()
         // vertical_layout->addComponent(std::move(horizontal_layout));
         // vertical_layout->addComponent(std::move(horizontal_layout2));
 
-        //vertical_layout->addComponent(std::move(hello));
-        //vertical_layout->addComponent(std::move(world));
+        //vertical_layout->addComponent(std::move(hello_button));
+        //vertical_layout->addComponent(std::move(world_button));
 
         window->addComponent(std::move(horizontal_layout));
-        //hello->setSize(sf::Vector2f{30.f,30.f});
-        //window->addComponent(std::move(hello));
+        //hello_button->setSize(sf::Vector2f{30.f,30.f});
+        //window->addComponent(std::move(hello_button));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
@@ -158,11 +156,12 @@ void Application::spawnSomeTanks()
         const auto x_spawn_position = i * 100 + 100;
         const auto y_spawn_position = x_spawn_position;
         const auto spawn_rotation = i * 36; 
-        auto tank = TankFactory::create(static_cast<TankFactory::TankType>(i),
+        auto tank = entity::TankFactory::create(
+            static_cast<entity::TankFactory::TankType>(i),
             x_spawn_position, y_spawn_position, spawn_rotation);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
-        world_.spawnObject(std::move(tank));
+        scene_.spawnObject(std::move(tank));
         navigators_.push_back(std::move(navigator));
     }
 }
@@ -173,11 +172,9 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     { 
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
-        auto barrel = BarrelFactory::create(static_cast<BarrelFactory::BarrelType>(i % 4),
-            x_spawn_position, y_spawn_position);
 
-        world_.spawnObject(BarrelFactory::create(
-            static_cast<BarrelFactory::BarrelType>(i % 4),
+        scene_.spawnObject(entity::BarrelFactory::create(
+            static_cast<entity::BarrelFactory::BarrelType>(i % 4),
             x_spawn_position, y_spawn_position));
     }
 
@@ -186,13 +183,14 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
 
-        world_.spawnObject(CrateFactory::create(static_cast<CrateFactory::CrateType>(i % 2),
+        scene_.spawnObject(entity::CrateFactory::create(
+            static_cast<entity::CrateFactory::CrateType>(i % 2),
             x_spawn_position, y_spawn_position));
     }
 
     constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 8;
 
-    using Type = game::TreeFactory::TreeType;
+    using Type = game::entity::TreeFactory::TreeType;
     const auto tree_types = std::vector<Type> 
     {
         Type::Brown_Large, 
@@ -207,7 +205,8 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         {
             const auto x_position = rand() % WINDOW_WIDTH;
             const auto y_position = rand() % WINDOW_HEIGHT;
-            world_.spawnObject(game::TreeFactory::create(tree_type, x_position, y_position));
+            scene_.spawnObject(game::entity::TreeFactory::create(
+                tree_type, x_position, y_position));
         }
     }
 }
@@ -228,14 +227,14 @@ int Application::run()
         sf::Clock clock;
 
         bool tank_debug_mode{false};
-        Tank::setDebug(tank_debug_mode);
+        entity::Tank::setDebug(tank_debug_mode);
 
         spawnSomeTanks();
         spawnSomeBarrelsAndCratesAndTress();
 
         while (window_.isOpen())
         {
-            world_.update();
+            scene_.update();
             particleSystem_.update(timeStep_);
 
             fpsLimiter_.startNewFrame();
@@ -257,7 +256,7 @@ int Application::run()
                             case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
                             case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
                             case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
-                            case sf::Keyboard::F12      :   {tank_debug_mode=!tank_debug_mode; Tank::setDebug(tank_debug_mode);} break;
+                            case sf::Keyboard::F12      :   {tank_debug_mode=!tank_debug_mode; entity::Tank::setDebug(tank_debug_mode);} break;
                             case sf::Keyboard::T        :   Context::getParticleSystem().clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                             case sf::Keyboard::Q        :   window_.close();
@@ -299,7 +298,7 @@ int Application::run()
             graphics::drawtools::drawWaypoints(window_, waypoints_);
             particleSystem_.drawTracks(window_);
 
-            for (auto& object : world_.objects())
+            for (auto& object : scene_.objects())
             {
                 if (object.get() != nullptr)
                 {
@@ -311,7 +310,7 @@ int Application::run()
 
             if (rigid_body_debug_)
             {
-                game::RigidBodyDebugRenderer::debug(world_, window_);
+                game::RigidBodyDebugRenderer::debug(scene_, window_);
             }
 
             auto draw_time = clock.getElapsedTime().asMilliseconds();
@@ -324,20 +323,20 @@ int Application::run()
             clock.restart();
 
             // TODO I can't use references here as in update method
-            // clients can add objects to world
+            // clients can add objects to scene
             // and vector reealoc can mess those references
             // so for now I keeping pointers but in a future maybe 
             // objects to be "created" should be stored separately
-            // and then added to world at the end of a game loop iteration
+            // and then added to scene at the end of a game loop iteration
 
-            const auto& world_objects = world_.objects();
+            const auto& scene_objects = scene_.objects();
 
-            for (size_t index = 0; index < world_objects.size(); ++index )
+            for (size_t index = 0; index < scene_objects.size(); ++index )
             {
-                GameObject* object = world_objects[index].get();
+                GameObject* object = scene_objects[index].get();
                 if (object != nullptr)
                 {
-                    object->update(world_, timeStep_);
+                    object->update(scene_, timeStep_);
                 }             
             }
 
@@ -441,7 +440,7 @@ int Application::run()
                  + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
                  + "us\nGUI: " + std::to_string(gui_time.asMilliseconds()) 
                  + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
-                 + "\nObjects count: " + std::to_string(world_.objects().size()));
+                 + "\nObjects count: " + std::to_string(scene_.objects().size()));
 
             measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
                 + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))

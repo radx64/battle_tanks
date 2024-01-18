@@ -6,7 +6,7 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace game {class World;}
+namespace game {class Scene;}
 
 namespace game
 {

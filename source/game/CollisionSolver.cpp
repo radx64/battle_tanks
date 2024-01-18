@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "math/Math.hpp"
-#include "game/World.hpp"
+#include "game/Scene.hpp"
 
 namespace game
 {
@@ -158,14 +158,14 @@ void solveCollsion(GameObject& object, GameObject& other_object)
 
 }  // namespace
 
-CollisionSolver::CollisionSolver(World& world)
-: world_(world)
+CollisionSolver::CollisionSolver(Scene& scene)
+: scene_(scene)
 {}
 
 
 void CollisionSolver::evaluateCollisions()
 {
-    auto& gameObjects = world_.objects();
+    auto& gameObjects = scene_.objects();
     for (size_t i = 0; i < gameObjects.size(); ++i)
     {
         for (size_t j = i + 1; j < gameObjects.size(); ++j) 

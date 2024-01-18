@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace game{class World;}
+namespace game{class Scene;}
 namespace sf{class RenderWindow;}
 
 namespace game
@@ -12,7 +12,7 @@ namespace game
 class RigidBodyDebugRenderer
 {
 public:
-static void debug(game::World& world, sf::RenderWindow& renderWindow);
+static void debug(game::Scene& scene, sf::RenderWindow& renderWindow);
 };
 
 }  // namespace game

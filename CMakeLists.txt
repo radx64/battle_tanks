@@ -34,7 +34,8 @@ if(BUILD_TESTS)
 endif()
 
 add_executable(battle_tanks main.cpp)
-target_link_libraries (battle_tanks 
+target_link_libraries (battle_tanks
+    engine_lib
     game_lib
     graphics_lib
     math_lib

@@ -5,16 +5,16 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/Camera.hpp"
+#include "engine/FpsCounter.hpp"
+#include "engine/FpsLimiter.hpp"
+#include "engine/Camera.hpp"
 #include "game/CollisionSolver.hpp"
 #include "game/Context.hpp"
-#include "game/FpsCounter.hpp"
-#include "game/FpsLimiter.hpp"
 #include "game/Navigator.hpp"
 #include "game/Renderer.hpp"
 #include "game/RigidBody.hpp"
-#include "game/Tank.hpp"
-#include "game/World.hpp"
+#include "game/entity/tank/Tank.hpp"
+#include "game/Scene.hpp"
 
 #include "graphics/ParticleSystem.hpp"
 #include "graphics/Tilemap.hpp"
@@ -39,12 +39,12 @@ protected:
 
     graphics::ParticleSystem particleSystem_;
     Context context_;
-    game::FpsCounter fpsCounter_;
-    game::FpsLimiter fpsLimiter_;
+    engine::FpsCounter fpsCounter_;
+    engine::FpsLimiter fpsLimiter_;
 
     const sf::Vector2f camera_initial_position_;
     const sf::Vector2f camera_initial_size_;
-    Camera camera_;
+    engine::Camera camera_;
     sf::View camera_view_;
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
@@ -65,7 +65,7 @@ protected:
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
-    game::World world_;
+    game::Scene scene_;
     game::CollisionSolver collision_solver_;
 };
 

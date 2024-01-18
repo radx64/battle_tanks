@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "game/Tank.hpp"
+#include "game/entity/tank/Tank.hpp"
 #include "math/Math.hpp"
 
 namespace game 
@@ -11,7 +11,7 @@ namespace game
 //How close to the waypoint to treat as visted
 constexpr float WAYPOINT_VISITED_DISTANCE = 30.0f; 
 
-Navigator::Navigator(Tank& tank, std::vector<sf::Vector2i>& waypoints) 
+Navigator::Navigator(entity::Tank& tank, std::vector<sf::Vector2i>& waypoints) 
 : waypoints_(waypoints), tank_(tank)
 {}
 

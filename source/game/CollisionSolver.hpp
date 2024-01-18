@@ -1,7 +1,7 @@
 #ifndef GAME_COLLISION_SOLVER_HPP_
 #define GAME_COLLISION_SOLVER_HPP_
 
-namespace game {class World;}
+namespace game {class Scene;}
 namespace game {class RigidBody;}
 namespace game {class GameObject;}
 
@@ -11,11 +11,11 @@ namespace game
 class CollisionSolver
 {
 public:
-    CollisionSolver(World& world);
+    CollisionSolver(Scene& scene);
     void evaluateCollisions();
 
 protected:
-    World& world_;
+    Scene& scene_;
 };
 
 }  // namespace game

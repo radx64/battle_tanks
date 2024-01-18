@@ -6,7 +6,7 @@
 #include "game/Renderer.hpp"
 #include "game/RigidBody.hpp"
 
-namespace game {class World;}
+namespace game {class Scene;}
 
 namespace sf {class RenderWindow;}
 
@@ -19,7 +19,7 @@ public:
     GameObject();
     virtual ~GameObject() = default;
     void draw(sf::RenderWindow& renderWindow, float timeStep);
-    void update(game::World& world, float timeStep);
+    void update(game::Scene& scene, float timeStep);
     RigidBody& getRigidBody();
     Renderer& getRenderer();
 
@@ -27,7 +27,7 @@ public:
     void kill();
 
     // This can be reimplemented for custom object behaviour every update step
-    virtual void onUpdate(game::World& world, float timeStep);
+    virtual void onUpdate(game::Scene& scene, float timeStep);
 
     std::unique_ptr<Renderer> renderer_;
     std::unique_ptr<RigidBody> rigid_body_;

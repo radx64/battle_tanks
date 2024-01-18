@@ -57,7 +57,7 @@ void ParticleSystem::clear()
 }
 
 
-// TODO this update method is somewhar simmilar to world game objects handling
+// TODO this update method is somewhar simmilar to scene game objects handling
 // Consider making this common
 void ParticleSystem::update(float timeStep)
 {

@@ -10,6 +10,7 @@ class Particle
 {
 public:
     Particle();
+    virtual ~Particle() = default;
 
     virtual void draw(sf::RenderWindow& renderWindow);
     void update(float timeStep);

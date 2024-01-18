@@ -2,14 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/World.hpp"
+#include "game/Scene.hpp"
 
 namespace game
 {
 
-void RigidBodyDebugRenderer::debug(game::World& world, sf::RenderWindow& renderWindow)
+void RigidBodyDebugRenderer::debug(game::Scene& scene, sf::RenderWindow& renderWindow)
 {
-    for (const auto& gameObject : world.objects())
+    for (const auto& gameObject : scene.objects())
     {
         auto x = gameObject->getRigidBody().x_;
         auto y = gameObject->getRigidBody().y_;

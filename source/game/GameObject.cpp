@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace game {class World;}
+namespace game {class Scene;}
 namespace game {class Renderer;}
 namespace game {class RigidBody;}
 
@@ -31,15 +31,15 @@ void GameObject::draw(sf::RenderWindow& renderWindow, float timeStep)
     if (renderer_)  renderer_->draw(renderWindow); // TODO add timeStep 
 }
 
-void GameObject::onUpdate(game::World& world, float timeStep)
+void GameObject::onUpdate(game::Scene& scene, float timeStep)
 {  
-    (void) world;
+    (void) scene;
     (void) timeStep;
 }
 
-void GameObject::update(game::World& world, float timeStep)
+void GameObject::update(game::Scene& scene, float timeStep)
 {
-    onUpdate(world, timeStep);
+    onUpdate(scene, timeStep);
     if (rigid_body_) rigid_body_->update(timeStep);
 }
 

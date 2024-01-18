@@ -4,7 +4,7 @@
 
 #include "math/Math.hpp"
 
-#include "game/World.hpp"
+#include "game/Scene.hpp"
 
 namespace game
 {

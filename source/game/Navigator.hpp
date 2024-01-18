@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#include "game/Tank.hpp"
 #include "math/Math.hpp"
+namespace game::entity {class Tank;}
 
 namespace game 
 {
@@ -14,13 +14,13 @@ namespace game
 class Navigator
 {
 public:
-    Navigator(Tank& tank, std::vector<sf::Vector2i>& waypoints);
+    Navigator(entity::Tank& tank, std::vector<sf::Vector2i>& waypoints);
     void navigate();
 
 protected:
     size_t waypoint_id_{0};
     std::vector<sf::Vector2i>& waypoints_;
-    Tank& tank_;
+    entity::Tank& tank_;
 };
 
 }  // namespace game
