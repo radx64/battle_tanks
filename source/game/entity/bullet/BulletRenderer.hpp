@@ -1,13 +1,13 @@
 #ifndef GAME_ENTITY_BULLET_BULLET_RENDERER_HPP_
 #define GAME_ENTITY_BULLET_BULLET_RENDERER_HPP_
 
-#include "game/Renderer.hpp"
+#include "engine/Renderer.hpp"
 
 namespace game::entity { class Bullet; }
 
 namespace game::entity
 {
-class BulletRenderer : public Renderer
+class BulletRenderer : public engine::Renderer
 {
 public:
     BulletRenderer(Bullet* bullet, sf::Texture& bulletBody);

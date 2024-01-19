@@ -6,19 +6,19 @@
 #include <SFML/Graphics.hpp>
 
 #include "game/entity/tank/Cannon.hpp"
-#include "game/GameObject.hpp"
+#include "engine/GameObject.hpp"
 
 namespace game::entity 
 {
 
-class Tank : public GameObject
+class Tank : public engine::GameObject
 {
 public:
     Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, sf::Texture& tankBody);
     virtual ~Tank() = default;
 
-    void onUpdate(game::Scene& scene, float timeStep) override;
+    void onUpdate(engine::Scene& scene, float timeStep) override;
     void setThrottle(float throttle);
     void setDirection(float direction);
     static void setDebug(bool is_enabled); 

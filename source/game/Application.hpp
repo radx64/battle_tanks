@@ -5,16 +5,16 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Camera.hpp"
 #include "engine/FpsCounter.hpp"
 #include "engine/FpsLimiter.hpp"
-#include "engine/Camera.hpp"
-#include "game/CollisionSolver.hpp"
+#include "engine/RigidBody.hpp"
+#include "engine/CollisionSolver.hpp"
 #include "game/Context.hpp"
-#include "game/Navigator.hpp"
-#include "game/Renderer.hpp"
-#include "game/RigidBody.hpp"
 #include "game/entity/tank/Tank.hpp"
-#include "game/Scene.hpp"
+#include "game/Navigator.hpp"
+#include "engine/Renderer.hpp"
+#include "engine/Scene.hpp"
 
 #include "graphics/ParticleSystem.hpp"
 #include "graphics/Tilemap.hpp"
@@ -65,8 +65,8 @@ protected:
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
-    game::Scene scene_;
-    game::CollisionSolver collision_solver_;
+    engine::Scene scene_;
+    engine::CollisionSolver collision_solver_;
 };
 
 }  // namespace game

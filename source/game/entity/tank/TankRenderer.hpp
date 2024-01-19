@@ -1,13 +1,13 @@
 #ifndef GAME_ENTITY_TANK_RENDERER_HPP_
 #define GAME_ENTITY_TANK_RENDERER_HPP_
 
-#include "game/Renderer.hpp"
+#include "engine/Renderer.hpp"
 
 namespace game::entity { class Tank; }
 
 namespace game::entity
 {
-class TankRenderer : public Renderer
+class TankRenderer : public engine::Renderer
 {
 public:
     TankRenderer(Tank* tank, sf::Texture& tankBody);

@@ -1,13 +1,13 @@
-#include "game/RigidBodyDebugRenderer.hpp"
+#include "engine/RigidBodyDebugRenderer.hpp"
 
 #include <SFML/Graphics.hpp>
 
-#include "game/Scene.hpp"
+#include "engine/Scene.hpp"
 
-namespace game
+namespace engine
 {
 
-void RigidBodyDebugRenderer::debug(game::Scene& scene, sf::RenderWindow& renderWindow)
+void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& renderWindow)
 {
     for (const auto& gameObject : scene.objects())
     {
@@ -20,7 +20,7 @@ void RigidBodyDebugRenderer::debug(game::Scene& scene, sf::RenderWindow& renderW
         boundary.setFillColor(sf::Color(0, 0, 0, 0));
         boundary.setOutlineThickness(1);
 
-        if(gameObject->getRigidBody().type_ == game::RigidBody::Type::STATIC)
+        if(gameObject->getRigidBody().type_ == engine::RigidBody::Type::STATIC)
         {
             boundary.setOutlineColor(sf::Color(0, 0, 255));
         }
@@ -58,4 +58,4 @@ void RigidBodyDebugRenderer::debug(game::Scene& scene, sf::RenderWindow& renderW
     }
 }
 
-}  // namespace game
+}  // namespace engine

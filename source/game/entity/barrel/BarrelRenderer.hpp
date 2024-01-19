@@ -1,13 +1,13 @@
 #ifndef GAME_ENTITY_BARREL_BARREL_RENDERER_HPP_
 #define GAME_ENTITY_BARREL_BARREL_RENDERER_HPP_
 
-#include "game/Renderer.hpp"
+#include "engine/Renderer.hpp"
 
 namespace game::entity { class Barrel; }
 
 namespace game::entity
 {
-class BarrelRenderer : public Renderer
+class BarrelRenderer : public engine::Renderer
 {
 public:
     BarrelRenderer(Barrel* barrel, sf::Texture& barrelBody);

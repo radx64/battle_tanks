@@ -1,14 +1,14 @@
-#include "game/GameObject.hpp"
+#include "engine/GameObject.hpp"
 
 #include <memory>
 
-namespace game {class Scene;}
-namespace game {class Renderer;}
-namespace game {class RigidBody;}
+namespace engine {class Scene;}
+namespace engine {class Renderer;}
+namespace engine {class RigidBody;}
 
 namespace sf {class RenderWindow;}
 
-namespace game
+namespace engine
 {
 
 GameObject::GameObject()
@@ -31,13 +31,13 @@ void GameObject::draw(sf::RenderWindow& renderWindow, float timeStep)
     if (renderer_)  renderer_->draw(renderWindow); // TODO add timeStep 
 }
 
-void GameObject::onUpdate(game::Scene& scene, float timeStep)
+void GameObject::onUpdate(engine::Scene& scene, float timeStep)
 {  
     (void) scene;
     (void) timeStep;
 }
 
-void GameObject::update(game::Scene& scene, float timeStep)
+void GameObject::update(engine::Scene& scene, float timeStep)
 {
     onUpdate(scene, timeStep);
     if (rigid_body_) rigid_body_->update(timeStep);
@@ -53,4 +53,4 @@ Renderer& GameObject::getRenderer()
     return *renderer_;
 }
 
-} // namespace game
+} // namespace engine

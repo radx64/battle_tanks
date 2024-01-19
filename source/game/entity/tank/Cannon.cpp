@@ -6,7 +6,7 @@
 #include "game/entity/bullet/Bullet.hpp"
 #include "game/entity/bullet/BulletFactory.hpp"
 #include "game/particle/Explosion.hpp"
-#include "game/Scene.hpp"
+#include "engine/Scene.hpp"
 #include "graphics/ParticleSystem.hpp"
 #include "math/Math.hpp"
 

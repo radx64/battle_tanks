@@ -1,14 +1,12 @@
-#ifndef RIGID_BODY_HPP_
-#define RIGID_BODY_HPP_
+#ifndef ENGINE_RIGID_BODY_HPP_
+#define ENGINE_RIGID_BODY_HPP_
 
 #include <memory>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
 
-namespace game {class Scene;}
-
-namespace game
+namespace engine
 {
 
 class RigidBody
@@ -24,7 +22,6 @@ public:
     RigidBody(uint32_t id, float x, float y, float radius, float mass, float ground_drag_cooef,
         Type type);
     virtual ~RigidBody() = default;
-    //void physics(std::vector<std::unique_ptr<RigidBody>>& objects, float timeStep);
     void update(float timeStep);
     void applyForce(sf::Vector2f force);
 
@@ -42,8 +39,6 @@ public:
     Type type_;
 };
 
-}  // namespace game
+}  // namespace engine
 
-
-
-#endif  // RIGID_BODY_HPP_
+#endif  // ENGINE_RIGID_BODY_HPP_

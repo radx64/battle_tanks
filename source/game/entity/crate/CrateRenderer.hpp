@@ -1,13 +1,13 @@
 #ifndef GAME_CRATE_RENDERER_HPP_
 #define GAME_CRATE_RENDERER_HPP_
 
-#include "game/Renderer.hpp"
+#include "engine/Renderer.hpp"
 
 namespace game::entity { class Crate; }
 
 namespace game::entity
 {
-class CrateRenderer : public Renderer
+class CrateRenderer : public engine::Renderer
 {
 public:
     CrateRenderer(Crate* crate, sf::Texture& crateBody);

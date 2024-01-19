@@ -3,19 +3,19 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/GameObject.hpp"
+#include "engine/GameObject.hpp"
 
 namespace game::entity
 {
 
-class Bullet : public GameObject
+class Bullet : public engine::GameObject
 {
 public:
     Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBody);
     virtual ~Bullet() = default;
 
 protected:
-    void onUpdate(game::Scene& scene, float timeStep) override;
+    void onUpdate(engine::Scene& scene, float timeStep) override;
 
     float lifetime_;
 };

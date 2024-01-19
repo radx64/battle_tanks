@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/GameObject.hpp"
+#include "engine/GameObject.hpp"
 
 namespace game::entity
 {
@@ -14,7 +14,7 @@ namespace game::entity
 // to support more complex convex shapes ( like box 🤣 )
 // Need to check SAT theorem which migh help solving that
 
-class Crate : public GameObject
+class Crate : public engine::GameObject
 {
 public:
     Crate(float x, float y, sf::Texture& barrelBody);

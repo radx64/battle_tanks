@@ -6,7 +6,7 @@
 #include "game/Context.hpp"
 #include "game/InstanceIdGenerator.hpp"
 #include "game/entity/tank/TankRenderer.hpp"
-#include "game/Scene.hpp"
+#include "engine/Scene.hpp"
 #include "graphics/ParticleSystem.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "math/Math.hpp"
@@ -37,12 +37,12 @@ Tank::Tank(float x, float y, float rotation,
 {
     renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
-    rigid_body_ = std::make_unique<RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, TANK_RADIUS,
         TANK_MASS, 
         GROUND_DRAG_COEEF, 
-        RigidBody::Type::DYNAMIC);
+        engine::RigidBody::Type::DYNAMIC);
 }
 
 void Tank::setThrottle(float throttle)
@@ -55,7 +55,7 @@ void Tank::setDirection(float direction)
     cannon_->setRotation(direction);
 }
 
-void Tank::onUpdate(game::Scene& scene, float timeStep)
+void Tank::onUpdate(engine::Scene& scene, float timeStep)
 {
     (void) scene;
 

@@ -6,7 +6,7 @@
 #include "math/Math.hpp"
 #include "game/entity/bullet/BulletRenderer.hpp"
 #include "game/InstanceIdGenerator.hpp"
-#include "game/RigidBody.hpp"
+#include "engine/RigidBody.hpp"
 
 namespace game::entity
 {
@@ -21,12 +21,12 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
 : lifetime_{}
 { 
     renderer_ = std::make_unique<BulletRenderer>(this, bulletBody);
-    rigid_body_ = std::make_unique<RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, BULLET_RADIUS, 
         BULLET_MASS, 
         AIR_DRAG_COEEF, 
-        RigidBody::Type::DYNAMIC);
+        engine::RigidBody::Type::DYNAMIC);
 
     rigid_body_->rotation_ = angle;
 
@@ -38,7 +38,7 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
     rigid_body_->applyForce(sf::Vector2f{vx, vy});
 }
 
-void Bullet::onUpdate(game::Scene& scene, float timeStep)
+void Bullet::onUpdate(engine::Scene& scene, float timeStep)
 {
     (void) scene;
     lifetime_ += timeStep;

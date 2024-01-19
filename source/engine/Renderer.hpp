@@ -1,9 +1,9 @@
-#ifndef GAME_RENDERER_HPP_
-#define GAME_RENDERER_HPP_
+#ifndef ENGINE_RENDERER_HPP_
+#define ENGINE_RENDERER_HPP_
 
 #include <SFML/Graphics.hpp>
 
-namespace game 
+namespace engine 
 {
 
 class Renderer
@@ -13,6 +13,6 @@ public:
     virtual void draw(sf::RenderWindow& renderWindow) = 0;
 };
 
-}  // namespace game
+}  // namespace engine
 
-#endif  // GAME_RENDERER_HPP_
+#endif  // ENGINE_RENDERER_HPP_

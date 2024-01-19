@@ -3,12 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/GameObject.hpp"
+#include "engine/GameObject.hpp"
 
 namespace game::entity
 {
 
-class Barrel : public GameObject
+class Barrel : public engine::GameObject
 {
 public:
     Barrel(float x, float y, sf::Texture& barrelBody);

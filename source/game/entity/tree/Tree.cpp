@@ -6,7 +6,7 @@
 
 #include "game/entity/tree/TreeRenderer.hpp"
 #include "game/InstanceIdGenerator.hpp"
-#include "game/RigidBody.hpp"
+#include "engine/RigidBody.hpp"
 
 namespace game::entity
 {
@@ -19,12 +19,12 @@ Tree::Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrun
 { 
     renderer_ = std::make_unique<TreeRenderer>(this, treeBody);
 
-    rigid_body_ = std::make_unique<RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, treeTrunkRadius, 
         TREE_MASS, 
         GROUND_DRAG_COEEF, 
-        RigidBody::Type::STATIC);
+        engine::RigidBody::Type::STATIC);
 }
 
 }  // namespace game::entity

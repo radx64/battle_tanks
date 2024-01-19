@@ -3,12 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/GameObject.hpp"
+#include "engine/GameObject.hpp"
 
 namespace game::entity
 {
 
-class Tree : public GameObject
+class Tree : public engine::GameObject
 {
 public:
     Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrunkRadius);

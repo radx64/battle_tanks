@@ -1,11 +1,11 @@
-#include "game/CollisionSolver.hpp"
+#include "engine/CollisionSolver.hpp"
 
 #include <cmath>
 
 #include "math/Math.hpp"
-#include "game/Scene.hpp"
+#include "engine/Scene.hpp"
 
-namespace game
+namespace engine
 {
 
 namespace
@@ -23,7 +23,7 @@ struct CollisionResult
     float ny_;                  // normal hit vector y coordinate
 };
 
-CollisionResult processObjectsCollsion(RigidBody& object, RigidBody& other_object)
+CollisionResult processObjectsCollsion(engine::RigidBody& object, engine::RigidBody& other_object)
 {
    float distance_between_objects = math::distance(object.x_, object.y_, 
         other_object.x_, other_object.y_);
@@ -60,7 +60,7 @@ CollisionResult processObjectsCollsion(RigidBody& object, RigidBody& other_objec
         .ny_ = ny};
 }
 
-void processStaticAndDynamicObjectsCollsion(RigidBody& static_object, RigidBody& dynamic_object)
+void processStaticAndDynamicObjectsCollsion(engine::RigidBody& static_object, engine::RigidBody& dynamic_object)
 {
     auto collisionResult = processObjectsCollsion(static_object, dynamic_object);
 
@@ -81,7 +81,7 @@ void processStaticAndDynamicObjectsCollsion(RigidBody& static_object, RigidBody&
     dynamic_object.velocity_ = dynamic_object.velocity_ - normalVector * impulse ;
 }
 
-void processDynamicObjectsCollsion(RigidBody& dynamic_object, RigidBody& other_dynamic_object)
+void processDynamicObjectsCollsion(engine::RigidBody& dynamic_object, engine::RigidBody& other_dynamic_object)
 { 
     auto collisionResult = processObjectsCollsion(dynamic_object, other_dynamic_object);
 
@@ -100,7 +100,7 @@ void processDynamicObjectsCollsion(RigidBody& dynamic_object, RigidBody& other_d
     other_dynamic_object.velocity_ = otherObjectCollisionVelocity;
 }
 
-void solveCollsion(GameObject& object, GameObject& other_object)
+void solveCollsion(engine::GameObject& object, engine::GameObject& other_object)
 {
     auto& rigid_body = object.getRigidBody();
     auto& other_rigid_body = other_object.getRigidBody();
@@ -118,9 +118,9 @@ void solveCollsion(GameObject& object, GameObject& other_object)
 
     float objects_overlap = (distance_between_objects - rigid_body.radius_ - other_rigid_body.radius_);
 
-    if (rigid_body.type_ == RigidBody::Type::STATIC)
+    if (rigid_body.type_ == engine::RigidBody::Type::STATIC)
     {
-        if (other_rigid_body.type_ == RigidBody::Type::STATIC)
+        if (other_rigid_body.type_ == engine::RigidBody::Type::STATIC)
         {
             // Collision of static objects should not do anything
             // TODO: call some onCollision handler on game objects
@@ -136,7 +136,7 @@ void solveCollsion(GameObject& object, GameObject& other_object)
     } 
     else /* Type::Dynamic */
     {
-        if (other_rigid_body.type_ == RigidBody::Type::STATIC)
+        if (other_rigid_body.type_ == engine::RigidBody::Type::STATIC)
         {
             processStaticAndDynamicObjectsCollsion(other_rigid_body, rigid_body);
             
@@ -158,7 +158,7 @@ void solveCollsion(GameObject& object, GameObject& other_object)
 
 }  // namespace
 
-CollisionSolver::CollisionSolver(Scene& scene)
+CollisionSolver::CollisionSolver(engine::Scene& scene)
 : scene_(scene)
 {}
 
@@ -175,4 +175,4 @@ void CollisionSolver::evaluateCollisions()
     }
 }
 
-}  // namespace game
+}  // namespace engine

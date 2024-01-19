@@ -1,16 +1,14 @@
-#include "RigidBody.hpp"
+#include "engine/RigidBody.hpp"
 
 #include <cmath>
 
 #include "math/Math.hpp"
 
-#include "game/Scene.hpp"
-
-namespace game
+namespace engine
 {
 
 RigidBody::RigidBody(uint32_t id, float x, float y,  float radius, float mass, float ground_drag_cooef,
-    RigidBody::Type type)
+    engine::RigidBody::Type type)
 : velocity_{}
 , rotation_(0.f)
 , angular_velocity_(0.f)
@@ -47,4 +45,4 @@ void RigidBody::update(float timeStep)
 }
 
 
-}  // namespace gam
+}  // namespace engine

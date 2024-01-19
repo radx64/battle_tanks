@@ -1,13 +1,13 @@
 #ifndef GAME_ENTITY_TREE_RENDERER_HPP_
 #define GAME_ENTITY_TREE_RENDERER_HPP_
 
-#include "game/Renderer.hpp"
+#include "engine/Renderer.hpp"
 
 namespace game::entity { class Tree; }
 
 namespace game::entity
 {
-class TreeRenderer : public Renderer
+class TreeRenderer : public engine::Renderer
 {
 public:
     TreeRenderer(Tree* tree, sf::Texture& treeBody);

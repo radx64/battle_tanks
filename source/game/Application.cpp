@@ -18,7 +18,7 @@
 #include "game/entity/tree/Tree.hpp"
 #include "game/entity/tree/TreeFactory.hpp"
 #include "game/HelpWindow.hpp"
-#include "game/RigidBodyDebugRenderer.hpp"
+#include "engine/RigidBodyDebugRenderer.hpp"
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
 #include "gui/Button.hpp"
@@ -310,7 +310,7 @@ int Application::run()
 
             if (rigid_body_debug_)
             {
-                game::RigidBodyDebugRenderer::debug(scene_, window_);
+                engine::RigidBodyDebugRenderer::debug(scene_, window_);
             }
 
             auto draw_time = clock.getElapsedTime().asMilliseconds();
@@ -333,7 +333,7 @@ int Application::run()
 
             for (size_t index = 0; index < scene_objects.size(); ++index )
             {
-                GameObject* object = scene_objects[index].get();
+                engine::GameObject* object = scene_objects[index].get();
                 if (object != nullptr)
                 {
                     object->update(scene_, timeStep_);
