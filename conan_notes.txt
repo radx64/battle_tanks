@@ -1,0 +1,17 @@
+Conan package manager usages
+
+1. install pipx to for installing conan system wide
+
+2. let conan to install missing dependencies using system package manager
+in conan profile config ~/conan2/profile.conf
+tools.system.package_manager:mode = install
+tools.system.package_manager:sudo = True
+
+3. environment setup
+conan install . --output-folder=build --build=missing
+
+4. compile project
+cmake .. -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release -j4
+
+

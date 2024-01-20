@@ -40,9 +40,10 @@ target_link_libraries (battle_tanks
     graphics_lib
     math_lib
     gui_lib
-    sfml-graphics 
-    sfml-window 
     sfml-system
+    sfml-window
+    sfml-graphics
+    sfml-network
 )
 
 set(CONFIGURED_ONCE TRUE CACHE INTERNAL
