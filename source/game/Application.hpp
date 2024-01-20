@@ -36,6 +36,7 @@ protected:
     void configureGUI();
     void spawnSomeTanks();
     void spawnSomeBarrelsAndCratesAndTress();
+    void renderGameObjects();
 
     graphics::ParticleSystem particleSystem_;
     Context context_;

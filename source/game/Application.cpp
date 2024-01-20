@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
@@ -58,6 +59,48 @@ Application::Application()
 
     configureGUI();
 }
+
+void Application::renderGameObjects()
+{
+    // Crude concept for correct depth rendering
+    struct GameObjectWithDistanceToCamera
+    {
+        engine::GameObject* object;
+        float distance;
+    };
+
+    std::vector<GameObjectWithDistanceToCamera> objects_to_draw;
+    objects_to_draw.reserve(scene_.objects().size());
+
+    const auto& cameraPosition = camera_.getPosition();
+    sf::Rect<float> cameraFrustum {cameraPosition - camera_.getSize()/2.f , camera_.getSize() };
+
+    for (auto& object : scene_.objects())
+    {
+        const auto rb = object->getRigidBody();
+        if (not cameraFrustum.contains(rb.x_, rb.y_))
+        {
+            continue;
+        }
+
+        auto distanceFromCameraCenter = math::distance(cameraPosition.x, cameraPosition.y, rb.x_, rb.y_);
+
+        objects_to_draw.emplace_back(GameObjectWithDistanceToCamera{object.get(), distanceFromCameraCenter});
+    }
+
+    std::sort(objects_to_draw.begin(), objects_to_draw.end(), 
+        [](const auto& left, const auto& right)
+        {
+            return left.distance > right.distance;
+        }
+    );
+
+    for (auto& e : objects_to_draw)
+    {
+        e.object->draw(window_, timeStep_);
+    }
+}
+
 
 void Application::configureGUI()
 {   
@@ -298,13 +341,7 @@ int Application::run()
             graphics::drawtools::drawWaypoints(window_, waypoints_);
             particleSystem_.drawTracks(window_);
 
-            for (auto& object : scene_.objects())
-            {
-                if (object.get() != nullptr)
-                {
-                    object->draw(window_, timeStep_);
-                } 
-            }
+            renderGameObjects();
 
             particleSystem_.draw(window_);
 
