@@ -26,7 +26,7 @@ void Label::setText(const sf::String& text)
 {
     text_.setString(text);
     bounds_.width = text_.getGlobalBounds().width;
-    bounds_.height = text_.getGlobalBounds().height;
+    bounds_.height = text_.getCharacterSize();
     Component::updateGlobalPosition();
 }
 

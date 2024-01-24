@@ -13,7 +13,7 @@ PRIVATE
     gmock
     pthread
 
-    math_lib
+    engine_math_lib
 )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Coverage")

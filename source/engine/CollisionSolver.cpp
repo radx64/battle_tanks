@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 #include "engine/Scene.hpp"
 
 namespace engine
@@ -25,27 +25,27 @@ struct CollisionResult
 
 CollisionResult processObjectsCollsion(engine::RigidBody& object, engine::RigidBody& other_object)
 {
-   float distance_between_objects = math::distance(object.x_, object.y_, 
+   float distance_between_objects = engine::math::distance(object.x_, object.y_, 
         other_object.x_, other_object.y_);
     // Collision detected here
     // Calculating hit vectors
     float nx = (other_object.x_ - object.x_) / distance_between_objects;
     float ny = (other_object.y_ - object.y_) / distance_between_objects;
     float impact = SPRING_COLLISION_COEEF * (
-        math::dot_product(object.velocity_.x, object.velocity_.y, nx, ny)
-        - math::dot_product(other_object.velocity_.x, other_object.velocity_.y, nx, ny)) 
+        engine::math::dot_product(object.velocity_.x, object.velocity_.y, nx, ny)
+        - engine::math::dot_product(other_object.velocity_.x, other_object.velocity_.y, nx, ny)) 
         / (object.mass_ + other_object.mass_);
 
     // Additional angular velocity based on the point of collision
     // So objects rotate when hit
     auto relativeVelocity = object.velocity_ - other_object.velocity_;
-    float velocityVectorLength = math::normalize_vector(relativeVelocity);
-    float dotProduct = math::dot_product(nx, ny, relativeVelocity.x, relativeVelocity.y);
+    float velocityVectorLength = engine::math::normalize_vector(relativeVelocity);
+    float dotProduct = engine::math::dot_product(nx, ny, relativeVelocity.x, relativeVelocity.y);
     // TODO: Consider adding mass and impact momentum to this tangent velocity later
     float tangentVelocity =  velocityVectorLength * dotProduct * TANGENT_VELOCITY_SCALING_FACTOR;
 
     // This cross product is used to determine rotation direction of the angular momentum    
-    float crossProduct = math::cross_product(
+    float crossProduct = engine::math::cross_product(
         object.velocity_.x, 
         object.velocity_.y,
         other_object.velocity_.x, 
@@ -67,9 +67,9 @@ void processStaticAndDynamicObjectsCollsion(engine::RigidBody& static_object, en
     dynamic_object.angular_velocity_ -= collisionResult.tangentVelocity_ / dynamic_object.radius_;
 
     sf::Vector2f normalVector{collisionResult.nx_,collisionResult.ny_};
-    math::normalize_vector(normalVector);
+    engine::math::normalize_vector(normalVector);
 
-    float relativeSpeed = math::dot_product(
+    float relativeSpeed = engine::math::dot_product(
         dynamic_object.velocity_.x, dynamic_object.velocity_.y,
         normalVector.x, normalVector.y);
 
@@ -106,7 +106,7 @@ void solveCollsion(engine::GameObject& object, engine::GameObject& other_object)
     auto& other_rigid_body = other_object.getRigidBody();
     if (rigid_body.id_ == other_rigid_body.id_) return; // do not check collision with itself.
     
-    float distance_between_objects = math::distance(rigid_body.x_, rigid_body.y_,
+    float distance_between_objects = engine::math::distance(rigid_body.x_, rigid_body.y_,
         other_rigid_body.x_, other_rigid_body.y_);
 
     float sum_of_radius = rigid_body.radius_ + other_rigid_body.radius_;

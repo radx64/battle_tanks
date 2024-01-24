@@ -1,10 +1,10 @@
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 
 #include <cmath>
 #include <cstddef>
 #include <stdexcept>
 
-namespace math
+namespace engine::math
 {
 
 float distance(float x1, float y1, float x2, float y2)
@@ -88,4 +88,4 @@ int Average::calculate(int new_value)
     return std::accumulate(measurements_.begin(), measurements_.end(), 0) / window_size_;
 }
 
-}  // namespace math
+}  // namespace engine::math

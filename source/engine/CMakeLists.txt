@@ -1,5 +1,11 @@
 add_library(engine_lib STATIC)
 
+add_subdirectory(math)
+
+target_link_libraries(engine_lib
+    PUBLIC
+    engine_math_lib)
+
 target_include_directories(engine_lib
     PUBLIC
     ${CMAKE_SOURCE_DIR}/source

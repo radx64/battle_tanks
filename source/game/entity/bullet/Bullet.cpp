@@ -3,7 +3,7 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 #include "game/entity/bullet/BulletRenderer.hpp"
 #include "game/InstanceIdGenerator.hpp"
 #include "engine/RigidBody.hpp"
@@ -30,7 +30,7 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
 
     rigid_body_->rotation_ = angle;
 
-    float angle_rad = math::degree_to_radians(angle);
+    float angle_rad = engine::math::degree_to_radians(angle);
 
     float vx = speed * std::cos(angle_rad);
     float vy = speed * std::sin(angle_rad);

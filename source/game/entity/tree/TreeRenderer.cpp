@@ -3,7 +3,7 @@
 
 #include "engine/Camera.hpp"
 #include "game/Context.hpp"
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 
 constexpr float HEIGHT_COEFF = 0.005f;
 
@@ -35,8 +35,8 @@ void TreeRenderer::draw(sf::RenderWindow& renderWindow)
     for (size_t layer = 0; layer < tree_layers; ++layer)
     {
         const float t = layer / static_cast<float>(tree_layers - 1);
-        const float scale = math::lerp(1.0f, 0.2f, t);
-        auto current_layer_point = math::lerp(tree_position, tree_top_point, t);
+        const float scale = engine::math::lerp(1.0f, 0.2f, t);
+        auto current_layer_point = engine::math::lerp(tree_position, tree_top_point, t);
 
         treeSprite_.setScale(scale, scale);
         treeSprite_.setRotation(tree_rigid_body.rotation_ + layer * 30.f);

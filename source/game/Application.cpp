@@ -27,7 +27,7 @@
 #include "gui/Label.hpp"
 #include "gui/Layout.hpp"
 #include "gui/Window.hpp"
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 
 namespace game 
 {
@@ -49,12 +49,18 @@ Application::Application()
     context_.setParticleSystem(&particleSystem_);
     context_.setScene(&scene_);
     context_.setCamera(&camera_);
-    gui::FontLibrary::initialize();
+    // FIXME static init of fonts and textures can lead to crashes on exit as
+    // statics can be destroyed after sfml context so this is a bit temporary
+    // solution until better staticless asset manager
+    gui::FontLibrary::initialize(); 
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{WINDOW_WIDTH, WINDOW_HEIGHT});
     auto desktop = sf::VideoMode::getDesktopMode();
     window_.setPosition(sf::Vector2i(desktop.width/2 - window_.getSize().x/2, desktop.height/2 - window_.getSize().y/2));
+    // window_.setFramerateLimit(120);
+    // fpsLimiter_.setFrameLimit(1000);
+    // window_.setVerticalSyncEnabled(false);
     camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
 
     configureGUI();
@@ -63,13 +69,14 @@ Application::Application()
 void Application::renderGameObjects()
 {
     // Crude concept for correct depth rendering
+    // Consider static vector size and it's single instance
     struct GameObjectWithDistanceToCamera
     {
         engine::GameObject* object;
         float distance;
     };
 
-    std::vector<GameObjectWithDistanceToCamera> objects_to_draw;
+    static std::vector<GameObjectWithDistanceToCamera> objects_to_draw;
     objects_to_draw.reserve(scene_.objects().size());
 
     const auto& cameraPosition = camera_.getPosition();
@@ -83,7 +90,7 @@ void Application::renderGameObjects()
             continue;
         }
 
-        auto distanceFromCameraCenter = math::distance(cameraPosition.x, cameraPosition.y, rb.x_, rb.y_);
+        auto distanceFromCameraCenter = engine::math::distance(cameraPosition.x, cameraPosition.y, rb.x_, rb.y_);
 
         objects_to_draw.emplace_back(GameObjectWithDistanceToCamera{object.get(), distanceFromCameraCenter});
     }
@@ -99,14 +106,15 @@ void Application::renderGameObjects()
     {
         e.object->draw(window_, timeStep_);
     }
-}
 
+    objects_to_draw.clear();
+}
 
 void Application::configureGUI()
 {   
     auto quit_button = std::make_unique<gui::Button>("Quit");
     quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
-    quit_button->setSize(sf::Vector2f(150.f, 50.f));
+    quit_button->setSize(sf::Vector2f(150.f, 30.f));
     quit_button->onClick([this](){std::cout << "Quitting...\n"; window_.close();});
     window_manager_->mainWindow()->addChild(std::move(quit_button));
 
@@ -131,8 +139,8 @@ void Application::configureGUI()
     window_manager_->mainWindow()->addChild(std::move(measurements_average_text));
 
     auto button = std::make_unique<gui::Button>("Help");
-    button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
-    button->setSize(sf::Vector2f(150.f, 50.f));
+    button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 150.f), gui::Alignment::LEFT);
+    button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){
         auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(WINDOW_WIDTH/2, 600.0f));
         help_window->setTitle("Help");
@@ -141,14 +149,14 @@ void Application::configureGUI()
     window_manager_->mainWindow()->addChild(std::move(button));
 
     auto demo_button = std::make_unique<gui::Button>("BUTTON DEMO");
-    demo_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 300.f), gui::Alignment::LEFT);
-    demo_button->setSize(sf::Vector2f(150.f, 50.f));
+    demo_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
+    demo_button->setSize(sf::Vector2f(150.f, 30.f));
     demo_button->onClick([this](){floating_button_demo_visible_ = !floating_button_demo_visible_;});
     window_manager_->mainWindow()->addChild(std::move(demo_button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
-    spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 400.f), gui::Alignment::LEFT);
-    spawn_window_button->setSize(sf::Vector2f(150.f, 50.f));
+    spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 250.f), gui::Alignment::LEFT);
+    spawn_window_button->setSize(sf::Vector2f(150.f, 30.f));
     spawn_window_button->onClick([this](){
         float random_x = rand() % 200;
         float random_y = rand() % 200;
@@ -261,11 +269,11 @@ int Application::run()
         // TODO: move those member creations to class fields
         // And create some proper profiler class not that
         constexpr int number_of_measurements = 10;
-        math::Average draw_average{number_of_measurements};
-        math::Average physics_average{number_of_measurements};
-        math::Average nav_average{number_of_measurements};
-        math::Average fps_average{number_of_measurements};
-        math::Average gui_average{number_of_measurements};
+        engine::math::Average draw_average{number_of_measurements};
+        engine::math::Average physics_average{number_of_measurements};
+        engine::math::Average nav_average{number_of_measurements};
+        engine::math::Average fps_average{number_of_measurements};
+        engine::math::Average gui_average{number_of_measurements};
 
         sf::Clock clock;
 

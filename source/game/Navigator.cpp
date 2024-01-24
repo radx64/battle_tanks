@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "game/entity/tank/Tank.hpp"
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 
 namespace game 
 {
@@ -29,7 +29,7 @@ void Navigator::navigate()
     auto tank_x = tank_.getRigidBody().x_;
     auto tank_y = tank_.getRigidBody().y_;   
 
-    float distance = math::distance(current_waypoint.x, current_waypoint.y, tank_x, tank_y);
+    float distance = engine::math::distance(current_waypoint.x, current_waypoint.y, tank_x, tank_y);
 
     if (distance > WAYPOINT_VISITED_DISTANCE)
     {

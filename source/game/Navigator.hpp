@@ -2,8 +2,10 @@
 #define GAME_NAVIGATOR_HPP_
 
 #include <cmath>
+#include <vector>
 
-#include "math/Math.hpp"
+#include <SFML/System.hpp>
+
 namespace game::entity {class Tank;}
 
 namespace game 

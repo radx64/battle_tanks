@@ -5,5 +5,6 @@ LUA programmable tanks fight
 Sprites sourced from: https://kenney.nl/assets/top-down-tanks-redux
 
 ### Fonts credits
-Font armata source: https://www.1001fonts.com/armata-font.html
-Font glassTTY source: http://sensi.org/~svo/glasstty/
+- armata source: https://www.1001fonts.com/armata-font.html
+- glassTTY source: http://sensi.org/~svo/glasstty/
+- vt323 source: https://fontsource.org/fonts/vt323

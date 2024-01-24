@@ -9,7 +9,7 @@
 #include "engine/Scene.hpp"
 #include "graphics/ParticleSystem.hpp"
 #include "graphics/TextureLibrary.hpp"
-#include "math/Math.hpp"
+#include "engine/math/Math.hpp"
 
 namespace game::entity 
 {
@@ -69,10 +69,10 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     tank_rigid_body.angular_velocity_ = 0;
 
     //Convert current direction to 0..360 range
-    current_direction_ = math::signed_fmod(current_direction_, 360.0);
+    current_direction_ = engine::math::signed_fmod(current_direction_, 360.0);
 
     float delta = set_direction_ - current_direction_;
-    delta = math::signed_fmod((delta + 180.0), 360.0) - 180.0;
+    delta = engine::math::signed_fmod((delta + 180.0), 360.0) - 180.0;
     // If current direction of movement is different(more than 15deg) than current one cut the throttle
     if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = set_throttle_;
     if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
@@ -91,9 +91,9 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
 
     if ((std::fabs(tank_rigid_body.velocity_.x) > 0.01) or (std::fabs(tank_rigid_body.velocity_.y) > 0.01))
     {
-        sf::Vector2f left_track = math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_-15.0),
+        sf::Vector2f left_track = engine::math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_-15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
-        sf::Vector2f right_track = math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
+        sf::Vector2f right_track = engine::math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
         Context::getParticleSystem().addTrackImprint(left_track.x, left_track.y, current_direction_);

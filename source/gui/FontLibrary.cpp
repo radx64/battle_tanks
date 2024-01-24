@@ -18,8 +18,9 @@ void FontLibrary::initFont(const std::string& name, const std::string& path)
 void FontLibrary::initialize()
 {
     initDefaultFont();
-    initFont("armata", "../fonts/armata.ttf");
-    initFont("glassTTY", "../fonts/Glass_TTY_VT220.ttf");
+    initFont("armata",      "../fonts/armata.ttf");
+    initFont("glassTTY",    "../fonts/Glass_TTY_VT220.ttf");
+    initFont("vt323",       "../fonts/vt323-latin-400-normal.ttf");
 }
 
 sf::Font& FontLibrary::get(const std::string& name)

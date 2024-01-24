@@ -1,5 +1,5 @@
-#ifndef MATH_MATH_HPP_
-#define MATH_MATH_HPP_
+#ifndef ENGINE_MATH_MATH_HPP_
+#define ENGINE_MATH_MATH_HPP_
 
 #include <cstddef>
 #include <numeric>
@@ -7,7 +7,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-namespace math
+namespace engine::math
 {
 float distance(float x1, float y1, float x2, float y2);
 float dot_product(float x1, float y1, float x2, float y2);
@@ -30,6 +30,6 @@ protected:
     size_t current_index_{};
 };
 
-}  // namespace math
+}  // namespace engine::math
 
-#endif  // MATH_MATH_HPP_
+#endif  // ENGINE_MATH_MATH_HPP_
