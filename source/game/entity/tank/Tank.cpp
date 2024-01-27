@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <cmath>
 
-#include "game/Context.hpp"
-#include "game/InstanceIdGenerator.hpp"
-#include "game/entity/tank/TankRenderer.hpp"
-#include "engine/Scene.hpp"
-#include "graphics/ParticleSystem.hpp"
-#include "graphics/TextureLibrary.hpp"
 #include "engine/math/Math.hpp"
+#include "engine/ParticleSystem.hpp"
+#include "engine/Scene.hpp"
+#include "game/entity/tank/TankRenderer.hpp"
+#include "game/entity/TracksRenderer.hpp"
+#include "game/InstanceIdGenerator.hpp"
+#include "graphics/TextureLibrary.hpp"
 
 namespace game::entity 
 {
@@ -30,10 +30,13 @@ void Tank::setDebug(bool is_enabled)
 }
 
 Tank::Tank(float x, float y, float rotation, 
-        std::unique_ptr<Cannon> cannon, sf::Texture& tankBody)
+    std::unique_ptr<Cannon> cannon, 
+    sf::Texture& tankBody,
+    TracksRenderer* tracksRenderer)
 : current_direction_(rotation)
 , cannon_(std::move(cannon))
 , set_direction_(rotation)
+, tracksRenderer_(tracksRenderer)
 {
     renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
@@ -96,8 +99,8 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
         sf::Vector2f right_track = engine::math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
-        Context::getParticleSystem().addTrackImprint(left_track.x, left_track.y, current_direction_);
-        Context::getParticleSystem().addTrackImprint(right_track.x, right_track.y, current_direction_);
+        tracksRenderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
+        tracksRenderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);
     }
 
     // Testing bullet shooting

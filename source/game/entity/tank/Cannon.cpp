@@ -7,7 +7,7 @@
 #include "game/entity/bullet/BulletFactory.hpp"
 #include "game/particle/Explosion.hpp"
 #include "engine/Scene.hpp"
-#include "graphics/ParticleSystem.hpp"
+#include "engine/ParticleSystem.hpp"
 #include "engine/math/Math.hpp"
 
 namespace game::entity 
@@ -75,7 +75,7 @@ void Cannon::fire()
 
         auto explosion = std::make_unique<game::particle::Explosion>(bullet_x, bullet_y);
 
-        Context::getParticleSystem().addParticle(std::move(explosion));
+        Context::getParticleSystem().add(std::move(explosion));
 
         cooldown_ = 0.f;
     }

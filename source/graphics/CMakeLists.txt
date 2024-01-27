@@ -8,13 +8,10 @@ target_include_directories(graphics_lib
 target_sources(graphics_lib
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.hpp    
-    ${CMAKE_CURRENT_SOURCE_DIR}/Particle.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/TextureLibrary.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Tilemap.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TextureLibrary.hpp
+
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Particle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.cpp   
-    ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextureLibrary.cpp
 )

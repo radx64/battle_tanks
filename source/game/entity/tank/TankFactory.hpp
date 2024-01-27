@@ -4,6 +4,7 @@
 #include <memory>
 
 namespace game::entity { class Tank; }
+namespace game::entity { class TracksRenderer; }
 
 namespace game::entity 
 {
@@ -20,7 +21,7 @@ public:
         Black
     };
 
-    static std::unique_ptr<Tank> create(const TankFactory::TankType type, float x, float y, float rotation);
+    static std::unique_ptr<Tank> create(const TankFactory::TankType type, float x, float y, float rotation, TracksRenderer* tracksRenderer);
 };
 
 }  // namespace game::entity

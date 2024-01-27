@@ -8,6 +8,7 @@
 #include "game/entity/tank/Cannon.hpp"
 #include "engine/GameObject.hpp"
 
+namespace game::entity {class TracksRenderer;}
 namespace game::entity 
 {
 
@@ -15,7 +16,9 @@ class Tank : public engine::GameObject
 {
 public:
     Tank(float x, float y, float rotation, 
-        std::unique_ptr<Cannon> cannon, sf::Texture& tankBody);
+        std::unique_ptr<Cannon> cannon, 
+        sf::Texture& tankBody,
+        TracksRenderer* tracksRenderer);
     virtual ~Tank() = default;
 
     void onUpdate(engine::Scene& scene, float timeStep) override;
@@ -35,6 +38,7 @@ protected:
     float set_direction_{};
     float set_throttle_{};
     float lifetime_{};
+    TracksRenderer* tracksRenderer_;
 };
 
 }  // namespace game::entity

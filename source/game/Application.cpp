@@ -209,7 +209,7 @@ void Application::spawnSomeTanks()
         const auto spawn_rotation = i * 36; 
         auto tank = entity::TankFactory::create(
             static_cast<entity::TankFactory::TankType>(i),
-            x_spawn_position, y_spawn_position, spawn_rotation);
+            x_spawn_position, y_spawn_position, spawn_rotation, &tracksRenderer_);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
         scene_.spawnObject(std::move(tank));
@@ -308,7 +308,7 @@ int Application::run()
                             case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
                             case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
                             case sf::Keyboard::F12      :   {tank_debug_mode=!tank_debug_mode; entity::Tank::setDebug(tank_debug_mode);} break;
-                            case sf::Keyboard::T        :   Context::getParticleSystem().clear(); break;
+                            case sf::Keyboard::T        :   tracksRenderer_.clear(); break;
                             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                             case sf::Keyboard::Q        :   window_.close();
                             default                     :   {}  
@@ -347,7 +347,7 @@ int Application::run()
 
             tilemap_->draw(window_);
             graphics::drawtools::drawWaypoints(window_, waypoints_);
-            particleSystem_.drawTracks(window_);
+            tracksRenderer_.draw(window_);
 
             renderGameObjects();
 

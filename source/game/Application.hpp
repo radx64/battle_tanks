@@ -6,17 +6,19 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/Camera.hpp"
+#include "engine/CollisionSolver.hpp"
 #include "engine/FpsCounter.hpp"
 #include "engine/FpsLimiter.hpp"
-#include "engine/RigidBody.hpp"
-#include "engine/CollisionSolver.hpp"
-#include "game/Context.hpp"
-#include "game/entity/tank/Tank.hpp"
-#include "game/Navigator.hpp"
+#include "engine/ParticleSystem.hpp"
 #include "engine/Renderer.hpp"
+#include "engine/RigidBody.hpp"
 #include "engine/Scene.hpp"
 
-#include "graphics/ParticleSystem.hpp"
+#include "game/Context.hpp"
+#include "game/entity/tank/Tank.hpp"
+#include "game/entity/TracksRenderer.hpp"
+#include "game/Navigator.hpp"
+
 #include "graphics/Tilemap.hpp"
 
 #include "gui/Label.hpp"
@@ -38,7 +40,7 @@ protected:
     void spawnSomeBarrelsAndCratesAndTress();
     void renderGameObjects();
 
-    graphics::ParticleSystem particleSystem_;
+    engine::ParticleSystem particleSystem_;
     Context context_;
     engine::FpsCounter fpsCounter_;
     engine::FpsLimiter fpsLimiter_;
@@ -68,6 +70,7 @@ protected:
     std::vector<std::unique_ptr<Navigator>> navigators_;
     engine::Scene scene_;
     engine::CollisionSolver collision_solver_;
+    entity::TracksRenderer tracksRenderer_;
 };
 
 }  // namespace game

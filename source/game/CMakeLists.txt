@@ -25,7 +25,8 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Cannon.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Tank.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankFactory.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankRenderer.hpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankRenderer.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity/TracksRenderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/Tree.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeFactory.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeRenderer.hpp 
@@ -49,7 +50,8 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Cannon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankFactory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankRenderer.cpp     
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankRenderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity/TracksRenderer.cpp     
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/Tree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeRenderer.cpp 

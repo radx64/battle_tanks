@@ -3,12 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "graphics/Particle.hpp"
+#include "engine/Particle.hpp"
 
 namespace game::particle
 {
 
-class Explosion : public graphics::Particle
+class Explosion : public engine::Particle
 {
 public:
     Explosion(float x, float y);

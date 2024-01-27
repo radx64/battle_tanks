@@ -1,8 +1,8 @@
-#include "graphics/Particle.hpp"
+#include "engine/Particle.hpp"
 
 #include <cmath>
 
-namespace graphics
+namespace engine
 {
 
 Particle::Particle()
@@ -40,4 +40,4 @@ void Particle::kill()
     is_dead_ = true;
 }
 
-}  // namespace graphics
+}  // namespace engine

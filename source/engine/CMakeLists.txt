@@ -17,9 +17,11 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Particle.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Scene.hpp
@@ -29,8 +31,10 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Particle.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Scene.cpp

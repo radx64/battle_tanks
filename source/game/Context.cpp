@@ -3,11 +3,11 @@
 namespace game 
 {
 
-graphics::ParticleSystem& Context::getParticleSystem()
+engine::ParticleSystem& Context::getParticleSystem()
 {
     return *particleSystem_;
 }
-void Context::setParticleSystem(graphics::ParticleSystem* particles)
+void Context::setParticleSystem(engine::ParticleSystem* particles)
 {
     particleSystem_ = particles;
 }
@@ -32,7 +32,7 @@ void Context::setCamera(engine::Camera* camera)
     camera_ = camera;
 }
 
-graphics::ParticleSystem* Context::particleSystem_{nullptr};
+engine::ParticleSystem* Context::particleSystem_{nullptr};
 engine::Scene* Context::scene_{nullptr};
 engine::Camera* Context::camera_{nullptr};
 

@@ -1,9 +1,9 @@
-#ifndef GRAPHICS_PARTICLE_HPP_
-#define GRAPHICS_PARTICLE_HPP_
+#ifndef ENGINE_PARTICLE_HPP_
+#define ENGINE_PARTICLE_HPP_
 
 #include <SFML/Graphics.hpp>
 
-namespace graphics
+namespace engine
 {
 
 class Particle
@@ -27,6 +27,6 @@ protected:
     bool is_dead_;
 };
 
-}  // namespace graphics
+}  // namespace engine
 
-#endif  // GRAPHICS_PARTICLE_HPP_
+#endif  // ENGINE_PARTICLE_HPP_
