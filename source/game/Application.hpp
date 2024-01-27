@@ -9,6 +9,8 @@
 #include "engine/CollisionSolver.hpp"
 #include "engine/FpsCounter.hpp"
 #include "engine/FpsLimiter.hpp"
+#include "engine/KeyboardHandler.hpp"
+#include "engine/KeyboardReceiver.hpp"
 #include "engine/ParticleSystem.hpp"
 #include "engine/Renderer.hpp"
 #include "engine/RigidBody.hpp"
@@ -27,6 +29,20 @@
 
 namespace game 
 {
+
+class ConsoleKeyboardPrinter : public engine::KeyboardReceiver
+{
+protected:
+    void onKeyPressed(const sf::Keyboard::Key key) override
+    {
+        std::cout << "Key pressed: " << key << std::endl;
+    }
+    void onKeyReleased(const sf::Keyboard::Key key) override
+    {
+        std::cout << "Key released: " << key << std::endl;
+    }
+   
+};
 
 class Application
 {
@@ -70,7 +86,9 @@ protected:
     std::vector<std::unique_ptr<Navigator>> navigators_;
     engine::Scene scene_;
     engine::CollisionSolver collision_solver_;
-    entity::TracksRenderer tracksRenderer_;
+    engine::KeyboardHandler keyboard_handler_;
+    ConsoleKeyboardPrinter console_keyboard_printer_;
+    entity::TracksRenderer tracks_renderer_;
 };
 
 }  // namespace game

@@ -36,7 +36,7 @@ Tank::Tank(float x, float y, float rotation,
 : current_direction_(rotation)
 , cannon_(std::move(cannon))
 , set_direction_(rotation)
-, tracksRenderer_(tracksRenderer)
+, tracks_renderer_(tracksRenderer)
 {
     renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
@@ -99,8 +99,8 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
         sf::Vector2f right_track = engine::math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
-        tracksRenderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
-        tracksRenderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);
+        tracks_renderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
+        tracks_renderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);
     }
 
     // Testing bullet shooting

@@ -29,7 +29,7 @@ Bunch of random ideas to randomly pick up and implement
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing
-- [ ] Shooting projectiles, every tank can do it right?
+- [x] Shooting projectiles, every tank can do it right?
 - [ ] Fuel management, pickups
 - [ ] Distance sensors
 
