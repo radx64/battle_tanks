@@ -11,6 +11,7 @@ class KeyboardHandler;
 class KeyboardReceiver
 {
 public:
+    KeyboardReceiver();
     virtual ~KeyboardReceiver();
 
 friend class KeyboardHandler;

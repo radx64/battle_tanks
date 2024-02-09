@@ -22,11 +22,13 @@ void KeyboardHandler::subscribe(const std::vector<sf::Keyboard::Key>& keys, Keyb
     {
         keys_with_receivers_[key].push_back(receiver);
     }
+
+    receiver->attach(this);
 }
 
 void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
 {
-    for(auto key_with_receivers_it = begin(keys_with_receivers_); key_with_receivers_it != end(keys_with_receivers_);)
+    for(auto key_with_receivers_it = std::begin(keys_with_receivers_); key_with_receivers_it != std::end(keys_with_receivers_);)
     {
         auto& receivers = key_with_receivers_it->second;
         std::remove(receivers.begin(), receivers.end(), receiver);

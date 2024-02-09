@@ -14,6 +14,7 @@ target_include_directories(engine_lib
 target_sources(engine_lib
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.hpp
@@ -30,6 +31,7 @@ target_sources(engine_lib
 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp

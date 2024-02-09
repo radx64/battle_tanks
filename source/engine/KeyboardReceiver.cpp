@@ -3,6 +3,11 @@
 
 namespace engine
 {
+
+KeyboardReceiver::KeyboardReceiver()
+: handler_{nullptr}
+{}
+
 KeyboardReceiver::~KeyboardReceiver()
 {
     if (handler_ != nullptr)

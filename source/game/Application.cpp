@@ -38,13 +38,22 @@ constexpr size_t TANKS_COUNT = 5;
 constexpr size_t BARRELS_COUNT = 10;
 constexpr size_t CRATES_COUNT = 10;
 
+constexpr int number_of_measurements = 10;
+
 Application::Application()
-: camera_initial_position_{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f}
+: keyboard_handler_{}
+, camera_initial_position_{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f}
 , camera_initial_size_{WINDOW_WIDTH, WINDOW_HEIGHT}
 , camera_{camera_initial_position_, camera_initial_size_}
+, camera_controller_{&camera_}
 , camera_view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
 , window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!")
 , collision_solver_(scene_)
+, draw_average_{number_of_measurements}
+, physics_average_{number_of_measurements}
+, nav_average_{number_of_measurements}
+, fps_average_{number_of_measurements}
+, gui_average_{number_of_measurements}
 {
     context_.setParticleSystem(&particleSystem_);
     context_.setScene(&scene_);
@@ -71,7 +80,7 @@ Application::Application()
         sf::Keyboard::S,
         sf::Keyboard::A,
         sf::Keyboard::D
-    }, &console_keyboard_printer_);
+    }, &camera_controller_);
 }
 
 void Application::renderGameObjects()
@@ -270,23 +279,73 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     }
 }
 
+void Application::processEvents()
+{
+    sf::Event event;
+    while (window_.pollEvent(event))
+    {
+        switch (event.type)
+        {
+            case sf::Event::Closed : { window_.close(); break; }
+            case sf::Event::KeyPressed :
+            {
+                keyboard_handler_.handleKeyPressed(event.key);
+                break;
+            } 
+            case sf::Event::KeyReleased : 
+            {
+                keyboard_handler_.handleKeyReleased(event.key);
+                switch (event.key.code)
+                {
+                    case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
+                    case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
+                    case sf::Keyboard::C        :   waypoints_.clear(); break;
+                    case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
+                    case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
+                    case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
+                    case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
+                    case sf::Keyboard::F12      :   {tank_debug_mode_=!tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_);} break;
+                    case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
+                    case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
+                    case sf::Keyboard::Q        :   window_.close();
+                    default                     :   {}  
+                }
+                break;
+            }
+
+            case sf::Event::MouseWheelMoved : 
+            {
+                if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
+                if (event.mouseWheel.delta < 0) camera_.zoomOut();
+            }
+            default : {}
+        }
+    }
+}
+
+void Application::generateProfiling()
+{
+    // TODO: Create some proper profiler class not that
+    measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time_)
+            + "ms\nPHYSICS: " + std::to_string(physics_time_.asMicroseconds())
+            + "us\nNAV: " + std::to_string(nav_time_.asMicroseconds())
+            + "us\nGUI: " + std::to_string(gui_time_.asMilliseconds()) 
+            + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
+            + "\nObjects count: " + std::to_string(scene_.objects().size()));
+
+    measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average_.calculate(draw_time_))
+        + "ms\nAVG: " + std::to_string(physics_average_.calculate(physics_time_.asMicroseconds()))
+        + "us\nAVG: " + std::to_string(nav_average_.calculate(nav_time_.asMicroseconds()))
+        + "us\nAVG: " + std::to_string(gui_average_.calculate(gui_time_.asMilliseconds()))
+        + "ms\nAVG: " + std::to_string(fps_average_.calculate(fpsCounter_.getFps())));
+}
+
 int Application::run()
 {
     try
     {
-        // TODO: move those member creations to class fields
-        // And create some proper profiler class not that
-        constexpr int number_of_measurements = 10;
-        engine::math::Average draw_average{number_of_measurements};
-        engine::math::Average physics_average{number_of_measurements};
-        engine::math::Average nav_average{number_of_measurements};
-        engine::math::Average fps_average{number_of_measurements};
-        engine::math::Average gui_average{number_of_measurements};
-
         sf::Clock clock;
-
-        bool tank_debug_mode{false};
-        entity::Tank::setDebug(tank_debug_mode);
+        entity::Tank::setDebug(tank_debug_mode_);
 
         spawnSomeTanks();
         spawnSomeBarrelsAndCratesAndTress();
@@ -298,53 +357,10 @@ int Application::run()
 
             fpsLimiter_.startNewFrame();
             fpsCounter_.startMeasurement();
-            sf::Event event;
-            while (window_.pollEvent(event))
-            {
-                switch (event.type)
-                {
-                    case sf::Event::Closed : { window_.close(); break; }
-                    case sf::Event::KeyPressed :
-                    {
-                        keyboard_handler_.handleKeyPressed(event.key);
-                        break;
-                    } 
-                    case sf::Event::KeyReleased : 
-                    {
-                        keyboard_handler_.handleKeyReleased(event.key);
-                        switch (event.key.code)
-                        {
-                            case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
-                            case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
-                            case sf::Keyboard::C        :   waypoints_.clear(); break;
-                            case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
-                            case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
-                            case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
-                            case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
-                            case sf::Keyboard::F12      :   {tank_debug_mode=!tank_debug_mode; entity::Tank::setDebug(tank_debug_mode);} break;
-                            case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
-                            case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
-                            case sf::Keyboard::Q        :   window_.close();
-                            default                     :   {}  
-                        }
-                        break;
-                    }
+           
+            processEvents();
 
-                    case sf::Event::MouseWheelMoved : 
-                    {
-                        if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
-                        if (event.mouseWheel.delta < 0) camera_.zoomOut();
-                    }
-                    default : {}
-                }
-            }
-            
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) camera_.move(0.f,-20.f);
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) camera_.move(0.f,20.f);
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) camera_.move(-20.f,0.f);
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) camera_.move(20.f,0.f);
-
-            camera_.update();
+            camera_.update(timeStep_);
             camera_view_.setCenter(camera_.getPosition());
             camera_view_.setSize(camera_.getSize());
 
@@ -372,36 +388,23 @@ int Application::run()
                 engine::RigidBodyDebugRenderer::debug(scene_, window_);
             }
 
-            auto draw_time = clock.getElapsedTime().asMilliseconds();
+            draw_time_ = clock.getElapsedTime().asMilliseconds();
             clock.restart();
             for(auto& navigator : navigators_)
             {
                 navigator->navigate();
             }
-            auto nav_time = clock.getElapsedTime();
+            nav_time_ = clock.getElapsedTime();
             clock.restart();
 
-            // TODO I can't use references here as in update method
-            // clients can add objects to scene
-            // and vector reealoc can mess those references
-            // so for now I keeping pointers but in a future maybe 
-            // objects to be "created" should be stored separately
-            // and then added to scene at the end of a game loop iteration
-
-            const auto& scene_objects = scene_.objects();
-
-            for (size_t index = 0; index < scene_objects.size(); ++index )
+            for (auto& object : scene_.objects())
             {
-                engine::GameObject* object = scene_objects[index].get();
-                if (object != nullptr)
-                {
-                    object->update(scene_, timeStep_);
-                }             
+                object->update(scene_, timeStep_);             
             }
 
             collision_solver_.evaluateCollisions();
 
-            auto physics_time = clock.getElapsedTime();
+            physics_time_ = clock.getElapsedTime();
 
             window_.setView(window_.getDefaultView());
 
@@ -481,7 +484,7 @@ int Application::run()
             
             window_manager_->render(window_);
 
-            auto gui_time = clock.getElapsedTime();
+            gui_time_ = clock.getElapsedTime();
             
             // I'm integrating new event system in components so this code looks very messy.
             // I'll clean it when everything will switch on EventReceiver methods
@@ -494,18 +497,7 @@ int Application::run()
             was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
             last_mouse_in_gui_position_ = mousePositionInGUI;
 
-            measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time)
-                 + "ms\nPHYSICS: " + std::to_string(physics_time.asMicroseconds())
-                 + "us\nNAV: " + std::to_string(nav_time.asMicroseconds())
-                 + "us\nGUI: " + std::to_string(gui_time.asMilliseconds()) 
-                 + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
-                 + "\nObjects count: " + std::to_string(scene_.objects().size()));
-
-            measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average.calculate(draw_time))
-                + "ms\nAVG: " + std::to_string(physics_average.calculate(physics_time.asMicroseconds()))
-                + "us\nAVG: " + std::to_string(nav_average.calculate(nav_time.asMicroseconds()))
-                + "us\nAVG: " + std::to_string(gui_average.calculate(gui_time.asMilliseconds()))
-                + "ms\nAVG: " + std::to_string(fps_average.calculate(fpsCounter_.getFps())));
+            generateProfiling();
 
             window_.display();
             fpsLimiter_.wait();

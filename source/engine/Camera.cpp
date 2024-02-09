@@ -3,15 +3,16 @@
 namespace engine 
 {
 
-constexpr float MOVE_FACTOR = 0.1;
-constexpr float ZOOM_FACTOR = 0.1;
+constexpr float MOVE_FACTOR = 1.1;
+constexpr float ZOOM_FACTOR = 1.1;
 
 constexpr float MIN_ZOOM_LEVEL = 1;
-constexpr float MAX_ZOOM_LEVEL = 3;
+constexpr float MAX_ZOOM_LEVEL = 4;
 
 Camera::Camera(const sf::Vector2f& position, const sf::Vector2f& size)
 : current_position_{position}
 , target_position_{position}
+, velocity_{0.f, 0.f}
 , original_size_{size}
 , current_size_{size}
 , target_size_{size}
@@ -35,11 +36,20 @@ void Camera::alignBoundaries()
     if (target_position_.y + half_of_target_size.y > original_size_.y) target_position_.y = original_size_.y - half_of_target_size.y;
 }
 
-void Camera::move(const float x_offset, const float y_offset)
+void Camera::moveX(const float x_velocity)
 {
-    target_position_.x += x_offset;
-    target_position_.y += y_offset;
-    alignBoundaries();
+    velocity_.x = x_velocity;
+}
+
+void Camera::moveY(const float y_velocity)
+{
+    velocity_.y = y_velocity;
+}
+
+void Camera::move(const float x_velocity, const float y_velocity)
+{
+    moveX(x_velocity);
+    moveY(y_velocity);
 }
 
 // TODO: combine zoomIn and zoomIn (x,y) methods later
@@ -68,7 +78,6 @@ void Camera::zoomIn(const float x, const float y)
     setPosition(new_position_x, new_position_y);
 }
 
-
 void Camera::zoomOut()
 {
     if (zoom_level_ > MIN_ZOOM_LEVEL) zoom_level_-=0.5f;
@@ -89,13 +98,16 @@ const sf::Vector2f& Camera::getSize()
     return current_size_;
 }
 
-void Camera::update()
+void Camera::update(float timeStep)
 {
+    target_position_ += velocity_ * timeStep;
+    alignBoundaries();
+
     const auto position_diff = target_position_ - current_position_;
-    current_position_ += position_diff  * MOVE_FACTOR;
+    current_position_ += position_diff  * MOVE_FACTOR  * timeStep;
 
     const auto zoom_diff = target_size_ - current_size_;
-    current_size_ += zoom_diff  * ZOOM_FACTOR;
+    current_size_ += zoom_diff  * ZOOM_FACTOR * timeStep;
 }
 
 float Camera::getZoom()

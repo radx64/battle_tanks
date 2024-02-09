@@ -14,7 +14,7 @@ namespace game::entity
 {
 
 constexpr float CANNON_ROTATION_SPEED = 600.0;
-constexpr float CANNON_COOLDOWN = 5.0f;
+constexpr float CANNON_COOLDOWN = 4.0f;
 constexpr float CANNON_SPRITE_ROTATION_OFFSET = 90.f;
 constexpr float CANNON_LENGTH = 30.f;
 constexpr float BULLET_SPEED = 400.f;
