@@ -3,5 +3,6 @@
 int main()
 {
     game::Application app;
+    app.init();
     return app.run();
 }

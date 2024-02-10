@@ -29,33 +29,35 @@
 #include "gui/Window.hpp"
 #include "engine/math/Math.hpp"
 
+#include "Config.hpp"
+
 namespace game 
 {
 
-constexpr uint32_t WINDOW_WIDTH = 1920;
-constexpr uint32_t WINDOW_HEIGHT = 1000;
+
 constexpr size_t TANKS_COUNT = 5;
 constexpr size_t BARRELS_COUNT = 10;
 constexpr size_t CRATES_COUNT = 10;
 
-constexpr int number_of_measurements = 10;
+constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
-: keyboard_handler_{}
-, camera_initial_position_{WINDOW_WIDTH/2.f, WINDOW_HEIGHT/2.f}
-, camera_initial_size_{WINDOW_WIDTH, WINDOW_HEIGHT}
+: engine::Application("Battle tanks")
+, camera_initial_position_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
+, camera_initial_size_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
 , camera_{camera_initial_position_, camera_initial_size_}
 , camera_controller_{&camera_}
-, camera_view_{sf::FloatRect(0.f, 0.f, WINDOW_WIDTH, WINDOW_HEIGHT)}
-, window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32), "Battle tanks!")
-, collision_solver_(scene_)
-, draw_average_{number_of_measurements}
-, physics_average_{number_of_measurements}
-, nav_average_{number_of_measurements}
-, fps_average_{number_of_measurements}
-, gui_average_{number_of_measurements}
+, camera_view_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
+, draw_average_{NUMBER_OF_MEASUREMENTS}
+, physics_average_{NUMBER_OF_MEASUREMENTS}
+, nav_average_{NUMBER_OF_MEASUREMENTS}
+, fps_average_{NUMBER_OF_MEASUREMENTS}
+, gui_average_{NUMBER_OF_MEASUREMENTS}
+{}
+
+void Application::onInit()
 {
-    context_.setParticleSystem(&particleSystem_);
+    context_.setParticleSystem(&particle_system_);
     context_.setScene(&scene_);
     context_.setCamera(&camera_);
     // FIXME static init of fonts and textures can lead to crashes on exit as
@@ -64,14 +66,13 @@ Application::Application()
     gui::FontLibrary::initialize(); 
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
-    window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{WINDOW_WIDTH, WINDOW_HEIGHT});
-    auto desktop = sf::VideoMode::getDesktopMode();
-    window_.setPosition(sf::Vector2i(desktop.width/2 - window_.getSize().x/2, desktop.height/2 - window_.getSize().y/2));
+    window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT});
+
     // window_.setFramerateLimit(120);
     // fpsLimiter_.setFrameLimit(1000);
     // window_.setVerticalSyncEnabled(false);
-    window_.setKeyRepeatEnabled(false);
-    camera_view_.setCenter(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
+    
+    camera_view_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
     configureGUI();
 
     keyboard_handler_.subscribe(std::vector<sf::Keyboard::Key>
@@ -81,6 +82,184 @@ Application::Application()
         sf::Keyboard::A,
         sf::Keyboard::D
     }, &camera_controller_);
+
+    spawnSomeTanks();
+    spawnSomeBarrelsAndCratesAndTress();
+}
+
+
+void Application::onEvent(const sf::Event& event)
+{
+    switch (event.type)
+    {
+        case sf::Event::Closed : { Application::close(); break; }
+        case sf::Event::KeyPressed :
+        {
+            keyboard_handler_.handleKeyPressed(event.key);
+            break;
+        } 
+        case sf::Event::KeyReleased : 
+        {
+            keyboard_handler_.handleKeyReleased(event.key);
+            switch (event.key.code)
+            {
+                case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
+                case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
+                case sf::Keyboard::C        :   waypoints_.clear(); break;
+                case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
+                case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
+                case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
+                case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
+                case sf::Keyboard::F12      :   {tank_debug_mode_=!tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_);} break;
+                case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
+                case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
+                case sf::Keyboard::Q        :   Application::close();
+                default                     :   {}  
+            }
+            break;
+        }
+
+        case sf::Event::MouseWheelMoved : 
+        {
+            if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
+            if (event.mouseWheel.delta < 0) camera_.zoomOut();
+        }
+        default : {}
+    }
+}
+
+void Application::onUpdate(float timeStep)
+{
+    clock_.restart();
+    for(auto& navigator : navigators_)
+    {
+        navigator->navigate();
+    }
+    nav_time_ = clock_.getElapsedTime();
+
+    clock_.restart();
+    camera_.update(timeStep);
+    camera_view_.setCenter(camera_.getPosition());
+    camera_view_.setSize(camera_.getSize());
+    for (auto& object : scene_.objects())
+    {
+        object->update(scene_, timeStep_);             
+    }
+    collision_solver_.evaluateCollisions();
+    physics_time_ = clock_.getElapsedTime();
+}
+
+void Application::onRender()
+{
+    //TODO move this FPS limiting and counting to base class
+    // otherwise values are wrong
+    fpsCounter_.startMeasurement();
+    fpsLimiter_.startNewFrame();
+
+    window_.setView(camera_view_);
+    tilemap_->draw(window_);
+    graphics::drawtools::drawWaypoints(window_, waypoints_);
+    tracks_renderer_.draw(window_);
+    renderGameObjects();
+    particle_system_.draw(window_);
+    draw_time_ = clock_.getElapsedTime().asMilliseconds();
+
+    if (rigid_body_debug_)
+    {
+        engine::RigidBodyDebugRenderer::debug(scene_, window_);
+    }
+
+    auto mousePosition = sf::Mouse::getPosition(window_);
+    auto mousePositionInCamera = window_.mapPixelToCoords(mousePosition);
+
+    window_.setView(window_.getDefaultView());
+    auto mousePositionInGUI = window_.mapPixelToCoords(mousePosition);
+
+    // Temporary hack for testing objects movement
+    if (floating_button_demo_visible_)
+    {
+        test_floating_button_handle_->setVisibility(true);
+        auto position = test_floating_button_handle_->getPosition();
+        position.x += 1.0f;
+        position.y = (sin(position.x / 20.f) * 100.f) + 300.f;
+        if (position.x > 1000.0f) position =  sf::Vector2f(1.0f, 1.0f);
+        test_floating_button_handle_->setPosition(position, gui::Alignment::LEFT);
+    }
+    else
+    {
+        test_floating_button_handle_->setVisibility(false);
+    }
+
+    bool isCurrentMouseEventLeftClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+
+    bool isLeftMouseButtonClicked {false};
+
+    if ((not was_last_event_left_click_) and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
+
+    // TODO This event generation should be reworked to some state machine pattern
+    // also some event queue would be nice
+    // For now this hacky approach is enough for some basic concept testing
+    // But looks like crap :P
+    std::optional<gui::event::MouseMoved> mouseMovedEvent;
+    std::optional<gui::event::MouseButtonPressed> mousePressedEvent;
+    std::optional<gui::event::MouseButtonReleased> mouseReleaseEvent;
+
+    if (last_mouse_in_gui_position_ != mousePositionInGUI)
+    {
+        mouseMovedEvent = gui::event::MouseMoved{.position 
+            = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
+    }
+
+    auto currentLeftClickEventStatus = gui::EventStatus{gui::EventStatus::NotConsumed};
+
+    if (not was_last_event_left_click_ and isCurrentMouseEventLeftClicked )
+    {
+        mousePressedEvent = gui::event::MouseButtonPressed{
+            .button = gui::event::MouseButton::Left, 
+            .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
+    }
+
+    if (was_last_event_left_click_ and not isCurrentMouseEventLeftClicked )
+    {
+        mouseReleaseEvent = gui::event::MouseButtonReleased{
+            .button = gui::event::MouseButton::Left, 
+            .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
+    }
+
+    // FIXME: isLeftMouseButtonClicked fires only once (for gui i need proper state of mouse every frame)
+    //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
+    //  I need to have proper mouse state every frame.
+    if (mousePressedEvent) 
+    {
+        auto result = window_manager_->receive(mousePressedEvent.value());
+        if (result == gui::EventStatus::Consumed)
+        {
+            currentLeftClickEventStatus = result;
+        }
+    }
+    if (mouseReleaseEvent) window_manager_->receive(mouseReleaseEvent.value());
+    
+    if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
+
+    window_manager_->render(window_);
+
+    // I'm integrating new event system in components so this code looks very messy.
+    // I'll clean it when everything will switch on EventReceiver methods
+
+    if (currentLeftClickEventStatus == gui::EventStatus::NotConsumed 
+        and isLeftMouseButtonClicked)
+    {
+        waypoints_.emplace_back(mousePositionInCamera);               
+    }
+
+    was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
+    last_mouse_in_gui_position_ = mousePositionInGUI;
+
+    clock_.restart();
+    fpsLimiter_.wait();
+    fpsCounter_.endMeasurement();
+
+    generateProfiling();
 }
 
 void Application::renderGameObjects()
@@ -130,9 +309,9 @@ void Application::renderGameObjects()
 void Application::configureGUI()
 {   
     auto quit_button = std::make_unique<gui::Button>("Quit");
-    quit_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
+    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
     quit_button->setSize(sf::Vector2f(150.f, 30.f));
-    quit_button->onClick([this](){std::cout << "Quitting...\n"; window_.close();});
+    quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
     window_manager_->mainWindow()->addChild(std::move(quit_button));
 
     auto demo_button_1 = std::make_unique<gui::Button>("TEST");
@@ -156,23 +335,23 @@ void Application::configureGUI()
     window_manager_->mainWindow()->addChild(std::move(measurements_average_text));
 
     auto button = std::make_unique<gui::Button>("Help");
-    button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 150.f), gui::Alignment::LEFT);
+    button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f), gui::Alignment::LEFT);
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){
-        auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(WINDOW_WIDTH/2, 600.0f));
+        auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
         help_window->setTitle("Help");
         window_manager_->addWindow(std::move(help_window));
     });
     window_manager_->mainWindow()->addChild(std::move(button));
 
     auto demo_button = std::make_unique<gui::Button>("BUTTON DEMO");
-    demo_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
+    demo_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
     demo_button->setSize(sf::Vector2f(150.f, 30.f));
     demo_button->onClick([this](){floating_button_demo_visible_ = !floating_button_demo_visible_;});
     window_manager_->mainWindow()->addChild(std::move(demo_button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
-    spawn_window_button->setPosition(sf::Vector2f(WINDOW_WIDTH - 200.f, 250.f), gui::Alignment::LEFT);
+    spawn_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f), gui::Alignment::LEFT);
     spawn_window_button->setSize(sf::Vector2f(150.f, 30.f));
     spawn_window_button->onClick([this](){
         float random_x = rand() % 200;
@@ -209,7 +388,7 @@ void Application::configureGUI()
         //window->addComponent(std::move(hello_button));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
-        window->setPosition(sf::Vector2f((WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
+        window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
         window->setTitle("Oh my gosh");
 
         window_manager_->addWindow(std::move(window));
@@ -271,54 +450,10 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     {
         for (size_t i = 0; i < NUMBER_OF_TREES_OF_EACH_TYPE; ++i)
         {
-            const auto x_position = rand() % WINDOW_WIDTH;
-            const auto y_position = rand() % WINDOW_HEIGHT;
+            const auto x_position = rand() % Config::WINDOW_WIDTH;
+            const auto y_position = rand() % Config::WINDOW_HEIGHT;
             scene_.spawnObject(game::entity::TreeFactory::create(
                 tree_type, x_position, y_position));
-        }
-    }
-}
-
-void Application::processEvents()
-{
-    sf::Event event;
-    while (window_.pollEvent(event))
-    {
-        switch (event.type)
-        {
-            case sf::Event::Closed : { window_.close(); break; }
-            case sf::Event::KeyPressed :
-            {
-                keyboard_handler_.handleKeyPressed(event.key);
-                break;
-            } 
-            case sf::Event::KeyReleased : 
-            {
-                keyboard_handler_.handleKeyReleased(event.key);
-                switch (event.key.code)
-                {
-                    case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
-                    case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
-                    case sf::Keyboard::C        :   waypoints_.clear(); break;
-                    case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
-                    case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
-                    case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
-                    case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
-                    case sf::Keyboard::F12      :   {tank_debug_mode_=!tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_);} break;
-                    case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
-                    case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
-                    case sf::Keyboard::Q        :   window_.close();
-                    default                     :   {}  
-                }
-                break;
-            }
-
-            case sf::Event::MouseWheelMoved : 
-            {
-                if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
-                if (event.mouseWheel.delta < 0) camera_.zoomOut();
-            }
-            default : {}
         }
     }
 }
@@ -338,179 +473,6 @@ void Application::generateProfiling()
         + "us\nAVG: " + std::to_string(nav_average_.calculate(nav_time_.asMicroseconds()))
         + "us\nAVG: " + std::to_string(gui_average_.calculate(gui_time_.asMilliseconds()))
         + "ms\nAVG: " + std::to_string(fps_average_.calculate(fpsCounter_.getFps())));
-}
-
-int Application::run()
-{
-    try
-    {
-        sf::Clock clock;
-        entity::Tank::setDebug(tank_debug_mode_);
-
-        spawnSomeTanks();
-        spawnSomeBarrelsAndCratesAndTress();
-
-        while (window_.isOpen())
-        {
-            scene_.update();
-            particleSystem_.update(timeStep_);
-
-            fpsLimiter_.startNewFrame();
-            fpsCounter_.startMeasurement();
-           
-            processEvents();
-
-            camera_.update(timeStep_);
-            camera_view_.setCenter(camera_.getPosition());
-            camera_view_.setSize(camera_.getSize());
-
-            window_.setView(camera_view_);
-            window_.clear(sf::Color(0, 0, 0));
-
-            auto mousePosition = sf::Mouse::getPosition(window_);
-            auto mousePositionInCamera = window_.mapPixelToCoords(mousePosition);
-            
-            if (mousePosition.x < 10) {camera_.move(-20.f,0.f);}
-            if ((uint32_t)mousePosition.x > WINDOW_WIDTH - 10) {camera_.move(20.f,0.f);}
-            if (mousePosition.y < 10) {camera_.move(0.f,-20.f);}
-            if ((uint32_t)mousePosition.y > WINDOW_HEIGHT - 10) {camera_.move(0.f,20.f);}
-
-            tilemap_->draw(window_);
-            graphics::drawtools::drawWaypoints(window_, waypoints_);
-            tracks_renderer_.draw(window_);
-
-            renderGameObjects();
-
-            particleSystem_.draw(window_);
-
-            if (rigid_body_debug_)
-            {
-                engine::RigidBodyDebugRenderer::debug(scene_, window_);
-            }
-
-            draw_time_ = clock.getElapsedTime().asMilliseconds();
-            clock.restart();
-            for(auto& navigator : navigators_)
-            {
-                navigator->navigate();
-            }
-            nav_time_ = clock.getElapsedTime();
-            clock.restart();
-
-            for (auto& object : scene_.objects())
-            {
-                object->update(scene_, timeStep_);             
-            }
-
-            collision_solver_.evaluateCollisions();
-
-            physics_time_ = clock.getElapsedTime();
-
-            window_.setView(window_.getDefaultView());
-
-            auto mousePositionInGUI = window_.mapPixelToCoords(mousePosition);
-
-            // set "gameplay area camera_view_" again so mouse coordinates will be calculated properly in next mouse event
-            // this can be calulated also as an offset of camera camera_view_, to not switch view_s back and forward
-            // TODO reimplement this later if needed, delete this todo otherwise
-            
-            clock.restart();
-            // Temporary hack for testing objects movement
-            if (floating_button_demo_visible_)
-            {
-                test_floating_button_handle_->setVisibility(true);
-                auto position = test_floating_button_handle_->getPosition();
-                position.x += 1.0f;
-                position.y = (sin(position.x / 20.f) * 100.f) + 300.f;
-                if (position.x > 1000.0f) position =  sf::Vector2f(1.0f, 1.0f);
-                test_floating_button_handle_->setPosition(position, gui::Alignment::LEFT);
-            }
-            else
-            {
-                test_floating_button_handle_->setVisibility(false);
-            }
-
-            bool isCurrentMouseEventLeftClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-
-            bool isLeftMouseButtonClicked {false};
-
-            if ((not was_last_event_left_click_) and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
-
-            // TODO This event generation should be reworked to some state machine pattern
-            // also some event queue would be nice
-            // For now this hacky approach is enough for some basic concept testing
-            std::optional<gui::event::MouseMoved> mouseMovedEvent;
-            std::optional<gui::event::MouseButtonPressed> mousePressedEvent;
-            std::optional<gui::event::MouseButtonReleased> mouseReleaseEvent;
-
-            if (last_mouse_in_gui_position_ != mousePositionInGUI)
-            {
-                mouseMovedEvent = gui::event::MouseMoved{.position 
-                    = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
-            }
-
-            auto currentLeftClickEventStatus = gui::EventStatus{gui::EventStatus::NotConsumed};
-
-
-            if (not was_last_event_left_click_ and isCurrentMouseEventLeftClicked )
-            {
-                mousePressedEvent = gui::event::MouseButtonPressed{
-                    .button = gui::event::MouseButton::Left, 
-                    .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
-
-            }
-
-            if (was_last_event_left_click_ and not isCurrentMouseEventLeftClicked )
-            {
-                mouseReleaseEvent = gui::event::MouseButtonReleased{
-                    .button = gui::event::MouseButton::Left, 
-                    .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
-            }
-
-            // FIXME: isLeftMouseButtonClicked fires only once (for gui i need proper state of mouse every frame)
-            //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
-            //  I need to have proper mouse state every frame.
-            if (mousePressedEvent) 
-            {
-                auto result = window_manager_->receive(mousePressedEvent.value());
-                if (result == gui::EventStatus::Consumed)
-                {
-                    currentLeftClickEventStatus = result;
-                }
-            }
-            if (mouseReleaseEvent) window_manager_->receive(mouseReleaseEvent.value());
-            
-            if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
-            
-            window_manager_->render(window_);
-
-            gui_time_ = clock.getElapsedTime();
-            
-            // I'm integrating new event system in components so this code looks very messy.
-            // I'll clean it when everything will switch on EventReceiver methods
-            if (currentLeftClickEventStatus == gui::EventStatus::NotConsumed 
-                and isLeftMouseButtonClicked)
-            {
-                waypoints_.emplace_back(mousePositionInCamera);               
-            }
-
-            was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
-            last_mouse_in_gui_position_ = mousePositionInGUI;
-
-            generateProfiling();
-
-            window_.display();
-            fpsLimiter_.wait();
-            fpsCounter_.endMeasurement();
-        }
-    }
-    catch (std::exception& e)
-    {
-        std::cout << "EXCEPTION THROWN: "<<  e.what() << std::endl;
-        return -1;
-    }
-
-    return 0;
 }
 
 }  // namespace game

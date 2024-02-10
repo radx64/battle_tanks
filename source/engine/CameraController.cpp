@@ -4,7 +4,7 @@
 namespace engine
 {
 
-constexpr float CAMERA_SPEED = 2000.f;
+constexpr float CAMERA_SPEED = 1000.f;
 
 CameraController::CameraController (Camera* camera)
 : camera_{camera}

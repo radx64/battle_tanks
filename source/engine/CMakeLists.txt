@@ -13,6 +13,7 @@ target_include_directories(engine_lib
 
 target_sources(engine_lib
     PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/Application.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.hpp
@@ -30,6 +31,7 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Scene.hpp
 
     PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp

@@ -3,19 +3,16 @@
 
 #include <memory>
 
-#include <SFML/Graphics.hpp>
-
+#include "engine/Application.hpp"
 #include "engine/Camera.hpp"
 #include "engine/CameraController.hpp"
-#include "engine/CollisionSolver.hpp"
+
 #include "engine/FpsCounter.hpp"
 #include "engine/FpsLimiter.hpp"
-#include "engine/KeyboardHandler.hpp"
-#include "engine/KeyboardReceiver.hpp"
-#include "engine/ParticleSystem.hpp"
+
 #include "engine/Renderer.hpp"
 #include "engine/RigidBody.hpp"
-#include "engine/Scene.hpp"
+
 #include "engine/math/Math.hpp"
 
 #include "game/Context.hpp"
@@ -32,23 +29,27 @@
 namespace game 
 {
 
-class Application
+class Application : public engine::Application
 {
 public:
     Application();
-    int run();
+    //int run();
     
 protected:
-    void processEvents();
+
+    void onInit() override;
+    void onEvent(const sf::Event& event) override;
+    void onUpdate(float timeStep) override;
+    void onRender() override;
+
     void configureGUI();
     void spawnSomeTanks();
     void spawnSomeBarrelsAndCratesAndTress();
     void renderGameObjects();
     void generateProfiling();
 
-    engine::ParticleSystem particleSystem_;
     Context context_;
-    engine::KeyboardHandler keyboard_handler_;
+   
     engine::FpsCounter fpsCounter_;
     engine::FpsLimiter fpsLimiter_;
 
@@ -67,18 +68,17 @@ protected:
 
     bool rigid_body_debug_{false};
     bool tank_debug_mode_{false};
-    float timeStep_{1.0f/30.f};
+    
 
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
     gui::Button* test_floating_button_handle_;
-    sf::RenderWindow window_;
+    
     std::unique_ptr<gui::WindowManager> window_manager_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
-    engine::Scene scene_;
-    engine::CollisionSolver collision_solver_;
+
     entity::TracksRenderer tracks_renderer_;
 
     sf::Int32 draw_time_{0};
