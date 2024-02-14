@@ -29,9 +29,10 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/TracksRenderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/Tree.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeFactory.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeRenderer.hpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeRenderer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HelpWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/particle/Explosion.hpp
 
@@ -56,6 +57,7 @@ target_sources(game_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeRenderer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/particle/Explosion.cpp
 )

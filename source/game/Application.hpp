@@ -8,7 +8,6 @@
 #include "engine/CameraController.hpp"
 
 #include "engine/FpsCounter.hpp"
-#include "engine/FpsLimiter.hpp"
 
 #include "engine/Renderer.hpp"
 #include "engine/RigidBody.hpp"
@@ -18,6 +17,7 @@
 #include "game/Context.hpp"
 #include "game/entity/tank/Tank.hpp"
 #include "game/entity/TracksRenderer.hpp"
+#include "game/MouseController.hpp"
 #include "game/Navigator.hpp"
 
 #include "graphics/Tilemap.hpp"
@@ -51,7 +51,6 @@ protected:
     Context context_;
    
     engine::FpsCounter fpsCounter_;
-    engine::FpsLimiter fpsLimiter_;
 
     const sf::Vector2f camera_initial_position_;
     const sf::Vector2f camera_initial_size_;
@@ -61,20 +60,14 @@ protected:
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
-    bool floating_button_demo_visible_{false};
-
-    bool was_last_event_left_click_{true}; // temporary workaround for dumb mouse event polling
-    sf::Vector2f last_mouse_in_gui_position_{};
-
     bool rigid_body_debug_{false};
     bool tank_debug_mode_{false};
     
-
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
-    gui::Button* test_floating_button_handle_;
-    
+
     std::unique_ptr<gui::WindowManager> window_manager_;
+    std::unique_ptr<game::MouseController> mouse_controller_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
@@ -91,7 +84,6 @@ protected:
     engine::math::Average nav_average_;
     engine::math::Average fps_average_;
     engine::math::Average gui_average_;
-
 };
 
 }  // namespace game

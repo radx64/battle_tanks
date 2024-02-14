@@ -1,5 +1,5 @@
-#ifndef ENGINE_KEYBOARDHANDLER_HPP_
-#define ENGINE_KEYBOARDHANDLER_HPP_
+#ifndef ENGINE_INPUT_KEYBOARDHANDLER_HPP_
+#define ENGINE_INPUT_KEYBOARDHANDLER_HPP_
 
 #include <unordered_map>
 #include <vector>
@@ -7,9 +7,9 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-namespace engine { class KeyboardReceiver; }
+namespace engine::input { class KeyboardReceiver; }
 
-namespace engine
+namespace engine::input
 {
 
 // This class acts as a buffer as it only for key presses whenever
@@ -30,6 +30,6 @@ protected:
 };
 
     
-}  // namespace engine
+}  // namespace engine::input
 
-#endif  // ENGINE_KEYBOARDHANDLER_HPP_
+#endif  // ENGINE_INPUT_KEYBOARDHANDLER_HPP_

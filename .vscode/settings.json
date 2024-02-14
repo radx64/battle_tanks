@@ -58,7 +58,8 @@
         "cinttypes": "cpp",
         "variant": "cpp",
         "span": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "chrono": "cpp"
     },
     "editor.tokenColorCustomizations": {
         "textMateRules": [

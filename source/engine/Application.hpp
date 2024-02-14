@@ -4,7 +4,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/CollisionSolver.hpp"
-#include "engine/KeyboardHandler.hpp"
+#include "engine/input/KeyboardHandler.hpp"
+#include "engine/input/MouseHandler.hpp"
 #include "engine/ParticleSystem.hpp"
 #include "engine/Scene.hpp"
 
@@ -37,7 +38,8 @@ protected:
     sf::Clock clock_;
 
     engine::ParticleSystem particle_system_;
-    engine::KeyboardHandler keyboard_handler_;
+    engine::input::KeyboardHandler keyboard_handler_;
+    engine::input::MouseHandler mouse_handler_;
 
     float timeStep_{1.0f/30.f};
     engine::Scene scene_;

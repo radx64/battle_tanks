@@ -1,11 +1,11 @@
-#include "engine/KeyboardReceiver.hpp"
+#include "engine/input/KeyboardReceiver.hpp"
 
 namespace engine {class Camera;}
 
 namespace engine 
 {
 
-class CameraController : public engine::KeyboardReceiver
+class CameraController : public engine::input::KeyboardReceiver
 {
 public:
     CameraController (Camera* camera);

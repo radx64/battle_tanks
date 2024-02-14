@@ -65,6 +65,25 @@ void Application::processEvents()
                 keyboard_handler_.handleKeyReleased(event.key);
                 break;
             }
+
+            case sf::Event::MouseButtonPressed :
+            {
+                mouse_handler_.handleButtonPressed(event.mouseButton);
+                break;
+            }
+
+            case sf::Event::MouseButtonReleased :
+            {
+                mouse_handler_.handleButtonReleased(event.mouseButton);
+                break;
+            }
+
+            case sf::Event::MouseMoved :
+            {
+                mouse_handler_.handleMouseMoved(event.mouseMove);
+                break;
+            }
+
             default : {}
         }
     onEvent(event);

@@ -67,9 +67,10 @@ void Application::onInit()
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT});
+    mouse_controller_ = std::make_unique<game::MouseController>(window_manager_.get(), waypoints_, window_, camera_view_);
+    mouse_handler_.subscribe(mouse_controller_.get());
 
-    // window_.setFramerateLimit(120);
-    // fpsLimiter_.setFrameLimit(1000);
+    window_.setFramerateLimit(120);
     // window_.setVerticalSyncEnabled(false);
     
     camera_view_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
@@ -93,14 +94,8 @@ void Application::onEvent(const sf::Event& event)
     switch (event.type)
     {
         case sf::Event::Closed : { Application::close(); break; }
-        case sf::Event::KeyPressed :
-        {
-            keyboard_handler_.handleKeyPressed(event.key);
-            break;
-        } 
         case sf::Event::KeyReleased : 
         {
-            keyboard_handler_.handleKeyReleased(event.key);
             switch (event.key.code)
             {
                 case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
@@ -154,7 +149,6 @@ void Application::onRender()
     //TODO move this FPS limiting and counting to base class
     // otherwise values are wrong
     fpsCounter_.startMeasurement();
-    fpsLimiter_.startNewFrame();
 
     window_.setView(camera_view_);
     tilemap_->draw(window_);
@@ -169,94 +163,10 @@ void Application::onRender()
         engine::RigidBodyDebugRenderer::debug(scene_, window_);
     }
 
-    auto mousePosition = sf::Mouse::getPosition(window_);
-    auto mousePositionInCamera = window_.mapPixelToCoords(mousePosition);
-
     window_.setView(window_.getDefaultView());
-    auto mousePositionInGUI = window_.mapPixelToCoords(mousePosition);
-
-    // Temporary hack for testing objects movement
-    if (floating_button_demo_visible_)
-    {
-        test_floating_button_handle_->setVisibility(true);
-        auto position = test_floating_button_handle_->getPosition();
-        position.x += 1.0f;
-        position.y = (sin(position.x / 20.f) * 100.f) + 300.f;
-        if (position.x > 1000.0f) position =  sf::Vector2f(1.0f, 1.0f);
-        test_floating_button_handle_->setPosition(position, gui::Alignment::LEFT);
-    }
-    else
-    {
-        test_floating_button_handle_->setVisibility(false);
-    }
-
-    bool isCurrentMouseEventLeftClicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-
-    bool isLeftMouseButtonClicked {false};
-
-    if ((not was_last_event_left_click_) and isCurrentMouseEventLeftClicked) isLeftMouseButtonClicked = true;
-
-    // TODO This event generation should be reworked to some state machine pattern
-    // also some event queue would be nice
-    // For now this hacky approach is enough for some basic concept testing
-    // But looks like crap :P
-    std::optional<gui::event::MouseMoved> mouseMovedEvent;
-    std::optional<gui::event::MouseButtonPressed> mousePressedEvent;
-    std::optional<gui::event::MouseButtonReleased> mouseReleaseEvent;
-
-    if (last_mouse_in_gui_position_ != mousePositionInGUI)
-    {
-        mouseMovedEvent = gui::event::MouseMoved{.position 
-            = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
-    }
-
-    auto currentLeftClickEventStatus = gui::EventStatus{gui::EventStatus::NotConsumed};
-
-    if (not was_last_event_left_click_ and isCurrentMouseEventLeftClicked )
-    {
-        mousePressedEvent = gui::event::MouseButtonPressed{
-            .button = gui::event::MouseButton::Left, 
-            .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
-    }
-
-    if (was_last_event_left_click_ and not isCurrentMouseEventLeftClicked )
-    {
-        mouseReleaseEvent = gui::event::MouseButtonReleased{
-            .button = gui::event::MouseButton::Left, 
-            .position = gui::event::MousePosition{.x = mousePositionInGUI.x, .y = mousePositionInGUI.y}};
-    }
-
-    // FIXME: isLeftMouseButtonClicked fires only once (for gui i need proper state of mouse every frame)
-    //  isLeftMouseButtonClicked is good hack for targets but for gui especially for dragging action
-    //  I need to have proper mouse state every frame.
-    if (mousePressedEvent) 
-    {
-        auto result = window_manager_->receive(mousePressedEvent.value());
-        if (result == gui::EventStatus::Consumed)
-        {
-            currentLeftClickEventStatus = result;
-        }
-    }
-    if (mouseReleaseEvent) window_manager_->receive(mouseReleaseEvent.value());
-    
-    if (mouseMovedEvent) window_manager_->receive(mouseMovedEvent.value());
-
     window_manager_->render(window_);
 
-    // I'm integrating new event system in components so this code looks very messy.
-    // I'll clean it when everything will switch on EventReceiver methods
-
-    if (currentLeftClickEventStatus == gui::EventStatus::NotConsumed 
-        and isLeftMouseButtonClicked)
-    {
-        waypoints_.emplace_back(mousePositionInCamera);               
-    }
-
-    was_last_event_left_click_ = isCurrentMouseEventLeftClicked;
-    last_mouse_in_gui_position_ = mousePositionInGUI;
-
     clock_.restart();
-    fpsLimiter_.wait();
     fpsCounter_.endMeasurement();
 
     generateProfiling();
@@ -314,14 +224,6 @@ void Application::configureGUI()
     quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
     window_manager_->mainWindow()->addChild(std::move(quit_button));
 
-    auto demo_button_1 = std::make_unique<gui::Button>("TEST");
-    demo_button_1->setPosition(sf::Vector2f(100.f, 200.f), gui::Alignment::LEFT);
-    demo_button_1->setSize(sf::Vector2f{200.f, 200.f});
-    demo_button_1->onClick([](){std::cout << "TEST" <<std::endl;});
-
-    test_floating_button_handle_ = demo_button_1.get();
-    window_manager_->mainWindow()->addChild(std::move(demo_button_1));
-
     auto measurements_text = std::make_unique<gui::Label>("");
     measurements_text->setPosition(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
     measurements_text_handle_ = measurements_text.get();
@@ -343,12 +245,6 @@ void Application::configureGUI()
         window_manager_->addWindow(std::move(help_window));
     });
     window_manager_->mainWindow()->addChild(std::move(button));
-
-    auto demo_button = std::make_unique<gui::Button>("BUTTON DEMO");
-    demo_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f), gui::Alignment::LEFT);
-    demo_button->setSize(sf::Vector2f(150.f, 30.f));
-    demo_button->onClick([this](){floating_button_demo_visible_ = !floating_button_demo_visible_;});
-    window_manager_->mainWindow()->addChild(std::move(demo_button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
     spawn_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f), gui::Alignment::LEFT);

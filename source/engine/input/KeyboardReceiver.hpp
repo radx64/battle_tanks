@@ -1,12 +1,13 @@
-#ifndef ENGINE_KEYBOARDRECEIVER_HPP_
-#define ENGINE_KEYBOARDRECEIVER_HPP_
+#ifndef ENGINE_INPUT_KEYBOARDRECEIVER_HPP_
+#define ENGINE_INPUT_KEYBOARDRECEIVER_HPP_
 
 #include <SFML/Window/Keyboard.hpp>
 
-namespace engine
-{
 
-class KeyboardHandler;
+namespace engine::input {class KeyboardHandler;}
+
+namespace engine::input
+{
 
 class KeyboardReceiver
 {
@@ -24,6 +25,6 @@ protected:
     KeyboardHandler* handler_;
 };
     
-}  // namespace engine
+}  // namespace engine::input
 
-#endif  // ENGINE_KEYBOARDRECEIVER_HPP_
+#endif  // ENGINE_INPUT_KEYBOARDRECEIVER_HPP_

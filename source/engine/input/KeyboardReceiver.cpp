@@ -1,7 +1,7 @@
-#include "engine/KeyboardReceiver.hpp"
-#include "engine/KeyboardHandler.hpp"
+#include "engine/input/KeyboardReceiver.hpp"
+#include "engine/input/KeyboardHandler.hpp"
 
-namespace engine
+namespace engine::input
 {
 
 KeyboardReceiver::KeyboardReceiver()
@@ -21,4 +21,4 @@ void KeyboardReceiver::attach(KeyboardHandler* handler)
     handler_ = handler;
 }
 
-}  // namespace engine
+}  // namespace engine::input

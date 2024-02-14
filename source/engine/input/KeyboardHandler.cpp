@@ -1,5 +1,5 @@
-#include "engine/KeyboardHandler.hpp"
-#include "engine/KeyboardReceiver.hpp"
+#include "engine/input/KeyboardHandler.hpp"
+#include "engine/input/KeyboardReceiver.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -7,14 +7,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-namespace engine { class KeyboardReceiver; }
-
-namespace engine
+namespace engine::input
 {
-
-// This class acts as a buffer as it only for key presses whenever
-// key event is pulled from sfml event queue
-// Also it does nice dispatching to receivers
 
 void KeyboardHandler::subscribe(const std::vector<sf::Keyboard::Key>& keys, KeyboardReceiver* receiver)
 {
@@ -87,4 +81,4 @@ bool KeyboardHandler::isKeyPressed(sf::Keyboard::Key key)
     }
 }
     
-}  // namespace engine
+}  // namespace engine::input

@@ -18,10 +18,11 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardReceiver.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardHandler.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardReceiver.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardHandler.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseReceiver.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseHandler.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Particle.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp
@@ -36,10 +37,11 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/FpsLimiter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardReceiver.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardReceiver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseReceiver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseHandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Particle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
