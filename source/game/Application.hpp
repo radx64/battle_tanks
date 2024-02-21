@@ -33,11 +33,11 @@ class Application : public engine::Application
 {
 public:
     Application();
-    //int run();
     
 protected:
 
     void onInit() override;
+    void onClose() override;
     void onEvent(const sf::Event& event) override;
     void onUpdate(float timeStep) override;
     void onRender() override;

@@ -1,4 +1,4 @@
-Conan package manager usages
+Conan package manager usage
 
 1. install pipx to for installing conan system wide
 

@@ -88,12 +88,16 @@ void Application::onInit()
     spawnSomeBarrelsAndCratesAndTress();
 }
 
+void Application::onClose()
+{
+    std::cout << "Goodbye!" << std::endl;
+}
+
 
 void Application::onEvent(const sf::Event& event)
 {
     switch (event.type)
     {
-        case sf::Event::Closed : { Application::close(); break; }
         case sf::Event::KeyReleased : 
         {
             switch (event.key.code)

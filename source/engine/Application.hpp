@@ -28,6 +28,7 @@ protected:
     // TODO those methods potentially should not use dynamic dispatching
     // consider adding some CRTP pattern to call methods from derived class
     virtual void onInit() = 0;
+    virtual void onClose() = 0;
     virtual void onEvent(const sf::Event& event) = 0;
     virtual void onUpdate(float timeStep) = 0;
     virtual void onRender() = 0;

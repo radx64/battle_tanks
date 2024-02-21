@@ -45,6 +45,8 @@ int Application::run()
 void Application::close()
 {
     is_running_ = false;
+    onClose();
+    window_.close();
 }
 
 void Application::processEvents()
@@ -54,7 +56,7 @@ void Application::processEvents()
     {
         switch (event.type)
         {
-            case sf::Event::Closed : { window_.close(); break; }
+            case sf::Event::Closed : { close(); break; }
             case sf::Event::KeyPressed :
             {
                 keyboard_handler_.handleKeyPressed(event.key);
