@@ -1,0 +1,11 @@
+#ifndef ENGINE_PHYSICS_COLLIDER_HPP_
+#define ENGINE_PHYSICS_COLLIDER_HPP_
+
+class Collider
+{
+
+};
+
+
+
+#endif  // ENGINE_PHYSICS_COLLIDER_HPP_
