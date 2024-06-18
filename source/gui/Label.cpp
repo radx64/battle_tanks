@@ -18,7 +18,7 @@ Label::Label(const std::string_view& text)
 
 void Label::onRender(sf::RenderTexture& renderWindow)
 {
-    text_.setPosition(Component::getGlobalPosition());
+    text_.setPosition(Component::getGlobalPosition()); // TODO: Position recalculation of text should not be needed
     renderWindow.draw(text_);
 }
 

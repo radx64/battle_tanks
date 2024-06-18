@@ -59,7 +59,13 @@
         "variant": "cpp",
         "span": "cpp",
         "format": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "ratio": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     },
     "editor.tokenColorCustomizations": {
         "textMateRules": [

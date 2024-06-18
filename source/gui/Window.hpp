@@ -155,7 +155,8 @@ public:
         top_bar_shape_.setPosition(Component::getGlobalPosition());
 
         const auto window_size = getSize();
-        sf::Vector2f tile_text_position {window_size.x/2.f, TOP_BAR_HEIGHT / 2.f};
+        constexpr float CHAR_SIZE = 10.f; //TODO character size should be fetched from label
+        sf::Vector2f tile_text_position {window_size.x/2.f, TOP_BAR_HEIGHT/2.f - CHAR_SIZE/2.f}; 
         title_text_handle_->setPosition(tile_text_position, gui::Alignment::CENTERED);
     }
 
@@ -265,7 +266,7 @@ protected:
 // It should always be as a backlayer
 // Can be used to place GUI components
 // on screen
-// Can't be move
+// Can't be moved
 // It's size is application window size  
 class MainWindow : public Component
 {

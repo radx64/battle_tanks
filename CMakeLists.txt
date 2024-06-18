@@ -2,6 +2,8 @@ set(projectName "battle_tanks")
 cmake_minimum_required (VERSION 3.5)
 project (${projectName})
 
+add_compile_definitions("SOURCE_ROOT=${CMAKE_SOURCE_DIR}")
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
 
 set(CMAKE_CXX_STANDARD 20)

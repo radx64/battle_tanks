@@ -70,8 +70,8 @@ void Application::onInit()
     mouse_controller_ = std::make_unique<game::MouseController>(window_manager_.get(), waypoints_, window_, camera_view_);
     mouse_handler_.subscribe(mouse_controller_.get());
 
-    window_.setFramerateLimit(120);
-    // window_.setVerticalSyncEnabled(false);
+    window_.setFramerateLimit(60);
+    window_.setVerticalSyncEnabled(true);
     
     camera_view_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
     configureGUI();
@@ -150,6 +150,9 @@ void Application::onUpdate(float timeStep)
 
 void Application::onRender()
 {
+    // End measurement of previous frame respecting vsync and frame limiting of SFML lib
+    // otherwise measurements are measuring potential FPS (not actual/frame limited)
+    fpsCounter_.endMeasurement();
     //TODO move this FPS limiting and counting to base class
     // otherwise values are wrong
     fpsCounter_.startMeasurement();
@@ -171,7 +174,6 @@ void Application::onRender()
     window_manager_->render(window_);
 
     clock_.restart();
-    fpsCounter_.endMeasurement();
 
     generateProfiling();
 }
