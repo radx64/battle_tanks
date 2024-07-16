@@ -15,8 +15,6 @@ Application::Application()
 : engine::Application("GUI sandbox")
 {}
 
-constexpr uint32_t NUM_OF_CIRCLES = 64;
-
 void Application::onInit()
 {
     gui::FontLibrary::initialize();
@@ -42,14 +40,33 @@ void Application::onInit()
         auto hello_button = std::make_unique<gui::Button>("HELLO");
         auto world_button = std::make_unique<gui::Button>("WORLD");
 
+        auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
+        auto something_button = std::make_unique<gui::Button>("SOMETHING");
+        auto cooking_button = std::make_unique<gui::Button>("IS COOKING");
+        auto hard_button = std::make_unique<gui::Button>("HARD");
+
         hello_button->onClick([](){std::cout << "Hello?" << std::endl;});
         world_button->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
 
-        horizontal_layout->addComponent(std::move(hello_button));
-        horizontal_layout->addComponent(std::move(world_button));
-        window->addComponent(std::move(horizontal_layout));
+        horizontal_layout->addChild(std::move(hello_button));
+        horizontal_layout->addChild(std::move(world_button));
 
-        window->setSize(sf::Vector2f(500.0f, 400.0f));
+        horizontal_layout2->addChild(std::move(something_button));
+
+        auto vertical_layout2 = std::make_unique<gui::VerticalLayout>();
+        vertical_layout2->addChild(std::move(cooking_button));
+        vertical_layout2->addChild(std::move(hard_button));
+
+        horizontal_layout2->addChild(std::move(vertical_layout2));
+
+        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+
+        vertical_layout->addChild(std::move(horizontal_layout));
+        vertical_layout->addChild(std::move(horizontal_layout2));
+
+        window->addComponent(std::move(vertical_layout));
+
+        window->setSize(sf::Vector2f(700.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f), gui::Alignment::CENTERED);
         window->setTitle("Oh my gosh");
 

@@ -1,5 +1,7 @@
 #include "gui/Layout.hpp"
 
+#include <iostream>
+
 namespace gui
 {
 
@@ -10,19 +12,13 @@ void Layout::onRender(sf::RenderTexture& renderWindow)
 
 void BaseLineLayout::addChild(std::unique_ptr<Component> child)
 {
-    addComponent(std::move(child));
-}
-
-void BaseLineLayout::addComponent(std::unique_ptr<Component> component)
-{
-    Component::addChild(std::move(component));
+    Component::addChild(std::move(child));
     recalculateChildrenBounds();
 }
 
-
 void BaseLineLayout::recalculateChildrenBounds()
 {
-    auto layout_size = Component::getSize();
+    auto layout_size = getSize();
 
     auto child_size = getChildSize(layout_size);
 
@@ -42,8 +38,7 @@ void BaseLineLayout::recalculateChildrenBounds()
 void BaseLineLayout::onParentSizeChange(const sf::Vector2f& parent_size)
 {
     // set layout size to it's parent size
-    // FIXME: Maybe this setSize should be decided by parent?
-    Component::setSize(parent_size);
+    setSize(parent_size);
     // recalculate childen to resize them
     recalculateChildrenBounds();
 }
@@ -51,9 +46,13 @@ void BaseLineLayout::onParentSizeChange(const sf::Vector2f& parent_size)
 void BaseLineLayout::onParentPositionChange(const sf::Vector2f& parent_position)
 {
     UNUSED(parent_position);
-    // FIXME: Is it really needed. Position change of a parent should move layout
-    // and it's children but sizes should stay the same
     recalculateChildrenBounds();
+
+    // I neeed to pass signal to children when container holding layout changes its position
+    for (auto& child : children_)
+    {
+        child->onParentPositionChange(getPosition());
+    }
 }
 
 sf::Vector2f HorizontalLayout::getChildSize(const sf::Vector2f& layout_size) const

@@ -22,10 +22,6 @@ public:
     // Just in case anyone would use addChild instead of addComponent
     void addChild(std::unique_ptr<Component> child) override;
 
-    // TODO maybe better idea would be to use Component::addChild method
-    // and override it?
-    void addComponent(std::unique_ptr<Component> component);
-
 protected:
     virtual sf::Vector2f getChildSize(const sf::Vector2f& layout_size) const = 0;
     virtual sf::Vector2f getNthChildPosition(const sf::Vector2f& child_size, size_t child_index) = 0;
