@@ -267,27 +267,22 @@ void Application::configureGUI()
         hello_button->onClick([](){std::cout << "Hello?" << std::endl;});
         world_button->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
 
-        horizontal_layout->addComponent(std::move(hello_button));
-        horizontal_layout->addComponent(std::move(world_button));
+        horizontal_layout->addChild(std::move(hello_button));
+        horizontal_layout->addChild(std::move(world_button));
 
-        // auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
-        // auto testing = std::make_unique<gui::Button>("TESTING");
-        // auto things = std::make_unique<gui::Button>("THINGS");
+        auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
+        auto testing = std::make_unique<gui::Button>("TESTING");
+        auto things = std::make_unique<gui::Button>("THINGS");
 
-        // horizontal_layout2->addComponent(std::move(testing));
-        // horizontal_layout2->addComponent(std::move(things));
+        horizontal_layout2->addChild(std::move(testing));
+        horizontal_layout2->addChild(std::move(things));
 
-       // auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
 
-        // vertical_layout->addComponent(std::move(horizontal_layout));
-        // vertical_layout->addComponent(std::move(horizontal_layout2));
+        vertical_layout->addChild(std::move(horizontal_layout));
+        vertical_layout->addChild(std::move(horizontal_layout2));
 
-        //vertical_layout->addComponent(std::move(hello_button));
-        //vertical_layout->addComponent(std::move(world_button));
-
-        window->addComponent(std::move(horizontal_layout));
-        //hello_button->setSize(sf::Vector2f{30.f,30.f});
-        //window->addComponent(std::move(hello_button));
+        window->addComponent(std::move(vertical_layout));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);

@@ -22,15 +22,8 @@ Window::Window()
 
     top_bar->closeButtonAction([window = this]()
     {
-        // Prevent clicking close button when resizing or dragging
-        // FIXME: This need to be fixed in some better way 
-        // as if any button is place inside window
-        // It sometimes gets clicked
-
-        if (window->isState(State::Idle))
-        {
-            window->close();
-        }
+        window->close();
+        
     });
 
     top_bar_handle_ = top_bar.get();
