@@ -21,6 +21,7 @@ void BaseLineLayout::recalculateChildrenBounds()
     auto layout_size = getSize();
 
     auto child_size = getChildSize(layout_size);
+    //sf::Vector2f child_size = {50.f, 50.f};
 
     size_t child_index{0};
     for (auto& child : children_)
