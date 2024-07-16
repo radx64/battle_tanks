@@ -223,10 +223,13 @@ void Component::addChild(std::unique_ptr<Component> child)
     auto found = std::find(children_.cbegin(), children_.cend(), child);
     if (found != children_.cend())
     {
+        // TODO: Throw exception?
         return;
     }
     child->parent_ = this;
     child->updateGlobalPosition();
+    child->onParentPositionChange(getPosition());
+    child->onParentSizeChange(getSize());
     children_.push_back(std::move(child));
 }
 
