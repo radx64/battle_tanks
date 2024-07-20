@@ -10,9 +10,7 @@
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
-constexpr auto TOP_BAR_HEIGHT = 20.f;
+constexpr auto TOP_BAR_HEIGHT = 30.f;
 constexpr auto RESIZE_THINGY_SIZE = 20.f;
 
 namespace gui { class Label; }
@@ -29,40 +27,18 @@ public:
         background_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
     }
 
-    void onParentSizeChange(const sf::Vector2f& parent_size) override
+    void onSizeChange() override
     {
-        setSize(parent_size);
-    }
-
-    void onParentPositionChange(const sf::Vector2f& parent_position) override
-    {
-        static_cast<void>(parent_position);
-        setPosition(sf::Vector2f{0.f, 0.f}, alignment_);
-    }
-
-    // TODO: add some onSetSizeChange to Component class
-    // to not have to call base class method every time overriding
-    // setSize could be even not virtual then
-    void setSize(const sf::Vector2f& size) override
-    {
-        static_cast<void>(size);
-
         auto panel_size = parent_->getSize();
         panel_size.y = panel_size.y - TOP_BAR_HEIGHT - RESIZE_THINGY_SIZE;
 
-        Component::setSize(panel_size);
         auto background_size = panel_size;
         background_.setSize(background_size);
     }
 
     // TODO: simmilar as TODO for setSize method
-    void setPosition(const sf::Vector2f& position, const Alignment alignment) override
+    void onPositionChange() override
     {
-        static_cast<void>(position);
-        auto panel_position = sf::Vector2f{0.f, TOP_BAR_HEIGHT};
-
-        //FIXME position should be offset by top bar
-        Component::setPosition(panel_position, alignment);
         background_.setPosition(Component::getGlobalPosition());
     }
 
@@ -96,7 +72,6 @@ public:
 
         // TODO add layout component for button and title text
         auto close_button = std::make_unique<gui::Button>("X");
-        //close_button->setPosition(sf::Vector2f(0.f, 0.f), gui::Alignment::LEFT);
         close_button->setSize(sf::Vector2f(20.f, TOP_BAR_HEIGHT));
         close_button->onClick([this]()
         {
@@ -106,8 +81,10 @@ public:
         addChild(std::move(close_button));
 
         auto title_text = std::make_unique<gui::Label>("");
+        title_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         title_text_handle_ = title_text.get();
-        this->addChild(std::move(title_text));
+        title_text_handle_->setSize(getSize());
+        addChild(std::move(title_text));
     }
 
     void closeButtonAction(std::function<void()> closeButtonAction)
@@ -118,6 +95,9 @@ public:
     void setTitle(const std::string_view& text)
     {
         title_text_handle_->setText(text.data());
+        // after setText called Label has default bounds
+        // so I need to resize it to fill the bar
+        title_text_handle_->setSize(getSize());
     }
 
     void onRender(sf::RenderTexture& renderWindow) override
@@ -125,39 +105,24 @@ public:
         renderWindow.draw(top_bar_shape_);
     }
 
-    void onParentSizeChange(const sf::Vector2f& parent_size) override
-    {
-        //FIXME this is probably wrong as only renderable has proper size
-        setSize(parent_size);
-
-        auto parent_width = parent_->getSize().x;
-        close_button_ptr_->setPosition(sf::Vector2f{parent_width - 20.f, 0.f}, alignment_);
-    }
-
-    void onParentPositionChange(const sf::Vector2f& parent_position) override
-    {
-        static_cast<void>(parent_position);
-        setPosition(sf::Vector2f{0.f, 0.f}, alignment_);
-    }
-
     // FIXME component size should be same as renderable
-    void setSize(const sf::Vector2f& size) override
+    // DAMN i have no idea what I've meant by this comment
+    void onSizeChange() override
     {
-        Component::setSize(size);
-        auto top_bar_size = size;
+        auto top_bar_size = getSize();
         top_bar_size.y = TOP_BAR_HEIGHT;
         top_bar_shape_.setSize(top_bar_size);
+        title_text_handle_->setSize(top_bar_size);
+        close_button_ptr_->setPosition(sf::Vector2f{top_bar_size.x - 20.f, 0.f});
     }
 
-    void setPosition(const sf::Vector2f& position, const Alignment alignment) override
+    void onPositionChange() override
     {
-        Component::setPosition(position, alignment);
         top_bar_shape_.setPosition(Component::getGlobalPosition());
-
-        const auto window_size = getSize();
-        constexpr float CHAR_SIZE = 10.f; //TODO character size should be fetched from label
-        sf::Vector2f tile_text_position {window_size.x/2.f, TOP_BAR_HEIGHT/2.f - CHAR_SIZE/2.f}; 
-        title_text_handle_->setPosition(tile_text_position, gui::Alignment::CENTERED);
+        
+        // TODO: placement of text label should be composed by some layout
+        sf::Vector2f tile_text_position {0.0f ,0.0f}; 
+        title_text_handle_->setPosition(tile_text_position);
     }
 
     void onFocus()
@@ -204,36 +169,22 @@ public:
         renderWindow.draw(resize_thingy_);
     }
 
-    void onParentSizeChange(const sf::Vector2f& parent_size) override
-    {
-        setSize(parent_size);
-    }
-
-    void onParentPositionChange(const sf::Vector2f& parent_position) override
-    {
-        static_cast<void>(parent_position);
-        setPosition(sf::Vector2f{0.f, 0.f}, alignment_);
-    }
-
     // FIXME component size should be same as renderable
-    void setSize(const sf::Vector2f& size) override
+    void onSizeChange() override
     {
-        Component::setSize(size);
-        auto bottom_bar_size = size;
+        auto bottom_bar_size = getSize();
         bottom_bar_size.y = RESIZE_THINGY_SIZE;
         background_.setSize(bottom_bar_size);
+
+        resize_thingy_.setPosition(
+            Component::getGlobalPosition() 
+            + Component::getSize() 
+            - sf::Vector2f{RESIZE_THINGY_SIZE, RESIZE_THINGY_SIZE});
     }
 
-    void setPosition(const sf::Vector2f& position, const Alignment alignment) override
+    void onPositionChange() override
     {
-        Component::setPosition(position, alignment);
-
-        auto bottom_bar_position = sf::Vector2f{};
-        
-        bottom_bar_position.x = position.x;
-        bottom_bar_position.y = Component::getSize().y - RESIZE_THINGY_SIZE;
-
-        background_.setPosition(Component::getGlobalPosition()+ bottom_bar_position);
+        background_.setPosition(getGlobalPosition());
 
         resize_thingy_.setPosition(
             Component::getGlobalPosition() 
@@ -282,9 +233,10 @@ class Window : public Component
 public:
     Window();
 
-    void setSize(const sf::Vector2f& size) override;
     void setTitle(const std::string_view& text);
     void onRender(sf::RenderTexture& renderWindow) override;
+    void onPositionChange() override;
+    void onSizeChange() override;
     void close();
     bool isDead() const;
     void focus();
@@ -296,6 +248,7 @@ public:
         return isState(Window::State::Idle);
     }
 
+    //TODO: override addChild and remove this method in a future.
     void addComponent(std::unique_ptr<Component> component)
     {
         window_panel_handle_->addChild(std::move(component));

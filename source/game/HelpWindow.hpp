@@ -27,11 +27,12 @@ public:
     HelpWindow(sf::Vector2f position) 
     {
         setSize(sf::Vector2f(500.0f, 400.0f));
-        setPosition(position, gui::Alignment::CENTERED);
+        setPosition(position);
 
         auto help_text = std::make_unique<gui::Label>(help_text_string.data());
-        help_text->setPosition(sf::Vector2f(20.0f, 20.0f), gui::Alignment::LEFT);
-        this->addChild(std::move(help_text));
+        help_text->setPosition(sf::Vector2f{0.0f, 0.0f});
+        help_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        this->addComponent(std::move(help_text));
     }
 };
 

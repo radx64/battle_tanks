@@ -185,7 +185,7 @@ TEST(ComponentShould, KnowOwnPositionWithoutParent)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
 
-    sut_->setPosition(sf::Vector2f{10.f,20.f}, gui::Alignment::LEFT);
+    sut_->setPosition(sf::Vector2f{10.f,20.f}, gui::Alignment::Left);
 
     auto expected_position = sf::Vector2f{10.f, 20.f};
     EXPECT_EQ(sut_->getPosition(), expected_position);
@@ -197,8 +197,8 @@ TEST(ComponentShould, KnowOwnPositionWithParent)
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
     auto parent_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
 
-    parent_->setPosition(sf::Vector2f{10.f,20.f}, gui::Alignment::LEFT);
-    sut_->setPosition(sf::Vector2f{20.f,10.f}, gui::Alignment::LEFT);
+    parent_->setPosition(sf::Vector2f{10.f,20.f}, gui::Alignment::Left);
+    sut_->setPosition(sf::Vector2f{20.f,10.f}, gui::Alignment::Left);
     auto sut_ptr = sut_.get();
     parent_->addChild(std::move(sut_));
 
@@ -211,7 +211,7 @@ TEST(ComponentShould, KnowOwnPositionWithParent)
 TEST(ComponentShould, DetectIfPointIsInsideOfComponent)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    sut_->setPosition(sf::Vector2f{20.f,10.f}, gui::Alignment::LEFT);
+    sut_->setPosition(sf::Vector2f{20.f,10.f}, gui::Alignment::Left);
     sut_->setSize(sf::Vector2f{10.f,10.f});
 
     EXPECT_TRUE(sut_->isInside(sf::Vector2f{25.f, 15.f}));

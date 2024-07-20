@@ -225,25 +225,25 @@ void Application::renderGameObjects()
 void Application::configureGUI()
 {   
     auto quit_button = std::make_unique<gui::Button>("Quit");
-    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f), gui::Alignment::LEFT);
+    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quit_button->setSize(sf::Vector2f(150.f, 30.f));
     quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
     window_manager_->mainWindow()->addChild(std::move(quit_button));
 
     auto measurements_text = std::make_unique<gui::Label>("");
-    measurements_text->setPosition(sf::Vector2f(20.f, 20.f), gui::Alignment::LEFT);
+    measurements_text->setPosition(sf::Vector2f(20.f, 20.f));
     measurements_text_handle_ = measurements_text.get();
 
     window_manager_->mainWindow()->addChild(std::move(measurements_text));
 
     auto measurements_average_text = std::make_unique<gui::Label>("");
-    measurements_average_text->setPosition(sf::Vector2f(200.f, 20.f), gui::Alignment::LEFT);
+    measurements_average_text->setPosition(sf::Vector2f(200.f, 20.f));
     measurements_average_text_handle_ = measurements_average_text.get();
 
     window_manager_->mainWindow()->addChild(std::move(measurements_average_text));
 
     auto button = std::make_unique<gui::Button>("Help");
-    button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f), gui::Alignment::LEFT);
+    button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){
         auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
@@ -253,7 +253,7 @@ void Application::configureGUI()
     window_manager_->mainWindow()->addChild(std::move(button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
-    spawn_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f), gui::Alignment::LEFT);
+    spawn_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f));
     spawn_window_button->setSize(sf::Vector2f(150.f, 30.f));
     spawn_window_button->onClick([this](){
         float random_x = rand() % 200;
@@ -285,7 +285,7 @@ void Application::configureGUI()
         window->addComponent(std::move(vertical_layout));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
-        window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y), gui::Alignment::CENTERED);
+        window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y));
         window->setTitle("Oh my gosh");
 
         window_manager_->addWindow(std::move(window));

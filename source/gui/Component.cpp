@@ -13,10 +13,8 @@ sf::Vector2f toVector2f(const event::MousePosition& position)
 
 }
 
-
 Component::Component()
 : local_position_{}
-, alignment_ {}
 , parent_{nullptr}
 , can_children_process_events_{true}
 , children_ {}
@@ -149,19 +147,18 @@ EventStatus Component::on(const event::MouseLeft& mouseLeftEvent)
     return EventStatus::NotConsumed;
 }
 
-void Component::setPosition(const sf::Vector2f& position, const Alignment alignment)
+void Component::setPosition(const sf::Vector2f& position)
 {
     local_position_ = position;
-    alignment_ = alignment;
     updateGlobalPosition();
-    
+
     for (auto& child : children_)
     {
-        child->onParentPositionChange(position);
+        child->updateGlobalPosition();
     }
 }
 
-sf::Vector2f Component::getSize()
+sf::Vector2f Component::getSize() const
 {
     return sf::Vector2f{bounds_.width, bounds_.height};
 }
@@ -171,6 +168,7 @@ void Component::setSize(const sf::Vector2f& size)
     bounds_.width = size.x;
     bounds_.height = size.y;
     updateGlobalPosition();
+    onSizeChange();
 
     for (auto& child : children_)
     {
@@ -178,9 +176,13 @@ void Component::setSize(const sf::Vector2f& size)
     }
 }
 
+void Component::onSizeChange()
+{
+}
+
 void Component::onParentSizeChange(const sf::Vector2f& parent_size)
 {
-    static_cast<void>(parent_size);
+    UNUSED(parent_size);
 };
 
 void Component::setVisibility(bool is_visible)
@@ -198,10 +200,9 @@ const sf::Vector2f Component::getPosition() const
     return local_position_;
 }
 
-void Component::onParentPositionChange(const sf::Vector2f& parent_position)
+void Component::onPositionChange()
 {
-    static_cast<void>(parent_position);
-};
+}
 
 bool Component::isInside(sf::Vector2f point) const
 {
@@ -228,41 +229,36 @@ void Component::addChild(std::unique_ptr<Component> child)
     }
     child->parent_ = this;
     child->updateGlobalPosition();
-    child->onParentPositionChange(getPosition());
     child->onParentSizeChange(getSize());
     children_.push_back(std::move(child));
 }
 
 void Component::updateGlobalPosition()
 {
-    sf::Vector2f offset{0.0f, 0.0f};
-
-    switch (alignment_)
-    {
-        case (gui::Alignment::LEFT)     : offset.x = 0.0f; break;
-        case (gui::Alignment::RIGHT)    : offset.x = - bounds_.width; break;
-        case (gui::Alignment::CENTERED) : offset.x = - bounds_.width / 2.0f; offset.y = - bounds_.height / 2.0f;  break;
-    }
-
     sf::Vector2f global_bounds_position {};
 
     if (parent_)
     {
-        global_bounds_position = parent_->getGlobalPosition() + getPosition() + offset;
+        global_bounds_position = parent_->getGlobalPosition() + getPosition();
     }
     else
     {
-        global_bounds_position = getPosition() + offset;
+        global_bounds_position = getPosition();
     }
 
-    bounds_.left = global_bounds_position.x;
-    bounds_.top = global_bounds_position.y;
-
-    //TODO can add check if recalculation has changed position of parent to not recalculate childeren
-    for (auto& child : children_)
+    if (bounds_.left != global_bounds_position.x or 
+        bounds_.top != global_bounds_position.y)
     {
-        // children can peek parent position for own calculations so remember to update parent first
-        child->updateGlobalPosition();
+        bounds_.left = global_bounds_position.x;
+        bounds_.top = global_bounds_position.y;
+
+        onPositionChange();
+
+        for (auto& child : children_)
+        {
+            // children can peek parent position for own calculations so remember to update parent first
+            child->updateGlobalPosition();
+        }
     }
 }
 
@@ -279,6 +275,5 @@ void Component::enableChildrenEvents()
 {
     can_children_process_events_ = true;
 }
-
 
 }  // namespace gui

@@ -5,7 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Alignment.hpp"
 #include "gui/EventReceiver.hpp"
 
 namespace gui
@@ -24,28 +23,29 @@ public:
     Component();
     virtual ~Component() = default;
     
-    //TODO: Those two methods should be protected
     virtual void onRender(sf::RenderTexture& renderTexture) = 0;
     
     void render(sf::RenderTexture& renderTexture);
 
-    virtual sf::Vector2f getSize();
+    virtual sf::Vector2f getSize() const;
     // TODO: introduce onSizeChange instead of overriding setSize()
     // so derived clesses does not need to call setSize from component
     // when redefining handling
-    virtual void setSize(const sf::Vector2f& position);
+    void setSize(const sf::Vector2f& size);
+
+    //TODO: Those two methods should be protected
+    virtual void onSizeChange();
     virtual void onParentSizeChange(const sf::Vector2f& parent_size);
 
     void setVisibility(bool is_visible);
     bool isVisible();
 
     const sf::Vector2f getPosition() const;
-    // TODO: introduce onPositionChange instead of overriding setPosition()
-    // so derived clesses does not need to call setSize from component
-    // when redefining handling
-    virtual void setPosition(const sf::Vector2f& position, const Alignment alignment);
-    virtual void onParentPositionChange(const sf::Vector2f& parent_position);
+    void setPosition(const sf::Vector2f& position);
     
+    // This is called when setPosition is called or globalPosition changes
+    virtual void onPositionChange();
+
     bool isInside(sf::Vector2f point) const;
     bool wasMouseInside() const;
 
@@ -80,7 +80,6 @@ protected:
     size_t getChildrenCount() const;
     sf::Vector2f local_position_;   // offset from parent position
     sf::FloatRect bounds_;          // bounds box in global space position
-    Alignment alignment_;
     Component* parent_;
     bool can_children_process_events_;
     std::vector<std::unique_ptr<Component>> children_;

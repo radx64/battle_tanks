@@ -16,34 +16,21 @@ Button::Button(const std::string_view& text)
     background_.setSize(Component::getSize());
     auto text_ptr = std::make_unique <gui::Label>(text);
     text_ = text_ptr.get();
-    this->addChild(std::move(text_ptr));
+    text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+    addChild(std::move(text_ptr));
 }
 
 Button::~Button() = default;
 
-void Button::setSize(const sf::Vector2f& size)
+void Button::onSizeChange()
 {
-    background_.setSize(size);
-    Component::setSize(size);
-    
     auto button_size = getSize();
-    auto text_size = text_->getSize();
-    text_->setPosition(sf::Vector2f{(button_size.x - text_size.x) / 2.f, (button_size.y - text_size.y) / 2.f}, alignment_);
+    background_.setSize(button_size);
+    text_->setSize(button_size);
 }
 
-void Button::setPosition(const sf::Vector2f& position, const Alignment alignment)
+void Button::onPositionChange()
 {
-    Component::setPosition(position, alignment);
-    UNUSED(position);
-    UNUSED(alignment);
-    text_->setPosition(getSize() / 2.f, gui::Alignment::CENTERED);
-    background_.setPosition(Component::getGlobalPosition());
-}
-
-void Button::onParentPositionChange(const sf::Vector2f& parent_position)
-{
-    UNUSED(parent_position);
-    text_->setPosition(getSize() / 2.f, gui::Alignment::CENTERED);
     background_.setPosition(Component::getGlobalPosition());
 }
 

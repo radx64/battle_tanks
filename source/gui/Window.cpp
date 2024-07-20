@@ -20,13 +20,10 @@ Window::Window()
 {   
     auto top_bar = std::make_unique<gui::TopBar>();
 
-    top_bar->closeButtonAction([window = this]()
-    {
-        window->close();
-        
-    });
+    top_bar->closeButtonAction([window = this](){window->close();});
 
     top_bar_handle_ = top_bar.get();
+    top_bar_handle_->setSize({getSize().x, TOP_BAR_HEIGHT});
     Component::addChild(std::move(top_bar));
 
     auto window_panel = std::make_unique<gui::WindowPanel>();
@@ -37,11 +34,6 @@ Window::Window()
     bottom_bar->setSize(getSize());
     bottom_bar_handle_ = bottom_bar.get();
     Component::addChild(std::move(bottom_bar));
-}
-
-void Window::setSize(const sf::Vector2f& size)
-{
-    Component::setSize(size);
 }
 
 void Window::setTitle(const std::string_view& text)
@@ -146,7 +138,7 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
     if (isState(State::Dragging))
     {
         disableChildrenEvents();
-        setPosition(mousePosition + dragging_offset_, alignment_);
+        setPosition(mousePosition + dragging_offset_);
         return gui::EventStatus::Consumed;
     }
 
@@ -154,39 +146,35 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
     {
         disableChildrenEvents();
         auto window_top_left_corner = getGlobalPosition();
-        auto old_window_size = getSize();
+        //auto old_window_size = getSize();
         auto new_window_size = mousePosition - window_top_left_corner + sf::Vector2f{RESIZE_THINGY_SIZE, RESIZE_THINGY_SIZE}/2.f;
         new_window_size.x = std::max(new_window_size.x, MINIMUM_WINDOW_WIDTH);
         new_window_size.y = std::max(new_window_size.y, MINIMUM_WINDOW_HEIGHT);
         setSize(new_window_size);
 
-        // This is needed to recalculate position of component 
-        // (especially when alignment::Center is used as it changes top left global position)
-
-        // TODO: reconsider if this alignment should be on window level or only widgets
-        // Maybe window should not derive from component?
-        // And component should be used only for widgets
-        switch(alignment_)
-        {
-            case Alignment::LEFT: break;
-            case Alignment::CENTERED: 
-            {
-                setPosition(getPosition() + (new_window_size - old_window_size) / 2.f, alignment_);
-                break;
-            }
-
-            case Alignment::RIGHT:
-            {
-                auto window_offset = (new_window_size - old_window_size);
-                setPosition(getPosition() + sf::Vector2f{window_offset.x, 0.f}, alignment_);
-                break;
-            }
-        }
-        // If currently resizing window process the mouse event
+        // TODO: This is a hack as recalulating children size on resize is not working properlu
+        // I need to investigate that
+        //setPosition(getPosition());
         return gui::EventStatus::Consumed;
     }
 
     return gui::EventStatus::NotConsumed;
+}
+
+void Window::onPositionChange()
+{
+    top_bar_handle_->setPosition({0.f, 0.f});
+    window_panel_handle_->setPosition({0.f, TOP_BAR_HEIGHT});
+    bottom_bar_handle_->setPosition({0.f, getSize().y-RESIZE_THINGY_SIZE});
+}
+
+void Window::onSizeChange()
+{
+    auto size = getSize();
+    top_bar_handle_->setSize({size.x, TOP_BAR_HEIGHT});
+    window_panel_handle_->setSize({size.x, size.y - TOP_BAR_HEIGHT - RESIZE_THINGY_SIZE}); 
+    bottom_bar_handle_->setSize({size.x, RESIZE_THINGY_SIZE});
+    bottom_bar_handle_->setPosition({0.f, getSize().y-RESIZE_THINGY_SIZE});
 }
 
 }  // namespace gui

@@ -17,9 +17,8 @@ public:
     Button(const std::string_view& text);
     ~Button();
 
-    void setSize(const sf::Vector2f& size) override;
-    void setPosition(const sf::Vector2f& position, const Alignment alignment) override;
-    void onParentPositionChange(const sf::Vector2f& parent_position) override;
+    void onSizeChange() override;
+    void onPositionChange() override;
     void setText(const sf::String& text);
     void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
