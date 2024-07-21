@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_TEXTURE_LIBRARY_HPP_
-#define GRAPHICS_TEXTURE_LIBRARY_HPP_
+#pragma once
+
 
 #include <map>
 #include <string>
@@ -23,4 +23,3 @@ private:
 
 }  // namespace graphics
 
-#endif  // GRAPHICS_TEXTURE_LIBRARY_HPP_

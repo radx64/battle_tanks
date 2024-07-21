@@ -1,5 +1,5 @@
-#ifndef GAME_CRATE_HPP_
-#define GAME_CRATE_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -23,4 +23,3 @@ public:
 
 }  // namespace game::entity
 
-#endif  // GAME_CRATE_HPP_

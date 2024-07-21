@@ -1,5 +1,5 @@
-#ifndef ENGINE_PHYSICS_BOXCOLLIDER_HPP_
-#define ENGINE_PHYSICS_BOXCOLLIDER_HPP_
+#pragma once
+
 
 #include <SFML/System.hpp>
 
@@ -14,4 +14,3 @@ struct BoxCollider
 }  // namespace engine::physics
 
 
-#endif  // ENGINE_PHYSICS_BOXCOLLIDER_HPP_

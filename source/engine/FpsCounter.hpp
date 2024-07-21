@@ -1,5 +1,5 @@
-#ifndef ENGINE_FPSCOUNTER_HPP_
-#define ENGINE_FPSCOUNTER_HPP_
+#pragma once
+
 
 #include <SFML/System.hpp>
 
@@ -24,4 +24,3 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_FPSCOUNTER_HPP_

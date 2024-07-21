@@ -1,5 +1,5 @@
-#ifndef GUI_WINDOW_MANAGER_HPP_
-#define GUI_WINDOW_MANAGER_HPP_
+#pragma once
+
 
 #include <list>
 #include <memory>
@@ -38,4 +38,3 @@ protected:
 
 }  // namespace gui
 
-#endif  // GUI_WINDOW_MANAGER_HPP_

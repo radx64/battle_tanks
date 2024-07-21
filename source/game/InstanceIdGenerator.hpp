@@ -1,5 +1,5 @@
-#ifndef GAME_INSTANCE_ID_GENERATOR_HPP_
-#define GAME_INSTANCE_ID_GENERATOR_HPP_
+#pragma once
+
 
 #include <cstdint>
 
@@ -16,4 +16,3 @@ protected:
 
 }  // namespace game
 
-#endif  // GAME_INSTANCE_ID_GENERATOR_HPP_

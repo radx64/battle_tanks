@@ -1,5 +1,5 @@
-#ifndef GUI_SANDBOX_APPLICATION_HPP_
-#define GUI_SANDBOX_APPLICATION_HPP_
+#pragma once
+
 
 #include "engine/Application.hpp"
 #include "gui/WindowManager.hpp"
@@ -25,5 +25,5 @@ protected:
 
 }  // namespace gui_sandbox
 
-#endif  // GUI_SANDBOX_APPLICATION_HPP_
+
 

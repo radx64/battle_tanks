@@ -1,5 +1,5 @@
-#ifndef GUI_EVENTCONSUMER_HPP_
-#define GUI_EVENTCONSUMER_HPP_
+#pragma once
+
 
 #include "gui/Event.hpp"
 
@@ -49,4 +49,3 @@ public:
 
 }  // namespace gui
 
-#endif  // GUI_EVENTCONSUMER_HPP_

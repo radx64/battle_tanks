@@ -1,5 +1,5 @@
-#ifndef ENGINE_GAME_OBJECT_HPP_
-#define ENGINE_GAME_OBJECT_HPP_
+#pragma once
+
 
 #include <memory>
 
@@ -40,4 +40,3 @@ protected:
 } // namespace engine
 
 
-#endif  // ENGINE_GAME_OBJECT_HPP_

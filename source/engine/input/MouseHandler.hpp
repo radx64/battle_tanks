@@ -1,5 +1,5 @@
-#ifndef ENGINE_INPUT_MOUSEHANDLER_HPP_
-#define ENGINE_INPUT_MOUSEHANDLER_HPP_
+#pragma once
+
 
 #include <unordered_map>
 #include <vector>
@@ -34,4 +34,3 @@ protected:
     
 }  // namespace engine::input
 
-#endif  // ENGINE_INPUT_MOUSEHANDLER_HPP_

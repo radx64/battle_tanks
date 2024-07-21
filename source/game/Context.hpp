@@ -1,5 +1,5 @@
-#ifndef GAME_CONTEXT_HPP_
-#define GAME_CONTEXT_HPP_
+#pragma once
+
 
 namespace engine { class ParticleSystem; }
 namespace engine { class Scene; }
@@ -27,4 +27,3 @@ protected:
 
 }  // namespace game
 
-#endif  // GAME_CONTEXT_HPP_

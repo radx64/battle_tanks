@@ -1,5 +1,5 @@
-#ifndef ENGINE_APPLICATION_HPP_
-#define ENGINE_APPLICATION_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -50,4 +50,3 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_APPLICATION_HPP_

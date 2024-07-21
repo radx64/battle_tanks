@@ -1,5 +1,5 @@
-#ifndef GUI_BUTTON_HPP_
-#define GUI_BUTTON_HPP_
+#pragma once
+
 
 #include <functional>
 #include <SFML/Graphics.hpp>
@@ -37,4 +37,3 @@ protected:
 
 }  // namespace gui
 
-#endif  // GUI_BUTTON_HPP_

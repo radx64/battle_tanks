@@ -1,5 +1,5 @@
-#ifndef GUI_LABEL_HPP_
-#define GUI_LABEL_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -29,4 +29,3 @@ protected:
 
 }  // namespace gui
 
-#endif  // GUI_LABEL_HPP_

@@ -1,5 +1,5 @@
-#ifndef GUI_LAYOUT_HPP_
-#define GUI_LAYOUT_HPP_
+#pragma once
+
 
 #include "gui/Component.hpp"
 
@@ -60,4 +60,3 @@ protected:
 }  // namespace gui
 
 
-#endif  // GUI_LAYOUT_HPP

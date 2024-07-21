@@ -1,5 +1,5 @@
-#ifndef ENGINE_CAMERA_HPP_
-#define ENGINE_CAMERA_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -35,4 +35,4 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_CAMERA_HPP_
+

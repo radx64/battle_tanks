@@ -1,5 +1,5 @@
-#ifndef GUI_EVENT_HPP_
-#define GUI_EVENT_HPP_
+#pragma once
+
 
 // I know sfml have own event subsystem but I'm redefining it 
 // to separate from SFML later on
@@ -49,4 +49,3 @@ namespace gui::event
 
 }  // namespace gui::event
 
-#endif  // GUI_EVENT_HPP_

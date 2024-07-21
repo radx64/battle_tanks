@@ -1,5 +1,5 @@
-#ifndef GAME_EXPLOSION_HPP_
-#define GAME_EXPLOSION_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -25,4 +25,3 @@ protected:
 
 }  // namespace game::particle
 
-#endif  // GAME_EXPLOSION_HPP_

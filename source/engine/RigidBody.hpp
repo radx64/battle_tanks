@@ -1,5 +1,5 @@
-#ifndef ENGINE_RIGID_BODY_HPP_
-#define ENGINE_RIGID_BODY_HPP_
+#pragma once
+
 
 #include <memory>
 #include <vector>
@@ -41,4 +41,3 @@ public:
 
 }  // namespace engine
 
-#endif  // ENGINE_RIGID_BODY_HPP_

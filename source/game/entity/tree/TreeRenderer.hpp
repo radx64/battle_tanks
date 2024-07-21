@@ -1,5 +1,5 @@
-#ifndef GAME_ENTITY_TREE_RENDERER_HPP_
-#define GAME_ENTITY_TREE_RENDERER_HPP_
+#pragma once
+
 
 #include "engine/Renderer.hpp"
 
@@ -21,4 +21,3 @@ protected:
 
 }  // namespace game::entity 
 
-#endif  // GAME_ENTITY_TREE_RENDERER_HPP_

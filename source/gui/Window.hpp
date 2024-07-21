@@ -1,5 +1,5 @@
-#ifndef GUI_WINDOW_HPP_
-#define GUI_WINDOW_HPP_
+#pragma once
+
 
 #include <functional>
 
@@ -278,4 +278,3 @@ protected:
 
 }  // namespace gui
 
-#endif  // GUI_WINDOW_HPP_

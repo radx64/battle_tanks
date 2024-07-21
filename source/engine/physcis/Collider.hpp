@@ -1,5 +1,5 @@
-#ifndef ENGINE_PHYSICS_COLLIDER_HPP_
-#define ENGINE_PHYSICS_COLLIDER_HPP_
+#pragma once
+
 
 class Collider
 {
@@ -8,4 +8,3 @@ class Collider
 
 
 
-#endif  // ENGINE_PHYSICS_COLLIDER_HPP_

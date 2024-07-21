@@ -1,5 +1,5 @@
-#ifndef ENGINE_PARTICLE_HPP_
-#define ENGINE_PARTICLE_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -29,4 +29,3 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_PARTICLE_HPP_

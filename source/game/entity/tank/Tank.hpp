@@ -1,5 +1,5 @@
-#ifndef GAME_ENTITY_TANK_TANK_HPP_
-#define GAME_ENTITY_TANK_TANK_HPP_
+#pragma once
+
 
 #include <memory>
 
@@ -43,4 +43,4 @@ protected:
 
 }  // namespace game::entity
 
-#endif  // GAME_ENTITY_TANK_TANK_HPP_
+

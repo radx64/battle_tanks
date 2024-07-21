@@ -1,5 +1,5 @@
-#ifndef SANDBOX_CIRCLE_HPP_
-#define SANDBOX_CIRCLE_HPP_
+#pragma once
+
 
 #include "engine/GameObject.hpp"
 
@@ -27,4 +27,3 @@ const engine::RigidBody::Type& type)
 
 }  // namespace sandbox
 
-#endif  // SANDBOX_CIRCLE_HPP_

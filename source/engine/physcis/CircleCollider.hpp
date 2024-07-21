@@ -1,5 +1,5 @@
-#ifndef ENGINE_PHYSICS_CIRCLECOLLIDER_HPP_
-#define ENGINE_PHYSICS_CIRCLECOLLIDER_HPP_
+#pragma once
+
 
 #include <SFML/System.hpp>
 
@@ -15,4 +15,3 @@ struct CircleCollider
 }  // namespace engine::physics
 
 
-#endif  // ENGINE_PHYSICS_CIRCLECOLLIDER_HPP_

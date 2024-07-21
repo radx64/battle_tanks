@@ -1,5 +1,5 @@
-#ifndef GAME_NAVIGATOR_HPP_
-#define GAME_NAVIGATOR_HPP_
+#pragma once
+
 
 #include <cmath>
 #include <vector>
@@ -27,4 +27,3 @@ protected:
 
 }  // namespace game
 
-#endif  // GAME_NAVIGATOR_HPP_

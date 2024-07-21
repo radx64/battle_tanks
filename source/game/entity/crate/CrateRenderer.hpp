@@ -1,5 +1,5 @@
-#ifndef GAME_CRATE_RENDERER_HPP_
-#define GAME_CRATE_RENDERER_HPP_
+#pragma once
+
 
 #include "engine/Renderer.hpp"
 
@@ -21,4 +21,3 @@ protected:
 
 }  // namespace game::entity 
 
-#endif  // GAME_CRATE_RENDERER_HPP_

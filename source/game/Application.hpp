@@ -1,5 +1,5 @@
-#ifndef GAME_APPLICATION_HPP_
-#define GAME_APPLICATION_HPP_
+#pragma once
+
 
 #include <memory>
 
@@ -88,4 +88,3 @@ protected:
 
 }  // namespace game
 
-#endif  // GAME_APPLICATION_HPP_

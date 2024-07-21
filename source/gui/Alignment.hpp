@@ -1,5 +1,5 @@
-#ifndef GUI_ALIGNMENT_HPP_
-#define GUI_ALIGNMENT_HPP_
+#pragma once
+
 
 #include <type_traits>
 
@@ -34,4 +34,4 @@ inline bool isBitSet(const Alignment& alignment, const Alignment& bit)
 
 }  // namespace gui
 
-#endif  // GUI_ALIGNMENT_HPP_
+

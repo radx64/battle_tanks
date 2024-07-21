@@ -1,5 +1,5 @@
-#ifndef GAME_ENTITY_BARREL_BARREL_HPP_
-#define GAME_ENTITY_BARREL_BARREL_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -19,4 +19,3 @@ public:
 
 }  // namespace game::entity
 
-#endif  // GAME_ENTITY_BARREL_BARREL_HPP_

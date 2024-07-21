@@ -1,5 +1,5 @@
-#ifndef ENGINE_PARTICLE_SYSTEM_HPP_
-#define ENGINE_PARTICLE_SYSTEM_HPP_
+#pragma once
+
 
 #include <memory>
 #include <vector>
@@ -28,4 +28,3 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_PARTICLE_SYSTEM_HPP_

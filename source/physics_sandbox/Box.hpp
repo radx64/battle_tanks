@@ -1,5 +1,5 @@
-#ifndef SANDBOX_BOX_HPP_
-#define SANDBOX_BOX_HPP_
+#pragma once
+
 
 #include "engine/GameObject.hpp"
 
@@ -27,4 +27,3 @@ const engine::RigidBody::Type& type)
 
 }  // namespace sandbox
 
-#endif  // SANDBOX_BOX_HPP_

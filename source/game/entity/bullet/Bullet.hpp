@@ -1,5 +1,5 @@
-#ifndef GAME_ENTITY_BULLET_BULLET_HPP_
-#define GAME_ENTITY_BULLET_BULLET_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -22,4 +22,3 @@ protected:
 
 }  // namespace game::entity
 
-#endif  // GAME_ENTITY_BULLET_BULLET_HPP_

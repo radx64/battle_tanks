@@ -1,5 +1,5 @@
-#ifndef GAME_HELPWINDOW_HPP_
-#define GAME_HELPWINDOW_HPP_
+#pragma once
+
 
 #include "gui/Alignment.hpp"
 #include "gui/Label.hpp"
@@ -38,4 +38,3 @@ public:
 
 }  // namespace game
 
-#endif  // GAME_HELPWINDOW_HPP_

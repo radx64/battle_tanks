@@ -1,5 +1,5 @@
-#ifndef GAME_ENTITY_TRACKSRENDERER_HPP_
-#define GAME_ENTITY_TRACKSRENDERER_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -20,4 +20,3 @@ protected:
 
 } // namespace game::entity
 
-#endif  //  GAME_ENTITY_TRACKSRENDERER_HPP_

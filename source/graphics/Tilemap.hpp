@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_TILEMAP_HPP_
-#define GRAPHICS_TILEMAP_HPP_
+#pragma once
+
 
 #include <cstdint>
 #include <string>
@@ -203,4 +203,4 @@ private:
 
 }  // namespace graphics
 
-#endif  // GRAPHICS_TILEMAP_HPP_
+

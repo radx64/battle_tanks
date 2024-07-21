@@ -1,5 +1,5 @@
-#ifndef ENGINE_COLLISION_SOLVER_HPP_
-#define ENGINE_COLLISION_SOLVER_HPP_
+#pragma once
+
 
 namespace engine {class Scene;}
 namespace engine {class RigidBody;}
@@ -20,4 +20,3 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_COLLISION_SOLVER_HPP_

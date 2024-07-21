@@ -1,5 +1,5 @@
-#ifndef CONFIG_HPP_
-#define CONFIG_HPP_
+#pragma once
+
 
 #include <cstdint>
 
@@ -9,4 +9,3 @@ struct Config
     static const uint32_t WINDOW_HEIGHT = 1000;
 };
 
-#endif  // CONFIG_HPP_;

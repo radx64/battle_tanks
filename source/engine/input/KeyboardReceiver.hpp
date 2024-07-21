@@ -1,5 +1,5 @@
-#ifndef ENGINE_INPUT_KEYBOARDRECEIVER_HPP_
-#define ENGINE_INPUT_KEYBOARDRECEIVER_HPP_
+#pragma once
+
 
 #include <SFML/Window/Keyboard.hpp>
 
@@ -27,4 +27,3 @@ protected:
     
 }  // namespace engine::input
 
-#endif  // ENGINE_INPUT_KEYBOARDRECEIVER_HPP_

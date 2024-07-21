@@ -1,5 +1,5 @@
-#ifndef SANDBOX_APPLICATION_HPP_
-#define SANDBOX_APPLICATION_HPP_
+#pragma once
+
 
 #include "engine/Application.hpp"
 #include "MouseController.hpp"
@@ -23,5 +23,5 @@ protected:
 
 }  // namespace sandbox
 
-#endif  // SANDBOX_APPLICATION_HPP_
+
 

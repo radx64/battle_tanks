@@ -1,5 +1,5 @@
-#ifndef ENGINE_SCENE_HPP_
-#define ENGINE_SCENE_HPP_
+#pragma once
+
 
 #include "engine/GameObject.hpp"
 
@@ -21,4 +21,3 @@ protected:
 
 }  // namespace engine
 
-#endif  // ENGINE_SCENE_HPP_

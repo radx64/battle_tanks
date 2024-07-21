@@ -1,5 +1,5 @@
-#ifndef ENGINE_RENDERER_HPP_
-#define ENGINE_RENDERER_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -15,4 +15,3 @@ public:
 
 }  // namespace engine
 
-#endif  // ENGINE_RENDERER_HPP_

@@ -5,7 +5,7 @@
 
 #include "gui/Component.hpp"
 
-#define UNUSED(x) static_cast<void>(x)
+
 
 namespace gui
 {

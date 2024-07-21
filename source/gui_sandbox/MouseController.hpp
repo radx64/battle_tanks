@@ -1,5 +1,5 @@
-#ifndef GUI_SANDBOX_MOUSECONTROLLER_HPP_
-#define GUI_SANDBOX_MOUSECONTROLLER_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -8,8 +8,7 @@
 namespace gui {class WindowManager;}
 
 namespace gui_sandbox
-{
-
+{   
 
 // TODO: Rewrite original MouseController to be expandable (eg game uses waypoints)
 // To not copy this code everywhere 
@@ -30,4 +29,3 @@ protected:
 }  // namespace gui_sandbox
 
 
-#endif  // GAME_MOUSECONTROLLER_HPP_

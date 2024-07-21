@@ -1,5 +1,5 @@
-#ifndef GUI_STYLESHEET_HPP_
-#define GUI_STYLESHEET_HPP_
+#pragma once
+
 
 #include <cstdint>
 #include <SFML/Graphics/Color.hpp>
@@ -58,4 +58,3 @@ private:
 
 }  // namespace gui
 
-#endif  // GUI_STYLESHEET_HPP_

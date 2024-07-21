@@ -1,5 +1,5 @@
-#ifndef ENGINE_INPUT_MOUSERECEIVER_HPP_
-#define ENGINE_INPUT_MOUSERECEIVER_HPP_
+#pragma once
+
 
 #include <SFML/Window/Mouse.hpp>
 
@@ -28,4 +28,3 @@ protected:
     
 }  // namespace engine::input
 
-#endif  // ENGINE_INPUT_MOUSERECEIVER_HPP_

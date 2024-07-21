@@ -1,5 +1,5 @@
-#ifndef GUI_FONT_LIBRARY_HPP_
-#define GUI_FONT_LIBRARY_HPP_
+#pragma once
+
 
 #include <map>
 #include <string>
@@ -24,4 +24,3 @@ private:
 
 }  // namespace gui
 
-#endif  // GUI_FONT_LIBRARY_HPP_

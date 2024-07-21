@@ -1,5 +1,5 @@
-#ifndef SANDBOX_MOUSECONTROLLER_HPP_
-#define SANDBOX_MOUSECONTROLLER_HPP_
+#pragma once
+
 
 #include "engine/input/MouseReceiver.hpp"
 #include "engine/Scene.hpp"
@@ -46,4 +46,3 @@ engine::Scene& scene_;
 
 }  // namespace sandbox
 
-#endif  // SANDBOX_MOUSECONTROLLER_HPP_

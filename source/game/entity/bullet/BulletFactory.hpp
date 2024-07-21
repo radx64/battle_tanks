@@ -1,5 +1,5 @@
-#ifndef GAME_ENTITY_BULLET_BULLET_FACTORY_HPP_
-#define GAME_ENTITY_BULLET_BULLET_FACTORY_HPP_
+#pragma once
+
 
 #include <memory>
 
@@ -22,4 +22,3 @@ public:
 
 }  // namespace game::entity
 
-#endif  // GAME_ENTITY_BULLET_BULLET_FACTORY_HPP_

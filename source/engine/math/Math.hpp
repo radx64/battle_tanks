@@ -1,5 +1,5 @@
-#ifndef ENGINE_MATH_MATH_HPP_
-#define ENGINE_MATH_MATH_HPP_
+#pragma once
+
 
 #include <cstddef>
 #include <numeric>
@@ -32,4 +32,3 @@ protected:
 
 }  // namespace engine::math
 
-#endif  // ENGINE_MATH_MATH_HPP_

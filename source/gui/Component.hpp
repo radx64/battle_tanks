@@ -1,5 +1,5 @@
-#ifndef GUI_ELEMENT_HPP_
-#define GUI_ELEMENT_HPP_
+#pragma once
+
 
 #include <memory>
 
@@ -87,4 +87,3 @@ protected:
 
 }  // namespace gui
 
-#endif  // GUI_ELEMENT_HPP_

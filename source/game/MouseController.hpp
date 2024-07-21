@@ -1,5 +1,5 @@
-#ifndef GAME_MOUSECONTROLLER_HPP_
-#define GAME_MOUSECONTROLLER_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -30,4 +30,3 @@ protected:
 }  // namespace game
 
 
-#endif  // GAME_MOUSECONTROLLER_HPP_

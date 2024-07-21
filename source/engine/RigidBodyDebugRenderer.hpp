@@ -1,5 +1,5 @@
-#ifndef ENGINE_RIGIDBODYDEBUGRENDERER_HPP_
-#define ENGINE_RIGIDBODYDEBUGRENDERER_HPP_
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -17,4 +17,4 @@ static void debug(engine::Scene& scene, sf::RenderWindow& renderWindow);
 
 }  // namespace game
 
-#endif  // ENGINE_RIGIDBODYDEBUGRENDERER_HPP_
+
