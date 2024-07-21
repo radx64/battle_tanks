@@ -27,5 +27,6 @@ target_sources(gui_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
 
 )

@@ -248,6 +248,7 @@ void Application::configureGUI()
     button->onClick([this](){
         auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
         help_window->setTitle("Help");
+        help_window->setPosition({80.f,80.f});
         window_manager_->addWindow(std::move(help_window));
     });
     window_manager_->mainWindow()->addChild(std::move(button));
@@ -282,7 +283,7 @@ void Application::configureGUI()
         vertical_layout->addChild(std::move(horizontal_layout));
         vertical_layout->addChild(std::move(horizontal_layout2));
 
-        window->addComponent(std::move(vertical_layout));
+        window->addChild(std::move(vertical_layout));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y));

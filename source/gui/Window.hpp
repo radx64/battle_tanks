@@ -248,11 +248,7 @@ public:
         return isState(Window::State::Idle);
     }
 
-    //TODO: override addChild and remove this method in a future.
-    void addComponent(std::unique_ptr<Component> component)
-    {
-        window_panel_handle_->addChild(std::move(component));
-    }
+    void addChild(std::unique_ptr<Component> child) override;
 
 protected:
     enum class State

@@ -28,14 +28,7 @@ public:
     void render(sf::RenderTexture& renderTexture);
 
     virtual sf::Vector2f getSize() const;
-    // TODO: introduce onSizeChange instead of overriding setSize()
-    // so derived clesses does not need to call setSize from component
-    // when redefining handling
     void setSize(const sf::Vector2f& size);
-
-    //TODO: Those two methods should be protected
-    virtual void onSizeChange();
-    virtual void onParentSizeChange(const sf::Vector2f& parent_size);
 
     void setVisibility(bool is_visible);
     bool isVisible();
@@ -44,7 +37,6 @@ public:
     void setPosition(const sf::Vector2f& position);
     
     // This is called when setPosition is called or globalPosition changes
-    virtual void onPositionChange();
 
     bool isInside(sf::Vector2f point) const;
     bool wasMouseInside() const;
@@ -62,6 +54,7 @@ public:
     virtual EventStatus receive(const event::MouseLeft& mouseLeftEvent) override final;
 
 protected:
+
     // those on methods should be overrided to define handling of mouse events
     // those are called when component receives an event
     // first forwards it to it's children
@@ -73,11 +66,16 @@ protected:
     virtual EventStatus on(const event::MouseEntered& mouseEnteredEvent);
     virtual EventStatus on(const event::MouseLeft& mouseLeftEvent);
 
+    virtual void onPositionChange();
+    virtual void onSizeChange();
+    virtual void onParentSizeChange(const sf::Vector2f& parent_size);
+    
     template <typename T>
     EventStatus processEvent(const T& event, bool isConsumable);
 
     void updateGlobalPosition();
     size_t getChildrenCount() const;
+
     sf::Vector2f local_position_;   // offset from parent position
     sf::FloatRect bounds_;          // bounds box in global space position
     Component* parent_;

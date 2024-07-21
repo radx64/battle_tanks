@@ -36,6 +36,12 @@ Window::Window()
     Component::addChild(std::move(bottom_bar));
 }
 
+void Window::addChild(std::unique_ptr<Component> component)
+{
+    window_panel_handle_->addChild(std::move(component));
+}
+
+
 void Window::setTitle(const std::string_view& text)
 {
     top_bar_handle_->setTitle(text);

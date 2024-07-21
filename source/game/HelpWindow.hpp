@@ -32,7 +32,7 @@ public:
         auto help_text = std::make_unique<gui::Label>(help_text_string.data());
         help_text->setPosition(sf::Vector2f{0.0f, 0.0f});
         help_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        this->addComponent(std::move(help_text));
+        addChild(std::move(help_text));
     }
 };
 

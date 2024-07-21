@@ -93,16 +93,12 @@ EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonRele
     return processEvent(mouseButtonReleasedEvent, true);
 }
 
-/* These two events are generated insde component using MouseMoveEvent*/
+/* These two events (entered, left) are generated insde component using MouseMoveEvent*/
 /* This two should not be propagated downwards to child components*/
 EventStatus Component::receive(const event::MouseEntered& mouseEnteredEvent)
 {
     if (not can_children_process_events_) return EventStatus::NotConsumed;
     was_mouse_inside_ = true;
-    // FIXME mouseEnteredEvent does not check bounds in children
-    // When distributing event so if window parent got mouse enter
-    // Children acts same regardles their position
-    //return processEvent(mouseEnteredEvent, true);
     return on(mouseEnteredEvent);
 }
 EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
@@ -224,7 +220,7 @@ void Component::addChild(std::unique_ptr<Component> child)
     auto found = std::find(children_.cbegin(), children_.cend(), child);
     if (found != children_.cend())
     {
-        // TODO: Throw exception?
+        throw std::runtime_error("Trying to add child object that was already added");
         return;
     }
     child->parent_ = this;
