@@ -19,6 +19,9 @@ protected:
     void onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
     void onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
     void onMouseMoved(const sf::Vector2f& mouse_postion) override;
+
+    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
+
     gui::WindowManager* window_manager_;
     std::vector<sf::Vector2i>& waypoints_;
     sf::RenderWindow& window_;

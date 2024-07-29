@@ -22,8 +22,11 @@ void Application::onInit()
 {
     gui::FontLibrary::initialize();
 
+    window_.setFramerateLimit(60);
+    window_.setVerticalSyncEnabled(true);
+
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT});
-    mouse_controller_ = std::make_unique<gui_sandbox::MouseController>(window_manager_.get());
+    mouse_controller_ = std::make_unique<gui_sandbox::MouseController>(window_manager_.get(), window_, window_.getDefaultView());
     mouse_handler_.subscribe(mouse_controller_.get());
 
     auto quit_button = std::make_unique<gui::Button>("Quit");

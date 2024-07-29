@@ -15,14 +15,18 @@ namespace gui_sandbox
 class MouseController : public engine::input::MouseReceiver
 {
 public:
-    MouseController(gui::WindowManager* window_manager);
+    MouseController(gui::WindowManager* window_manager, sf::RenderWindow& window, const sf::View& view);
 
 protected:
     void onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
     void onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
     void onMouseMoved(const sf::Vector2f& mouse_postion) override;
-    gui::WindowManager* window_manager_;
 
+    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
+
+    gui::WindowManager* window_manager_;
+    sf::RenderWindow& window_;
+    const sf::View& view_;
 };
 
 

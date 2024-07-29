@@ -55,6 +55,3 @@ target_link_libraries (battle_tanks
     sfml-graphics
     #sfml-network
 )
-
-# set(CONFIGURED_ONCE TRUE CACHE INTERNAL
-#     "A flag showing that CMake has configured at least once.")
