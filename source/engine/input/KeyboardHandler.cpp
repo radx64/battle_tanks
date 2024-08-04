@@ -20,6 +20,12 @@ void KeyboardHandler::subscribe(const std::vector<sf::Keyboard::Key>& keys, Keyb
     receiver->attach(this);
 }
 
+void KeyboardHandler::subscribe(KeyboardReceiver* receiver)
+{
+    any_key_receivers_.push_back(receiver);
+    receiver->attach(this);
+}
+
 void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
 {
     for(auto key_with_receivers_it = std::begin(keys_with_receivers_); key_with_receivers_it != std::end(keys_with_receivers_);)
@@ -36,6 +42,7 @@ void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
             ++key_with_receivers_it;
         }
     }
+    any_key_receivers_.erase(std::remove(std::begin(any_key_receivers_), std::end(any_key_receivers_), receiver));
 }
 
 void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
@@ -52,6 +59,12 @@ void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
             receiver->onKeyPressed(key);
         }
     }
+
+    for (auto* receiver : any_key_receivers_)
+    {
+        receiver->onKeyPressed(key);
+    }
+
 }
 
 void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
@@ -68,13 +81,20 @@ void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
             receiver->onKeyReleased(key);
         }
     }
+
+    for (auto* receiver : any_key_receivers_)
+    {
+        receiver->onKeyReleased(key);
+    }
 }
 
 bool KeyboardHandler::isKeyPressed(sf::Keyboard::Key key)
 {
     auto iter = keys_states_.find(key);
     if (iter != keys_states_.end())
+    {
         return iter->second;
+    }
     else
     {
         return false;

@@ -23,7 +23,7 @@ public:
     void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
 
-    EventStatus on(const event::MouseButtonPressed& mousePressedEvent) override;
+    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
     EventStatus on(const event::MouseLeft& mouseLeftEvent) override;

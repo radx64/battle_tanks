@@ -19,10 +19,11 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardHandler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseReceiver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardReceiver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardUtils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Particle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp

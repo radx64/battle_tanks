@@ -1,9 +1,6 @@
 #include "engine/input/MouseHandler.hpp"
 #include "engine/input/MouseReceiver.hpp"
 
-#include <unordered_map>
-#include <vector>
-
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 

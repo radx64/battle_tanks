@@ -36,8 +36,6 @@ public:
     const sf::Vector2f getPosition() const;
     void setPosition(const sf::Vector2f& position);
     
-    // This is called when setPosition is called or globalPosition changes
-
     bool isInside(sf::Vector2f point) const;
     bool wasMouseInside() const;
 
@@ -47,24 +45,31 @@ public:
     void disableChildrenEvents();
     void enableChildrenEvents();
 
-    virtual EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
-    virtual EventStatus receive(const event::MouseButtonPressed& mousePressedEvent) override final;
-    virtual EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override final;
-    virtual EventStatus receive(const event::MouseEntered& mouseEnteredEvent) override final;
-    virtual EventStatus receive(const event::MouseLeft& mouseLeftEvent) override final;
+    /* Mouse events */
+    EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
+    EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override final;
+    EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override final;
+    EventStatus receive(const event::MouseEntered& mouseEnteredEvent) override final;
+    EventStatus receive(const event::MouseLeft& mouseLeftEvent) override final;
+
+    /* Keyboard events */
+    EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed) override final;
+    EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased) override final;
 
 protected:
-
     // those on methods should be overrided to define handling of mouse events
     // those are called when component receives an event
     // first forwards it to it's children
     // and then handles it itself
     // so this is some kind bubbling mechanism
     virtual EventStatus on(const event::MouseMoved& mouseMovedEvent);
-    virtual EventStatus on(const event::MouseButtonPressed& mousePressedEvent);
+    virtual EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent);
     virtual EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent);
     virtual EventStatus on(const event::MouseEntered& mouseEnteredEvent);
     virtual EventStatus on(const event::MouseLeft& mouseLeftEvent);
+
+    virtual EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent);
+    virtual EventStatus on(const event::KeyboardKeyReleased& KeyboardKeyReleased);
 
     virtual void onPositionChange();
     virtual void onSizeChange();

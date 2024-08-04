@@ -2,6 +2,7 @@
 
 #include "engine/Application.hpp"
 #include "gui/WindowManager.hpp"
+#include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
 
 namespace gui_sandbox
@@ -20,6 +21,7 @@ protected:
 
     std::unique_ptr<gui::WindowManager> window_manager_;
     std::unique_ptr<gui::MouseController> mouse_controller_;
+    std::unique_ptr<gui::KeyboardController> keyboard_controller_;
 };
 
 }  // namespace gui_sandbox

@@ -180,4 +180,40 @@ EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButton
     return gui::EventStatus::NotConsumed;  
 }
 
+EventStatus WindowManager::receive (const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+{
+    EventStatus result{EventStatus::NotConsumed};
+
+    //Forward event to active window
+    if (active_window_handle_ && active_window_handle_->isFocused())
+    {
+        result = active_window_handle_->receive(keyboardKeyPressedEvent);
+    }
+
+    if (result ==  EventStatus::NotConsumed)
+    {
+        return main_window_->receive(keyboardKeyPressedEvent);
+    }
+
+    return result;
+}
+
+EventStatus WindowManager::receive (const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+{
+    EventStatus result{EventStatus::NotConsumed};
+
+    //Forward event to active window
+    if (active_window_handle_ && active_window_handle_->isFocused())
+    {
+        result = active_window_handle_->receive(keyboardKeyReleasedEvent);
+    }
+
+    if (result ==  EventStatus::NotConsumed)
+    {
+        return main_window_->receive(keyboardKeyReleasedEvent);
+    }
+
+    return result;
+}
+
 }  // namespace gui

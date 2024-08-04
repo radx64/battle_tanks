@@ -21,11 +21,11 @@ Label::Label(const std::string_view& text)
     text_.setPosition(Component::getGlobalPosition());
 }
 
-void Label::onRender(sf::RenderTexture& renderWindow)
+void Label::onRender(sf::RenderTexture& renderTexture)
 {
-    renderWindow.draw(text_);
+    renderTexture.draw(text_);
 
-    debug::draw_bounds(renderWindow, this);
+    debug::draw_bounds(renderTexture, this);
 }
 
 void Label::setText(const sf::String& text)

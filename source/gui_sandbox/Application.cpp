@@ -3,6 +3,7 @@
 #include "Config.hpp"
 
 #include "gui/Button.hpp"
+#include "gui/EditBox.hpp"
 #include "gui/FontLibrary.hpp"
 #include "gui/Layout.hpp"
 #include "gui/Window.hpp"
@@ -26,6 +27,9 @@ void Application::onInit()
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT});
     mouse_controller_ = std::make_unique<gui::MouseController>(window_manager_.get(), window_, window_.getDefaultView());
     mouse_handler_.subscribe(mouse_controller_.get());
+
+    keyboard_controller_ = std::make_unique<gui::KeyboardController>(window_manager_.get());
+    keyboard_handler_.subscribe(keyboard_controller_.get());
 
     auto quit_button = std::make_unique<gui::Button>("Quit");
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
@@ -96,6 +100,42 @@ void Application::onInit()
     });
 
     window_manager_->mainWindow()->addChild(std::move(create_progress_window_button));
+
+    auto create_editbox_window_button = std::make_unique<gui::Button>("Create Edit Box Window");
+    create_editbox_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
+    create_editbox_window_button->setSize(sf::Vector2f(250.f, 30.f));
+    create_editbox_window_button->onClick([this](){
+
+        auto window = std::make_unique<gui::Window>(); 
+        window->setSize(sf::Vector2f(400.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
+        window->setTitle("I can now read text from keyboard :D");
+
+        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+        auto minus_button = std::make_unique<gui::Button>("\\/\\/\\/\\/");
+        auto edit_box = std::make_unique<gui::EditBox>();
+        auto plus_button = std::make_unique<gui::Button>("/\\/\\/\\/\\");
+
+
+        minus_button->onClick([edit_box_ptr = edit_box.get()]{
+            
+        });
+
+        plus_button->onClick([edit_box_ptr = edit_box.get()]{
+            
+        });
+
+        vertical_layout->addChild(std::move(minus_button));
+        vertical_layout->addChild(std::move(edit_box));
+        vertical_layout->addChild(std::move(plus_button));
+
+        window->addChild(std::move(vertical_layout));
+
+        window_manager_->addWindow(std::move(window));
+
+    });
+
+    window_manager_->mainWindow()->addChild(std::move(create_editbox_window_button));
 
     auto create_layout_window_button = std::make_unique<gui::Button>("Create Layout Window");
     create_layout_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));

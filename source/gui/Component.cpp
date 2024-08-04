@@ -84,9 +84,9 @@ EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
     auto status = processEvent(mouseMovedEvent, true);
     return status;
 }
-EventStatus Component::receive(const event::MouseButtonPressed& mousePressedEvent)
+EventStatus Component::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    return processEvent(mousePressedEvent, true);
+    return processEvent(mouseButtonPressedEvent, true);
 }
 EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
@@ -116,14 +116,24 @@ EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
     return this->on(mouseLeftEvent);
 }
 
+EventStatus Component::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
+{
+    return processEvent(keyboardKeyPressed, true);
+}
+
+EventStatus Component::receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
+{
+    return processEvent(keyboardKeyReleased, true);
+}
+
 EventStatus Component::on(const event::MouseMoved& mouseMovedEvent)
 {
     UNUSED(mouseMovedEvent);
     return EventStatus::NotConsumed;
 }
-EventStatus Component::on(const event::MouseButtonPressed& mousePressedEvent)
+EventStatus Component::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    UNUSED(mousePressedEvent);
+    UNUSED(mouseButtonPressedEvent);
     return EventStatus::NotConsumed;
 }
 EventStatus Component::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
@@ -140,6 +150,18 @@ EventStatus Component::on(const event::MouseEntered& mouseEnteredEvent)
 EventStatus Component::on(const event::MouseLeft& mouseLeftEvent)
 {
     UNUSED(mouseLeftEvent);
+    return EventStatus::NotConsumed;
+}
+
+EventStatus Component::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+{
+    UNUSED(keyboardKeyPressedEvent);
+    return EventStatus::NotConsumed;
+}
+
+EventStatus Component::on(const event::KeyboardKeyReleased& KeyboardKeyReleased)
+{
+    UNUSED(KeyboardKeyReleased);
     return EventStatus::NotConsumed;
 }
 

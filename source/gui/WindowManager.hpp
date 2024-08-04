@@ -27,6 +27,10 @@ public:
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
 
+    EventStatus receive (const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
+    EventStatus receive (const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
+
+
     MainWindow* mainWindow();
 
 protected:

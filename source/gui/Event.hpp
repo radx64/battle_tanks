@@ -1,12 +1,13 @@
 #pragma once
 
-
 // I know sfml have own event subsystem but I'm redefining it 
 // to separate from SFML later on
 
+#include <SFML/Window/Keyboard.hpp>
+
 namespace gui::event
 {
-
+    /* Mouse events */
     struct MousePosition
     {
         float x;
@@ -45,6 +46,19 @@ namespace gui::event
 
     struct MouseLeft
     {
+    };
+
+    using Key = sf::Keyboard::Key;
+
+    /* Keyboard events */
+    struct KeyboardKeyPressed
+    {
+        Key key;
+    };
+
+    struct KeyboardKeyReleased
+    {
+        Key key;
     };
 
 }  // namespace gui::event

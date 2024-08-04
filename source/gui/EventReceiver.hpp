@@ -26,9 +26,9 @@ public:
         UNUSED(mouseMovedEvent);
         return EventStatus::NotConsumed; 
     };
-    virtual EventStatus receive(const event::MouseButtonPressed& mousePressedEvent)
+    virtual EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
     {
-        UNUSED(mousePressedEvent);
+        UNUSED(mouseButtonPressedEvent);
         return EventStatus::NotConsumed;
     };
     
@@ -49,6 +49,18 @@ public:
         UNUSED(mouseLeftEvent);
         return EventStatus::NotConsumed;
     };
+
+    virtual EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
+    {
+        UNUSED(keyboardKeyPressed);
+        return EventStatus::NotConsumed;
+    }
+
+    virtual EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
+    {
+        UNUSED(keyboardKeyReleased);
+        return EventStatus::NotConsumed;
+    }
 };
 
 }  // namespace gui

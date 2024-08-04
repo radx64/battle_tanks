@@ -60,12 +60,12 @@ EventStatus Button::on(const event::MouseLeft&)
     return gui::EventStatus::Consumed;
 }
 
-EventStatus Button::on(const event::MouseButtonPressed& mousePressedEvent)
+EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     if (not is_visible_) return gui::EventStatus::NotConsumed;
     
-    auto mousePosition = sf::Vector2f{mousePressedEvent.position.x, mousePressedEvent.position.y};
-    bool isLeftClicked = mousePressedEvent.button == gui::event::MouseButton::Left;
+    auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
 
     if (isLeftClicked and background_.getGlobalBounds().contains(mousePosition))
     {

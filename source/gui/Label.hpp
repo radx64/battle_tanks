@@ -14,7 +14,7 @@ class Label : public Component
 public:
     Label(const std::string_view& text);
 
-    void onRender(sf::RenderTexture& renderWindow) override;
+    void onRender(sf::RenderTexture& renderTexture) override;
     void setText(const sf::String& text);
     void setAlignment(const gui::Alignment& alignment);
 
