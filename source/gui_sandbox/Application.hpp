@@ -1,9 +1,8 @@
 #pragma once
 
-
 #include "engine/Application.hpp"
 #include "gui/WindowManager.hpp"
-#include "gui_sandbox/MouseController.hpp"
+#include "gui/MouseController.hpp"
 
 namespace gui_sandbox
 {
@@ -20,7 +19,7 @@ protected:
     void onRender() override; 
 
     std::unique_ptr<gui::WindowManager> window_manager_;
-    std::unique_ptr<gui_sandbox::MouseController> mouse_controller_;
+    std::unique_ptr<gui::MouseController> mouse_controller_;
 };
 
 }  // namespace gui_sandbox

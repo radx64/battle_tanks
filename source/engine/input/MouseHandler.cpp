@@ -27,7 +27,8 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
     buttons_states_[button] = true;
     for (auto* receiver : receivers_)
     {
-        receiver->onButtonPressed(mouse_position_, button);
+        const auto eventStatus = receiver->onButtonPressed(mouse_position_, button);
+        if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
 
@@ -37,16 +38,18 @@ void MouseHandler::handleButtonReleased(const sf::Event::MouseButtonEvent& event
     buttons_states_[button] = false;
     for (auto* receiver : receivers_)
     {
-        receiver->onButtonReleased(mouse_position_, button);
+        const auto eventStatus = receiver->onButtonReleased(mouse_position_, button);
+        if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
 
 void MouseHandler::handleMouseMoved(const sf::Event::MouseMoveEvent& event)
 {
-    mouse_position_ = sf::Vector2f{(float)event.x, (float)event.y};
+    mouse_position_ = sf::Vector2f{static_cast<float>(event.x), static_cast<float>(event.y)};
     for (auto& receiver : receivers_)
     {
-        receiver->onMouseMoved(mouse_position_);
+        const auto eventStatus = receiver->onMouseMoved(mouse_position_);
+        if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
 

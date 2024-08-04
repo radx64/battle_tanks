@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma once
+
 
 #include <SFML/Graphics.hpp>
 
@@ -7,20 +9,18 @@
 
 namespace gui {class WindowManager;}
 
-namespace gui_sandbox
+namespace gui
 {   
 
-// TODO: Rewrite original MouseController to be expandable (eg game uses waypoints)
-// To not copy this code everywhere 
 class MouseController : public engine::input::MouseReceiver
 {
 public:
     MouseController(gui::WindowManager* window_manager, sf::RenderWindow& window, const sf::View& view);
 
 protected:
-    void onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    void onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    void onMouseMoved(const sf::Vector2f& mouse_postion) override;
+    gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override;
 
     sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
 
@@ -29,7 +29,5 @@ protected:
     const sf::View& view_;
 };
 
-
-}  // namespace gui_sandbox
-
+}  // namespace gui
 

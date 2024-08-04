@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <memory>
 
 #include "engine/Application.hpp"
@@ -17,7 +16,7 @@
 #include "game/Context.hpp"
 #include "game/entity/tank/Tank.hpp"
 #include "game/entity/TracksRenderer.hpp"
-#include "game/MouseController.hpp"
+#include "game/WaypointMouseController.hpp"
 #include "game/Navigator.hpp"
 
 #include "graphics/Tilemap.hpp"
@@ -25,6 +24,7 @@
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
 #include "gui/WindowManager.hpp"
+#include "gui/MouseController.hpp"
 
 namespace game 
 {
@@ -67,7 +67,8 @@ protected:
     gui::Label* measurements_average_text_handle_;
 
     std::unique_ptr<gui::WindowManager> window_manager_;
-    std::unique_ptr<game::MouseController> mouse_controller_;
+    std::unique_ptr<game::WaypointMouseController> waypoint_mouse_controller_;
+    std::unique_ptr<gui::MouseController> gui_mouse_controller_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;

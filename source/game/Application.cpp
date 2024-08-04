@@ -67,8 +67,12 @@ void Application::onInit()
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT});
-    mouse_controller_ = std::make_unique<game::MouseController>(window_manager_.get(), waypoints_, window_, camera_view_);
-    mouse_handler_.subscribe(mouse_controller_.get());
+
+    gui_mouse_controller_ = std::make_unique<gui::MouseController>(window_manager_.get(), window_, window_.getDefaultView());
+    waypoint_mouse_controller_ = std::make_unique<game::WaypointMouseController>(window_manager_.get(), waypoints_, window_, camera_view_);
+
+    mouse_handler_.subscribe(gui_mouse_controller_.get());
+    mouse_handler_.subscribe(waypoint_mouse_controller_.get());
 
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);

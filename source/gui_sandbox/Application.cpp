@@ -8,8 +8,6 @@
 #include "gui/Window.hpp"
 #include "gui/ProgressBar.hpp"
 
-#include "gui_sandbox/MouseController.hpp"
-
 #include <iostream>
 
 namespace gui_sandbox
@@ -26,7 +24,7 @@ void Application::onInit()
     window_.setVerticalSyncEnabled(true);
 
     window_manager_ = std::make_unique<gui::WindowManager>(sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT});
-    mouse_controller_ = std::make_unique<gui_sandbox::MouseController>(window_manager_.get(), window_, window_.getDefaultView());
+    mouse_controller_ = std::make_unique<gui::MouseController>(window_manager_.get(), window_, window_.getDefaultView());
     mouse_handler_.subscribe(mouse_controller_.get());
 
     auto quit_button = std::make_unique<gui::Button>("Quit");

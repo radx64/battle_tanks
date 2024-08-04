@@ -17,27 +17,33 @@ MouseController (engine::Scene& scene)
 {}
 
 protected:
-void onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
+gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
 {
-    (void) mouse_postion;
-    (void) button;
+    UNUSED2(mouse_postion, button);
+    return gui::EventStatus::NotConsumed;
 }
-void onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
+gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
 {
-    if (button == sf::Mouse::Button::Left)
+    if (button != sf::Mouse::Button::Left)
     {
-        scene_.spawnObject(std::make_unique<Circle>(
-            rand(), 
-            mouse_postion.x,
-            mouse_postion.y,
-            25,
-            100,
-            engine::RigidBody::Type::DYNAMIC));
+        return gui::EventStatus::NotConsumed;
     }
+
+    scene_.spawnObject(std::make_unique<Circle>(
+        rand(), 
+        mouse_postion.x,
+        mouse_postion.y,
+        25,
+        100,
+        engine::RigidBody::Type::DYNAMIC));
+
+    return gui::EventStatus::Consumed;
 }
-void onMouseMoved(const sf::Vector2f& mouse_postion) override
+
+gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override
 {
-    (void) mouse_postion;
+    UNUSED(mouse_postion);
+    return gui::EventStatus::NotConsumed;
 }
 
 engine::Scene& scene_;
