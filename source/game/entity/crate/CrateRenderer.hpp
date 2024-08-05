@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "engine/Renderer.hpp"
 
 namespace game::entity { class Crate; }

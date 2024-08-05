@@ -37,6 +37,7 @@ void Button::onPositionChange()
 void Button::setText(const sf::String& text)
 {
     text_->setText(text);
+    text_->setSize(getSize());
 }
 
 void Button::onRender(sf::RenderTexture& renderTexture)

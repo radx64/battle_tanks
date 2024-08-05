@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <SFML/System.hpp>
 
 namespace engine::physics

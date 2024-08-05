@@ -64,26 +64,23 @@ void Label::recalculatePositionAndSize()
         x_offset = getSize().x - text_.getLocalBounds().width;
     }
 
-    // TODO: this X-height calculation is hihi hehe
-    // I need to figureout something to have nice centered view
-    // of fonts
-    auto text_data = text_.getString();
-    text_.setString("Ay");
-    auto x_height = text_.getLocalBounds().height;
-    auto char_size = text_.getCharacterSize();
-    text_.setString(text_data);
+    // FIXME: font height is problematic to calculate as SFML is keeping common baseline
+    // so top of a label has an empty space
+    // there are few possible solution for vertically centering this
+    // I need to work on that later
 
     if (isBitSet(alignment_, gui::Alignment::Top))
     {
-        y_offset -= char_size-x_height;
+        y_offset -= 0;
     }
     else if (isBitSet(alignment_, gui::Alignment::VerticallyCentered))
     {
-        y_offset = getSize().y / 2 -  (text_.getCharacterSize() + (char_size-x_height)) / 2;
+        y_offset = getSize().y / 2 - text_.getLocalBounds().height / 2;
+
     }
     else if (isBitSet(alignment_, gui::Alignment::Bottom))
     {
-        y_offset = getSize().y - text_.getCharacterSize();
+        y_offset = getSize().y - text_.getLocalBounds().height;
     }
 
     text_.setPosition(getGlobalPosition() + sf::Vector2f{x_offset, y_offset});

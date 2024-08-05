@@ -114,11 +114,11 @@ const StyleSheet& BasicStyleSheetFactory::instance()
     else
     {
         stylesheet_ = new StyleSheet();
-        stylesheet_->setFont(gui::FontLibrary::get("vt323"));
-        stylesheet_->setFontSize(24);
+        stylesheet_->setFont(gui::FontLibrary::get("armata"));
+        stylesheet_->setFontSize(16);
         stylesheet_->setFontColor(sf::Color::Black);
         stylesheet_->setOutlineColor(sf::Color(127,127,127,255));
-        stylesheet_->setOutlineThickness(2);
+        stylesheet_->setOutlineThickness(1);
         stylesheet_->setWindowColor(sf::Color(200,200,200,200));
         stylesheet_->setInactiveWindowColor(sf::Color(100,100,100,200));
         stylesheet_->setTopBarWindowColor(sf::Color(230,100,100,255));

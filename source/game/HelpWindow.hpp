@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "gui/Alignment.hpp"
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"

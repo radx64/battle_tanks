@@ -1,5 +1,4 @@
 #pragma once
-
 // I know sfml have own event subsystem but I'm redefining it 
 // to separate from SFML later on
 

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "engine/GameObject.hpp"
 
 constexpr float DRAG_COEEF = 0.95f;

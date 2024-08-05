@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <functional>
 
 #include <SFML/Graphics.hpp>
@@ -266,6 +265,7 @@ protected:
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
     bool killed_;
+    //FIXME: focused_ is conflicting with component focus. Should Window even be Component derivative?
     bool focused_;
     State state_;
     sf::Vector2f dragging_offset_;

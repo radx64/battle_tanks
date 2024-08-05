@@ -1,5 +1,4 @@
 #pragma once
-
 #include <engine/input/KeyboardReceiver.hpp>
 
 namespace gui {class WindowManager;}

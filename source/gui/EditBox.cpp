@@ -34,10 +34,15 @@ EditBox::EditBox()
     cursor_.setPosition(getGlobalPosition());
 }
 
+std::string EditBox::getText()
+{
+    return text_.getString();
+}
+
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(background_);
-    renderTexture.draw(cursor_);
+    if (isFocused()) renderTexture.draw(cursor_);
     renderTexture.draw(text_);
     debug::draw_bounds(renderTexture, this);
 }
@@ -51,12 +56,14 @@ void EditBox::onPositionChange()
 {
     text_.setPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
-    cursor_.setPosition(getGlobalPosition());
+    cursor_.setPosition(getGlobalPosition());  // FIXME: this set position is messing up cursor while moving
+
 }
 
 EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    UNUSED(mouseButtonPressedEvent);
+    if (isInside(mouseButtonPressedEvent.position)) focus();
+
     return gui::EventStatus::NotConsumed;
 }
 
@@ -68,17 +75,19 @@ EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEve
 
 EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
-    background_.setFillColor(sf::Color::Magenta);
-     std::string new_text = text_.getString();
+    if(not isFocused()) return gui::EventStatus::NotConsumed;
 
-    if (keyboardKeyPressed.key == sf::Keyboard::Space)
-    {
-        new_text += " ";
+    std::string new_text = text_.getString();
 
-    } else if (keyboardKeyPressed.key == sf::Keyboard::BackSpace)
+    if (keyboardKeyPressed.key == sf::Keyboard::BackSpace)
     {
-        if (new_text.empty()) return gui::EventStatus::NotConsumed;;
+        if (new_text.empty()) return gui::EventStatus::NotConsumed;
         new_text.pop_back();
+    }
+    else if (keyboardKeyPressed.key == sf::Keyboard::Return)
+    {
+        defocus();
+        return gui::EventStatus::Consumed;
     }
     else
     {
@@ -98,8 +107,17 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
 {
     UNUSED(keyboardKeyReleased);
+    return gui::EventStatus::NotConsumed;
+}
+
+void EditBox::onFocus()
+{
+    background_.setFillColor(sf::Color::Magenta);
+}
+
+void EditBox::onFocusLost()
+{
     background_.setFillColor(sf::Color::White);
-    return gui::EventStatus::Consumed;
 }
 
 }  // namespace gui

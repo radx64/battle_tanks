@@ -1,5 +1,4 @@
 #pragma once
-
 #include <SFML/Window/Mouse.hpp>
 
 #include <gui/EventReceiver.hpp>

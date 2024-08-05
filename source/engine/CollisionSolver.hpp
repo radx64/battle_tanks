@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace engine {class Scene;}
 namespace engine {class RigidBody;}
 namespace engine {class GameObject;}

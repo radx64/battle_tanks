@@ -1,5 +1,4 @@
 #pragma once
-
 #include "gui/Event.hpp"
 
 // TODO move it to some utils

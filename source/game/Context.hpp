@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace engine { class ParticleSystem; }
 namespace engine { class Scene; }
 namespace engine { class Camera; }

@@ -20,6 +20,7 @@ Component::Component()
 , children_ {}
 , is_visible_ {true}
 , was_mouse_inside_{false}
+, is_focused_{false}
 {
 }
 
@@ -227,6 +228,11 @@ bool Component::isInside(sf::Vector2f point) const
     return bounds_.contains(point);
 }
 
+bool Component::isInside(const event::MousePosition& position) const\
+{
+    return isInside(toVector2f(position));
+}
+
 bool Component::wasMouseInside() const
 {
     return was_mouse_inside_;
@@ -249,6 +255,66 @@ void Component::addChild(std::unique_ptr<Component> child)
     child->updateGlobalPosition();
     child->onParentSizeChange(getSize());
     children_.push_back(std::move(child));
+}
+
+void Component::focus()
+{
+    is_focused_ = true;
+
+    for (auto& child : children_)
+    {
+        child->defocus();
+    }
+
+    if (parent_)
+    {
+        parent_->defocusChildrenExcept(this);
+    }
+
+    onFocus();
+}
+
+void Component::defocus()
+{
+    is_focused_ = false;
+
+    for (auto& child : children_)
+    {
+        child->defocus();
+    }
+
+    onFocusLost();
+}
+
+bool Component::isFocused()
+{
+    return is_focused_;
+}
+
+void Component::defocusChildrenExcept(const Component* focused_child)
+{
+    for (auto& child : children_)
+    {
+        if (child.get() != focused_child)
+        {
+            child->defocus();
+        }
+    }
+
+    if (parent_)
+    {
+        parent_->defocusChildrenExcept(this);
+    }
+}
+
+void Component::onFocus()
+{
+
+}
+
+void Component::onFocusLost()
+{
+
 }
 
 void Component::updateGlobalPosition()

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <cstdint>
 #include <SFML/Graphics/Color.hpp>
 

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <memory>
 
 namespace game::entity { class Tank; }

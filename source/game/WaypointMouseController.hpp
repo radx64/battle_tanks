@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <SFML/Graphics.hpp>
 
 #include "engine/input/MouseReceiver.hpp"

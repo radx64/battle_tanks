@@ -1,5 +1,4 @@
 #pragma once
-
 #include <SFML/Window/Keyboard.hpp>
 
 #include <string_view>

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "engine/input/MouseReceiver.hpp"
 #include "engine/Scene.hpp"
 

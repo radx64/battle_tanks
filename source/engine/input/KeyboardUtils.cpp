@@ -6,7 +6,8 @@ namespace engine::input
 std::string_view keyToString(sf::Keyboard::Key key)
 {
     #define KEY_LUT_ITEM(x) case sf::Keyboard::x : return #x;
-
+    #define KEY_LUT_ITEM_CUSTOM(x,y)  case sf::Keyboard::x : return y;
+ 
     switch (key)
     {
         KEY_LUT_ITEM(Unknown);
@@ -36,16 +37,16 @@ std::string_view keyToString(sf::Keyboard::Key key)
         KEY_LUT_ITEM(X);
         KEY_LUT_ITEM(Y);
         KEY_LUT_ITEM(Z);
-        KEY_LUT_ITEM(Num0);
-        KEY_LUT_ITEM(Num1);
-        KEY_LUT_ITEM(Num2);
-        KEY_LUT_ITEM(Num3);
-        KEY_LUT_ITEM(Num4);
-        KEY_LUT_ITEM(Num5);
-        KEY_LUT_ITEM(Num6);
-        KEY_LUT_ITEM(Num7);
-        KEY_LUT_ITEM(Num8);
-        KEY_LUT_ITEM(Num9);
+        KEY_LUT_ITEM_CUSTOM(Num0, "0");
+        KEY_LUT_ITEM_CUSTOM(Num1, "1");
+        KEY_LUT_ITEM_CUSTOM(Num2, "2");
+        KEY_LUT_ITEM_CUSTOM(Num3, "3");
+        KEY_LUT_ITEM_CUSTOM(Num4, "4");
+        KEY_LUT_ITEM_CUSTOM(Num5, "5");
+        KEY_LUT_ITEM_CUSTOM(Num6, "6");
+        KEY_LUT_ITEM_CUSTOM(Num7, "7");
+        KEY_LUT_ITEM_CUSTOM(Num8, "8");
+        KEY_LUT_ITEM_CUSTOM(Num9, "9");
         KEY_LUT_ITEM(Escape);
         KEY_LUT_ITEM(LControl);
         KEY_LUT_ITEM(LShift);
@@ -58,16 +59,16 @@ std::string_view keyToString(sf::Keyboard::Key key)
         KEY_LUT_ITEM(Menu);
         KEY_LUT_ITEM(LBracket);
         KEY_LUT_ITEM(RBracket);
-        KEY_LUT_ITEM(SemiColon);
-        KEY_LUT_ITEM(Comma);
-        KEY_LUT_ITEM(Period);
-        KEY_LUT_ITEM(Quote);
-        KEY_LUT_ITEM(Slash);
-        KEY_LUT_ITEM(BackSlash);
-        KEY_LUT_ITEM(Tilde);
+        KEY_LUT_ITEM_CUSTOM(SemiColon, ":");
+        KEY_LUT_ITEM_CUSTOM(Comma, ",");
+        KEY_LUT_ITEM_CUSTOM(Period, ".");
+        KEY_LUT_ITEM_CUSTOM(Quote, "\"");
+        KEY_LUT_ITEM_CUSTOM(Slash, "/");
+        KEY_LUT_ITEM_CUSTOM(BackSlash , "\\");
+        KEY_LUT_ITEM_CUSTOM(Tilde, "`");
         KEY_LUT_ITEM(Equal);
         KEY_LUT_ITEM(Dash);
-        KEY_LUT_ITEM(Space);
+        KEY_LUT_ITEM_CUSTOM(Space, " ");
         KEY_LUT_ITEM(Return);
         KEY_LUT_ITEM(BackSpace);
         KEY_LUT_ITEM(Tab);

@@ -112,22 +112,17 @@ void Application::onInit()
         window->setTitle("I can now read text from keyboard :D");
 
         auto vertical_layout = std::make_unique<gui::VerticalLayout>();
-        auto minus_button = std::make_unique<gui::Button>("\\/\\/\\/\\/");
+        auto button = std::make_unique<gui::Button>("CLICK HERE");
         auto edit_box = std::make_unique<gui::EditBox>();
-        auto plus_button = std::make_unique<gui::Button>("/\\/\\/\\/\\");
+        auto edit_box_2 = std::make_unique<gui::EditBox>();
 
-
-        minus_button->onClick([edit_box_ptr = edit_box.get()]{
-            
+        button->onClick([edit_box_ptr = edit_box.get(), edit_box_2_ptr = edit_box_2.get(), button_ptr = button.get()]{ 
+            button_ptr->setText(edit_box_ptr->getText() + " | " + edit_box_2_ptr->getText());
         });
 
-        plus_button->onClick([edit_box_ptr = edit_box.get()]{
-            
-        });
-
-        vertical_layout->addChild(std::move(minus_button));
+        vertical_layout->addChild(std::move(button));
         vertical_layout->addChild(std::move(edit_box));
-        vertical_layout->addChild(std::move(plus_button));
+        vertical_layout->addChild(std::move(edit_box_2));
 
         window->addChild(std::move(vertical_layout));
 
@@ -221,6 +216,25 @@ void Application::onInit()
     window_manager_->mainWindow()->addChild(std::move(vcenter_label));
     window_manager_->mainWindow()->addChild(std::move(bottom_label));
 
+
+    auto multiline_top_aligned_label = std::make_unique<gui::Label>("Top multiline\nlabel is here\nand a bit there");
+    multiline_top_aligned_label->setPosition({100.f, 300.f});
+    multiline_top_aligned_label->setSize({400.f, 40.f});
+    multiline_top_aligned_label->setAlignment(gui::Alignment::Top);
+
+    auto multiline_center_aligned_label = std::make_unique<gui::Label>("Centered multiline\nlabel is here\nand a bit there");
+    multiline_center_aligned_label->setPosition({100.f, 400.f});
+    multiline_center_aligned_label->setSize({400.f, 40.f});
+    multiline_center_aligned_label->setAlignment(gui::Alignment::VerticallyCentered);
+
+    auto multiline_bottom_aligned_label = std::make_unique<gui::Label>("Bottom multiline\nlabel is here\nand a bit there");
+    multiline_bottom_aligned_label->setPosition({100.f, 500.f});
+    multiline_bottom_aligned_label->setSize({400.f, 40.f});
+    multiline_bottom_aligned_label->setAlignment(gui::Alignment::Bottom);
+
+    window_manager_->mainWindow()->addChild(std::move(multiline_top_aligned_label));
+    window_manager_->mainWindow()->addChild(std::move(multiline_center_aligned_label));
+    window_manager_->mainWindow()->addChild(std::move(multiline_bottom_aligned_label));
 }
 
 void Application::onClose()

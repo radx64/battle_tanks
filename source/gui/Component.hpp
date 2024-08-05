@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include <memory>
 
 #include <SFML/Graphics.hpp>
@@ -37,10 +35,20 @@ public:
     void setPosition(const sf::Vector2f& position);
     
     bool isInside(sf::Vector2f point) const;
+    bool isInside(const event::MousePosition& position) const;
+
     bool wasMouseInside() const;
 
     const sf::Vector2f getGlobalPosition() const;
     virtual void addChild(std::unique_ptr<Component> child);
+
+    void focus();
+    void defocus();
+    bool isFocused();
+    void defocusChildrenExcept(const Component* focused_child);
+
+    virtual void onFocus();
+    virtual void onFocusLost(); 
 
     void disableChildrenEvents();
     void enableChildrenEvents();
@@ -88,6 +96,7 @@ protected:
     std::vector<std::unique_ptr<Component>> children_;
     bool is_visible_;
     bool was_mouse_inside_;
+    bool is_focused_;
 };
 
 }  // namespace gui

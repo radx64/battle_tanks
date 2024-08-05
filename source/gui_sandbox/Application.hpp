@@ -1,5 +1,4 @@
 #pragma once
-
 #include "engine/Application.hpp"
 #include "gui/WindowManager.hpp"
 #include "gui/KeyboardController.hpp"
