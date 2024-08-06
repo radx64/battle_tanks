@@ -32,10 +32,25 @@ void Application::onInit()
     keyboard_handler_.subscribe(keyboard_controller_.get());
 
     auto quit_button = std::make_unique<gui::Button>("Quit");
-    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
+    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quit_button->setSize(sf::Vector2f(250.f, 30.f));
     quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});   
     window_manager_->mainWindow()->addChild(std::move(quit_button));
+
+    auto create_empty_window_button = std::make_unique<gui::Button>("Create Empty Window");
+    create_empty_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
+    create_empty_window_button->setSize(sf::Vector2f(250.f, 30.f));
+
+    create_empty_window_button->onClick([this](){
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(400.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
+        window->setTitle("Nothing here!");
+
+        window_manager_->addWindow(std::move(window));
+    });
+
+    window_manager_->mainWindow()->addChild(std::move(create_empty_window_button));
 
     auto create_window_button = std::make_unique<gui::Button>("Create Simple Window");
     create_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
@@ -253,6 +268,7 @@ void Application::onUpdate(float timeStep)
 
 void Application::onRender()
 {
+    window_.clear(sf::Color(37, 150, 190));
     window_manager_->render(window_);
 }
 

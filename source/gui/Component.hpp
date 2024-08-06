@@ -44,7 +44,7 @@ public:
 
     void focus();
     void defocus();
-    bool isFocused();
+    bool isFocused() const;
     void defocusChildrenExcept(const Component* focused_child);
 
     virtual void onFocus();

@@ -88,7 +88,7 @@ void StyleSheet::setInactiveWindowColor(const sf::Color& color)
     window_inactive_color_ = color;
 }  
 
-const sf::Color& StyleSheet::getTopBarWindowColor() const
+const sf::Color& StyleSheet::getWindowHeaderColor() const
 {
     return window_top_bar_color_;
 }
@@ -98,7 +98,7 @@ void StyleSheet::setTopBarWindowColor(const sf::Color& color)
     window_top_bar_color_ = color;
 }
 
-const sf::Color& StyleSheet::getInactiveTopBarWindowColor() const
+const sf::Color& StyleSheet::getInactiveWindowHeaderColor() const
 {
     return window_inanctive_top_bar_color_;
 }

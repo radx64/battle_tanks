@@ -1,5 +1,7 @@
 #include "gui/Component.hpp"
 
+#include "gui/Debug.hpp"
+
 namespace gui
 {
 
@@ -32,6 +34,7 @@ void Component::render(sf::RenderTexture& renderTexture)
     {
         child->render(renderTexture); 
     }
+    debug::draw_bounds(renderTexture, this);
 }
 
 template <typename T>
@@ -286,7 +289,7 @@ void Component::defocus()
     onFocusLost();
 }
 
-bool Component::isFocused()
+bool Component::isFocused() const
 {
     return is_focused_;
 }

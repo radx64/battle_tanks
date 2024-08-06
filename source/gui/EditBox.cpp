@@ -6,7 +6,7 @@
 
 #include "engine/input/KeyboardUtils.hpp"
 
-constexpr float CURSOR_WIDTH = 5.f;
+constexpr float CURSOR_WIDTH = 3.f;
 
 namespace gui
 {
@@ -22,7 +22,7 @@ EditBox::EditBox()
     setPosition({0.0f, 0.0f});
     text_.setPosition(Component::getGlobalPosition());
 
-    background_.setFillColor(sf::Color::White);
+    background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
     background_.setOutlineThickness(style.getOutlineThickness()); 
     background_.setPosition(getGlobalPosition());
@@ -30,7 +30,7 @@ EditBox::EditBox()
 
     cursor_.setFillColor(sf::Color::Black);
     cursor_.setOutlineColor(sf::Color::Black);
-    cursor_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+10.f});
+    cursor_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+5.f});
     cursor_.setPosition(getGlobalPosition());
 }
 
@@ -44,7 +44,6 @@ void EditBox::onRender(sf::RenderTexture& renderTexture)
     renderTexture.draw(background_);
     if (isFocused()) renderTexture.draw(cursor_);
     renderTexture.draw(text_);
-    debug::draw_bounds(renderTexture, this);
 }
 
 void EditBox::onSizeChange()
@@ -112,12 +111,12 @@ EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
 
 void EditBox::onFocus()
 {
-    background_.setFillColor(sf::Color::Magenta);
+    background_.setFillColor(sf::Color::White);
 }
 
 void EditBox::onFocusLost()
 {
-    background_.setFillColor(sf::Color::White);
+    background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
 }
 
 }  // namespace gui

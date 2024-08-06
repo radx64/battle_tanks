@@ -29,9 +29,9 @@ public:
     void setWindowColor(const sf::Color& color);
     const sf::Color& getInactiveWindowColor() const;
     void setInactiveWindowColor(const sf::Color& color);
-    const sf::Color& getTopBarWindowColor() const;
+    const sf::Color& getWindowHeaderColor() const;
     void setTopBarWindowColor(const sf::Color& color);
-    const sf::Color& getInactiveTopBarWindowColor() const;
+    const sf::Color& getInactiveWindowHeaderColor() const;
     void setInactiveTopBarWindowColor(const sf::Color& color);
 protected:
     sf::Font& font_;

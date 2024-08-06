@@ -18,7 +18,7 @@ ProgressBar::ProgressBar()
     background_.setSize(Component::getSize());
 
     //FIXME: I need to redesign style "subsystem" :)
-    bar_.setFillColor(style.getTopBarWindowColor());
+    bar_.setFillColor(style.getWindowHeaderColor());
     bar_.setOutlineColor(style.getOutlineColor());
     bar_.setOutlineThickness(style.getOutlineThickness()); 
     bar_.setPosition(getGlobalPosition());

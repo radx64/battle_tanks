@@ -5,8 +5,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Button.hpp"
-#include "gui/Label.hpp"
 #include "gui/Component.hpp"
+#include "gui/Label.hpp"
+#include "gui/Panel.hpp"
 
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
@@ -15,53 +16,52 @@ namespace gui
 
 Window::Window()
 : killed_{false}
-, focused_{false}
+, active_{false}
 , state_{State::Idle}
 {   
-    auto top_bar = std::make_unique<gui::TopBar>();
+    auto header = std::make_unique<window::Header>();
+    header_ = header.get();
+    header_->closeButtonAction([window = this](){window->close();});
+    header_->setSize({getSize().x, window::config::HEADER_HEIGHT});
+    Component::addChild(std::move(header));
 
-    top_bar->closeButtonAction([window = this](){window->close();});
-
-    top_bar_handle_ = top_bar.get();
-    top_bar_handle_->setSize({getSize().x, TOP_BAR_HEIGHT});
-    Component::addChild(std::move(top_bar));
-
-    auto window_panel = std::make_unique<gui::WindowPanel>();
-    window_panel_handle_ = window_panel.get();
+    auto window_panel = std::make_unique<gui::Panel>();
+    window_panel_ = window_panel.get();
     Component::addChild(std::move(window_panel));
 
-    auto bottom_bar = std::make_unique<gui::BottomBar>();
-    bottom_bar->setSize(getSize());
-    bottom_bar_handle_ = bottom_bar.get();
-    Component::addChild(std::move(bottom_bar));
+    auto status_bar = std::make_unique<gui::window::StatusBar>();
+    status_bar_ = status_bar.get();
+    status_bar_->setSize(getSize());
+
+    Component::addChild(std::move(status_bar));
 }
 
 void Window::addChild(std::unique_ptr<Component> component)
 {
-    window_panel_handle_->addChild(std::move(component));
+    window_panel_->addChild(std::move(component));
 }
 
 void Window::setTitle(const std::string_view& text)
 {
-    top_bar_handle_->setTitle(text);
+    header_->setTitle(text);
 }
 
-bool Window::isInsideTopBar(const sf::Vector2f point)
+bool Window::isInsideHeader(const sf::Vector2f point)
 {
-    return top_bar_handle_->isInside(point);
+    return header_->isInside(point);
 }
 
-bool Window::isInsideResizeThingy(const sf::Vector2f point)
+bool Window::isInsideResizeGadget(const sf::Vector2f point)
 {
-    return bottom_bar_handle_->isInsideResizeThingy(point);
+    return status_bar_->isInsideResizeGadget(point);
 }
 
-void Window::onRender(sf::RenderTexture& renderWindow)
+void Window::onRender(sf::RenderTexture& renderTexture)
 {
-    static_cast<void>(renderWindow);
+    static_cast<void>(renderTexture);
 }
 
-bool Window::isState(const Window::State& state) const
+bool Window::isInState(const Window::State& state) const
 {
     return state_ == state;
 }
@@ -77,26 +77,27 @@ bool Window::isDead() const
     return killed_;
 }
 
-void Window::focus()
+void Window::activate()
 {
-    focused_ = true;
-    top_bar_handle_->onFocus();
-    window_panel_handle_->onFocus();
-    bottom_bar_handle_->onFocus();
+    active_ = true;
+    header_->activate();
+    status_bar_->activate();
+}
+void Window::deactivate()
+{
+    active_ = false;
+    header_->deactivate();
+    status_bar_->deactivate();
 }
 
-void Window::defocus()
+bool Window::isActive() const
 {
-    focused_ = false;
-    top_bar_handle_->onFocusLost();
-    window_panel_handle_->onFocusLost();
-    bottom_bar_handle_->onFocusLost();
-    state_ = State::Idle;
+    return active_;
 }
 
-bool Window::isFocused() const
+bool Window::isIdle() const
 {
-    return focused_;
+    return isInState(Window::State::Idle);
 }
 
 EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
@@ -104,7 +105,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
     // If mouse clicked on top bar and was not yet dragging window
-    if (isInsideTopBar(mousePosition) and isState(State::Idle))
+    if (isInsideHeader(mousePosition) and isInState(State::Idle))
     {
         state_ = State::Dragging; 
         disableChildrenEvents();
@@ -112,7 +113,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         return gui::EventStatus::Consumed;
     }
 
-    if (isInsideResizeThingy(mousePosition) and isState(State::Idle))
+    if (isInsideResizeGadget(mousePosition) and isInState(State::Idle))
     {
         state_ = State::Resizing;
         disableChildrenEvents();
@@ -140,26 +141,23 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 {
     auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
-    if (isState(State::Dragging))
+    if (isInState(State::Dragging))
     {
         disableChildrenEvents();
         setPosition(mousePosition + dragging_offset_);
         return gui::EventStatus::Consumed;
     }
 
-    if (isState(State::Resizing))
+    if (isInState(State::Resizing))
     {
         disableChildrenEvents();
         auto window_top_left_corner = getGlobalPosition();
         //auto old_window_size = getSize();
-        auto new_window_size = mousePosition - window_top_left_corner + sf::Vector2f{RESIZE_THINGY_SIZE, RESIZE_THINGY_SIZE}/2.f;
+        auto new_window_size = mousePosition - window_top_left_corner 
+            + sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;
         new_window_size.x = std::max(new_window_size.x, MINIMUM_WINDOW_WIDTH);
         new_window_size.y = std::max(new_window_size.y, MINIMUM_WINDOW_HEIGHT);
         setSize(new_window_size);
-
-        // TODO: This is a hack as recalulating children size on resize is not working properlu
-        // I need to investigate that
-        //setPosition(getPosition());
         return gui::EventStatus::Consumed;
     }
 
@@ -168,18 +166,18 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 
 void Window::onPositionChange()
 {
-    top_bar_handle_->setPosition({0.f, 0.f});
-    window_panel_handle_->setPosition({0.f, TOP_BAR_HEIGHT});
-    bottom_bar_handle_->setPosition({0.f, getSize().y-RESIZE_THINGY_SIZE});
+    header_->setPosition({0.f,0.f});
+    window_panel_->setPosition({0.f, window::config::HEADER_HEIGHT});
+    status_bar_->setPosition({0.f, getSize().y - window::config::RESIZE_BOX_SIZE});
 }
 
 void Window::onSizeChange()
 {
     auto size = getSize();
-    top_bar_handle_->setSize({size.x, TOP_BAR_HEIGHT});
-    window_panel_handle_->setSize({size.x, size.y - TOP_BAR_HEIGHT - RESIZE_THINGY_SIZE}); 
-    bottom_bar_handle_->setSize({size.x, RESIZE_THINGY_SIZE});
-    bottom_bar_handle_->setPosition({0.f, getSize().y-RESIZE_THINGY_SIZE});
+    header_->setSize({size.x, window::config::HEADER_HEIGHT});
+    window_panel_->setSize({size.x, size.y - window::config::HEADER_HEIGHT - window::config::RESIZE_BOX_SIZE}); 
+    status_bar_->setSize({size.x, window::config::RESIZE_BOX_SIZE});
+    status_bar_->setPosition({0.f, getSize().y - window::config::RESIZE_BOX_SIZE});
 }
 
 }  // namespace gui

@@ -20,15 +20,16 @@ public:
 
     WindowManager(const sf::Vector2f& mainWindowSize);
     virtual ~WindowManager();
+    
     void addWindow(std::unique_ptr<Window> window);
     void render(sf::RenderWindow& renderWindow);
+
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
 
     EventStatus receive (const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
     EventStatus receive (const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
-
 
     MainWindow* mainWindow();
 

@@ -24,8 +24,6 @@ Label::Label(const std::string_view& text)
 void Label::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(text_);
-
-    debug::draw_bounds(renderTexture, this);
 }
 
 void Label::setText(const sf::String& text)

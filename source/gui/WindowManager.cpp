@@ -21,10 +21,10 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
 {
     if (active_window_handle_)
     {
-        active_window_handle_->defocus();
+        active_window_handle_->deactivate();
     }
     active_window_handle_ = window.get();
-    active_window_handle_->focus();
+    active_window_handle_->activate();
     windows_.push_front(std::move(window));
 }
 
@@ -77,9 +77,9 @@ EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonP
         
         if (active_window_handle_ != window) // Replace active window
         {
-            if (active_window_handle_) active_window_handle_->defocus();
+            if (active_window_handle_) active_window_handle_->deactivate();
             active_window_handle_ = window; 
-            active_window_handle_->focus();
+            active_window_handle_->activate();
             // bring window to front (rendering back to forth, so top window is at start of this list)
             windows_.splice(windows_.begin(), windows_, window_it);
         }
@@ -166,7 +166,7 @@ EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButton
     EventStatus result{EventStatus::NotConsumed};
 
     //Forward event to active window
-    if (active_window_handle_ && active_window_handle_->isFocused())
+    if (active_window_handle_ && active_window_handle_->isActive())
     {
         result = active_window_handle_->receive(mouseButtonReleasedEvent);
     }
@@ -185,7 +185,7 @@ EventStatus WindowManager::receive (const event::KeyboardKeyPressed& keyboardKey
     EventStatus result{EventStatus::NotConsumed};
 
     //Forward event to active window
-    if (active_window_handle_ && active_window_handle_->isFocused())
+    if (active_window_handle_ && active_window_handle_->isActive())
     {
         result = active_window_handle_->receive(keyboardKeyPressedEvent);
     }
@@ -203,7 +203,7 @@ EventStatus WindowManager::receive (const event::KeyboardKeyReleased& keyboardKe
     EventStatus result{EventStatus::NotConsumed};
 
     //Forward event to active window
-    if (active_window_handle_ && active_window_handle_->isFocused())
+    if (active_window_handle_ && active_window_handle_->isActive())
     {
         result = active_window_handle_->receive(keyboardKeyReleasedEvent);
     }
