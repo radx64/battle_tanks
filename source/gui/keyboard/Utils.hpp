@@ -3,9 +3,9 @@
 
 #include <string_view>
 
-namespace engine::input
+namespace gui::keyboard
 {
 
     std::string_view keyToString(sf::Keyboard::Key key);
 
-}  // namespace engine::input
+}  // namespace gui::keyboard

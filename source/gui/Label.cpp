@@ -26,9 +26,9 @@ void Label::onRender(sf::RenderTexture& renderTexture)
     renderTexture.draw(text_);
 }
 
-void Label::setText(const sf::String& text)
+void Label::setText(const std::string_view& text)
 {
-    text_.setString(text);
+    text_.setString(text.data());
     bounds_.width = text_.getLocalBounds().width;
     bounds_.height = text_.getLocalBounds().height;
     recalculatePositionAndSize();

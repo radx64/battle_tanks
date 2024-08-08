@@ -1,6 +1,8 @@
 #pragma once
 
 #include <functional>
+#include <string_view>
+
 #include <SFML/Graphics.hpp>
 
 #include "gui/Component.hpp"
@@ -14,11 +16,10 @@ class Button : public Component
 {
 public:
     Button(const std::string_view& text);
-    ~Button();
 
     void onSizeChange() override;
     void onPositionChange() override;
-    void setText(const sf::String& text);
+    void setText(const std::string_view& text);
     void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
 

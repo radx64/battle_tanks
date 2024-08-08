@@ -1,10 +1,8 @@
-#include <gui/EditBox.hpp>
-
-#include "gui/StyleSheet.hpp"
+#include "gui/EditBox.hpp"
 
 #include "gui/Debug.hpp"
-
-#include "engine/input/KeyboardUtils.hpp"
+#include "gui/keyboard/Utils.hpp"
+#include "gui/StyleSheet.hpp"
 
 constexpr float CURSOR_WIDTH = 3.f;
 
@@ -20,7 +18,7 @@ EditBox::EditBox()
     text_.setOutlineColor(style.getOutlineColor());
     text_.setOutlineThickness(style.getOutlineThickness());
     setPosition({0.0f, 0.0f});
-    text_.setPosition(Component::getGlobalPosition());
+    text_.setGlobalPosition(Component::getGlobalPosition());
 
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
@@ -36,7 +34,7 @@ EditBox::EditBox()
 
 std::string EditBox::getText()
 {
-    return text_.getString();
+    return text_.getText();
 }
 
 void EditBox::onRender(sf::RenderTexture& renderTexture)
@@ -49,11 +47,12 @@ void EditBox::onRender(sf::RenderTexture& renderTexture)
 void EditBox::onSizeChange()
 {
     background_.setSize(Component::getSize());
+    text_.setSize(Component::getSize());
 }
 
 void EditBox::onPositionChange()
 {
-    text_.setPosition(Component::getGlobalPosition());
+    text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
     cursor_.setPosition(getGlobalPosition());  // FIXME: this set position is messing up cursor while moving
 
@@ -76,7 +75,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
     if(not isFocused()) return gui::EventStatus::NotConsumed;
 
-    std::string new_text = text_.getString();
+    std::string new_text = text_.getText();
 
     if (keyboardKeyPressed.key == sf::Keyboard::BackSpace)
     {
@@ -90,15 +89,36 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
     }
     else
     {
-        new_text += engine::input::keyToString(keyboardKeyPressed.key).data();
+        new_text += keyboard::keyToString(keyboardKeyPressed.key).data();
     }
 
-    text_.setString(new_text);
+    text_.setText(new_text);
 
-    auto position = cursor_.getPosition();
-    position.y = text_.getPosition().y;
-    position.x = text_.getPosition().x + text_.getLocalBounds().width;
-    cursor_.setPosition(position);
+    auto cursor_position = cursor_.getPosition();
+    cursor_position.y = text_.getGlobalPosition().y;
+    cursor_position.x = text_.getGlobalPosition().x + text_.getTextWidth();
+
+    float cursor_position_x_offset_to_end = text_.getGlobalPosition().x + text_.getSize().x - cursor_position.x; 
+
+    if (cursor_position_x_offset_to_end < 0) 
+    {
+        cursor_position.x = text_.getGlobalPosition().x + text_.getSize().x - CURSOR_WIDTH;
+    }
+    
+    //TODO the same calculation need to be done on box resize
+    float text_x_offset = text_.getSize().x - text_.getTextWidth();
+
+    if (text_x_offset < 0)
+    {
+        text_.setOffset({text_x_offset, 0.f});
+    }
+    else
+    {
+        text_.setOffset({0.f, 0.f});
+    }
+    
+
+    cursor_.setPosition(cursor_position);
 
     return gui::EventStatus::Consumed;
 }

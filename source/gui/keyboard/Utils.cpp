@@ -1,6 +1,6 @@
-#include "engine/input/KeyboardUtils.hpp"
+#include "gui/keyboard/Utils.hpp"
 
-namespace engine::input
+namespace gui::keyboard
 {
 
 std::string_view keyToString(sf::Keyboard::Key key)
@@ -118,4 +118,4 @@ std::string_view keyToString(sf::Keyboard::Key key)
     #undef KEY_LUT_ITEM
 }
 
-}  // namespace engine::input
+}  // namespace gui::keyboard

@@ -13,12 +13,11 @@ class Label : public Component
 public:
     Label(const std::string_view& text);
 
-    void onRender(sf::RenderTexture& renderTexture) override;
-    void setText(const sf::String& text);
+    void setText(const std::string_view& text);
     void setAlignment(const gui::Alignment& alignment);
 
-
 protected:
+    void onRender(sf::RenderTexture& renderTexture) override;
     void onSizeChange() override;
     void onPositionChange() override;
     void recalculatePositionAndSize();

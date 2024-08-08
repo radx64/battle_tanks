@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/EventReceiver.hpp"
+#include "gui/Window.hpp"
 
 namespace gui { class Window; }
 namespace gui { class MainWindow; }
@@ -28,15 +29,15 @@ public:
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
 
-    EventStatus receive (const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
-    EventStatus receive (const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
+    EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
+    EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
 
-    MainWindow* mainWindow();
+    MainWindow& mainWindow();
 
 protected:
     std::list<std::unique_ptr<Window>> windows_;
     Window* active_window_handle_;
-    std::unique_ptr<MainWindow> main_window_;
+    MainWindow main_window_;
     sf::RenderTexture render_texture_;
 };
 

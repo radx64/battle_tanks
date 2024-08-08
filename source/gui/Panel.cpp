@@ -17,7 +17,6 @@ void Panel::onSizeChange()
     background_.setSize(getSize());
 }
 
-
 void Panel::onPositionChange()
 {
     background_.setPosition(Component::getGlobalPosition());

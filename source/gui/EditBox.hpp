@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-#include <gui/Component.hpp>
+#include "gui/Component.hpp"
+#include "gui/Text.hpp"
 
 namespace gui
 {
@@ -29,7 +30,7 @@ protected:
 
     sf::RectangleShape background_;
     sf::RectangleShape cursor_;
-    sf::Text text_;
+    gui::Text text_;
 };
 
 }  // namespace gui

@@ -20,8 +20,6 @@ Button::Button(const std::string_view& text)
     addChild(std::move(text_ptr));
 }
 
-Button::~Button() = default;
-
 void Button::onSizeChange()
 {
     auto button_size = getSize();
@@ -34,7 +32,7 @@ void Button::onPositionChange()
     background_.setPosition(Component::getGlobalPosition());
 }
 
-void Button::setText(const sf::String& text)
+void Button::setText(const std::string_view& text)
 {
     text_->setText(text);
     text_->setSize(getSize());

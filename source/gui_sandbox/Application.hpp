@@ -18,7 +18,7 @@ protected:
     void onUpdate(float timeStep) override;
     void onRender() override; 
 
-    std::unique_ptr<gui::WindowManager> window_manager_;
+    gui::WindowManager window_manager_;
     std::unique_ptr<gui::MouseController> mouse_controller_;
     std::unique_ptr<gui::KeyboardController> keyboard_controller_;
 };

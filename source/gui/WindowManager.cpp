@@ -8,10 +8,10 @@ namespace gui
 {
 
 WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
-: active_window_handle_ {nullptr}
+: active_window_handle_{nullptr}
+, main_window_{}
 {
-    main_window_ = std::make_unique<MainWindow>();
-    main_window_->setSize(mainWindowSize);
+    main_window_.setSize(mainWindowSize);
     render_texture_.create(mainWindowSize.x, mainWindowSize.y);
 }
 
@@ -31,7 +31,7 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
 void WindowManager::render(sf::RenderWindow& renderWindow)
 {
     render_texture_.clear(sf::Color{0,0,0,0});
-    main_window_->render(render_texture_);
+    main_window_.render(render_texture_);
     
     for (auto window = windows_.rbegin(); window != windows_.rend(); ++window  )
     {
@@ -42,9 +42,9 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderWindow.draw(texture);
 }
 
-MainWindow* WindowManager::mainWindow()
+MainWindow& WindowManager::mainWindow()
 {
-    return main_window_.get();
+    return main_window_;
 }
 
 EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
@@ -97,7 +97,7 @@ EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonP
         window_it++;
     }
 
-    return main_window_->receive(mouseButtonPressedEvent);
+    return main_window_.receive(mouseButtonPressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
@@ -155,7 +155,7 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
 
     if (status == EventStatus::NotConsumed)
     {
-        status = main_window_->receive(mouseMovedEvent);
+        status = main_window_.receive(mouseMovedEvent);
     }
 
     return status;
@@ -173,7 +173,7 @@ EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButton
 
     if (result ==  EventStatus::NotConsumed)
     {
-        return main_window_->receive(mouseButtonReleasedEvent);
+        return main_window_.receive(mouseButtonReleasedEvent);
     }
 
     //There is no active window
@@ -192,7 +192,7 @@ EventStatus WindowManager::receive (const event::KeyboardKeyPressed& keyboardKey
 
     if (result ==  EventStatus::NotConsumed)
     {
-        return main_window_->receive(keyboardKeyPressedEvent);
+        return main_window_.receive(keyboardKeyPressedEvent);
     }
 
     return result;
@@ -210,7 +210,7 @@ EventStatus WindowManager::receive (const event::KeyboardKeyReleased& keyboardKe
 
     if (result ==  EventStatus::NotConsumed)
     {
-        return main_window_->receive(keyboardKeyReleasedEvent);
+        return main_window_.receive(keyboardKeyReleasedEvent);
     }
 
     return result;
