@@ -130,6 +130,11 @@ EventStatus Component::receive(const event::KeyboardKeyReleased& keyboardKeyRele
     return processEvent(keyboardKeyReleased, true);
 }
 
+EventStatus Component::receive(const event::TextEntered& textEntered)
+{
+    return processEvent(textEntered, true);
+}
+
 EventStatus Component::on(const event::MouseMoved& mouseMovedEvent)
 {
     UNUSED(mouseMovedEvent);
@@ -166,6 +171,12 @@ EventStatus Component::on(const event::KeyboardKeyPressed& keyboardKeyPressedEve
 EventStatus Component::on(const event::KeyboardKeyReleased& KeyboardKeyReleased)
 {
     UNUSED(KeyboardKeyReleased);
+    return EventStatus::NotConsumed;
+}
+
+EventStatus Component::on(const event::TextEntered& textEntered)
+{
+    UNUSED(textEntered);
     return EventStatus::NotConsumed;
 }
 

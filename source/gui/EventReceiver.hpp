@@ -20,6 +20,8 @@ enum class EventStatus
 class EventReceiver
 {
 public:
+
+    // TODO make some macro to generate below empty implenentation
     virtual EventStatus receive(const event::MouseMoved& mouseMovedEvent)
     {
         UNUSED(mouseMovedEvent);
@@ -58,6 +60,12 @@ public:
     virtual EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
     {
         UNUSED(keyboardKeyReleased);
+        return EventStatus::NotConsumed;
+    }
+
+    virtual EventStatus receive(const event::TextEntered& textEntered)
+    {
+        UNUSED(textEntered);
         return EventStatus::NotConsumed;
     }
 };

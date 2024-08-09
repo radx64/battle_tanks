@@ -48,19 +48,51 @@ void EditBox::onSizeChange()
 {
     background_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
+    updateTextVisbleArea();
 }
 
 void EditBox::onPositionChange()
 {
     text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
-    cursor_.setPosition(getGlobalPosition());  // FIXME: this set position is messing up cursor while moving
+    updateCursor();
+}
 
+void EditBox::updateCursor()
+{
+    auto cursor_position = cursor_.getPosition();
+    cursor_position.y = text_.getGlobalPosition().y;
+    cursor_position.x = text_.getGlobalPosition().x + text_.getTextWidth();
+
+    float cursor_position_x_offset_to_end = text_.getGlobalPosition().x + text_.getSize().x - cursor_position.x; 
+
+    if (cursor_position_x_offset_to_end < 0) 
+    {
+        cursor_position.x = text_.getGlobalPosition().x + text_.getSize().x - CURSOR_WIDTH;
+    }
+    cursor_.setPosition(cursor_position);
+}
+
+void EditBox::updateTextVisbleArea()
+{
+    float text_x_offset = text_.getSize().x - text_.getTextWidth();
+
+    if (text_x_offset < 0)
+    {
+        text_.setOffset({text_x_offset, 0.f});
+    }
+    else
+    {
+        text_.setOffset({0.f, 0.f});
+    }
 }
 
 EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (isInside(mouseButtonPressedEvent.position)) focus();
+    if (isInside(mouseButtonPressedEvent.position))
+    {
+        focus();
+    }
 
     return gui::EventStatus::NotConsumed;
 }
@@ -77,50 +109,47 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
     std::string new_text = text_.getText();
 
-    if (keyboardKeyPressed.key == sf::Keyboard::BackSpace)
+    switch (keyboardKeyPressed.key)
     {
-        if (new_text.empty()) return gui::EventStatus::NotConsumed;
-        new_text.pop_back();
-    }
-    else if (keyboardKeyPressed.key == sf::Keyboard::Return)
-    {
-        defocus();
-        return gui::EventStatus::Consumed;
-    }
-    else
-    {
-        new_text += keyboard::keyToString(keyboardKeyPressed.key).data();
+        case sf::Keyboard::Backspace :
+        {
+            if (new_text.empty()) 
+            {
+                return gui::EventStatus::NotConsumed;
+            }
+
+            new_text.pop_back();
+            break;
+        }
+        case sf::Keyboard::Return : 
+        {
+            defocus();
+            return gui::EventStatus::Consumed;
+        }
+        default: break;
     }
 
     text_.setText(new_text);
-
-    auto cursor_position = cursor_.getPosition();
-    cursor_position.y = text_.getGlobalPosition().y;
-    cursor_position.x = text_.getGlobalPosition().x + text_.getTextWidth();
-
-    float cursor_position_x_offset_to_end = text_.getGlobalPosition().x + text_.getSize().x - cursor_position.x; 
-
-    if (cursor_position_x_offset_to_end < 0) 
-    {
-        cursor_position.x = text_.getGlobalPosition().x + text_.getSize().x - CURSOR_WIDTH;
-    }
-    
-    //TODO the same calculation need to be done on box resize
-    float text_x_offset = text_.getSize().x - text_.getTextWidth();
-
-    if (text_x_offset < 0)
-    {
-        text_.setOffset({text_x_offset, 0.f});
-    }
-    else
-    {
-        text_.setOffset({0.f, 0.f});
-    }
-    
-
-    cursor_.setPosition(cursor_position);
-
+    updateCursor();
+    updateTextVisbleArea();
     return gui::EventStatus::Consumed;
+}
+
+EventStatus EditBox::on(const event::TextEntered& textEntered)
+{
+    if(not isFocused()) return gui::EventStatus::NotConsumed;
+    std::string new_text = text_.getText();
+
+    // FIXME: crude unicode conversion and backspace ignore (0x8) 
+    if (textEntered.unicode < 128 && textEntered.unicode != 0x8)
+    {
+        new_text += static_cast<char>(textEntered.unicode);
+    }
+
+    text_.setText(new_text);
+    updateCursor();
+    updateTextVisbleArea();
+    return gui::EventStatus::Consumed;  
 }
 
 EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)

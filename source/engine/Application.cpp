@@ -68,6 +68,12 @@ void Application::processEvents()
                 break;
             }
 
+            case sf::Event::TextEntered : 
+            {
+                keyboard_handler_.handleTextEntered(event.text);
+                break;
+            }
+
             case sf::Event::MouseButtonPressed :
             {
                 mouse_handler_.handleButtonPressed(event.mouseButton);

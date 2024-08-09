@@ -63,6 +63,7 @@ public:
     /* Keyboard events */
     EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed) override final;
     EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased) override final;
+    EventStatus receive(const event::TextEntered& textEntered) override final;
 
 protected:
     // those on methods should be overrided to define handling of mouse events
@@ -78,6 +79,7 @@ protected:
 
     virtual EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent);
     virtual EventStatus on(const event::KeyboardKeyReleased& KeyboardKeyReleased);
+    virtual EventStatus on(const event::TextEntered& textEntered);
 
     virtual void onPositionChange();
     virtual void onSizeChange();

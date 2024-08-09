@@ -43,6 +43,7 @@ protected:
     sf::Vector2f size_;
     sf::RenderTexture texture_;
     sf::Text text_;
+    std::string buffer_;
 };
     
 }  // namespace gui

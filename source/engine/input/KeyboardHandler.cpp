@@ -1,5 +1,6 @@
 #include "engine/input/KeyboardHandler.hpp"
 #include "engine/input/KeyboardReceiver.hpp"
+#include "engine/input/TextEnteredReceiver.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -26,6 +27,12 @@ void KeyboardHandler::subscribe(KeyboardReceiver* receiver)
     receiver->attach(this);
 }
 
+void KeyboardHandler::subscribe(TextEnteredReceiver* receiver)
+{
+    text_entered_receivers_.push_back(receiver);
+    receiver->attach(this);
+}
+
 void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
 {
     for(auto key_with_receivers_it = std::begin(keys_with_receivers_); key_with_receivers_it != std::end(keys_with_receivers_);)
@@ -43,6 +50,11 @@ void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
         }
     }
     any_key_receivers_.erase(std::remove(std::begin(any_key_receivers_), std::end(any_key_receivers_), receiver));
+}
+
+void KeyboardHandler::unsubscribe(TextEnteredReceiver* receiver)
+{
+    text_entered_receivers_.erase(std::remove(std::begin(text_entered_receivers_), std::end(text_entered_receivers_), receiver));
 }
 
 void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
@@ -85,6 +97,14 @@ void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
     for (auto* receiver : any_key_receivers_)
     {
         receiver->onKeyReleased(key);
+    }
+}
+
+void KeyboardHandler::handleTextEntered(const sf::Event::TextEvent& event)
+{
+    for (auto* receiver : text_entered_receivers_)
+    {
+        receiver->onTextEntered(event.unicode);
     }
 }
 

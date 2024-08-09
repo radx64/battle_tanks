@@ -40,13 +40,14 @@ void Text::setSize(const sf::Vector2f& size)
 
 void Text::setText(const std::string_view& text)
 {
-    text_.setString(text.data());
+    buffer_ = text.data();
+    text_.setString(buffer_);
     updateTexture();
 }
 
 std::string Text::getText() const
 {
-    return text_.getString();
+    return buffer_;
 }
 
 void Text::setFont(const sf::Font& font)

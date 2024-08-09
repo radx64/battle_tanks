@@ -16,6 +16,9 @@ namespace gui_sandbox
 Application::Application()
 : engine::Application("GUI sandbox")
 , window_manager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
+, mouse_controller_{&window_manager_, window_, window_.getDefaultView()}
+, keyboard_controller_{&window_manager_}
+, text_entered_controller_{&window_manager_}
 {
 }
 
@@ -26,12 +29,9 @@ void Application::onInit()
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
 
-    
-    mouse_controller_ = std::make_unique<gui::MouseController>(&window_manager_, window_, window_.getDefaultView());
-    mouse_handler_.subscribe(mouse_controller_.get());
-
-    keyboard_controller_ = std::make_unique<gui::KeyboardController>(&window_manager_);
-    keyboard_handler_.subscribe(keyboard_controller_.get());
+    mouse_handler_.subscribe(&mouse_controller_);
+    keyboard_handler_.subscribe(&keyboard_controller_);
+    keyboard_handler_.subscribe(&text_entered_controller_);
 
     auto quit_button = std::make_unique<gui::Button>("Quit");
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
@@ -83,7 +83,7 @@ void Application::onInit()
     auto create_progress_window_button = std::make_unique<gui::Button>("Create ProgressBar Window");
     create_progress_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
     create_progress_window_button->setSize(sf::Vector2f(250.f, 30.f));
-    create_progress_window_button->onClick([this](){
+    create_progress_window_button->onClick([this](){return gui::EventStatus::Consumed;
 
         auto window = std::make_unique<gui::Window>(); 
         window->setSize(sf::Vector2f(400.0f, 400.0f));

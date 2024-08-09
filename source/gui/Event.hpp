@@ -2,6 +2,8 @@
 // I know sfml have own event subsystem but I'm redefining it 
 // to separate from SFML later on
 
+#include <cstdint>
+
 #include <SFML/Window/Keyboard.hpp>
 
 namespace gui::event
@@ -58,6 +60,11 @@ namespace gui::event
     struct KeyboardKeyReleased
     {
         Key key;
+    };
+
+    struct TextEntered
+    {
+        uint32_t unicode;
     };
 
 }  // namespace gui::event

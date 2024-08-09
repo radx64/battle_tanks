@@ -15,7 +15,7 @@ public:
 protected:
     void onKeyPressed(const sf::Keyboard::Key key) override;
     void onKeyReleased(const sf::Keyboard::Key key) override;
-
+    
     gui::WindowManager* window_manager_;
 };
 

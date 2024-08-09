@@ -3,6 +3,7 @@
 #include "gui/WindowManager.hpp"
 #include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
+#include "gui/TextEnteredController.hpp"
 
 namespace gui_sandbox
 {
@@ -19,8 +20,9 @@ protected:
     void onRender() override; 
 
     gui::WindowManager window_manager_;
-    std::unique_ptr<gui::MouseController> mouse_controller_;
-    std::unique_ptr<gui::KeyboardController> keyboard_controller_;
+    gui::MouseController mouse_controller_;
+    gui::KeyboardController keyboard_controller_;
+    gui::TextEnteredController text_entered_controller_;
 };
 
 }  // namespace gui_sandbox

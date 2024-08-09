@@ -24,9 +24,13 @@ protected:
 
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
     EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
+    EventStatus on(const event::TextEntered& textEntered) override;
 
     void onFocus() override;
     void onFocusLost() override; 
+
+    void updateCursor();
+    void updateTextVisbleArea();
 
     sf::RectangleShape background_;
     sf::RectangleShape cursor_;

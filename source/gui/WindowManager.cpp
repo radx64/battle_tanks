@@ -216,4 +216,22 @@ EventStatus WindowManager::receive (const event::KeyboardKeyReleased& keyboardKe
     return result;
 }
 
+EventStatus WindowManager::receive(const event::TextEntered& textEntered)
+{
+    EventStatus result{EventStatus::NotConsumed};
+
+    //Forward event to active window
+    if (active_window_handle_ && active_window_handle_->isActive())
+    {
+        result = active_window_handle_->receive(textEntered);
+    }
+
+    if (result ==  EventStatus::NotConsumed)
+    {
+        return main_window_.receive(textEntered);
+    }
+
+    return result;    
+}
+
 }  // namespace gui
