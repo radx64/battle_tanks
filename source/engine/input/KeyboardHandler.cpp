@@ -49,12 +49,16 @@ void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
             ++key_with_receivers_it;
         }
     }
-    any_key_receivers_.erase(std::remove(std::begin(any_key_receivers_), std::end(any_key_receivers_), receiver));
+    any_key_receivers_.erase(
+        std::remove(std::begin(any_key_receivers_), std::end(any_key_receivers_), receiver),
+        std::end(any_key_receivers_));
 }
 
 void KeyboardHandler::unsubscribe(TextEnteredReceiver* receiver)
 {
-    text_entered_receivers_.erase(std::remove(std::begin(text_entered_receivers_), std::end(text_entered_receivers_), receiver));
+    text_entered_receivers_.erase(
+        std::remove(std::begin(text_entered_receivers_), std::end(text_entered_receivers_), receiver),
+        std::end(text_entered_receivers_));
 }
 
 void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)

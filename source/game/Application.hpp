@@ -65,9 +65,9 @@ protected:
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
 
-    std::unique_ptr<gui::WindowManager> window_manager_;
-    std::unique_ptr<game::WaypointMouseController> waypoint_mouse_controller_;
-    std::unique_ptr<gui::MouseController> gui_mouse_controller_;
+    gui::WindowManager window_manager_;
+    game::WaypointMouseController waypoint_mouse_controller_;
+    gui::MouseController gui_mouse_controller_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;

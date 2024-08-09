@@ -15,6 +15,8 @@ Application::Application(const std::string_view& windowName)
     window_.setPosition(sf::Vector2i{0, 0});
 }
 
+Application::~Application() = default;
+
 void Application::init()
 {
     onInit();

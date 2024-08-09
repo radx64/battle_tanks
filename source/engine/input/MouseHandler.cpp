@@ -15,7 +15,9 @@ void MouseHandler::subscribe(MouseReceiver* receiver)
 
 void MouseHandler::unsubscribe(MouseReceiver* receiver)
 {
-    std::remove(receivers_.begin(), receivers_.end(), receiver);
+    receivers_.erase(
+        std::remove(std::begin(receivers_), std::end(receivers_), receiver),
+        std::end(receivers_));
 }
 
 void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)

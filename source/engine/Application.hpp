@@ -15,6 +15,8 @@ class Application
 {
 public:
     Application(const std::string_view& windowName);
+    virtual ~Application();
+    
     void init();
     int run();
     void close();
