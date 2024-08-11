@@ -73,7 +73,7 @@ void TextCursor::moveTo(const gui::Text& text, float mouse_x)
 {
     auto fieldText = text.getText();
     float offset{text.getGlobalPosition().x + text.getOffset().x};
-    uint32_t foundIndex{0};
+    size_t foundIndex{fieldText.length()};
 
     for (uint32_t index = 0; index < fieldText.length(); ++index)
     {
