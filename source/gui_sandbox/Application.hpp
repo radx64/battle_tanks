@@ -19,10 +19,15 @@ protected:
     void onUpdate(float timeStep) override;
     void onRender() override; 
 
+    void generateBackground();
+
     gui::WindowManager window_manager_;
     gui::MouseController mouse_controller_;
     gui::KeyboardController keyboard_controller_;
     gui::TextEnteredController text_entered_controller_;
+
+    sf::RenderTexture backgroundTexture_;
+    sf::Sprite backgroundSprite_;
 };
 
 }  // namespace gui_sandbox

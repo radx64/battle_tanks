@@ -5,21 +5,19 @@ namespace gui
 
 Text::Text()
 : offset_{0.f, 0.f}
+, sprite_(texture_.getTexture())
 {
     // TODO decide on size 
     // According to docs try to not resize as this is costly operation
     // Consider either alocating it once per text with some reasonable size and check on some 
-    // assert if size is not bigger to (either costlyu resize or ) make buffer bigger by default 
+    // assert if size is not bigger to (either costly resize or) make buffer bigger by default 
     texture_.create(1024,128);
 }
 
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     //TODO optimze thist later as there is no point contrtucting this whole thing every frame
-    sf::Sprite sprite(texture_.getTexture());
-    sprite.setTextureRect(sf::IntRect(0, 0, size_.x, size_.y));
-    sprite.setPosition(global_position_);
-    target.draw(sprite, states);
+    target.draw(sprite_, states);
 }
 
 void Text::setOffset(const sf::Vector2f& offset)
@@ -31,6 +29,7 @@ void Text::setOffset(const sf::Vector2f& offset)
 void Text::setGlobalPosition(const sf::Vector2f& position)
 {
     global_position_ = position;
+    updateSprite();
 }
 
 void Text::setSize(const sf::Vector2f& size)
@@ -81,6 +80,12 @@ void Text::updateTexture()
     text_.setPosition(offset_);
     texture_.draw(text_);
     texture_.display();
+}
+
+void Text::updateSprite()
+{
+    sprite_.setTextureRect(sf::IntRect(0, 0, size_.x, size_.y));
+    sprite_.setPosition(global_position_);
 }
 
 sf::Vector2f Text::getGlobalPosition() const

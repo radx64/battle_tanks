@@ -38,10 +38,12 @@ public:
 
 protected:
     void updateTexture();
+    void updateSprite();
     sf::Vector2f offset_;
     sf::Vector2f global_position_;
     sf::Vector2f size_;
     sf::RenderTexture texture_;
+    sf::Sprite sprite_;
     sf::Text text_;
     std::string buffer_;
 };

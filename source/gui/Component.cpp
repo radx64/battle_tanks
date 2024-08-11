@@ -135,50 +135,21 @@ EventStatus Component::receive(const event::TextEntered& textEntered)
     return processEvent(textEntered, true);
 }
 
-EventStatus Component::on(const event::MouseMoved& mouseMovedEvent)
-{
-    UNUSED(mouseMovedEvent);
-    return EventStatus::NotConsumed;
-}
-EventStatus Component::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
-{
-    UNUSED(mouseButtonPressedEvent);
-    return EventStatus::NotConsumed;
-}
-EventStatus Component::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
-{
-    UNUSED(mouseButtonReleasedEvent);
-    return EventStatus::NotConsumed;
-}
+#define EMPTY_ON_METHOD(Class, Event)\
+    EventStatus Class::on(const Event& event)\
+    { UNUSED(event); return EventStatus::NotConsumed; }
 
-EventStatus Component::on(const event::MouseEntered& mouseEnteredEvent)
-{
-    UNUSED(mouseEnteredEvent);
-    return EventStatus::NotConsumed;
-}
-EventStatus Component::on(const event::MouseLeft& mouseLeftEvent)
-{
-    UNUSED(mouseLeftEvent);
-    return EventStatus::NotConsumed;
-}
+EMPTY_ON_METHOD(Component, event::MouseMoved);
+EMPTY_ON_METHOD(Component, event::MouseButtonPressed);
+EMPTY_ON_METHOD(Component, event::MouseButtonReleased);
+EMPTY_ON_METHOD(Component, event::MouseEntered);
+EMPTY_ON_METHOD(Component, event::MouseLeft);
 
-EventStatus Component::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
-{
-    UNUSED(keyboardKeyPressedEvent);
-    return EventStatus::NotConsumed;
-}
+EMPTY_ON_METHOD(Component, event::KeyboardKeyPressed);
+EMPTY_ON_METHOD(Component, event::KeyboardKeyReleased);
+EMPTY_ON_METHOD(Component, event::TextEntered);
 
-EventStatus Component::on(const event::KeyboardKeyReleased& KeyboardKeyReleased)
-{
-    UNUSED(KeyboardKeyReleased);
-    return EventStatus::NotConsumed;
-}
-
-EventStatus Component::on(const event::TextEntered& textEntered)
-{
-    UNUSED(textEntered);
-    return EventStatus::NotConsumed;
-}
+#undef EMPTY_ON_METHOD
 
 void Component::setPosition(const sf::Vector2f& position)
 {

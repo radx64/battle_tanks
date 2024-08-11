@@ -49,6 +49,7 @@ void EditBox::onSizeChange()
     background_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
     updateTextVisbleArea();
+    updateCursor();
 }
 
 void EditBox::onPositionChange()

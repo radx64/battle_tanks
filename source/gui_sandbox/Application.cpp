@@ -29,6 +29,8 @@ void Application::onInit()
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
 
+    generateBackground();
+
     mouse_handler_.subscribe(&mouse_controller_);
     keyboard_handler_.subscribe(&keyboard_controller_);
     keyboard_handler_.subscribe(&text_entered_controller_);
@@ -83,8 +85,7 @@ void Application::onInit()
     auto create_progress_window_button = std::make_unique<gui::Button>("Create ProgressBar Window");
     create_progress_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
     create_progress_window_button->setSize(sf::Vector2f(250.f, 30.f));
-    create_progress_window_button->onClick([this](){return gui::EventStatus::Consumed;
-
+    create_progress_window_button->onClick([this](){
         auto window = std::make_unique<gui::Window>(); 
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
@@ -268,9 +269,50 @@ void Application::onUpdate(float timeStep)
     (void) timeStep;
 }
 
+void Application::generateBackground()
+{
+    backgroundTexture_.create(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT);
+    backgroundSprite_.setTexture(backgroundTexture_.getTexture());
+
+    const auto EDGE_OFFSET = 20.f;
+    const auto LINE_THICKNESS = 10.f;
+    const auto X_STEPS = 20;
+    const auto Y_STEPS = 10;
+
+    sf::RectangleShape outer_box{};
+    outer_box.setPosition(EDGE_OFFSET, EDGE_OFFSET);
+    outer_box.setSize(sf::Vector2f{Config::WINDOW_WIDTH - 2 * EDGE_OFFSET, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
+    outer_box.setOutlineThickness(LINE_THICKNESS);
+    outer_box.setFillColor(sf::Color::Transparent);
+    outer_box.setOutlineColor(sf::Color(255,255,255,240));
+    backgroundTexture_.draw(outer_box);
+
+    for (auto x = 1; x < X_STEPS; ++x)
+    {
+        auto x_coord = x * ((Config::WINDOW_WIDTH - 2*EDGE_OFFSET) / X_STEPS) + EDGE_OFFSET;  
+        sf::RectangleShape line{}; 
+        line.setPosition(x_coord, EDGE_OFFSET);
+        line.setSize(sf::Vector2f{LINE_THICKNESS/4.f, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
+        line.setFillColor(sf::Color(255,255,255,200));
+        backgroundTexture_.draw(line);
+    }
+
+    for (auto y = 1; y < Y_STEPS; ++y)
+    {
+        auto y_coord = y * ((Config::WINDOW_HEIGHT- 2*EDGE_OFFSET) / Y_STEPS) + EDGE_OFFSET;  
+        sf::RectangleShape line{}; 
+        line.setPosition(EDGE_OFFSET, y_coord);
+        line.setSize(sf::Vector2f{Config::WINDOW_WIDTH -  2*EDGE_OFFSET, LINE_THICKNESS/4.f});
+        line.setFillColor(sf::Color(255,255,255,200));
+        backgroundTexture_.draw(line);
+    }
+    backgroundTexture_.display();
+}
+
 void Application::onRender()
 {
-    window_.clear(sf::Color(37, 150, 190));
+    window_.clear(sf::Color(20, 110, 158));
+    window_.draw(backgroundSprite_);
     window_manager_.render(window_);
 }
 
