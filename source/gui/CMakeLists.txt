@@ -21,6 +21,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TextCursor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextEnteredController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window/Header.cpp

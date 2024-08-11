@@ -1,5 +1,7 @@
 #include "gui/Text.hpp"
 
+#include <cassert>
+
 namespace gui
 {
 
@@ -9,14 +11,13 @@ Text::Text()
 {
     // TODO decide on size 
     // According to docs try to not resize as this is costly operation
-    // Consider either alocating it once per text with some reasonable size and check on some 
-    // assert if size is not bigger to (either costly resize or) make buffer bigger by default 
-    texture_.create(1024,128);
+    // Consider either alocating it once per text with some reasonable size
+    // or dynamic resize if really really needed
+    texture_.create(2048,128);
 }
 
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    //TODO optimze thist later as there is no point contrtucting this whole thing every frame
     target.draw(sprite_, states);
 }
 
@@ -24,6 +25,11 @@ void Text::setOffset(const sf::Vector2f& offset)
 {
     offset_ = offset;
     updateTexture();
+}
+
+const sf::Vector2f& Text::getOffset() const
+{
+    return offset_;
 }
 
 void Text::setGlobalPosition(const sf::Vector2f& position)
@@ -39,14 +45,13 @@ void Text::setSize(const sf::Vector2f& size)
 
 void Text::setText(const std::string_view& text)
 {
-    buffer_ = text.data();
-    text_.setString(buffer_);
+    text_.setString(text.data());
     updateTexture();
 }
 
 std::string Text::getText() const
 {
-    return buffer_;
+    return text_.getString();
 }
 
 void Text::setFont(const sf::Font& font)
@@ -54,9 +59,19 @@ void Text::setFont(const sf::Font& font)
     text_.setFont(font);
 }
 
+const sf::Font* Text::getFont() const
+{
+    return text_.getFont();
+}
+
 void Text::setCharacterSize(uint32_t size)
 {
     text_.setCharacterSize(size);
+}
+
+uint32_t Text::getCharacterSize() const
+{
+    return text_.getCharacterSize();
 }
 
 void Text::setOutlineColor(const sf::Color& color)
@@ -76,6 +91,9 @@ void Text::setOutlineThickness(float thickness)
 
 void Text::updateTexture()
 {
+    //TODO: Consider doing something more sophisticated later
+    assert (text_.getLocalBounds().width <= texture_.getSize().x && "Text width exceeded renderable texure width");
+
     texture_.clear(sf::Color::Transparent);
     text_.setPosition(offset_);
     texture_.draw(text_);

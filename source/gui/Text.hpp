@@ -21,7 +21,11 @@ public:
     std::string getText() const;
 
     void setFont(const sf::Font& font);
+    const sf::Font* getFont() const;
+
     void setCharacterSize(uint32_t size);
+    uint32_t getCharacterSize() const;
+
     void setOutlineColor(const sf::Color& color);
     void setFillColor(const sf::Color& color);
     void setOutlineThickness(float thickness);
@@ -29,6 +33,7 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     void setOffset(const sf::Vector2f& offset);
+    const sf::Vector2f& getOffset() const;
     void setGlobalPosition(const sf::Vector2f& position);
     void setSize(const sf::Vector2f& size);
 
@@ -45,7 +50,6 @@ protected:
     sf::RenderTexture texture_;
     sf::Sprite sprite_;
     sf::Text text_;
-    std::string buffer_;
 };
     
 }  // namespace gui

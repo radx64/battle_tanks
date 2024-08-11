@@ -4,12 +4,14 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
-constexpr float CURSOR_WIDTH = 3.f;
+constexpr float EXTRA_END_OFFSET = 5.f;
+constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 
 namespace gui
 {
 
 EditBox::EditBox()
+: max_length_{DEFAULT_TEXT_MAX_LENGTH}
 {
     auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());
@@ -17,19 +19,16 @@ EditBox::EditBox()
     text_.setFillColor(style.getFontColor());
     text_.setOutlineColor(style.getOutlineColor());
     text_.setOutlineThickness(style.getOutlineThickness());
-    setPosition({0.0f, 0.0f});
     text_.setGlobalPosition(Component::getGlobalPosition());
+
+    text_cursor_.setFont(text_.getFont());
+    text_cursor_.setCharacterSize(text_.getCharacterSize());
 
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
     background_.setOutlineThickness(style.getOutlineThickness()); 
     background_.setPosition(getGlobalPosition());
     background_.setSize(Component::getSize());
-
-    cursor_.setFillColor(sf::Color::Black);
-    cursor_.setOutlineColor(sf::Color::Black);
-    cursor_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+5.f});
-    cursor_.setPosition(getGlobalPosition());
 }
 
 std::string EditBox::getText()
@@ -40,7 +39,7 @@ std::string EditBox::getText()
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(background_);
-    if (isFocused()) renderTexture.draw(cursor_);
+    if (isFocused()) text_cursor_.render(renderTexture);
     renderTexture.draw(text_);
 }
 
@@ -49,34 +48,20 @@ void EditBox::onSizeChange()
     background_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
     updateTextVisbleArea();
-    updateCursor();
+    text_cursor_.update(text_);
 }
 
 void EditBox::onPositionChange()
 {
     text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
-    updateCursor();
-}
-
-void EditBox::updateCursor()
-{
-    auto cursor_position = cursor_.getPosition();
-    cursor_position.y = text_.getGlobalPosition().y;
-    cursor_position.x = text_.getGlobalPosition().x + text_.getTextWidth();
-
-    float cursor_position_x_offset_to_end = text_.getGlobalPosition().x + text_.getSize().x - cursor_position.x; 
-
-    if (cursor_position_x_offset_to_end < 0) 
-    {
-        cursor_position.x = text_.getGlobalPosition().x + text_.getSize().x - CURSOR_WIDTH;
-    }
-    cursor_.setPosition(cursor_position);
+    text_cursor_.update(text_);
 }
 
 void EditBox::updateTextVisbleArea()
 {
     float text_x_offset = text_.getSize().x - text_.getTextWidth();
+    text_x_offset -= EXTRA_END_OFFSET;
 
     if (text_x_offset < 0)
     {
@@ -92,6 +77,8 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 {
     if (isInside(mouseButtonPressedEvent.position))
     {
+        text_cursor_.moveTo(text_, mouseButtonPressedEvent.position.x);
+        text_cursor_.update(text_);
         focus();
     }
 
@@ -114,43 +101,68 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
     {
         case sf::Keyboard::Backspace :
         {
-            if (new_text.empty()) 
+            if (new_text.empty() || text_cursor_.getIndex() == 0) 
             {
                 return gui::EventStatus::NotConsumed;
             }
 
-            new_text.pop_back();
+            text_cursor_.moveLeft();
+            new_text.erase(text_cursor_.getIndex(), 1);
             break;
         }
+        case sf::Keyboard::Tab : 
+        {
+            defocus();
+            return gui::EventStatus::Consumed;
+        }
+
         case sf::Keyboard::Return : 
         {
             defocus();
             return gui::EventStatus::Consumed;
         }
+
+        case sf::Keyboard::Left : 
+        {
+            text_cursor_.moveLeft();
+            break;
+        }
+
+        case sf::Keyboard::Right : 
+        {
+            text_cursor_.moveRight();
+            break;
+        }
+
         default: break;
     }
 
     text_.setText(new_text);
-    updateCursor();
     updateTextVisbleArea();
+    text_cursor_.update(text_);
     return gui::EventStatus::Consumed;
 }
 
 EventStatus EditBox::on(const event::TextEntered& textEntered)
 {
     if(not isFocused()) return gui::EventStatus::NotConsumed;
-    std::string new_text = text_.getText();
 
-    // FIXME: crude unicode conversion and backspace ignore (0x8) 
-    if (textEntered.unicode < 128 && textEntered.unicode != 0x8)
+    std::string text = text_.getText();
+
+    if (text.length() >= max_length_) return gui::EventStatus::NotConsumed;
+
+    // FIXME: crude unicode conversion, backspace and tab ignore (0x8, 0x9) 
+    if (textEntered.unicode < 128 && textEntered.unicode != 0x8 && textEntered.unicode != 0x9)
     {
-        new_text += static_cast<char>(textEntered.unicode);
+        text.insert(text_cursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
+        text_.setText(text);
+        updateTextVisbleArea();
+        text_cursor_.moveRight();
+        text_cursor_.update(text_);
+        return gui::EventStatus::Consumed;  
     }
 
-    text_.setText(new_text);
-    updateCursor();
-    updateTextVisbleArea();
-    return gui::EventStatus::Consumed;  
+    return gui::EventStatus::NotConsumed;  
 }
 
 EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)

@@ -3,6 +3,7 @@
 
 #include "gui/Component.hpp"
 #include "gui/Text.hpp"
+#include "gui/TextCursor.hpp"
 
 namespace gui
 {
@@ -29,12 +30,12 @@ protected:
     void onFocus() override;
     void onFocusLost() override; 
 
-    void updateCursor();
     void updateTextVisbleArea();
 
     sf::RectangleShape background_;
-    sf::RectangleShape cursor_;
     gui::Text text_;
+    gui::TextCursor text_cursor_;
+    uint32_t max_length_;
 };
 
 }  // namespace gui

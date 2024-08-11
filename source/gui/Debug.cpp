@@ -5,8 +5,17 @@
 namespace gui::debug
 {
 
+static bool debug_enabled{false};
+
+void toggle()
+{
+    debug_enabled = !debug_enabled;
+}
+
 void draw_bounds(sf::RenderTexture& renderWindow, const Component* component)
 {
+    if (not debug_enabled) return;
+    
     sf::RectangleShape bound_rect;
     bound_rect.setSize(component->getSize());
     bound_rect.setPosition(component->getGlobalPosition());

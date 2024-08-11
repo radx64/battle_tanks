@@ -2,6 +2,7 @@
 
 #include "Config.hpp"
 
+#include "gui/Debug.hpp"
 #include "gui/Button.hpp"
 #include "gui/EditBox.hpp"
 #include "gui/FontLibrary.hpp"
@@ -40,6 +41,12 @@ void Application::onInit()
     quit_button->setSize(sf::Vector2f(250.f, 30.f));
     quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});   
     window_manager_.mainWindow().addChild(std::move(quit_button));
+
+    auto gui_debug = std::make_unique<gui::Button>("GUI DEBUG");
+    gui_debug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
+    gui_debug->setSize(sf::Vector2f(250.f, 30.f));
+    gui_debug->onClick([](){gui::debug::toggle();});   
+    window_manager_.mainWindow().addChild(std::move(gui_debug));
 
     auto create_empty_window_button = std::make_unique<gui::Button>("Create Empty Window");
     create_empty_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
