@@ -10,8 +10,9 @@ constexpr float CURSOR_WIDTH = 2.f;
 namespace gui
 {
 
-TextCursor::TextCursor()
+TextCursor::TextCursor(const gui::Text& text)
 : font_{nullptr}
+, text_{text}
 , text_length_{}
 , cursor_index_{}
 {
@@ -31,27 +32,31 @@ void TextCursor::setFont(const sf::Font* font)
     font_ = font;
 }
 
-void TextCursor::update(const gui::Text& text)
+void TextCursor::update()
 {
-    auto cursor_position = text.getGlobalPosition();
+    auto cursor_position = text_.getGlobalPosition();
 
     assert(character_size_ > 0 && "Character size must be > 0");
     assert(font_ != nullptr && "Font* needs to be set");
 
-    const auto fieldText = text.getText();
+    const auto fieldText = text_.getText();
     text_length_ = fieldText.length();
 
     if (cursor_index_ > text_length_) cursor_index_ = text_length_;
 
     for (uint32_t index = 0; index < cursor_index_; ++index)
     {
-        // FIXME: do something with false and 0.f params later
-        cursor_position.x +=font_->getGlyph(fieldText[index], character_size_, false, 0.f).advance;
+        cursor_position.x += getGlyphSizeAt(fieldText, index);
     }
 
-    auto text_x_offset = text.getOffset().x;
+    auto text_x_offset = text_.getOffset().x;
     cursor_position.x+= text_x_offset;
     cursor_.setPosition(cursor_position);
+}
+
+sf::Vector2f TextCursor::getGlobalPosition()
+{
+    return cursor_.getPosition();
 }
 
 void TextCursor::render(sf::RenderTexture& renderTexture)
@@ -59,6 +64,7 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
     renderTexture.draw(cursor_);
 }
 
+// TODO: consider adding update call to move methods
 void TextCursor::moveLeft()
 {
     if (cursor_index_ > 0) --cursor_index_; 
@@ -69,16 +75,21 @@ void TextCursor::moveRight()
     cursor_index_++;
 }
 
-void TextCursor::moveTo(const gui::Text& text, float mouse_x)
+float TextCursor::getGlyphSizeAt(const std::string& string, const size_t index)
 {
-    auto fieldText = text.getText();
-    float offset{text.getGlobalPosition().x + text.getOffset().x};
+    // FIXME: do something with false and 0.f params later
+    return font_->getGlyph(string[index], character_size_, false, 0.f).advance;
+}
+
+void TextCursor::moveTo(float mouse_x)
+{
+    auto fieldText = text_.getText();
+    float offset{text_.getGlobalPosition().x + text_.getOffset().x};
     size_t foundIndex{fieldText.length()};
 
     for (uint32_t index = 0; index < fieldText.length(); ++index)
     {
-        // FIXME: do something with false and 0.f params later
-        float glyph_width =font_->getGlyph(fieldText[index], character_size_, false, 0.f).advance;
+        float glyph_width = getGlyphSizeAt(fieldText, index);
 
         if (offset+glyph_width >= mouse_x)
         {
@@ -101,6 +112,11 @@ void TextCursor::moveTo(const gui::Text& text, float mouse_x)
 uint32_t TextCursor::getIndex() const
 {
     return cursor_index_;
+}
+
+void TextCursor::setIndex(const uint32_t index)
+{
+    cursor_index_ = index;
 }
 
 

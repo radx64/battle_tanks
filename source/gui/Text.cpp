@@ -121,4 +121,9 @@ float Text::getTextWidth() const
     return text_.getLocalBounds().width;
 }
 
+float Text::getTextHeight() const
+{
+    return text_.getLocalBounds().height;
+}
+
 }  // namespace gui

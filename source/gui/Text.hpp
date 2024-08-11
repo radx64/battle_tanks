@@ -40,6 +40,7 @@ public:
     sf::Vector2f getGlobalPosition() const;
     sf::Vector2f getSize() const;
     float getTextWidth() const;
+    float getTextHeight() const;
 
 protected:
     void updateTexture();

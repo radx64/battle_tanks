@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Component.hpp"
+#include "gui/Selection.hpp"
 #include "gui/Text.hpp"
 #include "gui/TextCursor.hpp"
 
@@ -22,6 +23,7 @@ protected:
 
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
     EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
@@ -35,6 +37,7 @@ protected:
     sf::RectangleShape background_;
     gui::Text text_;
     gui::TextCursor text_cursor_;
+    gui::Selection selection_;
     uint32_t max_length_;
 };
 

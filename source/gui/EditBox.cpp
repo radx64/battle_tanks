@@ -11,7 +11,10 @@ namespace gui
 {
 
 EditBox::EditBox()
-: max_length_{DEFAULT_TEXT_MAX_LENGTH}
+: text_{}
+, text_cursor_{text_}
+, selection_{text_}
+, max_length_{DEFAULT_TEXT_MAX_LENGTH}
 {
     auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());
@@ -39,7 +42,11 @@ std::string EditBox::getText()
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(background_);
-    if (isFocused()) text_cursor_.render(renderTexture);
+    if (isFocused())
+    {
+        selection_.render(renderTexture);
+        text_cursor_.render(renderTexture);
+    }
     renderTexture.draw(text_);
 }
 
@@ -48,14 +55,16 @@ void EditBox::onSizeChange()
     background_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
     updateTextVisbleArea();
-    text_cursor_.update(text_);
+    text_cursor_.update();
+    selection_.update();
 }
 
 void EditBox::onPositionChange()
 {
     text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
-    text_cursor_.update(text_);
+    text_cursor_.update();
+    selection_.update();
 }
 
 void EditBox::updateTextVisbleArea()
@@ -77,9 +86,15 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 {
     if (isInside(mouseButtonPressedEvent.position))
     {
-        text_cursor_.moveTo(text_, mouseButtonPressedEvent.position.x);
-        text_cursor_.update(text_);
+        text_cursor_.moveTo(mouseButtonPressedEvent.position.x);
+        text_cursor_.update();
         focus();
+
+        if (not selection_.isOngoing())
+        {
+            selection_.start(text_cursor_.getIndex(), text_cursor_.getGlobalPosition());
+            selection_.update();
+        }
     }
 
     return gui::EventStatus::NotConsumed;
@@ -88,6 +103,20 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     UNUSED(mouseButtonReleasedEvent);
+    selection_.end();
+    return gui::EventStatus::NotConsumed;
+}
+
+EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
+{
+    if(selection_.isOngoing())
+    {
+        text_cursor_.moveTo(mouseMovedEvent.position.x);
+        text_cursor_.update();
+        selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getGlobalPosition());
+        selection_.update();
+    }
+        
     return gui::EventStatus::NotConsumed;
 }
 
@@ -139,7 +168,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
     text_.setText(new_text);
     updateTextVisbleArea();
-    text_cursor_.update(text_);
+    text_cursor_.update();
     return gui::EventStatus::Consumed;
 }
 
@@ -154,11 +183,28 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
     // FIXME: crude unicode conversion, backspace and tab ignore (0x8, 0x9) 
     if (textEntered.unicode < 128 && textEntered.unicode != 0x8 && textEntered.unicode != 0x9)
     {
-        text.insert(text_cursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
+        if (selection_.isOngoing())
+        {
+            selection_.end();
+        }
+
+        if (not selection_.isEmpty())
+        {
+            text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
+            selection_.clear();
+            selection_.update();
+            text_cursor_.setIndex(selection_.startsAt());
+            text_cursor_.update();
+        }
+        else
+        {
+            text.insert(text_cursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
+        }
+
         text_.setText(text);
         updateTextVisbleArea();
         text_cursor_.moveRight();
-        text_cursor_.update(text_);
+        text_cursor_.update();
         return gui::EventStatus::Consumed;  
     }
 
