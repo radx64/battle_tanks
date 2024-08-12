@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace gui {class TextDisplayModifier;}
+
 namespace gui
 {
 
@@ -42,8 +44,12 @@ public:
     float getTextWidth() const;
     float getTextHeight() const;
 
-protected:
+    void addModifier(TextDisplayModifier* modifier);
+    void removeModifier(TextDisplayModifier* modifier);
+    
     void updateTexture();
+
+protected:
     void updateSprite();
     sf::Vector2f offset_;
     sf::Vector2f global_position_;
@@ -51,6 +57,8 @@ protected:
     sf::RenderTexture texture_;
     sf::Sprite sprite_;
     sf::Text text_;
+
+    std::vector<TextDisplayModifier*> modifiers_;
 };
     
 }  // namespace gui

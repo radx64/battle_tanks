@@ -10,11 +10,12 @@ constexpr float CURSOR_WIDTH = 2.f;
 namespace gui
 {
 
-TextCursor::TextCursor(const gui::Text& text)
+TextCursor::TextCursor(gui::Text& text)
 : font_{nullptr}
 , text_{text}
 , text_length_{}
 , cursor_index_{}
+, enabled_{false}
 {
     auto style = BasicStyleSheetFactory::instance();
     cursor_.setFillColor(sf::Color::Black);
@@ -34,7 +35,7 @@ void TextCursor::setFont(const sf::Font* font)
 
 void TextCursor::update()
 {
-    auto cursor_position = text_.getGlobalPosition();
+    auto cursor_position = sf::Vector2f{0.f, 0.f};
 
     assert(character_size_ > 0 && "Character size must be > 0");
     assert(font_ != nullptr && "Font* needs to be set");
@@ -49,19 +50,21 @@ void TextCursor::update()
         cursor_position.x += getGlyphSizeAt(fieldText, index);
     }
 
-    auto text_x_offset = text_.getOffset().x;
-    cursor_position.x+= text_x_offset;
     cursor_.setPosition(cursor_position);
+    text_.updateTexture();
 }
 
-sf::Vector2f TextCursor::getGlobalPosition()
+sf::Vector2f TextCursor::getPosition()
 {
     return cursor_.getPosition();
 }
 
 void TextCursor::render(sf::RenderTexture& renderTexture)
 {
-    renderTexture.draw(cursor_);
+    if (enabled_)
+    {
+        renderTexture.draw(cursor_);
+    }
 }
 
 // TODO: consider adding update call to move methods
@@ -119,5 +122,14 @@ void TextCursor::setIndex(const uint32_t index)
     cursor_index_ = index;
 }
 
+void TextCursor::disable()
+{
+    enabled_ = false;
+}
+
+void TextCursor::enable()
+{
+    enabled_ = true;
+}
 
 }  // namespace gui

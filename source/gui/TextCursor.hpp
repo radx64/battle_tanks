@@ -1,15 +1,18 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
+
+#include "gui/TextDisplayModifier.hpp"
 
 namespace gui {class Text;}
 
 namespace gui
 {
 
-class TextCursor
+class TextCursor : public TextDisplayModifier
 {
 public:
-    TextCursor(const gui::Text& text);
+    TextCursor(gui::Text& text);
     void setCharacterSize(uint32_t characterSize);
     void setFont(const sf::Font* font);
 
@@ -21,18 +24,22 @@ public:
     void update();
     uint32_t getIndex() const;
     void setIndex(const uint32_t index);
-    sf::Vector2f getGlobalPosition();
+    sf::Vector2f getPosition();
+
+    void disable();
+    void enable();
 
 protected:
     float getGlyphSizeAt(const std::string& string, const size_t index);
 
     uint32_t character_size_;
     const sf::Font* font_;
-    const gui::Text& text_;
+    gui::Text& text_;
 
     uint32_t text_length_;
     uint32_t cursor_index_;
     sf::RectangleShape cursor_;
+    bool enabled_;
 };
 
 }  // namespace gui

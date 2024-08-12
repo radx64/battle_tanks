@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+#include "gui/TextDisplayModifier.hpp"
+
 namespace gui
 {
 
@@ -24,7 +26,7 @@ void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void Text::setOffset(const sf::Vector2f& offset)
 {
     offset_ = offset;
-    updateTexture();
+    updateSprite();
 }
 
 const sf::Vector2f& Text::getOffset() const
@@ -47,6 +49,7 @@ void Text::setText(const std::string_view& text)
 {
     text_.setString(text.data());
     updateTexture();
+    updateSprite();
 }
 
 std::string Text::getText() const
@@ -95,14 +98,20 @@ void Text::updateTexture()
     assert (text_.getLocalBounds().width <= texture_.getSize().x && "Text width exceeded renderable texure width");
 
     texture_.clear(sf::Color::Transparent);
-    text_.setPosition(offset_);
+    text_.setPosition(sf::Vector2f{0.f, 0.f});
     texture_.draw(text_);
+
+    for (auto* modifier : modifiers_)
+    {
+        modifier->render(texture_);
+    }
+
     texture_.display();
 }
 
 void Text::updateSprite()
 {
-    sprite_.setTextureRect(sf::IntRect(0, 0, size_.x, size_.y));
+    sprite_.setTextureRect(sf::IntRect(-offset_.x, -offset_.y, size_.x, size_.y));
     sprite_.setPosition(global_position_);
 }
 
@@ -124,6 +133,18 @@ float Text::getTextWidth() const
 float Text::getTextHeight() const
 {
     return text_.getLocalBounds().height;
+}
+
+void Text::addModifier(TextDisplayModifier* modifier)
+{
+    modifiers_.push_back(modifier);
+}
+
+void Text::removeModifier(TextDisplayModifier* modifier)
+{
+    modifiers_.erase(
+        std::remove(std::begin(modifiers_), std::end(modifiers_),modifier),
+        std::end(modifiers_));
 }
 
 }  // namespace gui

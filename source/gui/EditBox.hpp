@@ -13,6 +13,7 @@ class EditBox : public Component
 {
 public:
     EditBox();
+    ~EditBox();
 
     std::string getText();
 

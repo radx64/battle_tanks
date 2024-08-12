@@ -4,20 +4,17 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "gui/TextDisplayModifier.hpp"
+
 namespace gui {class Text;}
 
 namespace gui
 {
 
-
-// FIXME: When selected text offset changes (moves) selection is not moving along with it
-// I can't store selection position from cursor data as these are not valid anymore
-// Need to recalculate it every update to be sure these are up to date.
-
-class Selection
+class Selection : public TextDisplayModifier
 {
 public:
-    Selection(const gui::Text& text);
+    Selection(gui::Text& text);
     bool isOngoing() const;
     bool isEmpty() const;
 
@@ -33,11 +30,13 @@ public:
     void clear();
 
     void update();
-    void render(sf::RenderTexture& renderTexture);
+
+    void render(sf::RenderTexture& renderTexture) override;
 
 protected:
-    const gui::Text& text_;
+    gui::Text& text_;
     bool is_ongoing_;
+    
     size_t selection_start_index_;
     size_t selection_end_index_;
 
@@ -45,7 +44,6 @@ protected:
     sf::Vector2f selection_end_position_;
 
     sf::RectangleShape selection_;
-
 };
 
 }  // namespace gui

@@ -16,6 +16,9 @@ EditBox::EditBox()
 , selection_{text_}
 , max_length_{DEFAULT_TEXT_MAX_LENGTH}
 {
+    text_.addModifier(&selection_);
+    text_.addModifier(&text_cursor_);
+
     auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());
     text_.setCharacterSize(style.getFontSize());
@@ -34,6 +37,12 @@ EditBox::EditBox()
     background_.setSize(Component::getSize());
 }
 
+EditBox::~EditBox()
+{
+    text_.removeModifier(&selection_);
+    text_.removeModifier(&text_cursor_);
+}
+
 std::string EditBox::getText()
 {
     return text_.getText();
@@ -42,16 +51,12 @@ std::string EditBox::getText()
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(background_);
-    if (isFocused())
-    {
-        selection_.render(renderTexture);
-        text_cursor_.render(renderTexture);
-    }
     renderTexture.draw(text_);
 }
 
 void EditBox::onSizeChange()
 {
+    text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
     updateTextVisbleArea();
@@ -63,6 +68,7 @@ void EditBox::onPositionChange()
 {
     text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
+    updateTextVisbleArea();
     text_cursor_.update();
     selection_.update();
 }
@@ -92,7 +98,7 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 
         if (not selection_.isOngoing())
         {
-            selection_.start(text_cursor_.getIndex(), text_cursor_.getGlobalPosition());
+            selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
             selection_.update();
         }
     }
@@ -113,7 +119,7 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
     {
         text_cursor_.moveTo(mouseMovedEvent.position.x);
         text_cursor_.update();
-        selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getGlobalPosition());
+        selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
         selection_.update();
     }
         
@@ -220,11 +226,15 @@ EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
 void EditBox::onFocus()
 {
     background_.setFillColor(sf::Color::White);
+    text_cursor_.enable();
 }
 
 void EditBox::onFocusLost()
 {
     background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+    text_cursor_.disable();
+    selection_.clear();
+    text_.updateTexture();
 }
 
 }  // namespace gui
