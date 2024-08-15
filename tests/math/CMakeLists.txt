@@ -9,11 +9,12 @@ PRIVATE
 
 target_link_libraries(battle_tanks_testing_math 
 PRIVATE
+    engine_math_lib
+
     gtest
     gmock
     pthread
 
-    engine_math_lib
 )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Coverage")

@@ -9,6 +9,9 @@ PRIVATE
 
 target_link_libraries(battle_tanks_testing_gui 
 PRIVATE
+
+    gui_lib
+    
     gtest
     gmock
     sfml-graphics 
@@ -16,7 +19,6 @@ PRIVATE
     sfml-system
     pthread
 
-    gui_lib
 )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
