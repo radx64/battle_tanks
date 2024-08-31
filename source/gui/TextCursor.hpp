@@ -30,7 +30,7 @@ public:
     void enable();
 
 protected:
-    float getGlyphSizeAt(const std::string& string, const size_t index);
+    float getGlyphOffset(const std::string& string, const size_t index);
 
     uint32_t character_size_;
     const sf::Font* font_;

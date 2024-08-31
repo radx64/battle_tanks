@@ -68,4 +68,3 @@ namespace gui::event
     };
 
 }  // namespace gui::event
-

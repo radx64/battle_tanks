@@ -9,9 +9,9 @@ namespace gui
 
 Selection::Selection(gui::Text& text)
 : text_{text}
-, is_ongoing_{false}
 , selection_start_index_{}
 , selection_end_index_{}
+, is_ongoing_{false}
 , selection_start_position_{}
 , selection_end_position_{}
 {
@@ -57,6 +57,7 @@ void Selection::clear()
 {
     selection_end_index_ = selection_start_index_;
     selection_end_position_ = selection_start_position_;
+    end();
     update();
 }
 

@@ -25,4 +25,3 @@ protected:
 };
     
 }  // namespace engine::input
-

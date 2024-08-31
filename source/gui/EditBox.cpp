@@ -140,9 +140,22 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             {
                 return gui::EventStatus::NotConsumed;
             }
+            
+            if (!selection_.isEmpty())
+            {
+                new_text.erase(selection_.startsAt(), selection_.length());
+                text_cursor_.setIndex(selection_.startsAt());
+                text_cursor_.update();
+                selection_.clear();
 
-            text_cursor_.moveLeft();
-            new_text.erase(text_cursor_.getIndex(), 1);
+            }
+            else
+            {
+                text_cursor_.moveLeft();
+                text_cursor_.update();
+                new_text.erase(text_cursor_.getIndex(), 1);
+            }
+
             break;
         }
         case sf::Keyboard::Tab : 
@@ -160,12 +173,37 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         case sf::Keyboard::Left : 
         {
             text_cursor_.moveLeft();
+            text_cursor_.update();
+
+            if (selection_.isOngoing())
+            {
+                selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
+                selection_.update();
+            }
             break;
         }
 
         case sf::Keyboard::Right : 
         {
             text_cursor_.moveRight();
+            text_cursor_.update();
+    
+            if (selection_.isOngoing())
+            {
+                selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
+                selection_.update();
+            }
+            break;
+        }
+
+        case sf::Keyboard::LShift :
+        {
+            if (not selection_.isOngoing())
+            {
+                //TODO: extract this as it is same as in mouse handling
+                selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
+                selection_.update();
+            }
             break;
         }
 
@@ -174,7 +212,6 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
     text_.setText(new_text);
     updateTextVisbleArea();
-    text_cursor_.update();
     return gui::EventStatus::Consumed;
 }
 
@@ -219,7 +256,21 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
 EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
 {
-    UNUSED(keyboardKeyReleased);
+    if(not isFocused()) return gui::EventStatus::NotConsumed;
+    
+    switch (keyboardKeyReleased.key)
+    {
+        case sf::Keyboard::LShift :
+        {
+            if (selection_.isOngoing())
+            {
+                selection_.end();
+            }
+            return gui::EventStatus::Consumed; 
+        }
+        default : return gui::EventStatus::NotConsumed;  
+    }
+
     return gui::EventStatus::NotConsumed;
 }
 

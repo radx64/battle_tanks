@@ -35,11 +35,11 @@ public:
 
 protected:
     gui::Text& text_;
-    bool is_ongoing_;
     
     size_t selection_start_index_;
     size_t selection_end_index_;
 
+    bool is_ongoing_;
     sf::Vector2f selection_start_position_;
     sf::Vector2f selection_end_position_;
 

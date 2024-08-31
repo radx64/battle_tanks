@@ -24,6 +24,11 @@ Bunch of random ideas to randomly pick up and implement
   - [x] Horizontal
   - [x] Vertical
   - [ ] Box (like 2x2 grid)
+- [ ] Edit box
+  - [x] Text input
+  - [ ] Selection support
+    - [ ] 🐛 Moving cursor does not clear previous selection
+  - [ ] Copy paste mechanics
 - [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 

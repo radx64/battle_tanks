@@ -5,6 +5,8 @@
 #include "gui/Text.hpp"
 #include "gui/StyleSheet.hpp"
 
+#include <iostream>
+
 constexpr float CURSOR_WIDTH = 2.f;
 
 namespace gui
@@ -47,7 +49,7 @@ void TextCursor::update()
 
     for (uint32_t index = 0; index < cursor_index_; ++index)
     {
-        cursor_position.x += getGlyphSizeAt(fieldText, index);
+        cursor_position.x += getGlyphOffset(fieldText, index);
     }
 
     cursor_.setPosition(cursor_position);
@@ -78,10 +80,19 @@ void TextCursor::moveRight()
     cursor_index_++;
 }
 
-float TextCursor::getGlyphSizeAt(const std::string& string, const size_t index)
+float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
 {
+
+    float kering_offset{};
+
+    if(index > 0)
+    {
+        // On some font rendering systems kering make characters closer to each other
+        // This need to be accomodated in cursor position calculations 
+        kering_offset =  font_->getKerning(string[index-1],string[index], character_size_);
+    }
     // FIXME: do something with false and 0.f params later
-    return font_->getGlyph(string[index], character_size_, false, 0.f).advance;
+    return font_->getGlyph(string[index], character_size_, false, 0.f).advance + kering_offset;
 }
 
 void TextCursor::moveTo(float mouse_x)
@@ -92,7 +103,7 @@ void TextCursor::moveTo(float mouse_x)
 
     for (uint32_t index = 0; index < fieldText.length(); ++index)
     {
-        float glyph_width = getGlyphSizeAt(fieldText, index);
+        float glyph_width = getGlyphOffset(fieldText, index);
 
         if (offset+glyph_width >= mouse_x)
         {
