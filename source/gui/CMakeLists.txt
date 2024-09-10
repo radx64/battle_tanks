@@ -9,6 +9,7 @@ target_sources(gui_lib
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Button.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Component.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Clipboard.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp

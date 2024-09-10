@@ -1,5 +1,6 @@
 #include "gui/EditBox.hpp"
 
+#include "gui/Clipboard.hpp"
 #include "gui/Debug.hpp"
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
@@ -211,6 +212,37 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
                 //TODO: extract this as it is same as in mouse handling
                 selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
                 selection_.update();
+            }
+            break;
+        }
+
+        // TODO: testing clipboard
+        // Need to handle combos like CTRL+C CTRL+V somehow later
+        case sf::Keyboard::F2 :
+        {
+            if (not selection_.isEmpty())
+            {
+                auto textToSave = text_.getText().substr(selection_.startsAt(), selection_.length());
+                Clipboard::save(textToSave);
+            }
+            break;
+        }
+
+        case sf::Keyboard::F3 :
+        {
+            auto textToPaste = Clipboard::retreive();
+            if (not selection_.isEmpty())
+            {
+                new_text.replace(selection_.startsAt(), selection_.length(),textToPaste.c_str(), textToPaste.size());
+                selection_.clear();
+            }
+            else
+            {
+                new_text.insert(text_cursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
+
+                // TODO: need to figure out clever way to move cursor after updating text of editbox
+                // otherwise cursor can't be moved before text is updated
+                // text_cursor_.setIndex(text_cursor_.getIndex() + textToPaste.size());
             }
             break;
         }

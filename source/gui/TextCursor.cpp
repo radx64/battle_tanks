@@ -72,7 +72,7 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
 // TODO: consider adding update call to move methods
 void TextCursor::moveLeft()
 {
-    if (cursor_index_ > 0) --cursor_index_; 
+    if (cursor_index_ > 0) --cursor_index_;
 }
 
 void TextCursor::moveRight()
@@ -88,7 +88,7 @@ float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
     if(index > 0)
     {
         // On some font rendering systems kering make characters closer to each other
-        // This need to be accomodated in cursor position calculations 
+        // This need to be accomodated in cursor position calculations
         kering_offset =  font_->getKerning(string[index-1],string[index], character_size_);
     }
     // FIXME: do something with false and 0.f params later
@@ -122,7 +122,7 @@ void TextCursor::moveTo(float mouse_x)
     }
     cursor_index_ = foundIndex;
 }
- 
+
 uint32_t TextCursor::getIndex() const
 {
     return cursor_index_;
@@ -131,6 +131,7 @@ uint32_t TextCursor::getIndex() const
 void TextCursor::setIndex(const uint32_t index)
 {
     cursor_index_ = index;
+    update();
 }
 
 void TextCursor::disable()
