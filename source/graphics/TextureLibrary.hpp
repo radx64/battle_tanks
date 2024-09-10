@@ -14,6 +14,7 @@ public:
     TextureLibrary() = delete;
     static void initialize();
     static sf::Texture& get(const std::string& name);
+    static void destroy();
 
 private:
     static void initTexture(const std::string& name, const std::string& path);
@@ -21,4 +22,3 @@ private:
 };
 
 }  // namespace graphics
-

@@ -86,6 +86,11 @@ sf::Texture& TextureLibrary::get(const std::string& name)
     return texture->second;
 }
 
+void TextureLibrary::destroy()
+{
+    textures_.clear();
+}
+
 std::map<std::string, sf::Texture> TextureLibrary::textures_;
 
 }  // namespace graphics

@@ -31,7 +31,7 @@
 
 #include "Config.hpp"
 
-namespace game 
+namespace game
 {
 
 
@@ -63,10 +63,7 @@ void Application::onInit()
     context_.setParticleSystem(&particle_system_);
     context_.setScene(&scene_);
     context_.setCamera(&camera_);
-    // FIXME static init of fonts and textures can lead to crashes on exit as
-    // statics can be destroyed after sfml context so this is a bit temporary
-    // solution until better staticless asset manager
-    gui::FontLibrary::initialize(); 
+    gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
 
@@ -75,7 +72,7 @@ void Application::onInit()
 
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
-    
+
     camera_view_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
     configureGUI();
 
@@ -94,6 +91,8 @@ void Application::onInit()
 void Application::onClose()
 {
     std::cout << "Goodbye!" << std::endl;
+    gui::FontLibrary::destroy();
+    graphics::TextureLibrary::destroy();
 }
 
 
@@ -101,7 +100,7 @@ void Application::onEvent(const sf::Event& event)
 {
     switch (event.type)
     {
-        case sf::Event::KeyReleased : 
+        case sf::Event::KeyReleased :
         {
             switch (event.key.code)
             {
@@ -116,12 +115,12 @@ void Application::onEvent(const sf::Event& event)
                 case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
                 case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                 case sf::Keyboard::Q        :   Application::close();
-                default                     :   {}  
+                default                     :   {}
             }
             break;
         }
 
-        case sf::Event::MouseWheelMoved : 
+        case sf::Event::MouseWheelMoved :
         {
             if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
             if (event.mouseWheel.delta < 0) camera_.zoomOut();
@@ -145,7 +144,7 @@ void Application::onUpdate(float timeStep)
     camera_view_.setSize(camera_.getSize());
     for (auto& object : scene_.objects())
     {
-        object->update(scene_, timeStep_);             
+        object->update(scene_, timeStep_);
     }
     collision_solver_.evaluateCollisions();
     physics_time_ = clock_.getElapsedTime();
@@ -210,7 +209,7 @@ void Application::renderGameObjects()
         objects_to_draw.emplace_back(GameObjectWithDistanceToCamera{object.get(), distanceFromCameraCenter});
     }
 
-    std::sort(objects_to_draw.begin(), objects_to_draw.end(), 
+    std::sort(objects_to_draw.begin(), objects_to_draw.end(),
         [](const auto& left, const auto& right)
         {
             return left.distance > right.distance;
@@ -226,7 +225,7 @@ void Application::renderGameObjects()
 }
 
 void Application::configureGUI()
-{   
+{
     auto quit_button = std::make_unique<gui::Button>("Quit");
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quit_button->setSize(sf::Vector2f(150.f, 30.f));
@@ -262,7 +261,7 @@ void Application::configureGUI()
     spawn_window_button->onClick([this](){
         float random_x = rand() % 200;
         float random_y = rand() % 200;
-        auto window = std::make_unique<gui::Window>(); 
+        auto window = std::make_unique<gui::Window>();
 
         auto horizontal_layout = std::make_unique<gui::HorizontalLayout>();
         auto hello_button = std::make_unique<gui::Button>("HELLO");
@@ -300,10 +299,10 @@ void Application::configureGUI()
 void Application::spawnSomeTanks()
 {
     for (size_t i = 0; i < TANKS_COUNT; ++i)
-    { 
+    {
         const auto x_spawn_position = i * 100 + 100;
         const auto y_spawn_position = x_spawn_position;
-        const auto spawn_rotation = i * 36; 
+        const auto spawn_rotation = i * 36;
         auto tank = entity::TankFactory::create(
             static_cast<entity::TankFactory::TankType>(i),
             x_spawn_position, y_spawn_position, spawn_rotation, &tracks_renderer_);
@@ -317,7 +316,7 @@ void Application::spawnSomeTanks()
 void Application::spawnSomeBarrelsAndCratesAndTress()
 {
     for (size_t i = 0; i < BARRELS_COUNT; ++i)
-    { 
+    {
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
 
@@ -327,7 +326,7 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     }
 
     for (size_t i = BARRELS_COUNT; i < CRATES_COUNT + BARRELS_COUNT; ++i)
-    { 
+    {
         const auto x_spawn_position = i * 30 + 500;
         const auto y_spawn_position = x_spawn_position - 400;
 
@@ -339,10 +338,10 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 8;
 
     using Type = game::entity::TreeFactory::TreeType;
-    const auto tree_types = std::vector<Type> 
+    const auto tree_types = std::vector<Type>
     {
-        Type::Brown_Large, 
-        Type::Brown_Small, 
+        Type::Brown_Large,
+        Type::Brown_Small,
         Type::Green_Large,
         Type::Green_Small
     };
@@ -365,7 +364,7 @@ void Application::generateProfiling()
     measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time_)
             + "ms\nPHYSICS: " + std::to_string(physics_time_.asMicroseconds())
             + "us\nNAV: " + std::to_string(nav_time_.asMicroseconds())
-            + "us\nGUI: " + std::to_string(gui_time_.asMilliseconds()) 
+            + "us\nGUI: " + std::to_string(gui_time_.asMilliseconds())
             + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
             + "\nObjects count: " + std::to_string(scene_.objects().size()));
 
