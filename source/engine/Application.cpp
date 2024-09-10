@@ -40,14 +40,13 @@ int Application::run()
         return -1;
     }
 
-    window_.close();
+    onClose();
 
     return 0;
 }
 void Application::close()
 {
     is_running_ = false;
-    onClose();
     window_.close();
 }
 
@@ -63,14 +62,14 @@ void Application::processEvents()
             {
                 keyboard_handler_.handleKeyPressed(event.key);
                 break;
-            } 
-            case sf::Event::KeyReleased : 
+            }
+            case sf::Event::KeyReleased :
             {
                 keyboard_handler_.handleKeyReleased(event.key);
                 break;
             }
 
-            case sf::Event::TextEntered : 
+            case sf::Event::TextEntered :
             {
                 keyboard_handler_.handleTextEntered(event.text);
                 break;

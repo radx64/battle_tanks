@@ -39,13 +39,13 @@ void Application::onInit()
     auto quit_button = std::make_unique<gui::Button>("Quit");
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quit_button->setSize(sf::Vector2f(250.f, 30.f));
-    quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});   
+    quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
     window_manager_.mainWindow().addChild(std::move(quit_button));
 
     auto gui_debug = std::make_unique<gui::Button>("GUI DEBUG");
     gui_debug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
     gui_debug->setSize(sf::Vector2f(250.f, 30.f));
-    gui_debug->onClick([](){gui::debug::toggle();});   
+    gui_debug->onClick([](){gui::debug::toggle();});
     window_manager_.mainWindow().addChild(std::move(gui_debug));
 
     auto create_empty_window_button = std::make_unique<gui::Button>("Create Empty Window");
@@ -93,7 +93,7 @@ void Application::onInit()
     create_progress_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
     create_progress_window_button->setSize(sf::Vector2f(250.f, 30.f));
     create_progress_window_button->onClick([this](){
-        auto window = std::make_unique<gui::Window>(); 
+        auto window = std::make_unique<gui::Window>();
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("I see some progress :D");
@@ -131,7 +131,7 @@ void Application::onInit()
     create_editbox_window_button->setSize(sf::Vector2f(250.f, 30.f));
     create_editbox_window_button->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>(); 
+        auto window = std::make_unique<gui::Window>();
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("I can now read text from keyboard :D");
@@ -141,7 +141,7 @@ void Application::onInit()
         auto edit_box = std::make_unique<gui::EditBox>();
         auto edit_box_2 = std::make_unique<gui::EditBox>();
 
-        button->onClick([edit_box_ptr = edit_box.get(), edit_box_2_ptr = edit_box_2.get(), button_ptr = button.get()]{ 
+        button->onClick([edit_box_ptr = edit_box.get(), edit_box_2_ptr = edit_box_2.get(), button_ptr = button.get()]{
             button_ptr->setText(edit_box_ptr->getText() + " | " + edit_box_2_ptr->getText());
         });
 
@@ -162,7 +162,7 @@ void Application::onInit()
     create_layout_window_button->setSize(sf::Vector2f(250.f, 30.f));
     create_layout_window_button->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>(); 
+        auto window = std::make_unique<gui::Window>();
         auto horizontal_layout = std::make_unique<gui::HorizontalLayout>();
         auto hello_button = std::make_unique<gui::Button>("HELLO");
         auto world_button = std::make_unique<gui::Button>("WORLD");
@@ -200,7 +200,7 @@ void Application::onInit()
         window_manager_.addWindow(std::move(window));
 
     });
-    
+
     window_manager_.mainWindow().addChild(std::move(create_layout_window_button));
 
     auto left_label = std::make_unique<gui::Label>("Left aligned label");
@@ -264,6 +264,7 @@ void Application::onInit()
 
 void Application::onClose()
 {
+    gui::FontLibrary::destroy();
 }
 
 void Application::onEvent(const sf::Event& event)
@@ -296,8 +297,8 @@ void Application::generateBackground()
 
     for (auto x = 1; x < X_STEPS; ++x)
     {
-        auto x_coord = x * ((Config::WINDOW_WIDTH - 2*EDGE_OFFSET) / X_STEPS) + EDGE_OFFSET;  
-        sf::RectangleShape line{}; 
+        auto x_coord = x * ((Config::WINDOW_WIDTH - 2*EDGE_OFFSET) / X_STEPS) + EDGE_OFFSET;
+        sf::RectangleShape line{};
         line.setPosition(x_coord, EDGE_OFFSET);
         line.setSize(sf::Vector2f{LINE_THICKNESS/4.f, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
         line.setFillColor(sf::Color(255,255,255,200));
@@ -306,8 +307,8 @@ void Application::generateBackground()
 
     for (auto y = 1; y < Y_STEPS; ++y)
     {
-        auto y_coord = y * ((Config::WINDOW_HEIGHT- 2*EDGE_OFFSET) / Y_STEPS) + EDGE_OFFSET;  
-        sf::RectangleShape line{}; 
+        auto y_coord = y * ((Config::WINDOW_HEIGHT- 2*EDGE_OFFSET) / Y_STEPS) + EDGE_OFFSET;
+        sf::RectangleShape line{};
         line.setPosition(EDGE_OFFSET, y_coord);
         line.setSize(sf::Vector2f{Config::WINDOW_WIDTH -  2*EDGE_OFFSET, LINE_THICKNESS/4.f});
         line.setFillColor(sf::Color(255,255,255,200));

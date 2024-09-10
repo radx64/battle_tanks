@@ -34,6 +34,11 @@ sf::Font& FontLibrary::get(const std::string& name)
     return font->second;
 }
 
+void FontLibrary::destroy()
+{
+    fonts_.clear();
+}
+
 std::map<std::string, sf::Font> FontLibrary::fonts_;
 
 }  // namespace gui

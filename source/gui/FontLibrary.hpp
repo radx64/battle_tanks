@@ -14,6 +14,7 @@ public:
     FontLibrary() = delete;
     static void initialize();
     static sf::Font& get(const std::string& name);
+    static void destroy();
 
 private:
     static void initDefaultFont();
@@ -22,4 +23,3 @@ private:
 };
 
 }  // namespace gui
-
