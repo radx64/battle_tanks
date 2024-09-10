@@ -32,7 +32,7 @@ EditBox::EditBox()
 
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
-    background_.setOutlineThickness(style.getOutlineThickness()); 
+    background_.setOutlineThickness(style.getOutlineThickness());
     background_.setPosition(getGlobalPosition());
     background_.setSize(Component::getSize());
 }
@@ -122,7 +122,7 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
         selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
         selection_.update();
     }
-        
+
     return gui::EventStatus::NotConsumed;
 }
 
@@ -136,11 +136,11 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
     {
         case sf::Keyboard::Backspace :
         {
-            if (new_text.empty() || text_cursor_.getIndex() == 0) 
+            if (new_text.empty() || text_cursor_.getIndex() == 0)
             {
                 return gui::EventStatus::NotConsumed;
             }
-            
+
             if (!selection_.isEmpty())
             {
                 new_text.erase(selection_.startsAt(), selection_.length());
@@ -158,19 +158,19 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
             break;
         }
-        case sf::Keyboard::Tab : 
+        case sf::Keyboard::Tab :
         {
             defocus();
             return gui::EventStatus::Consumed;
         }
 
-        case sf::Keyboard::Return : 
+        case sf::Keyboard::Return :
         {
             defocus();
             return gui::EventStatus::Consumed;
         }
 
-        case sf::Keyboard::Left : 
+        case sf::Keyboard::Left :
         {
             text_cursor_.moveLeft();
             text_cursor_.update();
@@ -180,18 +180,26 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
                 selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
                 selection_.update();
             }
+            else
+            {
+                selection_.clear();
+            }
             break;
         }
 
-        case sf::Keyboard::Right : 
+        case sf::Keyboard::Right :
         {
             text_cursor_.moveRight();
             text_cursor_.update();
-    
+
             if (selection_.isOngoing())
             {
                 selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
                 selection_.update();
+            }
+            else
+            {
+                selection_.clear();
             }
             break;
         }
@@ -223,7 +231,7 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
     if (text.length() >= max_length_) return gui::EventStatus::NotConsumed;
 
-    // FIXME: crude unicode conversion, backspace and tab ignore (0x8, 0x9) 
+    // FIXME: crude unicode conversion, backspace and tab ignore (0x8, 0x9)
     if (textEntered.unicode < 128 && textEntered.unicode != 0x8 && textEntered.unicode != 0x9)
     {
         if (selection_.isOngoing())
@@ -248,16 +256,16 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
         updateTextVisbleArea();
         text_cursor_.moveRight();
         text_cursor_.update();
-        return gui::EventStatus::Consumed;  
+        return gui::EventStatus::Consumed;
     }
 
-    return gui::EventStatus::NotConsumed;  
+    return gui::EventStatus::NotConsumed;
 }
 
 EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
 {
     if(not isFocused()) return gui::EventStatus::NotConsumed;
-    
+
     switch (keyboardKeyReleased.key)
     {
         case sf::Keyboard::LShift :
@@ -266,9 +274,9 @@ EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
             {
                 selection_.end();
             }
-            return gui::EventStatus::Consumed; 
+            return gui::EventStatus::Consumed;
         }
-        default : return gui::EventStatus::NotConsumed;  
+        default : return gui::EventStatus::NotConsumed;
     }
 
     return gui::EventStatus::NotConsumed;
