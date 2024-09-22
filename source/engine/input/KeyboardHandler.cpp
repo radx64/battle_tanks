@@ -72,13 +72,13 @@ void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
     {
         for (auto* receiver : receivers_for_key->second)
         {
-            receiver->onKeyPressed(key);
+            receiver->onKeyPressed(event);
         }
     }
 
     for (auto* receiver : any_key_receivers_)
     {
-        receiver->onKeyPressed(key);
+        receiver->onKeyPressed(event);
     }
 
 }
@@ -94,13 +94,13 @@ void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
     {
         for (auto* receiver : receivers_for_key->second)
         {
-            receiver->onKeyReleased(key);
+            receiver->onKeyReleased(event);
         }
     }
 
     for (auto* receiver : any_key_receivers_)
     {
-        receiver->onKeyReleased(key);
+        receiver->onKeyReleased(event);
     }
 }
 

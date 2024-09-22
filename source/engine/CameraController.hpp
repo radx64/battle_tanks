@@ -1,3 +1,5 @@
+#pragma once
+
 #include "engine/input/KeyboardReceiver.hpp"
 
 namespace engine {class Camera;}
@@ -11,8 +13,8 @@ public:
     CameraController (Camera* camera);
 
 protected:
-    void onKeyPressed(const sf::Keyboard::Key key) override;
-    void onKeyReleased(const sf::Keyboard::Key key) override;
+    void onKeyPressed(const sf::Event::KeyEvent& keyEvent) override;
+    void onKeyReleased(const sf::Event::KeyEvent& keyEvent) override;
 
     Camera* camera_;
 };

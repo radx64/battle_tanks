@@ -13,8 +13,8 @@ public:
     KeyboardController(gui::WindowManager* window_manager);
 
 protected:
-    void onKeyPressed(const sf::Keyboard::Key key) override;
-    void onKeyReleased(const sf::Keyboard::Key key) override;
+    void onKeyPressed(const sf::Event::KeyEvent& keyEvent) override;
+    void onKeyReleased(const sf::Event::KeyEvent& keyEvent) override;
     
     gui::WindowManager* window_manager_;
 };

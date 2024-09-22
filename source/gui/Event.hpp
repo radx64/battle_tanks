@@ -4,6 +4,10 @@
 
 #include <cstdint>
 
+#include <bitset>
+
+#include <engine/Options.hpp>
+
 #include <SFML/Window/Keyboard.hpp>
 
 namespace gui::event
@@ -51,15 +55,26 @@ namespace gui::event
 
     using Key = sf::Keyboard::Key;
 
+    enum class KeyboardModifier
+    {
+        Alt = 0,
+        Shift,
+        Control,
+        System,
+        Last
+    };
+
     /* Keyboard events */
     struct KeyboardKeyPressed
     {
         Key key;
+        engine::Options<KeyboardModifier> modifiers;
     };
 
     struct KeyboardKeyReleased
     {
         Key key;
+        engine::Options<KeyboardModifier> modifiers;
     };
 
     struct TextEntered

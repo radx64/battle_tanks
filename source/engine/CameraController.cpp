@@ -10,9 +10,9 @@ CameraController::CameraController (Camera* camera)
 : camera_{camera}
 {}
 
-void CameraController::onKeyPressed(const sf::Keyboard::Key key)
+void CameraController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 {
-    switch(key)
+    switch(keyEvent.code)
     {
         case sf::Keyboard::W : camera_->moveY(-CAMERA_SPEED); break;
         case sf::Keyboard::S : camera_->moveY(CAMERA_SPEED); break;
@@ -22,9 +22,9 @@ void CameraController::onKeyPressed(const sf::Keyboard::Key key)
     }
 }
 
-void CameraController::onKeyReleased(const sf::Keyboard::Key key)
+void CameraController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
 {
-    switch(key)
+    switch(keyEvent.code)
     {
         case sf::Keyboard::W : camera_->moveY(0.f); break;
         case sf::Keyboard::S : camera_->moveY(0.f); break;

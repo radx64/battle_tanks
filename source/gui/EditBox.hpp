@@ -35,6 +35,9 @@ protected:
 
     void updateTextVisbleArea();
 
+    void copy();
+    void paste(std::string& textToUpdate);
+
     sf::RectangleShape background_;
     gui::Text text_;
     gui::TextCursor text_cursor_;
@@ -43,4 +46,3 @@ protected:
 };
 
 }  // namespace gui
-

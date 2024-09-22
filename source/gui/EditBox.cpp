@@ -11,6 +11,10 @@ constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 namespace gui
 {
 
+// FIXME: cursor after paste should be at the end of pasted text
+// FIXME: cursor after selection cancel by right arrow should be at the end of previous selection
+//        same for canceling selection in left direction (but at the beggining)
+
 EditBox::EditBox()
 : text_{}
 , text_cursor_{text_}
@@ -127,6 +131,34 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
     return gui::EventStatus::NotConsumed;
 }
 
+void EditBox::copy()
+{
+    if (not selection_.isEmpty())
+    {
+        auto textToSave = text_.getText().substr(selection_.startsAt(), selection_.length());
+        Clipboard::save(textToSave);
+    }
+}
+
+void EditBox::paste(std::string& textToUpdate)
+{
+
+    auto textToPaste = Clipboard::retreive();
+    if (not selection_.isEmpty())
+    {
+        textToUpdate.replace(selection_.startsAt(), selection_.length(),textToPaste.c_str(), textToPaste.size());
+        selection_.clear();
+    }
+    else
+    {
+        textToUpdate.insert(text_cursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
+
+        // TODO: need to figure out clever way to move cursor after updating text of editbox
+        // otherwise cursor can't be moved before text is updated
+        // text_cursor_.setIndex(text_cursor_.getIndex() + textToPaste.size());
+    }
+}
+
 EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
     if(not isFocused()) return gui::EventStatus::NotConsumed;
@@ -215,34 +247,19 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             }
             break;
         }
-
-        // TODO: testing clipboard
-        // Need to handle combos like CTRL+C CTRL+V somehow later
-        case sf::Keyboard::F2 :
+        case sf::Keyboard::C : 
         {
-            if (not selection_.isEmpty())
+            if (keyboardKeyPressed.modifiers.isSet(gui::event::KeyboardModifier::Control))
             {
-                auto textToSave = text_.getText().substr(selection_.startsAt(), selection_.length());
-                Clipboard::save(textToSave);
+                copy();
             }
             break;
         }
-
-        case sf::Keyboard::F3 :
+        case sf::Keyboard::V : 
         {
-            auto textToPaste = Clipboard::retreive();
-            if (not selection_.isEmpty())
+            if (keyboardKeyPressed.modifiers.isSet(gui::event::KeyboardModifier::Control))
             {
-                new_text.replace(selection_.startsAt(), selection_.length(),textToPaste.c_str(), textToPaste.size());
-                selection_.clear();
-            }
-            else
-            {
-                new_text.insert(text_cursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
-
-                // TODO: need to figure out clever way to move cursor after updating text of editbox
-                // otherwise cursor can't be moved before text is updated
-                // text_cursor_.setIndex(text_cursor_.getIndex() + textToPaste.size());
+                paste(new_text);
             }
             break;
         }
@@ -263,8 +280,8 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
     if (text.length() >= max_length_) return gui::EventStatus::NotConsumed;
 
-    // FIXME: crude unicode conversion, backspace and tab ignore (0x8, 0x9)
-    if (textEntered.unicode < 128 && textEntered.unicode != 0x8 && textEntered.unicode != 0x9)
+    // FIXME: crude unicode conversion and check to for printable characters
+    if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
     {
         if (selection_.isOngoing())
         {
