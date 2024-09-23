@@ -249,7 +249,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         }
         case sf::Keyboard::C : 
         {
-            if (keyboardKeyPressed.modifiers.isSet(gui::event::KeyboardModifier::Control))
+            if (keyboardKeyPressed.modifiers.control)
             {
                 copy();
             }
@@ -257,7 +257,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         }
         case sf::Keyboard::V : 
         {
-            if (keyboardKeyPressed.modifiers.isSet(gui::event::KeyboardModifier::Control))
+            if (keyboardKeyPressed.modifiers.control)
             {
                 paste(new_text);
             }
