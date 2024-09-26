@@ -73,11 +73,13 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
 void TextCursor::moveLeft()
 {
     if (cursor_index_ > 0) --cursor_index_;
+    update();
 }
 
 void TextCursor::moveRight()
 {
     cursor_index_++;
+    update();
 }
 
 float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
@@ -121,6 +123,7 @@ void TextCursor::moveTo(float mouse_x)
         offset += glyph_width;
     }
     cursor_index_ = foundIndex;
+    update();
 }
 
 uint32_t TextCursor::getIndex() const

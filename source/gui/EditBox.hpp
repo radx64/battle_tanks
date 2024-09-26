@@ -1,4 +1,5 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
 
 #include "gui/Component.hpp"
@@ -27,7 +28,6 @@ protected:
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
-    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
     EventStatus on(const event::TextEntered& textEntered) override;
 
     void onFocus() override;
@@ -36,7 +36,11 @@ protected:
     void updateTextVisbleArea();
 
     void copy();
-    void paste(std::string& textToUpdate);
+    void paste();
+    void toggleSelection(const bool enable);
+    void startSelection();
+    void endSelection();
+    void updateCursorAndSelection(const size_t cursorIndexOnSelectionCancel);
 
     sf::RectangleShape background_;
     gui::Text text_;

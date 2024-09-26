@@ -11,10 +11,6 @@ constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 namespace gui
 {
 
-// FIXME: cursor after paste should be at the end of pasted text
-// FIXME: cursor after selection cancel by right arrow should be at the end of previous selection
-//        same for canceling selection in left direction (but at the beggining)
-
 EditBox::EditBox()
 : text_{}
 , text_cursor_{text_}
@@ -140,22 +136,68 @@ void EditBox::copy()
     }
 }
 
-void EditBox::paste(std::string& textToUpdate)
+void EditBox::paste()
 {
-
     auto textToPaste = Clipboard::retreive();
+    auto textToUpdate = text_.getText();
     if (not selection_.isEmpty())
     {
         textToUpdate.replace(selection_.startsAt(), selection_.length(),textToPaste.c_str(), textToPaste.size());
         selection_.clear();
+        text_.setText(textToUpdate);
     }
     else
     {
         textToUpdate.insert(text_cursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
+        text_.setText(textToUpdate);
+    }
+    text_cursor_.setIndex(text_cursor_.getIndex() + textToPaste.size());
+    updateTextVisbleArea();
+}
 
-        // TODO: need to figure out clever way to move cursor after updating text of editbox
-        // otherwise cursor can't be moved before text is updated
-        // text_cursor_.setIndex(text_cursor_.getIndex() + textToPaste.size());
+void EditBox::startSelection()
+{
+    if (not selection_.isOngoing())
+    {
+        selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
+        selection_.update();
+    }
+}
+
+void EditBox::endSelection()
+{
+    if (selection_.isOngoing())
+    {
+        selection_.end();
+    }
+}
+
+void EditBox::toggleSelection(const bool enable)
+{
+    if (enable)
+    {
+        startSelection();
+    }
+    else
+    {
+        endSelection();
+    } 
+}
+
+void EditBox::updateCursorAndSelection(const size_t cursorIndexOnSelectionCancel)
+{
+    if (selection_.isOngoing())
+    {
+        selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
+        selection_.update();
+    }
+    else
+    {
+        if (not selection_.isEmpty())
+        {
+            text_cursor_.setIndex(cursorIndexOnSelectionCancel);
+            selection_.clear();
+        }
     }
 }
 
@@ -178,17 +220,14 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             {
                 new_text.erase(selection_.startsAt(), selection_.length());
                 text_cursor_.setIndex(selection_.startsAt());
-                text_cursor_.update();
                 selection_.clear();
-
             }
             else
             {
                 text_cursor_.moveLeft();
-                text_cursor_.update();
                 new_text.erase(text_cursor_.getIndex(), 1);
             }
-
+            text_.setText(new_text);
             break;
         }
         case sf::Keyboard::Tab :
@@ -205,52 +244,28 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Left :
         {
-            text_cursor_.moveLeft();
-            text_cursor_.update();
+            toggleSelection(keyboardKeyPressed.modifiers.shift);
 
-            if (selection_.isOngoing())
-            {
-                selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
-                selection_.update();
-            }
-            else
-            {
-                selection_.clear();
-            }
+            text_cursor_.moveLeft();
+
+            updateCursorAndSelection(selection_.startsAt());
             break;
         }
 
         case sf::Keyboard::Right :
         {
+            toggleSelection(keyboardKeyPressed.modifiers.shift);
+
             text_cursor_.moveRight();
-            text_cursor_.update();
 
-            if (selection_.isOngoing())
-            {
-                selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
-                selection_.update();
-            }
-            else
-            {
-                selection_.clear();
-            }
-            break;
-        }
-
-        case sf::Keyboard::LShift :
-        {
-            if (not selection_.isOngoing())
-            {
-                //TODO: extract this as it is same as in mouse handling
-                selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
-                selection_.update();
-            }
+            updateCursorAndSelection(selection_.endsAt());
             break;
         }
         case sf::Keyboard::C : 
         {
             if (keyboardKeyPressed.modifiers.control)
             {
+                selection_.end();
                 copy();
             }
             break;
@@ -259,7 +274,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         {
             if (keyboardKeyPressed.modifiers.control)
             {
-                paste(new_text);
+                paste();
             }
             break;
         }
@@ -267,7 +282,6 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         default: break;
     }
 
-    text_.setText(new_text);
     updateTextVisbleArea();
     return gui::EventStatus::Consumed;
 }
@@ -294,7 +308,6 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
             selection_.clear();
             selection_.update();
             text_cursor_.setIndex(selection_.startsAt());
-            text_cursor_.update();
         }
         else
         {
@@ -304,28 +317,7 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
         text_.setText(text);
         updateTextVisbleArea();
         text_cursor_.moveRight();
-        text_cursor_.update();
         return gui::EventStatus::Consumed;
-    }
-
-    return gui::EventStatus::NotConsumed;
-}
-
-EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
-{
-    if(not isFocused()) return gui::EventStatus::NotConsumed;
-
-    switch (keyboardKeyReleased.key)
-    {
-        case sf::Keyboard::LShift :
-        {
-            if (selection_.isOngoing())
-            {
-                selection_.end();
-            }
-            return gui::EventStatus::Consumed;
-        }
-        default : return gui::EventStatus::NotConsumed;
     }
 
     return gui::EventStatus::NotConsumed;
