@@ -207,26 +207,28 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
     std::string new_text = text_.getText();
 
+    toggleSelection(keyboardKeyPressed.modifiers.shift);
+
     switch (keyboardKeyPressed.key)
     {
         case sf::Keyboard::Backspace :
         {
-            if (new_text.empty() || text_cursor_.getIndex() == 0)
-            {
-                return gui::EventStatus::NotConsumed;
-            }
-
-            if (!selection_.isEmpty())
+            if (not selection_.isEmpty())
             {
                 new_text.erase(selection_.startsAt(), selection_.length());
                 text_cursor_.setIndex(selection_.startsAt());
                 selection_.clear();
+            }
+            else if (new_text.empty() || text_cursor_.getIndex() == 0)
+            {
+                return gui::EventStatus::NotConsumed;
             }
             else
             {
                 text_cursor_.moveLeft();
                 new_text.erase(text_cursor_.getIndex(), 1);
             }
+
             text_.setText(new_text);
             break;
         }
@@ -244,8 +246,6 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Left :
         {
-            toggleSelection(keyboardKeyPressed.modifiers.shift);
-
             text_cursor_.moveLeft();
 
             updateCursorAndSelection(selection_.startsAt());
@@ -254,13 +254,12 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Right :
         {
-            toggleSelection(keyboardKeyPressed.modifiers.shift);
-
             text_cursor_.moveRight();
 
             updateCursorAndSelection(selection_.endsAt());
             break;
         }
+
         case sf::Keyboard::C : 
         {
             if (keyboardKeyPressed.modifiers.control)
@@ -270,6 +269,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             }
             break;
         }
+        
         case sf::Keyboard::V : 
         {
             if (keyboardKeyPressed.modifiers.control)
@@ -297,10 +297,7 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
     // FIXME: crude unicode conversion and check to for printable characters
     if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
     {
-        if (selection_.isOngoing())
-        {
-            selection_.end();
-        }
+        endSelection();
 
         if (not selection_.isEmpty())
         {
