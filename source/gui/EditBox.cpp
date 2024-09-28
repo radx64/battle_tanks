@@ -96,7 +96,6 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
     if (isInside(mouseButtonPressedEvent.position))
     {
         text_cursor_.moveTo(mouseButtonPressedEvent.position.x);
-        text_cursor_.update();
         focus();
 
         if (not selection_.isOngoing())
@@ -121,7 +120,6 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
     if(selection_.isOngoing())
     {
         text_cursor_.moveTo(mouseMovedEvent.position.x);
-        text_cursor_.update();
         selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
         selection_.update();
     }
