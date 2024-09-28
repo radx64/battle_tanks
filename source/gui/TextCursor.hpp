@@ -16,8 +16,8 @@ public:
     void setCharacterSize(uint32_t characterSize);
     void setFont(const sf::Font* font);
 
-    void moveLeft();
-    void moveRight();
+    void moveLeft(const bool moveWholeWord);
+    void moveRight(const bool moveWholeWord);
     void moveTo(float mouse_x);
 
     void render(sf::RenderTexture& renderTexture);

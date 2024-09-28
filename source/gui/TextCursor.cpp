@@ -5,8 +5,6 @@
 #include "gui/Text.hpp"
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
 constexpr float CURSOR_WIDTH = 2.f;
 
 namespace gui
@@ -69,16 +67,81 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
     }
 }
 
-// TODO: consider adding update call to move methods
-void TextCursor::moveLeft()
+void TextCursor::moveLeft(const bool moveWholeWord)
 {
-    if (cursor_index_ > 0) --cursor_index_;
+    if (cursor_index_ == 0)
+    {
+        return;
+    }
+    if (not moveWholeWord)
+    {
+        --cursor_index_;
+    }
+    else
+    {
+        const auto& text = text_.getText();
+
+        auto characterBeforeCursor = cursor_index_ - 1;
+        if (characterBeforeCursor <= text.length() && text.at(characterBeforeCursor) == ' ')
+        {
+            auto cursorPositionWithSkippedSpaces = text.find_last_not_of(' ', characterBeforeCursor);
+            if (cursorPositionWithSkippedSpaces == std::string::npos)
+            {
+                characterBeforeCursor = 0; 
+            }
+            else
+            {
+                characterBeforeCursor = cursorPositionWithSkippedSpaces - 1;
+            }
+        }
+
+        auto lastSpace = text.find_last_of(' ', characterBeforeCursor);
+        if (lastSpace != std::string::npos)
+        {
+            cursor_index_ = lastSpace + 1;
+        }
+        else
+        {
+            cursor_index_ = 0;
+        }
+    }
     update();
 }
 
-void TextCursor::moveRight()
-{
-    cursor_index_++;
+void TextCursor::moveRight(const bool moveWholeWord)
+{    
+    if (not moveWholeWord)
+    {
+        cursor_index_++;
+    }
+    else
+    {
+        const auto& text = text_.getText();
+
+        auto character_after_cursor = cursor_index_ + 1;
+        if (character_after_cursor < text.length() && text.at(character_after_cursor) == ' ')
+        {
+            auto cursorPositionWithSkippedSpaces = text.find_first_not_of(' ', character_after_cursor);
+            if (cursorPositionWithSkippedSpaces == std::string::npos)
+            {
+                character_after_cursor = text.length(); 
+            }
+            else
+            {
+                character_after_cursor = cursorPositionWithSkippedSpaces - 1;
+            }
+        }
+
+        auto firstSpace = text.find_first_of(' ', character_after_cursor);
+        if (firstSpace != std::string::npos)
+        {
+            cursor_index_ = firstSpace + 1;
+        }
+        else
+        {
+            cursor_index_ = text.length();
+        }
+    }
     update();
 }
 

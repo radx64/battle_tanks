@@ -11,6 +11,8 @@ constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 namespace gui
 {
 
+// FIXME: moving mouse over text while selecting using keyboard is affecting selection scope 
+
 EditBox::EditBox()
 : text_{}
 , text_cursor_{text_}
@@ -207,6 +209,13 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
     std::string new_text = text_.getText();
 
+    // FIXME: this toggleSelection is causing an issue when shift 
+    // is released and pressed again as selection
+    // is toggled of so it starts from begining
+    // so this need to be redesigned
+    // either start should be able to restart selection
+    // or I need to figure out something else
+
     toggleSelection(keyboardKeyPressed.modifiers.shift);
 
     switch (keyboardKeyPressed.key)
@@ -225,7 +234,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             }
             else
             {
-                text_cursor_.moveLeft();
+                text_cursor_.moveLeft(false);
                 new_text.erase(text_cursor_.getIndex(), 1);
             }
 
@@ -246,7 +255,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Left :
         {
-            text_cursor_.moveLeft();
+            text_cursor_.moveLeft(keyboardKeyPressed.modifiers.control);
 
             updateCursorAndSelection(selection_.startsAt());
             break;
@@ -254,7 +263,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Right :
         {
-            text_cursor_.moveRight();
+            text_cursor_.moveRight(keyboardKeyPressed.modifiers.control);
 
             updateCursorAndSelection(selection_.endsAt());
             break;
@@ -313,7 +322,7 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
         text_.setText(text);
         updateTextVisbleArea();
-        text_cursor_.moveRight();
+        text_cursor_.moveRight(false);
         return gui::EventStatus::Consumed;
     }
 
