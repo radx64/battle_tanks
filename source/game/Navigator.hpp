@@ -19,10 +19,9 @@ public:
     void navigate();
 
 protected:
-    size_t waypoint_id_{0};
+    size_t waypointId_{0};
     std::vector<sf::Vector2i>& waypoints_;
     entity::Tank& tank_;
 };
 
 }  // namespace game
-

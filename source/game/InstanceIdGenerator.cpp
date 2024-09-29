@@ -5,9 +5,9 @@ namespace game
 
 uint32_t InstanceIdGenerator::getId()
 {
-    return next_instance_id++;
+    return nextInstanceId++;
 }
 
-uint32_t InstanceIdGenerator::next_instance_id = 0;
+uint32_t InstanceIdGenerator::nextInstanceId = 0;
 
 }  // namespace game

@@ -22,9 +22,9 @@ protected:
     void generateBackground();
 
     gui::WindowManager windowManager_;
-    gui::MouseController mouse_controller_;
-    gui::KeyboardController keyboard_controller_;
-    gui::TextEnteredController text_entered_controller_;
+    gui::MouseController mouseController_;
+    gui::KeyboardController keyboardController_;
+    gui::TextEnteredController textEnteredController_;
 
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;

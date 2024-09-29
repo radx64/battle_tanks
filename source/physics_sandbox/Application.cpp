@@ -9,14 +9,14 @@ namespace sandbox
 
 Application::Application()
 : engine::Application("Physics sandbox")
-, mouse_controller_{scene_}
+, mouseController_{scene_}
 {}
 
 constexpr uint32_t NUM_OF_CIRCLES = 64;
 
 void Application::onInit()
 {
-    mouse_handler_.subscribe(&mouse_controller_);
+    mouseHandler_.subscribe(&mouseController_);
 
     for (uint32_t idx = 0; idx < NUM_OF_CIRCLES; ++idx)
     {
@@ -85,7 +85,7 @@ void Application::onUpdate(float timeStep)
         object->update(scene_, timeStep);
     }
 
-    collision_solver_.evaluateCollisions();
+    collisionSolver_.evaluateCollisions();
 
     (void) timeStep;
 }

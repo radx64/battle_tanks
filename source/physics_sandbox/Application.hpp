@@ -17,10 +17,7 @@ protected:
     void onUpdate(float timeStep) override;
     void onRender() override; 
 
-    MouseController mouse_controller_;   
+    MouseController mouseController_;   
 };
 
 }  // namespace sandbox
-
-
-

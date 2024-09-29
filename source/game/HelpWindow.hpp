@@ -4,7 +4,7 @@
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
 
-constexpr std::string_view help_text_string{
+constexpr std::string_view helpTextString{
     "WASD - moves view\n" 
     "PgUp/PgDn - zoom\n"  
     "C - clear all waypoints\n"
@@ -28,12 +28,11 @@ public:
         setSize(sf::Vector2f(500.0f, 400.0f));
         setPosition(position);
 
-        auto help_text = std::make_unique<gui::Label>(help_text_string.data());
-        help_text->setPosition(sf::Vector2f{0.0f, 0.0f});
-        help_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        addChild(std::move(help_text));
+        auto helpText = std::make_unique<gui::Label>(helpTextString.data());
+        helpText->setPosition(sf::Vector2f{0.0f, 0.0f});
+        helpText->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        addChild(std::move(helpText));
     }
 };
 
 }  // namespace game
-

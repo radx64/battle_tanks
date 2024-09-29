@@ -22,24 +22,24 @@ void Navigator::navigate()
         tank_.setThrottle(0.0);
         return;
     }
-    if(waypoint_id_ >= waypoints_.size()) waypoint_id_ = 0;
+    if(waypointId_ >= waypoints_.size()) waypointId_ = 0;
     
-    const auto& current_waypoint = waypoints_[waypoint_id_];
+    const auto& currentWaypoint = waypoints_[waypointId_];
 
-    auto tank_x = tank_.getRigidBody().x_;
-    auto tank_y = tank_.getRigidBody().y_;   
+    auto tankX = tank_.getRigidBody().x_;
+    auto tankY = tank_.getRigidBody().y_;   
 
-    float distance = engine::math::distance(current_waypoint.x, current_waypoint.y, tank_x, tank_y);
+    float distance = engine::math::distance(currentWaypoint.x, currentWaypoint.y, tankX, tankY);
 
     if (distance > WAYPOINT_VISITED_DISTANCE)
     {
-        float direction = atan2((float)current_waypoint.y - tank_y, (float)current_waypoint.x - tank_x);
+        float direction = atan2((float)currentWaypoint.y - tankY, (float)currentWaypoint.x - tankX);
         tank_.setThrottle(std::min(1.0, distance*0.01));
         tank_.setDirection(direction * 180.0 / M_PI);        
     }
     else
     {
-        waypoint_id_++;
+        waypointId_++;
     }
 }
 

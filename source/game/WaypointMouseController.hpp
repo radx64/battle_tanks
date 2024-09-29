@@ -12,14 +12,14 @@ namespace game
 class WaypointMouseController : public engine::input::MouseReceiver
 {
 public:
-    WaypointMouseController(gui::WindowManager* window_manager, std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view);
+    WaypointMouseController(gui::WindowManager* windowManager, std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view);
 
 protected:
-    gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override;
+    gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onMouseMoved(const sf::Vector2f& mousePostion) override;
 
-    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
+    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mousePosition);
 
     gui::WindowManager* windowManager_;
     std::vector<sf::Vector2i>& waypoints_;

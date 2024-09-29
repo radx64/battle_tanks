@@ -51,39 +51,39 @@ protected:
    
     engine::FpsCounter fpsCounter_;
 
-    const sf::Vector2f camera_initial_position_;
-    const sf::Vector2f camera_initial_size_;
+    const sf::Vector2f cameraInitialPosition_;
+    const sf::Vector2f cameraInitialSize_;
     engine::Camera camera_;
-    engine::CameraController camera_controller_;
-    sf::View camera_view_;
+    engine::CameraController cameraController_;
+    sf::View cameraView_;
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
-    bool rigid_body_debug_{false};
-    bool tank_debug_mode_{false};
+    bool rigidBodyDebug_{false};
+    bool tankDebugMode_{false};
     
-    gui::Label* measurements_text_handle_;
-    gui::Label* measurements_average_text_handle_;
+    gui::Label* measurementsTextHandle_;
+    gui::Label* measurementsAverageTextHandle_;
 
     gui::WindowManager windowManager_;
-    game::WaypointMouseController waypoint_mouse_controller_;
-    gui::MouseController gui_mouse_controller_;
+    game::WaypointMouseController waypointMouseController_;
+    gui::MouseController guiMouseController_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
 
-    entity::TracksRenderer tracks_renderer_;
+    entity::TracksRenderer tracksRenderer_;
 
-    sf::Int32 draw_time_{0};
-    sf::Time physics_time_{};
-    sf::Time nav_time_{};
-    sf::Time gui_time_{};
+    sf::Int32 drawTime_{0};
+    sf::Time physicsTime_{};
+    sf::Time navTime_{};
+    sf::Time guiTime_{};
 
-    engine::math::Average draw_average_;
-    engine::math::Average physics_average_;
-    engine::math::Average nav_average_;
-    engine::math::Average fps_average_;
-    engine::math::Average gui_average_;
+    engine::math::Average drawAverage_;
+    engine::math::Average physicsAverage_;
+    engine::math::Average navAverage_;
+    engine::math::Average fpsAverage_;
+    engine::math::Average guiAverage_;
 };
 
 }  // namespace game

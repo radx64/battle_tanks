@@ -43,46 +43,46 @@ constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
 : engine::Application("Battle tanks")
-, camera_initial_position_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
-, camera_initial_size_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
-, camera_{camera_initial_position_, camera_initial_size_}
-, camera_controller_{&camera_}
-, camera_view_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
+, cameraInitialPosition_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
+, cameraInitialSize_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
+, camera_{cameraInitialPosition_, cameraInitialSize_}
+, cameraController_{&camera_}
+, cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
 , windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
-, waypoint_mouse_controller_{&windowManager_, waypoints_, window_, camera_view_}
-, gui_mouse_controller_{&windowManager_, window_, window_.getDefaultView()}
-, draw_average_{NUMBER_OF_MEASUREMENTS}
-, physics_average_{NUMBER_OF_MEASUREMENTS}
-, nav_average_{NUMBER_OF_MEASUREMENTS}
-, fps_average_{NUMBER_OF_MEASUREMENTS}
-, gui_average_{NUMBER_OF_MEASUREMENTS}
+, waypointMouseController_{&windowManager_, waypoints_, window_, cameraView_}
+, guiMouseController_{&windowManager_, window_, window_.getDefaultView()}
+, drawAverage_{NUMBER_OF_MEASUREMENTS}
+, physicsAverage_{NUMBER_OF_MEASUREMENTS}
+, navAverage_{NUMBER_OF_MEASUREMENTS}
+, fpsAverage_{NUMBER_OF_MEASUREMENTS}
+, guiAverage_{NUMBER_OF_MEASUREMENTS}
 {}
 
 void Application::onInit()
 {
-    context_.setParticleSystem(&particle_system_);
+    context_.setParticleSystem(&particleSystem_);
     context_.setScene(&scene_);
     context_.setCamera(&camera_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
     tilemap_ = std::make_unique<graphics::Tilemap>();
 
-    mouse_handler_.subscribe(&gui_mouse_controller_);
-    mouse_handler_.subscribe(&waypoint_mouse_controller_);
+    mouseHandler_.subscribe(&guiMouseController_);
+    mouseHandler_.subscribe(&waypointMouseController_);
 
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
 
-    camera_view_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
+    cameraView_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
     configureGUI();
 
-    keyboard_handler_.subscribe(std::vector<sf::Keyboard::Key>
+    keyboardHandler_.subscribe(std::vector<sf::Keyboard::Key>
     {
         sf::Keyboard::W,
         sf::Keyboard::S,
         sf::Keyboard::A,
         sf::Keyboard::D
-    }, &camera_controller_);
+    }, &cameraController_);
 
     spawnSomeTanks();
     spawnSomeBarrelsAndCratesAndTress();
@@ -110,9 +110,9 @@ void Application::onEvent(const sf::Event& event)
                 case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
                 case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
                 case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
-                case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
-                case sf::Keyboard::F12      :   {tank_debug_mode_=!tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_);} break;
-                case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
+                case sf::Keyboard::F11      :   {rigidBodyDebug_ = !rigidBodyDebug_;} break;
+                case sf::Keyboard::F12      :   {tankDebugMode_=!tankDebugMode_; entity::Tank::setDebug(tankDebugMode_);} break;
+                case sf::Keyboard::T        :   tracksRenderer_.clear(); break;
                 case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
                 case sf::Keyboard::Q        :   Application::close();
                 default                     :   {}
@@ -136,18 +136,18 @@ void Application::onUpdate(float timeStep)
     {
         navigator->navigate();
     }
-    nav_time_ = clock_.getElapsedTime();
+    navTime_ = clock_.getElapsedTime();
 
     clock_.restart();
     camera_.update(timeStep);
-    camera_view_.setCenter(camera_.getPosition());
-    camera_view_.setSize(camera_.getSize());
+    cameraView_.setCenter(camera_.getPosition());
+    cameraView_.setSize(camera_.getSize());
     for (auto& object : scene_.objects())
     {
         object->update(scene_, timeStep_);
     }
-    collision_solver_.evaluateCollisions();
-    physics_time_ = clock_.getElapsedTime();
+    collisionSolver_.evaluateCollisions();
+    physicsTime_ = clock_.getElapsedTime();
 }
 
 void Application::onRender()
@@ -159,15 +159,15 @@ void Application::onRender()
     // otherwise values are wrong
     fpsCounter_.startMeasurement();
 
-    window_.setView(camera_view_);
+    window_.setView(cameraView_);
     tilemap_->draw(window_);
     graphics::drawtools::drawWaypoints(window_, waypoints_);
-    tracks_renderer_.draw(window_);
+    tracksRenderer_.draw(window_);
     renderGameObjects();
-    particle_system_.draw(window_);
-    draw_time_ = clock_.getElapsedTime().asMilliseconds();
+    particleSystem_.draw(window_);
+    drawTime_ = clock_.getElapsedTime().asMilliseconds();
 
-    if (rigid_body_debug_)
+    if (rigidBodyDebug_)
     {
         engine::RigidBodyDebugRenderer::debug(scene_, window_);
     }
@@ -190,8 +190,8 @@ void Application::renderGameObjects()
         float distance;
     };
 
-    static std::vector<GameObjectWithDistanceToCamera> objects_to_draw;
-    objects_to_draw.reserve(scene_.objects().size());
+    static std::vector<GameObjectWithDistanceToCamera> objectsToDraw;
+    objectsToDraw.reserve(scene_.objects().size());
 
     const auto& cameraPosition = camera_.getPosition();
     sf::Rect<float> cameraFrustum {cameraPosition - camera_.getSize()/2.f , camera_.getSize() };
@@ -206,106 +206,106 @@ void Application::renderGameObjects()
 
         auto distanceFromCameraCenter = engine::math::distance(cameraPosition.x, cameraPosition.y, rb.x_, rb.y_);
 
-        objects_to_draw.emplace_back(GameObjectWithDistanceToCamera{object.get(), distanceFromCameraCenter});
+        objectsToDraw.emplace_back(GameObjectWithDistanceToCamera{object.get(), distanceFromCameraCenter});
     }
 
-    std::sort(objects_to_draw.begin(), objects_to_draw.end(),
+    std::sort(objectsToDraw.begin(), objectsToDraw.end(),
         [](const auto& left, const auto& right)
         {
             return left.distance > right.distance;
         }
     );
 
-    for (auto& e : objects_to_draw)
+    for (auto& e : objectsToDraw)
     {
         e.object->draw(window_, timeStep_);
     }
 
-    objects_to_draw.clear();
+    objectsToDraw.clear();
 }
 
 void Application::configureGUI()
 {
-    auto quit_button = std::make_unique<gui::Button>("Quit");
-    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
-    quit_button->setSize(sf::Vector2f(150.f, 30.f));
-    quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
-    windowManager_.mainWindow().addChild(std::move(quit_button));
+    auto quitButton = std::make_unique<gui::Button>("Quit");
+    quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
+    quitButton->setSize(sf::Vector2f(150.f, 30.f));
+    quitButton->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
+    windowManager_.mainWindow().addChild(std::move(quitButton));
 
-    auto measurements_text = std::make_unique<gui::Label>("");
-    measurements_text->setPosition(sf::Vector2f(20.f, 20.f));
-    measurements_text_handle_ = measurements_text.get();
+    auto measurementsText = std::make_unique<gui::Label>("");
+    measurementsText->setPosition(sf::Vector2f(20.f, 20.f));
+    measurementsTextHandle_ = measurementsText.get();
 
-    windowManager_.mainWindow().addChild(std::move(measurements_text));
+    windowManager_.mainWindow().addChild(std::move(measurementsText));
 
-    auto measurements_average_text = std::make_unique<gui::Label>("");
-    measurements_average_text->setPosition(sf::Vector2f(200.f, 20.f));
-    measurements_average_text_handle_ = measurements_average_text.get();
+    auto measurementsAverageText = std::make_unique<gui::Label>("");
+    measurementsAverageText->setPosition(sf::Vector2f(200.f, 20.f));
+    measurementsAverageTextHandle_ = measurementsAverageText.get();
 
-    windowManager_.mainWindow().addChild(std::move(measurements_average_text));
+    windowManager_.mainWindow().addChild(std::move(measurementsAverageText));
 
     auto button = std::make_unique<gui::Button>("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){
-        auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
-        help_window->setTitle("Help");
-        help_window->setPosition({80.f,80.f});
-        windowManager_.addWindow(std::move(help_window));
+        auto helpWindow = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
+        helpWindow->setTitle("Help");
+        helpWindow->setPosition({80.f,80.f});
+        windowManager_.addWindow(std::move(helpWindow));
     });
     windowManager_.mainWindow().addChild(std::move(button));
 
-    auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
-    spawn_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f));
-    spawn_window_button->setSize(sf::Vector2f(150.f, 30.f));
-    spawn_window_button->onClick([this](){
-        float random_x = rand() % 200;
-        float random_y = rand() % 200;
+    auto spawnWindowButton = std::make_unique<gui::Button>("Spawn new window");
+    spawnWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f));
+    spawnWindowButton->setSize(sf::Vector2f(150.f, 30.f));
+    spawnWindowButton->onClick([this](){
+        float randomX = rand() % 200;
+        float randomY = rand() % 200;
         auto window = std::make_unique<gui::Window>();
 
-        auto horizontal_layout = std::make_unique<gui::HorizontalLayout>();
-        auto hello_button = std::make_unique<gui::Button>("HELLO");
-        auto world_button = std::make_unique<gui::Button>("WORLD");
+        auto horizontalLayout = std::make_unique<gui::HorizontalLayout>();
+        auto helloButton = std::make_unique<gui::Button>("HELLO");
+        auto worldButton = std::make_unique<gui::Button>("WORLD");
 
-        hello_button->onClick([](){std::cout << "Hello?" << std::endl;});
-        world_button->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
+        helloButton->onClick([](){std::cout << "Hello?" << std::endl;});
+        worldButton->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
 
-        horizontal_layout->addChild(std::move(hello_button));
-        horizontal_layout->addChild(std::move(world_button));
+        horizontalLayout->addChild(std::move(helloButton));
+        horizontalLayout->addChild(std::move(worldButton));
 
-        auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
+        auto horizontalLayout2   = std::make_unique<gui::HorizontalLayout>();
         auto testing = std::make_unique<gui::Button>("TESTING");
         auto things = std::make_unique<gui::Button>("THINGS");
 
-        horizontal_layout2->addChild(std::move(testing));
-        horizontal_layout2->addChild(std::move(things));
+        horizontalLayout2->addChild(std::move(testing));
+        horizontalLayout2->addChild(std::move(things));
 
-        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+        auto verticalLayout = std::make_unique<gui::VerticalLayout>();
 
-        vertical_layout->addChild(std::move(horizontal_layout));
-        vertical_layout->addChild(std::move(horizontal_layout2));
+        verticalLayout->addChild(std::move(horizontalLayout));
+        verticalLayout->addChild(std::move(horizontalLayout2));
 
-        window->addChild(std::move(vertical_layout));
+        window->addChild(std::move(verticalLayout));
 
         window->setSize(sf::Vector2f(500.0f, 400.0f));
-        window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y));
+        window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+randomX)/2, 400.0f+randomY));
         window->setTitle("Oh my gosh");
 
         windowManager_.addWindow(std::move(window));
     });
-    windowManager_.mainWindow().addChild(std::move(spawn_window_button));
+    windowManager_.mainWindow().addChild(std::move(spawnWindowButton));
 }
 
 void Application::spawnSomeTanks()
 {
     for (size_t i = 0; i < TANKS_COUNT; ++i)
     {
-        const auto x_spawn_position = i * 100 + 100;
-        const auto y_spawn_position = x_spawn_position;
-        const auto spawn_rotation = i * 36;
+        const auto xSpawnPosition = i * 100 + 100;
+        const auto ySpawnPosition = xSpawnPosition;
+        const auto spawnRotation = i * 36;
         auto tank = entity::TankFactory::create(
             static_cast<entity::TankFactory::TankType>(i),
-            x_spawn_position, y_spawn_position, spawn_rotation, &tracks_renderer_);
+            xSpawnPosition, ySpawnPosition, spawnRotation, &tracksRenderer_);
 
         auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
         scene_.spawnObject(std::move(tank));
@@ -317,28 +317,28 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
 {
     for (size_t i = 0; i < BARRELS_COUNT; ++i)
     {
-        const auto x_spawn_position = i * 30 + 500;
-        const auto y_spawn_position = x_spawn_position - 400;
+        const auto xSpawnPosition = i * 30 + 500;
+        const auto ySpawnPosition = xSpawnPosition - 400;
 
         scene_.spawnObject(entity::BarrelFactory::create(
             static_cast<entity::BarrelFactory::BarrelType>(i % 4),
-            x_spawn_position, y_spawn_position));
+            xSpawnPosition, ySpawnPosition));
     }
 
     for (size_t i = BARRELS_COUNT; i < CRATES_COUNT + BARRELS_COUNT; ++i)
     {
-        const auto x_spawn_position = i * 30 + 500;
-        const auto y_spawn_position = x_spawn_position - 400;
+        const auto xSpawnPosition = i * 30 + 500;
+        const auto ySpawnPosition = xSpawnPosition - 400;
 
         scene_.spawnObject(entity::CrateFactory::create(
             static_cast<entity::CrateFactory::CrateType>(i % 2),
-            x_spawn_position, y_spawn_position));
+            xSpawnPosition, ySpawnPosition));
     }
 
     constexpr size_t NUMBER_OF_TREES_OF_EACH_TYPE = 8;
 
     using Type = game::entity::TreeFactory::TreeType;
-    const auto tree_types = std::vector<Type>
+    const auto treeTypes = std::vector<Type>
     {
         Type::Brown_Large,
         Type::Brown_Small,
@@ -346,14 +346,14 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
         Type::Green_Small
     };
 
-    for (const auto& tree_type : tree_types)
+    for (const auto& treeType : treeTypes)
     {
         for (size_t i = 0; i < NUMBER_OF_TREES_OF_EACH_TYPE; ++i)
         {
-            const auto x_position = rand() % Config::WINDOW_WIDTH;
-            const auto y_position = rand() % Config::WINDOW_HEIGHT;
+            const auto xPosition = rand() % Config::WINDOW_WIDTH;
+            const auto yPosition = rand() % Config::WINDOW_HEIGHT;
             scene_.spawnObject(game::entity::TreeFactory::create(
-                tree_type, x_position, y_position));
+                treeType, xPosition, yPosition));
         }
     }
 }
@@ -361,18 +361,18 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
 void Application::generateProfiling()
 {
     // TODO: Create some proper profiler class not that
-    measurements_text_handle_->setText("DRAW: " + std::to_string(draw_time_)
-            + "ms\nPHYSICS: " + std::to_string(physics_time_.asMicroseconds())
-            + "us\nNAV: " + std::to_string(nav_time_.asMicroseconds())
-            + "us\nGUI: " + std::to_string(gui_time_.asMilliseconds())
+    measurementsTextHandle_->setText("DRAW: " + std::to_string(drawTime_)
+            + "ms\nPHYSICS: " + std::to_string(physicsTime_.asMicroseconds())
+            + "us\nNAV: " + std::to_string(navTime_.asMicroseconds())
+            + "us\nGUI: " + std::to_string(guiTime_.asMilliseconds())
             + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
             + "\nObjects count: " + std::to_string(scene_.objects().size()));
 
-    measurements_average_text_handle_->setText("AVG: " + std::to_string(draw_average_.calculate(draw_time_))
-        + "ms\nAVG: " + std::to_string(physics_average_.calculate(physics_time_.asMicroseconds()))
-        + "us\nAVG: " + std::to_string(nav_average_.calculate(nav_time_.asMicroseconds()))
-        + "us\nAVG: " + std::to_string(gui_average_.calculate(gui_time_.asMilliseconds()))
-        + "ms\nAVG: " + std::to_string(fps_average_.calculate(fpsCounter_.getFps())));
+    measurementsAverageTextHandle_->setText("AVG: " + std::to_string(drawAverage_.calculate(drawTime_))
+        + "ms\nAVG: " + std::to_string(physicsAverage_.calculate(physicsTime_.asMicroseconds()))
+        + "us\nAVG: " + std::to_string(navAverage_.calculate(navTime_.asMicroseconds()))
+        + "us\nAVG: " + std::to_string(guiAverage_.calculate(guiTime_.asMilliseconds()))
+        + "ms\nAVG: " + std::to_string(fpsAverage_.calculate(fpsCounter_.getFps())));
 }
 
 }  // namespace game

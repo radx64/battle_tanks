@@ -37,9 +37,7 @@ protected:
     float set_direction_{};
     float set_throttle_{};
     float lifetime_{};
-    TracksRenderer* tracks_renderer_;
+    TracksRenderer* tracksRenderer_;
 };
 
 }  // namespace game::entity
-
-

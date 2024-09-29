@@ -5,9 +5,9 @@ namespace graphics
 
 void TextureLibrary::initTexture(const std::string& name, const std::string& path)
 {
-    auto placed_element = textures_.emplace(std::make_pair(name, sf::Texture()));
-    bool has_loaded = placed_element.first->second.loadFromFile(path);
-    if(not has_loaded) throw std::string("Couldn't load texture file...");
+    auto placedElement = textures_.emplace(std::make_pair(name, sf::Texture()));
+    bool hasLoaded = placedElement.first->second.loadFromFile(path);
+    if(not hasLoaded) throw std::string("Couldn't load texture file...");
 }
 
 void TextureLibrary::initialize()

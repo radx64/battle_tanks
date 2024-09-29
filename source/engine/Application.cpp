@@ -9,7 +9,7 @@ namespace engine
 
 Application::Application(const std::string_view& windowName)
 : window_(sf::VideoMode(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 32), windowName.data())
-,collision_solver_(scene_)
+,collisionSolver_(scene_)
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});
@@ -60,36 +60,36 @@ void Application::processEvents()
             case sf::Event::Closed : { close(); break; }
             case sf::Event::KeyPressed :
             {
-                keyboard_handler_.handleKeyPressed(event.key);
+                keyboardHandler_.handleKeyPressed(event.key);
                 break;
             }
             case sf::Event::KeyReleased :
             {
-                keyboard_handler_.handleKeyReleased(event.key);
+                keyboardHandler_.handleKeyReleased(event.key);
                 break;
             }
 
             case sf::Event::TextEntered :
             {
-                keyboard_handler_.handleTextEntered(event.text);
+                keyboardHandler_.handleTextEntered(event.text);
                 break;
             }
 
             case sf::Event::MouseButtonPressed :
             {
-                mouse_handler_.handleButtonPressed(event.mouseButton);
+                mouseHandler_.handleButtonPressed(event.mouseButton);
                 break;
             }
 
             case sf::Event::MouseButtonReleased :
             {
-                mouse_handler_.handleButtonReleased(event.mouseButton);
+                mouseHandler_.handleButtonReleased(event.mouseButton);
                 break;
             }
 
             case sf::Event::MouseMoved :
             {
-                mouse_handler_.handleMouseMoved(event.mouseMove);
+                mouseHandler_.handleMouseMoved(event.mouseMove);
                 break;
             }
 
@@ -102,7 +102,7 @@ void Application::processEvents()
 void Application::update()
 {
     scene_.update();
-    particle_system_.update(timeStep_);
+    particleSystem_.update(timeStep_);
     onUpdate(timeStep_);
 }
 

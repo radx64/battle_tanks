@@ -17,9 +17,9 @@ namespace gui_sandbox
 Application::Application()
 : engine::Application("GUI sandbox")
 , windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
-, mouse_controller_{&windowManager_, window_, window_.getDefaultView()}
-, keyboard_controller_{&windowManager_}
-, text_entered_controller_{&windowManager_}
+, mouseController_{&windowManager_, window_, window_.getDefaultView()}
+, keyboardController_{&windowManager_}
+, textEnteredController_{&windowManager_}
 {
 }
 
@@ -32,27 +32,27 @@ void Application::onInit()
 
     generateBackground();
 
-    mouse_handler_.subscribe(&mouse_controller_);
-    keyboard_handler_.subscribe(&keyboard_controller_);
-    keyboard_handler_.subscribe(&text_entered_controller_);
+    mouseHandler_.subscribe(&mouseController_);
+    keyboardHandler_.subscribe(&keyboardController_);
+    keyboardHandler_.subscribe(&textEnteredController_);
 
-    auto quit_button = std::make_unique<gui::Button>("Quit");
-    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
-    quit_button->setSize(sf::Vector2f(250.f, 30.f));
-    quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
-    windowManager_.mainWindow().addChild(std::move(quit_button));
+    auto quitButton = std::make_unique<gui::Button>("Quit");
+    quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
+    quitButton->setSize(sf::Vector2f(250.f, 30.f));
+    quitButton->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
+    windowManager_.mainWindow().addChild(std::move(quitButton));
 
-    auto gui_debug = std::make_unique<gui::Button>("GUI DEBUG");
-    gui_debug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
-    gui_debug->setSize(sf::Vector2f(250.f, 30.f));
-    gui_debug->onClick([](){gui::debug::toggle();});
-    windowManager_.mainWindow().addChild(std::move(gui_debug));
+    auto guiDebug = std::make_unique<gui::Button>("GUI DEBUG");
+    guiDebug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
+    guiDebug->setSize(sf::Vector2f(250.f, 30.f));
+    guiDebug->onClick([](){gui::debug::toggle();});
+    windowManager_.mainWindow().addChild(std::move(guiDebug));
 
-    auto create_empty_window_button = std::make_unique<gui::Button>("Create Empty Window");
-    create_empty_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
-    create_empty_window_button->setSize(sf::Vector2f(250.f, 30.f));
+    auto createEmptyWindowButton = std::make_unique<gui::Button>("Create Empty Window");
+    createEmptyWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
+    createEmptyWindowButton->setSize(sf::Vector2f(250.f, 30.f));
 
-    create_empty_window_button->onClick([this](){
+    createEmptyWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
@@ -61,21 +61,21 @@ void Application::onInit()
         windowManager_.addWindow(std::move(window));
     });
 
-    windowManager_.mainWindow().addChild(std::move(create_empty_window_button));
+    windowManager_.mainWindow().addChild(std::move(createEmptyWindowButton));
 
-    auto create_window_button = std::make_unique<gui::Button>("Create Simple Window");
-    create_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
-    create_window_button->setSize(sf::Vector2f(250.f, 30.f));
+    auto createSimpleWindowButton = std::make_unique<gui::Button>("Create Simple Window");
+    createSimpleWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
+    createSimpleWindowButton->setSize(sf::Vector2f(250.f, 30.f));
 
-    create_window_button->onClick([this](){
+    createSimpleWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
-        auto simple_button = std::make_unique<gui::Button>("THIS IS BUTTON!");
-        simple_button->setSize({100.f, 100.f});
-        simple_button->setPosition({10.f, 10.f});
+        auto simpleButton = std::make_unique<gui::Button>("THIS IS BUTTON!");
+        simpleButton->setSize({100.f, 100.f});
+        simpleButton->setPosition({10.f, 10.f});
 
         auto fillLayout = std::make_unique<gui::FillLayout>();
 
-        fillLayout->addChild(std::move(simple_button));
+        fillLayout->addChild(std::move(simpleButton));
 
         window->addChild(std::move(fillLayout));
 
@@ -87,111 +87,111 @@ void Application::onInit()
 
     });
 
-    windowManager_.mainWindow().addChild(std::move(create_window_button));
+    windowManager_.mainWindow().addChild(std::move(createSimpleWindowButton));
 
-    auto create_progress_window_button = std::make_unique<gui::Button>("Create ProgressBar Window");
-    create_progress_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
-    create_progress_window_button->setSize(sf::Vector2f(250.f, 30.f));
-    create_progress_window_button->onClick([this](){
+    auto createProgressWindowButton = std::make_unique<gui::Button>("Create ProgressBar Window");
+    createProgressWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
+    createProgressWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createProgressWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("I see some progress :D");
 
-        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
-        auto minus_button = std::make_unique<gui::Button>("-");
-        auto progress_bar = std::make_unique<gui::ProgressBar>();
-        auto plus_button = std::make_unique<gui::Button>("+");
+        auto verticalLayout = std::make_unique<gui::VerticalLayout>();
+        auto minusButton = std::make_unique<gui::Button>("-");
+        auto progressBar = std::make_unique<gui::ProgressBar>();
+        auto plusButton = std::make_unique<gui::Button>("+");
 
 
-        progress_bar->setRange(0.f, 25.f);
+        progressBar->setRange(0.f, 25.f);
 
-        minus_button->onClick([progress_bar_ptr = progress_bar.get()]{
-            progress_bar_ptr->setValue(progress_bar_ptr->getValue()-1.f);
+        minusButton->onClick([progressBarPtr = progressBar.get()]{
+            progressBarPtr->setValue(progressBarPtr->getValue()-1.f);
         });
 
-        plus_button->onClick([progress_bar_ptr = progress_bar.get()]{
-            progress_bar_ptr->setValue(progress_bar_ptr->getValue()+1.f);
+        plusButton->onClick([progressBarPtr = progressBar.get()]{
+            progressBarPtr->setValue(progressBarPtr->getValue()+1.f);
         });
 
-        vertical_layout->addChild(std::move(minus_button));
-        vertical_layout->addChild(std::move(progress_bar));
-        vertical_layout->addChild(std::move(plus_button));
+        verticalLayout->addChild(std::move(minusButton));
+        verticalLayout->addChild(std::move(progressBar));
+        verticalLayout->addChild(std::move(plusButton));
 
-        window->addChild(std::move(vertical_layout));
+        window->addChild(std::move(verticalLayout));
 
         windowManager_.addWindow(std::move(window));
 
     });
 
-    windowManager_.mainWindow().addChild(std::move(create_progress_window_button));
+    windowManager_.mainWindow().addChild(std::move(createProgressWindowButton));
 
-    auto create_editbox_window_button = std::make_unique<gui::Button>("Create Edit Box Window");
-    create_editbox_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
-    create_editbox_window_button->setSize(sf::Vector2f(250.f, 30.f));
-    create_editbox_window_button->onClick([this](){
+    auto createEditboxWindowButton = std::make_unique<gui::Button>("Create Edit Box Window");
+    createEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
+    createEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createEditboxWindowButton->onClick([this](){
 
         auto window = std::make_unique<gui::Window>();
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("I can now read text from keyboard :D");
 
-        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+        auto verticalLayout = std::make_unique<gui::VerticalLayout>();
         auto button = std::make_unique<gui::Button>("CLICK HERE");
-        auto edit_box = std::make_unique<gui::EditBox>();
-        auto edit_box_2 = std::make_unique<gui::EditBox>();
+        auto editBox = std::make_unique<gui::EditBox>();
+        auto editBox2 = std::make_unique<gui::EditBox>();
 
-        button->onClick([edit_box_ptr = edit_box.get(), edit_box_2_ptr = edit_box_2.get(), button_ptr = button.get()]{
-            button_ptr->setText(edit_box_ptr->getText() + " | " + edit_box_2_ptr->getText());
+        button->onClick([editBoxPtr = editBox.get(), editBox2Ptr = editBox2.get(), button_ptr = button.get()]{
+            button_ptr->setText(editBoxPtr->getText() + " | " + editBox2Ptr->getText());
         });
 
-        vertical_layout->addChild(std::move(button));
-        vertical_layout->addChild(std::move(edit_box));
-        vertical_layout->addChild(std::move(edit_box_2));
+        verticalLayout->addChild(std::move(button));
+        verticalLayout->addChild(std::move(editBox));
+        verticalLayout->addChild(std::move(editBox2));
 
-        window->addChild(std::move(vertical_layout));
+        window->addChild(std::move(verticalLayout));
 
         windowManager_.addWindow(std::move(window));
 
     });
 
-    windowManager_.mainWindow().addChild(std::move(create_editbox_window_button));
+    windowManager_.mainWindow().addChild(std::move(createEditboxWindowButton));
 
-    auto create_layout_window_button = std::make_unique<gui::Button>("Create Layout Window");
-    create_layout_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
-    create_layout_window_button->setSize(sf::Vector2f(250.f, 30.f));
-    create_layout_window_button->onClick([this](){
+    auto createLayoutWindowButton = std::make_unique<gui::Button>("Create Layout Window");
+    createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
+    createLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createLayoutWindowButton->onClick([this](){
 
         auto window = std::make_unique<gui::Window>();
-        auto horizontal_layout = std::make_unique<gui::HorizontalLayout>();
-        auto hello_button = std::make_unique<gui::Button>("HELLO");
-        auto world_button = std::make_unique<gui::Button>("WORLD");
+        auto horizontalLayout = std::make_unique<gui::HorizontalLayout>();
+        auto helloButton = std::make_unique<gui::Button>("HELLO");
+        auto worldButton = std::make_unique<gui::Button>("WORLD");
 
-        auto horizontal_layout2 = std::make_unique<gui::HorizontalLayout>();
-        auto something_button = std::make_unique<gui::Button>("SOMETHING");
-        auto cooking_button = std::make_unique<gui::Button>("IS COOKING");
-        auto hard_button = std::make_unique<gui::Button>("HARD");
+        auto horizontalLayout2 = std::make_unique<gui::HorizontalLayout>();
+        auto somethingButton = std::make_unique<gui::Button>("SOMETHING");
+        auto cookingButton = std::make_unique<gui::Button>("IS COOKING");
+        auto hardButton = std::make_unique<gui::Button>("HARD");
 
-        hello_button->onClick([](){std::cout << "Hello?" << std::endl;});
-        world_button->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
+        helloButton->onClick([](){std::cout << "Hello?" << std::endl;});
+        worldButton->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
 
-        horizontal_layout->addChild(std::move(hello_button));
-        horizontal_layout->addChild(std::move(world_button));
+        horizontalLayout->addChild(std::move(helloButton));
+        horizontalLayout->addChild(std::move(worldButton));
 
-        horizontal_layout2->addChild(std::move(something_button));
+        horizontalLayout2->addChild(std::move(somethingButton));
 
-        auto vertical_layout2 = std::make_unique<gui::VerticalLayout>();
-        vertical_layout2->addChild(std::move(cooking_button));
-        vertical_layout2->addChild(std::move(hard_button));
+        auto verticalLayout2 = std::make_unique<gui::VerticalLayout>();
+        verticalLayout2->addChild(std::move(cookingButton));
+        verticalLayout2->addChild(std::move(hardButton));
 
-        horizontal_layout2->addChild(std::move(vertical_layout2));
+        horizontalLayout2->addChild(std::move(verticalLayout2));
 
-        auto vertical_layout = std::make_unique<gui::VerticalLayout>();
+        auto verticalLayout = std::make_unique<gui::VerticalLayout>();
 
-        vertical_layout->addChild(std::move(horizontal_layout));
-        vertical_layout->addChild(std::move(horizontal_layout2));
+        verticalLayout->addChild(std::move(horizontalLayout));
+        verticalLayout->addChild(std::move(horizontalLayout2));
 
-        window->addChild(std::move(vertical_layout));
+        window->addChild(std::move(verticalLayout));
 
         window->setSize(sf::Vector2f(700.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
@@ -201,65 +201,65 @@ void Application::onInit()
 
     });
 
-    windowManager_.mainWindow().addChild(std::move(create_layout_window_button));
+    windowManager_.mainWindow().addChild(std::move(createLayoutWindowButton));
 
-    auto left_label = std::make_unique<gui::Label>("Left aligned label");
-    left_label->setPosition({100.f, 20.f});
-    left_label->setSize({400.f, 40.f});
-    left_label->setAlignment(gui::Alignment::Left);
+    auto leftLabel = std::make_unique<gui::Label>("Left aligned label");
+    leftLabel->setPosition({100.f, 20.f});
+    leftLabel->setSize({400.f, 40.f});
+    leftLabel->setAlignment(gui::Alignment::Left);
 
-    auto hcenter_label = std::make_unique<gui::Label>("Horizontally centered label");
-    hcenter_label->setPosition({100.f, 80.f});
-    hcenter_label->setSize({400.f, 40.f});
-    hcenter_label->setAlignment(gui::Alignment::HorizontallyCentered);
+    auto hcenterLabel = std::make_unique<gui::Label>("Horizontally centered label");
+    hcenterLabel->setPosition({100.f, 80.f});
+    hcenterLabel->setSize({400.f, 40.f});
+    hcenterLabel->setAlignment(gui::Alignment::HorizontallyCentered);
 
-    auto right_label = std::make_unique<gui::Label>("Right aligned label");
-    right_label->setPosition({100.f, 140.f});
-    right_label->setSize({400.f, 40.f});
-    right_label->setAlignment(gui::Alignment::Right);
+    auto rightLabel = std::make_unique<gui::Label>("Right aligned label");
+    rightLabel->setPosition({100.f, 140.f});
+    rightLabel->setSize({400.f, 40.f});
+    rightLabel->setAlignment(gui::Alignment::Right);
 
-    windowManager_.mainWindow().addChild(std::move(left_label));
-    windowManager_.mainWindow().addChild(std::move(hcenter_label));
-    windowManager_.mainWindow().addChild(std::move(right_label));
+    windowManager_.mainWindow().addChild(std::move(leftLabel));
+    windowManager_.mainWindow().addChild(std::move(hcenterLabel));
+    windowManager_.mainWindow().addChild(std::move(rightLabel));
 
-    auto top_label = std::make_unique<gui::Label>("Top aligned label");
-    top_label->setPosition({700.f, 20.f});
-    top_label->setSize({400.f, 40.f});
-    top_label->setAlignment(gui::Alignment::Top);
+    auto topLabel = std::make_unique<gui::Label>("Top aligned label");
+    topLabel->setPosition({700.f, 20.f});
+    topLabel->setSize({400.f, 40.f});
+    topLabel->setAlignment(gui::Alignment::Top);
 
-    auto vcenter_label = std::make_unique<gui::Label>("Vertically centered label");
-    vcenter_label->setPosition({700.f, 80.f});
-    vcenter_label->setSize({400.f, 40.f});
-    vcenter_label->setAlignment(gui::Alignment::VerticallyCentered);
+    auto vcenterLabel = std::make_unique<gui::Label>("Vertically centered label");
+    vcenterLabel->setPosition({700.f, 80.f});
+    vcenterLabel->setSize({400.f, 40.f});
+    vcenterLabel->setAlignment(gui::Alignment::VerticallyCentered);
 
-    auto bottom_label = std::make_unique<gui::Label>("Bottom aligned label");
-    bottom_label->setPosition({700.f, 140.f});
-    bottom_label->setSize({400.f, 40.f});
-    bottom_label->setAlignment(gui::Alignment::Bottom);
+    auto bottomLabel = std::make_unique<gui::Label>("Bottom aligned label");
+    bottomLabel->setPosition({700.f, 140.f});
+    bottomLabel->setSize({400.f, 40.f});
+    bottomLabel->setAlignment(gui::Alignment::Bottom);
 
-    windowManager_.mainWindow().addChild(std::move(top_label));
-    windowManager_.mainWindow().addChild(std::move(vcenter_label));
-    windowManager_.mainWindow().addChild(std::move(bottom_label));
+    windowManager_.mainWindow().addChild(std::move(topLabel));
+    windowManager_.mainWindow().addChild(std::move(vcenterLabel));
+    windowManager_.mainWindow().addChild(std::move(bottomLabel));
 
 
-    auto multiline_top_aligned_label = std::make_unique<gui::Label>("Top multiline\nlabel is here\nand a bit there");
-    multiline_top_aligned_label->setPosition({100.f, 300.f});
-    multiline_top_aligned_label->setSize({400.f, 40.f});
-    multiline_top_aligned_label->setAlignment(gui::Alignment::Top);
+    auto multilineTopAlignedLabel = std::make_unique<gui::Label>("Top multiline\nlabel is here\nand a bit there");
+    multilineTopAlignedLabel->setPosition({100.f, 300.f});
+    multilineTopAlignedLabel->setSize({400.f, 40.f});
+    multilineTopAlignedLabel->setAlignment(gui::Alignment::Top);
 
-    auto multiline_center_aligned_label = std::make_unique<gui::Label>("Centered multiline\nlabel is here\nand a bit there");
-    multiline_center_aligned_label->setPosition({100.f, 400.f});
-    multiline_center_aligned_label->setSize({400.f, 40.f});
-    multiline_center_aligned_label->setAlignment(gui::Alignment::VerticallyCentered);
+    auto multilineCenterAlignedLabel = std::make_unique<gui::Label>("Centered multiline\nlabel is here\nand a bit there");
+    multilineCenterAlignedLabel->setPosition({100.f, 400.f});
+    multilineCenterAlignedLabel->setSize({400.f, 40.f});
+    multilineCenterAlignedLabel->setAlignment(gui::Alignment::VerticallyCentered);
 
-    auto multiline_bottom_aligned_label = std::make_unique<gui::Label>("Bottom multiline\nlabel is here\nand a bit there");
-    multiline_bottom_aligned_label->setPosition({100.f, 500.f});
-    multiline_bottom_aligned_label->setSize({400.f, 40.f});
-    multiline_bottom_aligned_label->setAlignment(gui::Alignment::Bottom);
+    auto multilineBottomAlignedLabel = std::make_unique<gui::Label>("Bottom multiline\nlabel is here\nand a bit there");
+    multilineBottomAlignedLabel->setPosition({100.f, 500.f});
+    multilineBottomAlignedLabel->setSize({400.f, 40.f});
+    multilineBottomAlignedLabel->setAlignment(gui::Alignment::Bottom);
 
-    windowManager_.mainWindow().addChild(std::move(multiline_top_aligned_label));
-    windowManager_.mainWindow().addChild(std::move(multiline_center_aligned_label));
-    windowManager_.mainWindow().addChild(std::move(multiline_bottom_aligned_label));
+    windowManager_.mainWindow().addChild(std::move(multilineTopAlignedLabel));
+    windowManager_.mainWindow().addChild(std::move(multilineCenterAlignedLabel));
+    windowManager_.mainWindow().addChild(std::move(multilineBottomAlignedLabel));
 }
 
 void Application::onClose()
@@ -287,19 +287,19 @@ void Application::generateBackground()
     const auto X_STEPS = 20;
     const auto Y_STEPS = 10;
 
-    sf::RectangleShape outer_box{};
-    outer_box.setPosition(EDGE_OFFSET, EDGE_OFFSET);
-    outer_box.setSize(sf::Vector2f{Config::WINDOW_WIDTH - 2 * EDGE_OFFSET, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
-    outer_box.setOutlineThickness(LINE_THICKNESS);
-    outer_box.setFillColor(sf::Color::Transparent);
-    outer_box.setOutlineColor(sf::Color(255,255,255,240));
-    backgroundTexture_.draw(outer_box);
+    sf::RectangleShape outerBox{};
+    outerBox.setPosition(EDGE_OFFSET, EDGE_OFFSET);
+    outerBox.setSize(sf::Vector2f{Config::WINDOW_WIDTH - 2 * EDGE_OFFSET, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
+    outerBox.setOutlineThickness(LINE_THICKNESS);
+    outerBox.setFillColor(sf::Color::Transparent);
+    outerBox.setOutlineColor(sf::Color(255,255,255,240));
+    backgroundTexture_.draw(outerBox);
 
     for (auto x = 1; x < X_STEPS; ++x)
     {
-        auto x_coord = x * ((Config::WINDOW_WIDTH - 2*EDGE_OFFSET) / X_STEPS) + EDGE_OFFSET;
+        auto xCoord = x * ((Config::WINDOW_WIDTH - 2*EDGE_OFFSET) / X_STEPS) + EDGE_OFFSET;
         sf::RectangleShape line{};
-        line.setPosition(x_coord, EDGE_OFFSET);
+        line.setPosition(xCoord, EDGE_OFFSET);
         line.setSize(sf::Vector2f{LINE_THICKNESS/4.f, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
         line.setFillColor(sf::Color(255,255,255,200));
         backgroundTexture_.draw(line);
@@ -307,9 +307,9 @@ void Application::generateBackground()
 
     for (auto y = 1; y < Y_STEPS; ++y)
     {
-        auto y_coord = y * ((Config::WINDOW_HEIGHT- 2*EDGE_OFFSET) / Y_STEPS) + EDGE_OFFSET;
+        auto yCoord = y * ((Config::WINDOW_HEIGHT- 2*EDGE_OFFSET) / Y_STEPS) + EDGE_OFFSET;
         sf::RectangleShape line{};
-        line.setPosition(EDGE_OFFSET, y_coord);
+        line.setPosition(EDGE_OFFSET, yCoord);
         line.setSize(sf::Vector2f{Config::WINDOW_WIDTH -  2*EDGE_OFFSET, LINE_THICKNESS/4.f});
         line.setFillColor(sf::Color(255,255,255,200));
         backgroundTexture_.draw(line);

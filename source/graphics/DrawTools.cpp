@@ -36,15 +36,15 @@ void drawTarget(sf::RenderWindow& window, int x, int y)
 
 void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoints)
 {
-    const sf::Vector2i* last_waypoint = nullptr;
+    const sf::Vector2i* lastWaypoint = nullptr;
     for(const auto& waypoint : waypoints)
     {
         drawTarget(window, waypoint.x, waypoint.y);
-        if(last_waypoint)
+        if(lastWaypoint)
         {
-            drawLine(window, last_waypoint->x, last_waypoint->y, waypoint.x, waypoint.y, sf::Color::White);
+            drawLine(window, lastWaypoint->x, lastWaypoint->y, waypoint.x, waypoint.y, sf::Color::White);
         }
-        last_waypoint = &waypoint;
+        lastWaypoint = &waypoint;
     }
 
     if (waypoints.size() > 2) 

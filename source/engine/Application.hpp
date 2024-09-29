@@ -39,15 +39,14 @@ protected:
     sf::RenderWindow window_;
     sf::Clock clock_;
 
-    engine::ParticleSystem particle_system_;
-    engine::input::KeyboardHandler keyboard_handler_;
-    engine::input::MouseHandler mouse_handler_;
+    engine::ParticleSystem particleSystem_;
+    engine::input::KeyboardHandler keyboardHandler_;
+    engine::input::MouseHandler mouseHandler_;
 
     float timeStep_{1.0f/30.f};
     engine::Scene scene_;
-    engine::CollisionSolver collision_solver_;
+    engine::CollisionSolver collisionSolver_;
 
 };
 
 }  // namespace engine
-
