@@ -11,12 +11,11 @@ constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 namespace gui
 {
 
-// FIXME: moving mouse over text while selecting using keyboard is affecting selection scope 
-
 EditBox::EditBox()
 : text_{}
 , textCursor_{text_}
 , selection_{text_}
+, keyboardSelectionOngoing_{false}
 , maxLength_{DEFAULT_TEXT_MAX_LENGTH}
 {
     text_.addModifier(&selection_);
@@ -103,6 +102,13 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
             selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
             selection_.update();
         }
+        else
+        {
+            keyboardSelectionOngoing_ = false;
+            selection_.clear();
+            selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
+            selection_.update();
+        }
     }
 
     return gui::EventStatus::NotConsumed;
@@ -117,7 +123,7 @@ EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEve
 
 EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
 {
-    if(selection_.isOngoing())
+    if(selection_.isOngoing() and not keyboardSelectionOngoing_)
     {
         textCursor_.moveTo(mouseMovedEvent.position.x);
         selection_.updateEnd(textCursor_.getIndex(), textCursor_.getPosition());
@@ -176,10 +182,12 @@ void EditBox::toggleSelection(const bool enable)
 {
     if (enable)
     {
+        keyboardSelectionOngoing_ = true;
         startSelection();
     }
     else
     {
+        keyboardSelectionOngoing_ = false;
         endSelection();
     } 
 }

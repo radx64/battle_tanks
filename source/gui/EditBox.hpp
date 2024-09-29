@@ -46,6 +46,7 @@ protected:
     gui::Text text_;
     gui::TextCursor textCursor_;
     gui::Selection selection_;
+    bool keyboardSelectionOngoing_;
     uint32_t maxLength_;
 };
 
