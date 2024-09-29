@@ -9,12 +9,12 @@ namespace gui
 class TextEnteredController : public engine::input::TextEnteredReceiver
 {
 public:
-    TextEnteredController(gui::WindowManager* window_manager);
+    TextEnteredController(gui::WindowManager* windowManager);
 
 protected:
     void onTextEntered(const uint32_t unicode) override;
 
-    gui::WindowManager* window_manager_;
+    gui::WindowManager* windowManager_;
 };
 
 }  // namespace gui

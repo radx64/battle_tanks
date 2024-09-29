@@ -18,7 +18,7 @@ public:
 
     void moveLeft(const bool moveWholeWord);
     void moveRight(const bool moveWholeWord);
-    void moveTo(float mouse_x);
+    void moveTo(float mouseX);
 
     void render(sf::RenderTexture& renderTexture);
     void update();
@@ -32,12 +32,12 @@ public:
 protected:
     float getGlyphOffset(const std::string& string, const size_t index);
 
-    uint32_t character_size_;
+    uint32_t characterSize_;
     const sf::Font* font_;
     gui::Text& text_;
 
-    uint32_t text_length_;
-    uint32_t cursor_index_;
+    uint32_t textLength_;
+    uint32_t cursorIndex_;
     sf::RectangleShape cursor_;
     bool enabled_;
 };

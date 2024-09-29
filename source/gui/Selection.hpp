@@ -36,12 +36,12 @@ public:
 protected:
     gui::Text& text_;
     
-    size_t selection_start_index_;
-    size_t selection_end_index_;
+    size_t selectionStartIndex_;
+    size_t selectionEndIndex_;
 
-    bool is_ongoing_;
-    sf::Vector2f selection_start_position_;
-    sf::Vector2f selection_end_position_;
+    bool isOngoing_;
+    sf::Vector2f selectionStartPosition_;
+    sf::Vector2f selectionEndPosition_;
 
     sf::RectangleShape selection_;
 };

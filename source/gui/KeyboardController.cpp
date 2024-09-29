@@ -4,13 +4,13 @@
 
 namespace gui
 {
-KeyboardController::KeyboardController(gui::WindowManager* window_manager)
-: window_manager_(window_manager)
+KeyboardController::KeyboardController(gui::WindowManager* windowManager)
+: windowManager_(windowManager)
 {}
 
 void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 {
-    window_manager_->receive(gui::event::KeyboardKeyPressed{
+    windowManager_->receive(gui::event::KeyboardKeyPressed{
         .key = keyEvent.code,
         .modifiers = {
             .alt = keyEvent.alt,
@@ -22,7 +22,7 @@ void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 
 void KeyboardController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
 {
-    window_manager_->receive(gui::event::KeyboardKeyReleased{
+    windowManager_->receive(gui::event::KeyboardKeyReleased{
         .key = keyEvent.code, 
         .modifiers = {
             .alt = keyEvent.alt,

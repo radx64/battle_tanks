@@ -23,10 +23,10 @@ ProgressBar::ProgressBar()
     bar_.setOutlineThickness(style.getOutlineThickness()); 
     bar_.setPosition(getGlobalPosition());
 
-    auto text_ptr = std::make_unique <gui::Label>("");
-    text_ = text_ptr.get();
+    auto textPtr = std::make_unique <gui::Label>("");
+    text_ = textPtr.get();
     text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-    addChild(std::move(text_ptr));
+    addChild(std::move(textPtr));
     setTextLabel(progress_);
 }
 

@@ -16,25 +16,25 @@ sf::Vector2f toVector2f(const event::MousePosition& position)
 }
 
 Component::Component()
-: local_position_{}
+: localPosition_{}
 , parent_{nullptr}
-, can_children_process_events_{true}
+, canChildrenProcessEvents_{true}
 , children_ {}
-, is_visible_ {true}
-, was_mouse_inside_{false}
-, is_focused_{false}
+, isVisible_ {true}
+, wasMouseInside_{false}
+, isFocused_{false}
 {
 }
 
 void Component::render(sf::RenderTexture& renderTexture)
 {
-    if (!is_visible_) return;
+    if (!isVisible_) return;
     onRender(renderTexture);
     for (auto& child : children_)
     {
         child->render(renderTexture); 
     }
-    debug::draw_bounds(renderTexture, this);
+    debug::drawBounds(renderTexture, this);
 }
 
 template <typename T>
@@ -46,7 +46,7 @@ EventStatus Component::processEvent(const T& event, bool isConsumable)
     // as if child is rendered on top of another
     // it's better if topmost child captures event first
     // so it will not be send to back layer ones
-    if (can_children_process_events_)
+    if (canChildrenProcessEvents_)
     {
         for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
         {
@@ -65,7 +65,7 @@ EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
     {
         // FIXME refactor this loop body to reduce number of if statements
         bool isMouseInside = child->isInside(toVector2f(mouseMovedEvent.position));
-        bool wasMouseInside = child->was_mouse_inside_;
+        bool wasMouseInside = child->wasMouseInside_;
 
         if (hasChildComponentCapturesMouseEnterEvent and wasMouseInside)
         {
@@ -101,22 +101,22 @@ EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonRele
 /* This two should not be propagated downwards to child components*/
 EventStatus Component::receive(const event::MouseEntered& mouseEnteredEvent)
 {
-    if (not can_children_process_events_) return EventStatus::NotConsumed;
-    was_mouse_inside_ = true;
+    if (not canChildrenProcessEvents_) return EventStatus::NotConsumed;
+    wasMouseInside_ = true;
     return on(mouseEnteredEvent);
 }
 EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
 {
-    if (not can_children_process_events_) return EventStatus::NotConsumed;
+    if (not canChildrenProcessEvents_) return EventStatus::NotConsumed;
     for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
     {
-        if ((*child)->was_mouse_inside_)
+        if ((*child)->wasMouseInside_)
         {
             (*child)->receive(mouseLeftEvent);
         }
     }
 
-    was_mouse_inside_ = false;
+    wasMouseInside_ = false;
     return this->on(mouseLeftEvent);
 }
 
@@ -153,7 +153,7 @@ EMPTY_ON_METHOD(Component, event::TextEntered);
 
 void Component::setPosition(const sf::Vector2f& position)
 {
-    local_position_ = position;
+    localPosition_ = position;
     updateGlobalPosition();
 
     for (auto& child : children_)
@@ -184,24 +184,24 @@ void Component::onSizeChange()
 {
 }
 
-void Component::onParentSizeChange(const sf::Vector2f& parent_size)
+void Component::onParentSizeChange(const sf::Vector2f& parentSize)
 {
-    UNUSED(parent_size);
+    UNUSED(parentSize);
 };
 
-void Component::setVisibility(bool is_visible)
+void Component::setVisibility(bool isVisible)
 {
-    is_visible_ = is_visible;
+    isVisible_ = isVisible;
 }
 
 bool Component::isVisible()
 {
-    return is_visible_; 
+    return isVisible_; 
 }
 
 const sf::Vector2f Component::getPosition() const
 {
-    return local_position_;
+    return localPosition_;
 }
 
 void Component::onPositionChange()
@@ -220,7 +220,7 @@ bool Component::isInside(const event::MousePosition& position) const\
 
 bool Component::wasMouseInside() const
 {
-    return was_mouse_inside_;
+    return wasMouseInside_;
 }
 
 const sf::Vector2f Component::getGlobalPosition() const
@@ -244,7 +244,7 @@ void Component::addChild(std::unique_ptr<Component> child)
 
 void Component::focus()
 {
-    is_focused_ = true;
+    isFocused_ = true;
 
     for (auto& child : children_)
     {
@@ -261,7 +261,7 @@ void Component::focus()
 
 void Component::defocus()
 {
-    is_focused_ = false;
+    isFocused_ = false;
 
     for (auto& child : children_)
     {
@@ -273,14 +273,14 @@ void Component::defocus()
 
 bool Component::isFocused() const
 {
-    return is_focused_;
+    return isFocused_;
 }
 
-void Component::defocusChildrenExcept(const Component* focused_child)
+void Component::defocusChildrenExcept(const Component* focusedChild)
 {
     for (auto& child : children_)
     {
-        if (child.get() != focused_child)
+        if (child.get() != focusedChild)
         {
             child->defocus();
         }
@@ -304,22 +304,22 @@ void Component::onFocusLost()
 
 void Component::updateGlobalPosition()
 {
-    sf::Vector2f global_bounds_position {};
+    sf::Vector2f globalBoundsPosition {};
 
     if (parent_)
     {
-        global_bounds_position = parent_->getGlobalPosition() + getPosition();
+        globalBoundsPosition = parent_->getGlobalPosition() + getPosition();
     }
     else
     {
-        global_bounds_position = getPosition();
+        globalBoundsPosition = getPosition();
     }
 
-    if (bounds_.left != global_bounds_position.x or 
-        bounds_.top != global_bounds_position.y)
+    if (bounds_.left != globalBoundsPosition.x or 
+        bounds_.top != globalBoundsPosition.y)
     {
-        bounds_.left = global_bounds_position.x;
-        bounds_.top = global_bounds_position.y;
+        bounds_.left = globalBoundsPosition.x;
+        bounds_.top = globalBoundsPosition.y;
 
         onPositionChange();
 
@@ -338,11 +338,11 @@ size_t Component::getChildrenCount() const
 
 void Component::disableChildrenEvents()
 {
-    can_children_process_events_ = false;
+    canChildrenProcessEvents_ = false;
 }
 void Component::enableChildrenEvents()
 {
-    can_children_process_events_ = true;
+    canChildrenProcessEvents_ = true;
 }
 
 }  // namespace gui

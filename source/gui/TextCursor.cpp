@@ -13,8 +13,8 @@ namespace gui
 TextCursor::TextCursor(gui::Text& text)
 : font_{nullptr}
 , text_{text}
-, text_length_{}
-, cursor_index_{}
+, textLength_{}
+, cursorIndex_{}
 , enabled_{false}
 {
     auto style = BasicStyleSheetFactory::instance();
@@ -25,7 +25,7 @@ TextCursor::TextCursor(gui::Text& text)
 
 void TextCursor::setCharacterSize(uint32_t characterSize)
 {
-    character_size_ = characterSize;
+    characterSize_ = characterSize;
 }
 
 void TextCursor::setFont(const sf::Font* font)
@@ -35,22 +35,22 @@ void TextCursor::setFont(const sf::Font* font)
 
 void TextCursor::update()
 {
-    auto cursor_position = sf::Vector2f{0.f, 0.f};
+    auto cursorPosition = sf::Vector2f{0.f, 0.f};
 
-    assert(character_size_ > 0 && "Character size must be > 0");
+    assert(characterSize_ > 0 && "Character size must be > 0");
     assert(font_ != nullptr && "Font* needs to be set");
 
     const auto fieldText = text_.getText();
-    text_length_ = fieldText.length();
+    textLength_ = fieldText.length();
 
-    if (cursor_index_ > text_length_) cursor_index_ = text_length_;
+    if (cursorIndex_ > textLength_) cursorIndex_ = textLength_;
 
-    for (uint32_t index = 0; index < cursor_index_; ++index)
+    for (uint32_t index = 0; index < cursorIndex_; ++index)
     {
-        cursor_position.x += getGlyphOffset(fieldText, index);
+        cursorPosition.x += getGlyphOffset(fieldText, index);
     }
 
-    cursor_.setPosition(cursor_position);
+    cursor_.setPosition(cursorPosition);
     text_.updateTexture();
 }
 
@@ -69,19 +69,19 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
 
 void TextCursor::moveLeft(const bool moveWholeWord)
 {
-    if (cursor_index_ == 0)
+    if (cursorIndex_ == 0)
     {
         return;
     }
     if (not moveWholeWord)
     {
-        --cursor_index_;
+        --cursorIndex_;
     }
     else
     {
         const auto& text = text_.getText();
 
-        auto characterBeforeCursor = cursor_index_ - 1;
+        auto characterBeforeCursor = cursorIndex_ - 1;
         if (characterBeforeCursor <= text.length() && text.at(characterBeforeCursor) == ' ')
         {
             auto cursorPositionWithSkippedSpaces = text.find_last_not_of(' ', characterBeforeCursor);
@@ -98,11 +98,11 @@ void TextCursor::moveLeft(const bool moveWholeWord)
         auto lastSpace = text.find_last_of(' ', characterBeforeCursor);
         if (lastSpace != std::string::npos)
         {
-            cursor_index_ = lastSpace + 1;
+            cursorIndex_ = lastSpace + 1;
         }
         else
         {
-            cursor_index_ = 0;
+            cursorIndex_ = 0;
         }
     }
     update();
@@ -112,34 +112,34 @@ void TextCursor::moveRight(const bool moveWholeWord)
 {    
     if (not moveWholeWord)
     {
-        cursor_index_++;
+        cursorIndex_++;
     }
     else
     {
         const auto& text = text_.getText();
 
-        auto character_after_cursor = cursor_index_ + 1;
-        if (character_after_cursor < text.length() && text.at(character_after_cursor) == ' ')
+        auto characterAfterCursor = cursorIndex_ + 1;
+        if (characterAfterCursor < text.length() && text.at(characterAfterCursor) == ' ')
         {
-            auto cursorPositionWithSkippedSpaces = text.find_first_not_of(' ', character_after_cursor);
+            auto cursorPositionWithSkippedSpaces = text.find_first_not_of(' ', characterAfterCursor);
             if (cursorPositionWithSkippedSpaces == std::string::npos)
             {
-                character_after_cursor = text.length(); 
+                characterAfterCursor = text.length(); 
             }
             else
             {
-                character_after_cursor = cursorPositionWithSkippedSpaces - 1;
+                characterAfterCursor = cursorPositionWithSkippedSpaces - 1;
             }
         }
 
-        auto firstSpace = text.find_first_of(' ', character_after_cursor);
+        auto firstSpace = text.find_first_of(' ', characterAfterCursor);
         if (firstSpace != std::string::npos)
         {
-            cursor_index_ = firstSpace + 1;
+            cursorIndex_ = firstSpace + 1;
         }
         else
         {
-            cursor_index_ = text.length();
+            cursorIndex_ = text.length();
         }
     }
     update();
@@ -147,20 +147,19 @@ void TextCursor::moveRight(const bool moveWholeWord)
 
 float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
 {
-
-    float kering_offset{};
+    float keringOffset{};
 
     if(index > 0)
     {
         // On some font rendering systems kering make characters closer to each other
         // This need to be accomodated in cursor position calculations
-        kering_offset =  font_->getKerning(string[index-1],string[index], character_size_);
+        keringOffset =  font_->getKerning(string[index-1],string[index], characterSize_);
     }
     // FIXME: do something with false and 0.f params later
-    return font_->getGlyph(string[index], character_size_, false, 0.f).advance + kering_offset;
+    return font_->getGlyph(string[index], characterSize_, false, 0.f).advance + keringOffset;
 }
 
-void TextCursor::moveTo(float mouse_x)
+void TextCursor::moveTo(float mouseX)
 {
     auto fieldText = text_.getText();
     float offset{text_.getGlobalPosition().x + text_.getOffset().x};
@@ -168,11 +167,11 @@ void TextCursor::moveTo(float mouse_x)
 
     for (uint32_t index = 0; index < fieldText.length(); ++index)
     {
-        float glyph_width = getGlyphOffset(fieldText, index);
+        float glyphWidth = getGlyphOffset(fieldText, index);
 
-        if (offset+glyph_width >= mouse_x)
+        if (offset+glyphWidth >= mouseX)
         {
-            if(offset + (glyph_width / 2.f) >= mouse_x)
+            if(offset + (glyphWidth / 2.f) >= mouseX)
             {
                 foundIndex = index;  // cursor clicked on left side of a glyph (so before glyph)
             }
@@ -183,20 +182,20 @@ void TextCursor::moveTo(float mouse_x)
             break;
         }
 
-        offset += glyph_width;
+        offset += glyphWidth;
     }
-    cursor_index_ = foundIndex;
+    cursorIndex_ = foundIndex;
     update();
 }
 
 uint32_t TextCursor::getIndex() const
 {
-    return cursor_index_;
+    return cursorIndex_;
 }
 
 void TextCursor::setIndex(const uint32_t index)
 {
-    cursor_index_ = index;
+    cursorIndex_ = index;
     update();
 }
 

@@ -35,15 +35,15 @@ public:
     void setInactiveTopBarWindowColor(const sf::Color& color);
 protected:
     sf::Font& font_;
-    uint32_t font_size_;
-    sf::Color font_color_;
-    sf::Color outline_color_;
-    uint32_t outline_thickness_;
+    uint32_t fontSize_;
+    sf::Color fontColor_;
+    sf::Color outlineColor_;
+    uint32_t outlineThickness_;
 
-    sf::Color window_color_;
-    sf::Color window_inactive_color_;
-    sf::Color window_top_bar_color_;
-    sf::Color window_inanctive_top_bar_color_;
+    sf::Color windowColor_;
+    sf::Color windowInactiveColor_;
+    sf::Color windowTopBarColor_;
+    sf::Color windowInanctiveTopBarColor_;
 };
 
 class BasicStyleSheetFactory
@@ -56,4 +56,3 @@ private:
 };
 
 }  // namespace gui
-

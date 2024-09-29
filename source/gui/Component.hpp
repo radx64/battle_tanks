@@ -28,7 +28,7 @@ public:
     virtual sf::Vector2f getSize() const;
     void setSize(const sf::Vector2f& size);
 
-    void setVisibility(bool is_visible);
+    void setVisibility(bool isVisible);
     bool isVisible();
 
     const sf::Vector2f getPosition() const;
@@ -45,7 +45,7 @@ public:
     void focus();
     void defocus();
     bool isFocused() const;
-    void defocusChildrenExcept(const Component* focused_child);
+    void defocusChildrenExcept(const Component* focusedChild);
 
     virtual void onFocus();
     virtual void onFocusLost(); 
@@ -83,7 +83,7 @@ protected:
 
     virtual void onPositionChange();
     virtual void onSizeChange();
-    virtual void onParentSizeChange(const sf::Vector2f& parent_size);
+    virtual void onParentSizeChange(const sf::Vector2f& parentSize);
     
     template <typename T>
     EventStatus processEvent(const T& event, bool isConsumable);
@@ -91,15 +91,14 @@ protected:
     void updateGlobalPosition();
     size_t getChildrenCount() const;
 
-    sf::Vector2f local_position_;   // offset from parent position
+    sf::Vector2f localPosition_;   // offset from parent position
     sf::FloatRect bounds_;          // bounds box in global space position
     Component* parent_;
-    bool can_children_process_events_;
+    bool canChildrenProcessEvents_;
     std::vector<std::unique_ptr<Component>> children_;
-    bool is_visible_;
-    bool was_mouse_inside_;
-    bool is_focused_;
+    bool isVisible_;
+    bool wasMouseInside_;
+    bool isFocused_;
 };
 
 }  // namespace gui
-

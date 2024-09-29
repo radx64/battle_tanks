@@ -12,7 +12,7 @@ void toggle()
     debug_enabled = !debug_enabled;
 }
 
-void draw_bounds(sf::RenderTexture& renderWindow, const Component* component)
+void drawBounds(sf::RenderTexture& renderWindow, const Component* component)
 {
     if (not debug_enabled) return;
     

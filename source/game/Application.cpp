@@ -48,9 +48,9 @@ Application::Application()
 , camera_{camera_initial_position_, camera_initial_size_}
 , camera_controller_{&camera_}
 , camera_view_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
-, window_manager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
-, waypoint_mouse_controller_{&window_manager_, waypoints_, window_, camera_view_}
-, gui_mouse_controller_{&window_manager_, window_, window_.getDefaultView()}
+, windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
+, waypoint_mouse_controller_{&windowManager_, waypoints_, window_, camera_view_}
+, gui_mouse_controller_{&windowManager_, window_, window_.getDefaultView()}
 , draw_average_{NUMBER_OF_MEASUREMENTS}
 , physics_average_{NUMBER_OF_MEASUREMENTS}
 , nav_average_{NUMBER_OF_MEASUREMENTS}
@@ -173,7 +173,7 @@ void Application::onRender()
     }
 
     window_.setView(window_.getDefaultView());
-    window_manager_.render(window_);
+    windowManager_.render(window_);
 
     clock_.restart();
 
@@ -230,19 +230,19 @@ void Application::configureGUI()
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quit_button->setSize(sf::Vector2f(150.f, 30.f));
     quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
-    window_manager_.mainWindow().addChild(std::move(quit_button));
+    windowManager_.mainWindow().addChild(std::move(quit_button));
 
     auto measurements_text = std::make_unique<gui::Label>("");
     measurements_text->setPosition(sf::Vector2f(20.f, 20.f));
     measurements_text_handle_ = measurements_text.get();
 
-    window_manager_.mainWindow().addChild(std::move(measurements_text));
+    windowManager_.mainWindow().addChild(std::move(measurements_text));
 
     auto measurements_average_text = std::make_unique<gui::Label>("");
     measurements_average_text->setPosition(sf::Vector2f(200.f, 20.f));
     measurements_average_text_handle_ = measurements_average_text.get();
 
-    window_manager_.mainWindow().addChild(std::move(measurements_average_text));
+    windowManager_.mainWindow().addChild(std::move(measurements_average_text));
 
     auto button = std::make_unique<gui::Button>("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
@@ -251,9 +251,9 @@ void Application::configureGUI()
         auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
         help_window->setTitle("Help");
         help_window->setPosition({80.f,80.f});
-        window_manager_.addWindow(std::move(help_window));
+        windowManager_.addWindow(std::move(help_window));
     });
-    window_manager_.mainWindow().addChild(std::move(button));
+    windowManager_.mainWindow().addChild(std::move(button));
 
     auto spawn_window_button = std::make_unique<gui::Button>("Spawn new window");
     spawn_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f));
@@ -291,9 +291,9 @@ void Application::configureGUI()
         window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+random_x)/2, 400.0f+random_y));
         window->setTitle("Oh my gosh");
 
-        window_manager_.addWindow(std::move(window));
+        windowManager_.addWindow(std::move(window));
     });
-    window_manager_.mainWindow().addChild(std::move(spawn_window_button));
+    windowManager_.mainWindow().addChild(std::move(spawn_window_button));
 }
 
 void Application::spawnSomeTanks()

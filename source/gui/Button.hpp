@@ -32,8 +32,7 @@ protected:
     sf::RectangleShape background_;
     gui::Label* text_;
     bool isButtonHoldDown_;
-    std::function<void()> on_click_;
+    std::function<void()> onClick_;
 };
 
 }  // namespace gui
-

@@ -14,17 +14,17 @@ Button::Button(const std::string_view& text)
     background_.setOutlineThickness(style.getOutlineThickness()); 
     background_.setPosition(getGlobalPosition());
     background_.setSize(Component::getSize());
-    auto text_ptr = std::make_unique <gui::Label>(text);
-    text_ = text_ptr.get();
+    auto textPtr = std::make_unique <gui::Label>(text);
+    text_ = textPtr.get();
     text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-    addChild(std::move(text_ptr));
+    addChild(std::move(textPtr));
 }
 
 void Button::onSizeChange()
 {
-    auto button_size = getSize();
-    background_.setSize(button_size);
-    text_->setSize(button_size);
+    auto buttonSize = getSize();
+    background_.setSize(buttonSize);
+    text_->setSize(buttonSize);
 }
 
 void Button::onPositionChange()
@@ -45,7 +45,7 @@ void Button::onRender(sf::RenderTexture& renderTexture)
 
 void Button::onClick(std::function<void()> onClickCallback)
 {
-    on_click_ = onClickCallback;
+    onClick_ = onClickCallback;
 }
 
 EventStatus Button::on(const event::MouseEntered&)
@@ -61,7 +61,7 @@ EventStatus Button::on(const event::MouseLeft&)
 
 EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (not is_visible_) return gui::EventStatus::NotConsumed;
+    if (not isVisible_) return gui::EventStatus::NotConsumed;
     
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
@@ -72,7 +72,7 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         if (not isButtonHoldDown_) 
         {
             isButtonHoldDown_ = true;
-            if (on_click_) on_click_();  
+            if (onClick_) onClick_();  
         }
         return gui::EventStatus::Consumed;
     }

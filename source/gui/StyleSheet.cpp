@@ -8,14 +8,14 @@ namespace gui
 {
 StyleSheet::StyleSheet() 
 : font_(gui::FontLibrary::get("default"))
-, font_size_(12)
-, font_color_(sf::Color::Black)
-, outline_color_(sf::Color::Black)
-, outline_thickness_(0)
-, window_color_(sf::Color(127, 127, 127, 200))
-, window_inactive_color_(sf::Color(100, 100, 100, 200))
-, window_top_bar_color_(sf::Color(100, 100, 100, 255))
-, window_inanctive_top_bar_color_(sf::Color(100, 100, 100, 255))
+, fontSize_(12)
+, fontColor_(sf::Color::Black)
+, outlineColor_(sf::Color::Black)
+, outlineThickness_(0)
+, windowColor_(sf::Color(127, 127, 127, 200))
+, windowInactiveColor_(sf::Color(100, 100, 100, 200))
+, windowTopBarColor_(sf::Color(100, 100, 100, 255))
+, windowInanctiveTopBarColor_(sf::Color(100, 100, 100, 255))
 { }
 
 sf::Font& StyleSheet::getFont() const
@@ -30,82 +30,82 @@ void StyleSheet::setFont(const sf::Font& font)
 
 uint32_t StyleSheet::getFontSize() const
 {
-    return font_size_;
+    return fontSize_;
 }
 
 void StyleSheet::setFontSize(const uint32_t size)
 {
-    font_size_ = size;
+    fontSize_ = size;
 }
 
 const sf::Color& StyleSheet::getFontColor() const
 {
-    return font_color_;
+    return fontColor_;
 }
 
 void StyleSheet::setFontColor(const sf::Color& color)
 {
-    font_color_ = color;
+    fontColor_ = color;
 }
 
 const sf::Color& StyleSheet::getOutlineColor() const
 {
-    return outline_color_;
+    return outlineColor_;
 }
 
 void StyleSheet::setOutlineColor(const sf::Color& color)
 {
-    outline_color_ = color;
+    outlineColor_ = color;
 }
 
 uint32_t StyleSheet::getOutlineThickness() const
 {
-    return outline_thickness_;
+    return outlineThickness_;
 }
 
 void StyleSheet::setOutlineThickness(const uint32_t thickness)
 {
-    outline_thickness_ = thickness;
+    outlineThickness_ = thickness;
 }
 
 const sf::Color& StyleSheet::getWindowColor() const
 {
-    return window_color_;
+    return windowColor_;
 }
 
 void StyleSheet::setWindowColor(const sf::Color& color)
 {
-    window_color_ = color;
+    windowColor_ = color;
 }  
 
 const sf::Color& StyleSheet::getInactiveWindowColor() const
 {
-    return window_inactive_color_;
+    return windowInactiveColor_;
 }
 
 void StyleSheet::setInactiveWindowColor(const sf::Color& color)
 {
-    window_inactive_color_ = color;
+    windowInactiveColor_ = color;
 }  
 
 const sf::Color& StyleSheet::getWindowHeaderColor() const
 {
-    return window_top_bar_color_;
+    return windowTopBarColor_;
 }
 
 void StyleSheet::setTopBarWindowColor(const sf::Color& color)
 {
-    window_top_bar_color_ = color;
+    windowTopBarColor_ = color;
 }
 
 const sf::Color& StyleSheet::getInactiveWindowHeaderColor() const
 {
-    return window_inanctive_top_bar_color_;
+    return windowInanctiveTopBarColor_;
 }
 
 void StyleSheet::setInactiveTopBarWindowColor(const sf::Color& color)
 {
-    window_inanctive_top_bar_color_ = color;
+    windowInanctiveTopBarColor_ = color;
 }
 
 const StyleSheet& BasicStyleSheetFactory::instance()

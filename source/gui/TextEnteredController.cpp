@@ -5,13 +5,13 @@
 namespace gui
 {
 
-TextEnteredController::TextEnteredController(gui::WindowManager* window_manager)
-: window_manager_(window_manager)
+TextEnteredController::TextEnteredController(gui::WindowManager* windowManager)
+: windowManager_(windowManager)
 {}
 
 void TextEnteredController::onTextEntered(const uint32_t unicode)
 {
-    window_manager_->receive(gui::event::TextEntered{.unicode = unicode});
+    windowManager_->receive(gui::event::TextEntered{.unicode = unicode});
 }
 
 }  // namespace gui

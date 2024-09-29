@@ -16,9 +16,9 @@ void FillLayout::addChild(std::unique_ptr<Component> child)
     Component::addChild(std::move(child));
 }
 
-void FillLayout::onParentSizeChange(const sf::Vector2f& parent_size)
+void FillLayout::onParentSizeChange(const sf::Vector2f& parentSize)
 {
-    setSize(parent_size);
+    setSize(parentSize);
 }
 
 void FillLayout::onSizeChange()
@@ -44,56 +44,56 @@ void BaseLineLayout::addChild(std::unique_ptr<Component> child)
 
 void BaseLineLayout::recalculateChildrenBounds()
 {
-    auto layout_size = getSize();
+    auto layoutSize = getSize();
 
-    auto child_size = getChildSize(layout_size);
+    auto childSize = getChildSize(layoutSize);
 
-    size_t child_index{0};
+    size_t childIndex{0};
     for (auto& child : children_)
     {
-        auto child_position = getNthChildPosition(child_size, child_index);
+        auto childPosition = getNthChildPosition(childSize, childIndex);
 
-        child->setPosition(child_position);
-        child->setSize(child_size);
-        child_index++;
+        child->setPosition(childPosition);
+        child->setSize(childSize);
+        childIndex++;
     }
 }
 
-void BaseLineLayout::onParentSizeChange(const sf::Vector2f& parent_size)
+void BaseLineLayout::onParentSizeChange(const sf::Vector2f& parentSize)
 {
     // set layout size to it's parent size
-    setSize(parent_size);
+    setSize(parentSize);
     // recalculate childen to resize them
     recalculateChildrenBounds();
 }
 
-sf::Vector2f HorizontalLayout::getChildSize(const sf::Vector2f& layout_size) const
+sf::Vector2f HorizontalLayout::getChildSize(const sf::Vector2f& layoutSize) const
 {
-    auto child_width = layout_size.x / (float) Component::getChildrenCount();
-    auto child_height = layout_size.y;
-    return sf::Vector2f{child_width, child_height};
+    auto childWidth = layoutSize.x / (float) Component::getChildrenCount();
+    auto childHeight = layoutSize.y;
+    return sf::Vector2f{childWidth, childHeight};
 }
 
-sf::Vector2f HorizontalLayout::getNthChildPosition(const sf::Vector2f& child_size,size_t child_index) const
+sf::Vector2f HorizontalLayout::getNthChildPosition(const sf::Vector2f& childSize,size_t childIndex) const
 {
-    float child_x = child_index * child_size.x;
-    float child_y = 0.f;
-    return sf::Vector2f{child_x, child_y};
+    float childX = childIndex * childSize.x;
+    float childY = 0.f;
+    return sf::Vector2f{childX, childY};
 }
 
 
-sf::Vector2f VerticalLayout::getChildSize(const sf::Vector2f& layout_size) const
+sf::Vector2f VerticalLayout::getChildSize(const sf::Vector2f& layoutSize) const
 {
-    auto child_width = layout_size.x;
-    auto child_height = layout_size.y / (float) Component::getChildrenCount();
-    return sf::Vector2f{child_width, child_height};
+    auto childWidth = layoutSize.x;
+    auto childHeight = layoutSize.y / (float) Component::getChildrenCount();
+    return sf::Vector2f{childWidth, childHeight};
 }
 
-sf::Vector2f VerticalLayout::getNthChildPosition(const sf::Vector2f& child_size,size_t child_index) const
+sf::Vector2f VerticalLayout::getNthChildPosition(const sf::Vector2f& childSize,size_t childIndex) const
 {
-    float child_x = 0.f;
-    float child_y = child_index * child_size.y;
-    return sf::Vector2f{child_x, child_y};
+    float childX = 0.f;
+    float childY = childIndex * childSize.y;
+    return sf::Vector2f{childX, childY};
 }
 
 }  // namespace gui

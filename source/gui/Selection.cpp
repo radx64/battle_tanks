@@ -9,43 +9,43 @@ namespace gui
 
 Selection::Selection(gui::Text& text)
 : text_{text}
-, selection_start_index_{}
-, selection_end_index_{}
-, is_ongoing_{false}
-, selection_start_position_{}
-, selection_end_position_{}
+, selectionStartIndex_{}
+, selectionEndIndex_{}
+, isOngoing_{false}
+, selectionStartPosition_{}
+, selectionEndPosition_{}
 {
     selection_.setFillColor(sf::Color(230,100,100,127));
 }
 
 bool Selection::isOngoing() const
 {
-    return is_ongoing_;
+    return isOngoing_;
 }
 
 bool Selection::isEmpty() const
 {
-    return selection_start_index_ == selection_end_index_;
+    return selectionStartIndex_ == selectionEndIndex_;
 }
 
 void Selection::start(const uint32_t index, const sf::Vector2f& position)
 {
-    assert(not is_ongoing_ && "Selection can be started only once");
-    is_ongoing_ = true;
-    selection_start_index_ = index;
-    selection_start_position_ = position;
-    selection_end_index_ = selection_start_index_;
-    selection_end_position_ = selection_start_position_;
+    assert(not isOngoing_ && "Selection can be started only once");
+    isOngoing_ = true;
+    selectionStartIndex_ = index;
+    selectionStartPosition_ = position;
+    selectionEndIndex_ = selectionStartIndex_;
+    selectionEndPosition_ = selectionStartPosition_;
 }
 
 size_t Selection::startsAt() const
 {
-    return selection_start_index_;
+    return selectionStartIndex_;
 }
 
 size_t Selection::endsAt() const
 {
-    return selection_end_index_;
+    return selectionEndIndex_;
 }
 
 size_t Selection::length() const
@@ -55,33 +55,33 @@ size_t Selection::length() const
 
 void Selection::clear()
 {
-    selection_end_index_ = selection_start_index_;
-    selection_end_position_ = selection_start_position_;
+    selectionEndIndex_ = selectionStartIndex_;
+    selectionEndPosition_ = selectionStartPosition_;
     end();
     update();
 }
 
 void Selection::updateEnd(const uint32_t index, const sf::Vector2f& position)
 {
-    selection_end_index_ = index;
-    selection_end_position_ = position;
+    selectionEndIndex_ = index;
+    selectionEndPosition_ = position;
 }   
 
 void Selection::end()
 {
-    is_ongoing_ = false;
+    isOngoing_ = false;
 
-    if (selection_start_index_ > selection_end_index_)
+    if (selectionStartIndex_ > selectionEndIndex_)
     {
-        std::swap(selection_start_index_, selection_end_index_);
-        std::swap(selection_start_position_, selection_end_position_);
+        std::swap(selectionStartIndex_, selectionEndIndex_);
+        std::swap(selectionStartPosition_, selectionEndPosition_);
     }
 }
 
 void Selection::update()
 {
-    selection_.setPosition(selection_start_position_);
-    selection_.setSize(sf::Vector2f(selection_end_position_.x - selection_start_position_.x, text_.getTextHeight())); 
+    selection_.setPosition(selectionStartPosition_);
+    selection_.setSize(sf::Vector2f(selectionEndPosition_.x - selectionStartPosition_.x, text_.getTextHeight())); 
     text_.updateTexture();
 }
 

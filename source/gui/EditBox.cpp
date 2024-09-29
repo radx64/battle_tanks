@@ -15,12 +15,12 @@ namespace gui
 
 EditBox::EditBox()
 : text_{}
-, text_cursor_{text_}
+, textCursor_{text_}
 , selection_{text_}
-, max_length_{DEFAULT_TEXT_MAX_LENGTH}
+, maxLength_{DEFAULT_TEXT_MAX_LENGTH}
 {
     text_.addModifier(&selection_);
-    text_.addModifier(&text_cursor_);
+    text_.addModifier(&textCursor_);
 
     auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());
@@ -30,8 +30,8 @@ EditBox::EditBox()
     text_.setOutlineThickness(style.getOutlineThickness());
     text_.setGlobalPosition(Component::getGlobalPosition());
 
-    text_cursor_.setFont(text_.getFont());
-    text_cursor_.setCharacterSize(text_.getCharacterSize());
+    textCursor_.setFont(text_.getFont());
+    textCursor_.setCharacterSize(text_.getCharacterSize());
 
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
@@ -43,7 +43,7 @@ EditBox::EditBox()
 EditBox::~EditBox()
 {
     text_.removeModifier(&selection_);
-    text_.removeModifier(&text_cursor_);
+    text_.removeModifier(&textCursor_);
 }
 
 std::string EditBox::getText()
@@ -63,7 +63,7 @@ void EditBox::onSizeChange()
     background_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
     updateTextVisbleArea();
-    text_cursor_.update();
+    textCursor_.update();
     selection_.update();
 }
 
@@ -72,18 +72,18 @@ void EditBox::onPositionChange()
     text_.setGlobalPosition(Component::getGlobalPosition());
     background_.setPosition(getGlobalPosition());
     updateTextVisbleArea();
-    text_cursor_.update();
+    textCursor_.update();
     selection_.update();
 }
 
 void EditBox::updateTextVisbleArea()
 {
-    float text_x_offset = text_.getSize().x - text_.getTextWidth();
-    text_x_offset -= EXTRA_END_OFFSET;
+    float textXoffset = text_.getSize().x - text_.getTextWidth();
+    textXoffset -= EXTRA_END_OFFSET;
 
-    if (text_x_offset < 0)
+    if (textXoffset < 0)
     {
-        text_.setOffset({text_x_offset, 0.f});
+        text_.setOffset({textXoffset, 0.f});
     }
     else
     {
@@ -95,12 +95,12 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 {
     if (isInside(mouseButtonPressedEvent.position))
     {
-        text_cursor_.moveTo(mouseButtonPressedEvent.position.x);
+        textCursor_.moveTo(mouseButtonPressedEvent.position.x);
         focus();
 
         if (not selection_.isOngoing())
         {
-            selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
+            selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
             selection_.update();
         }
     }
@@ -119,8 +119,8 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
 {
     if(selection_.isOngoing())
     {
-        text_cursor_.moveTo(mouseMovedEvent.position.x);
-        selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
+        textCursor_.moveTo(mouseMovedEvent.position.x);
+        selection_.updateEnd(textCursor_.getIndex(), textCursor_.getPosition());
         selection_.update();
     }
 
@@ -148,10 +148,10 @@ void EditBox::paste()
     }
     else
     {
-        textToUpdate.insert(text_cursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
+        textToUpdate.insert(textCursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
         text_.setText(textToUpdate);
     }
-    text_cursor_.setIndex(text_cursor_.getIndex() + textToPaste.size());
+    textCursor_.setIndex(textCursor_.getIndex() + textToPaste.size());
     updateTextVisbleArea();
 }
 
@@ -159,7 +159,7 @@ void EditBox::startSelection()
 {
     if (not selection_.isOngoing())
     {
-        selection_.start(text_cursor_.getIndex(), text_cursor_.getPosition());
+        selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
         selection_.update();
     }
 }
@@ -188,14 +188,14 @@ void EditBox::updateCursorAndSelection(const size_t cursorIndexOnSelectionCancel
 {
     if (selection_.isOngoing())
     {
-        selection_.updateEnd(text_cursor_.getIndex(), text_cursor_.getPosition());
+        selection_.updateEnd(textCursor_.getIndex(), textCursor_.getPosition());
         selection_.update();
     }
     else
     {
         if (not selection_.isEmpty())
         {
-            text_cursor_.setIndex(cursorIndexOnSelectionCancel);
+            textCursor_.setIndex(cursorIndexOnSelectionCancel);
             selection_.clear();
         }
     }
@@ -205,7 +205,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
     if(not isFocused()) return gui::EventStatus::NotConsumed;
 
-    std::string new_text = text_.getText();
+    std::string newText = text_.getText();
 
     // FIXME: this toggleSelection is causing an issue when shift 
     // is released and pressed again as selection
@@ -222,21 +222,21 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         {
             if (not selection_.isEmpty())
             {
-                new_text.erase(selection_.startsAt(), selection_.length());
-                text_cursor_.setIndex(selection_.startsAt());
+                newText.erase(selection_.startsAt(), selection_.length());
+                textCursor_.setIndex(selection_.startsAt());
                 selection_.clear();
             }
-            else if (new_text.empty() || text_cursor_.getIndex() == 0)
+            else if (newText.empty() || textCursor_.getIndex() == 0)
             {
                 return gui::EventStatus::NotConsumed;
             }
             else
             {
-                text_cursor_.moveLeft(false);
-                new_text.erase(text_cursor_.getIndex(), 1);
+                textCursor_.moveLeft(false);
+                newText.erase(textCursor_.getIndex(), 1);
             }
 
-            text_.setText(new_text);
+            text_.setText(newText);
             break;
         }
         case sf::Keyboard::Tab :
@@ -253,7 +253,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Left :
         {
-            text_cursor_.moveLeft(keyboardKeyPressed.modifiers.control);
+            textCursor_.moveLeft(keyboardKeyPressed.modifiers.control);
 
             updateCursorAndSelection(selection_.startsAt());
             break;
@@ -261,7 +261,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Right :
         {
-            text_cursor_.moveRight(keyboardKeyPressed.modifiers.control);
+            textCursor_.moveRight(keyboardKeyPressed.modifiers.control);
 
             updateCursorAndSelection(selection_.endsAt());
             break;
@@ -299,7 +299,7 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
     std::string text = text_.getText();
 
-    if (text.length() >= max_length_) return gui::EventStatus::NotConsumed;
+    if (text.length() >= maxLength_) return gui::EventStatus::NotConsumed;
 
     // FIXME: crude unicode conversion and check to for printable characters
     if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
@@ -311,16 +311,16 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
             text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
             selection_.clear();
             selection_.update();
-            text_cursor_.setIndex(selection_.startsAt());
+            textCursor_.setIndex(selection_.startsAt());
         }
         else
         {
-            text.insert(text_cursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
+            text.insert(textCursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
         }
 
         text_.setText(text);
         updateTextVisbleArea();
-        text_cursor_.moveRight(false);
+        textCursor_.moveRight(false);
         return gui::EventStatus::Consumed;
     }
 
@@ -330,13 +330,13 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 void EditBox::onFocus()
 {
     background_.setFillColor(sf::Color::White);
-    text_cursor_.enable();
+    textCursor_.enable();
 }
 
 void EditBox::onFocusLost()
 {
     background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
-    text_cursor_.disable();
+    textCursor_.disable();
     selection_.clear();
     text_.updateTexture();
 }

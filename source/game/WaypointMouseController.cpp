@@ -6,7 +6,7 @@ namespace game
 {
 
 WaypointMouseController::WaypointMouseController(gui::WindowManager* window_manager, std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view)
-: window_manager_(window_manager)
+: windowManager_(window_manager)
 , waypoints_(waypoints)
 , window_(window)
 , view_(view)

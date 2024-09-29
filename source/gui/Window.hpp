@@ -72,12 +72,11 @@ protected:
     bool killed_;
     bool active_;
     State state_;
-    sf::Vector2f dragging_offset_;
+    sf::Vector2f draggingOffset_;
 
     gui::window::Header* header_;
-    gui::Panel* window_panel_;
-    gui::window::StatusBar* status_bar_;
+    gui::Panel* windowPanel_;
+    gui::window::StatusBar* statusBar_;
 };
 
 }  // namespace gui
-

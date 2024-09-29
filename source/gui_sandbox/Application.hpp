@@ -21,7 +21,7 @@ protected:
 
     void generateBackground();
 
-    gui::WindowManager window_manager_;
+    gui::WindowManager windowManager_;
     gui::MouseController mouse_controller_;
     gui::KeyboardController keyboard_controller_;
     gui::TextEnteredController text_entered_controller_;
@@ -31,6 +31,3 @@ protected:
 };
 
 }  // namespace gui_sandbox
-
-
-

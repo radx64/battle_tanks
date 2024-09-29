@@ -44,9 +44,9 @@ protected:
 
     sf::RectangleShape background_;
     gui::Text text_;
-    gui::TextCursor text_cursor_;
+    gui::TextCursor textCursor_;
     gui::Selection selection_;
-    uint32_t max_length_;
+    uint32_t maxLength_;
 };
 
 }  // namespace gui

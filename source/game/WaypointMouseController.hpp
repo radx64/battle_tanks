@@ -21,7 +21,7 @@ protected:
 
     sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
 
-    gui::WindowManager* window_manager_;
+    gui::WindowManager* windowManager_;
     std::vector<sf::Vector2i>& waypoints_;
     sf::RenderWindow& window_;
     sf::View& view_;
@@ -30,5 +30,3 @@ protected:
 
 
 }  // namespace game
-
-

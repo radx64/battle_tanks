@@ -36,7 +36,7 @@ const sf::Vector2f& Text::getOffset() const
 
 void Text::setGlobalPosition(const sf::Vector2f& position)
 {
-    global_position_ = position;
+    globalPosition_ = position;
     updateSprite();
 }
 
@@ -112,12 +112,12 @@ void Text::updateTexture()
 void Text::updateSprite()
 {
     sprite_.setTextureRect(sf::IntRect(-offset_.x, -offset_.y, size_.x, size_.y));
-    sprite_.setPosition(global_position_);
+    sprite_.setPosition(globalPosition_);
 }
 
 sf::Vector2f Text::getGlobalPosition() const
 {
-    return global_position_;
+    return globalPosition_;
 }
 
 sf::Vector2f Text::getSize() const

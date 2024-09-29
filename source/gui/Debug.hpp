@@ -6,6 +6,6 @@ namespace gui::debug
 {
     void toggle();
 
-    void draw_bounds(sf::RenderTexture& renderWindow, const Component* component);
+    void drawBounds(sf::RenderTexture& renderWindow, const Component* component);
 
 }  // namespace gui::debug

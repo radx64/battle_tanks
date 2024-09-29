@@ -13,9 +13,9 @@ void FontLibrary::initDefaultFont()
 
 void FontLibrary::initFont(const std::string& name, const std::string& path)
 {
-    auto placed_element = fonts_.emplace(std::make_pair(name, sf::Font()));
-    bool has_loaded = placed_element.first->second.loadFromFile(path);
-    if(not has_loaded) throw std::string("Couldn't load font file...");
+    auto placedElement = fonts_.emplace(std::make_pair(name, sf::Font()));
+    bool hasLoaded = placedElement.first->second.loadFromFile(path);
+    if(not hasLoaded) throw std::string("Couldn't load font file...");
 }
 
 void FontLibrary::initialize()

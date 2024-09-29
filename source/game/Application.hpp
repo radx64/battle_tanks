@@ -65,7 +65,7 @@ protected:
     gui::Label* measurements_text_handle_;
     gui::Label* measurements_average_text_handle_;
 
-    gui::WindowManager window_manager_;
+    gui::WindowManager windowManager_;
     game::WaypointMouseController waypoint_mouse_controller_;
     gui::MouseController gui_mouse_controller_;
 
@@ -87,4 +87,3 @@ protected:
 };
 
 }  // namespace game
-

@@ -11,16 +11,16 @@ namespace gui
 class MouseController : public engine::input::MouseReceiver
 {
 public:
-    MouseController(gui::WindowManager* window_manager, sf::RenderWindow& window, const sf::View& view);
+    MouseController(gui::WindowManager* windowManager, sf::RenderWindow& window, const sf::View& view);
 
 protected:
-    gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override;
+    gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onMouseMoved(const sf::Vector2f& mousePostion) override;
 
-    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
+    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mousePosition);
 
-    gui::WindowManager* window_manager_;
+    gui::WindowManager* windowManager_;
     sf::RenderWindow& window_;
     const sf::View& view_;
 };

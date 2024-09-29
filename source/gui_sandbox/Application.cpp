@@ -16,10 +16,10 @@ namespace gui_sandbox
 {
 Application::Application()
 : engine::Application("GUI sandbox")
-, window_manager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
-, mouse_controller_{&window_manager_, window_, window_.getDefaultView()}
-, keyboard_controller_{&window_manager_}
-, text_entered_controller_{&window_manager_}
+, windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
+, mouse_controller_{&windowManager_, window_, window_.getDefaultView()}
+, keyboard_controller_{&windowManager_}
+, text_entered_controller_{&windowManager_}
 {
 }
 
@@ -40,13 +40,13 @@ void Application::onInit()
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quit_button->setSize(sf::Vector2f(250.f, 30.f));
     quit_button->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
-    window_manager_.mainWindow().addChild(std::move(quit_button));
+    windowManager_.mainWindow().addChild(std::move(quit_button));
 
     auto gui_debug = std::make_unique<gui::Button>("GUI DEBUG");
     gui_debug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
     gui_debug->setSize(sf::Vector2f(250.f, 30.f));
     gui_debug->onClick([](){gui::debug::toggle();});
-    window_manager_.mainWindow().addChild(std::move(gui_debug));
+    windowManager_.mainWindow().addChild(std::move(gui_debug));
 
     auto create_empty_window_button = std::make_unique<gui::Button>("Create Empty Window");
     create_empty_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
@@ -58,10 +58,10 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("Nothing here!");
 
-        window_manager_.addWindow(std::move(window));
+        windowManager_.addWindow(std::move(window));
     });
 
-    window_manager_.mainWindow().addChild(std::move(create_empty_window_button));
+    windowManager_.mainWindow().addChild(std::move(create_empty_window_button));
 
     auto create_window_button = std::make_unique<gui::Button>("Create Simple Window");
     create_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
@@ -83,11 +83,11 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("So simple!");
 
-        window_manager_.addWindow(std::move(window));
+        windowManager_.addWindow(std::move(window));
 
     });
 
-    window_manager_.mainWindow().addChild(std::move(create_window_button));
+    windowManager_.mainWindow().addChild(std::move(create_window_button));
 
     auto create_progress_window_button = std::make_unique<gui::Button>("Create ProgressBar Window");
     create_progress_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
@@ -120,11 +120,11 @@ void Application::onInit()
 
         window->addChild(std::move(vertical_layout));
 
-        window_manager_.addWindow(std::move(window));
+        windowManager_.addWindow(std::move(window));
 
     });
 
-    window_manager_.mainWindow().addChild(std::move(create_progress_window_button));
+    windowManager_.mainWindow().addChild(std::move(create_progress_window_button));
 
     auto create_editbox_window_button = std::make_unique<gui::Button>("Create Edit Box Window");
     create_editbox_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
@@ -151,11 +151,11 @@ void Application::onInit()
 
         window->addChild(std::move(vertical_layout));
 
-        window_manager_.addWindow(std::move(window));
+        windowManager_.addWindow(std::move(window));
 
     });
 
-    window_manager_.mainWindow().addChild(std::move(create_editbox_window_button));
+    windowManager_.mainWindow().addChild(std::move(create_editbox_window_button));
 
     auto create_layout_window_button = std::make_unique<gui::Button>("Create Layout Window");
     create_layout_window_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
@@ -197,11 +197,11 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("Oh my gosh");
 
-        window_manager_.addWindow(std::move(window));
+        windowManager_.addWindow(std::move(window));
 
     });
 
-    window_manager_.mainWindow().addChild(std::move(create_layout_window_button));
+    windowManager_.mainWindow().addChild(std::move(create_layout_window_button));
 
     auto left_label = std::make_unique<gui::Label>("Left aligned label");
     left_label->setPosition({100.f, 20.f});
@@ -218,9 +218,9 @@ void Application::onInit()
     right_label->setSize({400.f, 40.f});
     right_label->setAlignment(gui::Alignment::Right);
 
-    window_manager_.mainWindow().addChild(std::move(left_label));
-    window_manager_.mainWindow().addChild(std::move(hcenter_label));
-    window_manager_.mainWindow().addChild(std::move(right_label));
+    windowManager_.mainWindow().addChild(std::move(left_label));
+    windowManager_.mainWindow().addChild(std::move(hcenter_label));
+    windowManager_.mainWindow().addChild(std::move(right_label));
 
     auto top_label = std::make_unique<gui::Label>("Top aligned label");
     top_label->setPosition({700.f, 20.f});
@@ -237,9 +237,9 @@ void Application::onInit()
     bottom_label->setSize({400.f, 40.f});
     bottom_label->setAlignment(gui::Alignment::Bottom);
 
-    window_manager_.mainWindow().addChild(std::move(top_label));
-    window_manager_.mainWindow().addChild(std::move(vcenter_label));
-    window_manager_.mainWindow().addChild(std::move(bottom_label));
+    windowManager_.mainWindow().addChild(std::move(top_label));
+    windowManager_.mainWindow().addChild(std::move(vcenter_label));
+    windowManager_.mainWindow().addChild(std::move(bottom_label));
 
 
     auto multiline_top_aligned_label = std::make_unique<gui::Label>("Top multiline\nlabel is here\nand a bit there");
@@ -257,9 +257,9 @@ void Application::onInit()
     multiline_bottom_aligned_label->setSize({400.f, 40.f});
     multiline_bottom_aligned_label->setAlignment(gui::Alignment::Bottom);
 
-    window_manager_.mainWindow().addChild(std::move(multiline_top_aligned_label));
-    window_manager_.mainWindow().addChild(std::move(multiline_center_aligned_label));
-    window_manager_.mainWindow().addChild(std::move(multiline_bottom_aligned_label));
+    windowManager_.mainWindow().addChild(std::move(multiline_top_aligned_label));
+    windowManager_.mainWindow().addChild(std::move(multiline_center_aligned_label));
+    windowManager_.mainWindow().addChild(std::move(multiline_bottom_aligned_label));
 }
 
 void Application::onClose()
@@ -321,7 +321,7 @@ void Application::onRender()
 {
     window_.clear(sf::Color(20, 110, 158));
     window_.draw(backgroundSprite_);
-    window_manager_.render(window_);
+    windowManager_.render(window_);
 }
 
 }  // namespace gui_sandbox

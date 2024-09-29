@@ -46,20 +46,20 @@ void Label::onPositionChange()
 
 void Label::recalculatePositionAndSize()
 {
-    float x_offset{};
-    float y_offset{};
+    float xOffset{};
+    float yOffset{};
 
     if (isBitSet(alignment_, gui::Alignment::Left))
     {
-        x_offset = 0;
+        xOffset = 0;
     }
     else if (isBitSet(alignment_, gui::Alignment::HorizontallyCentered))
     {
-        x_offset = getSize().x / 2 -  text_.getLocalBounds().width / 2;
+        xOffset = getSize().x / 2 -  text_.getLocalBounds().width / 2;
     }
     else if (isBitSet(alignment_, gui::Alignment::Right))
     {
-        x_offset = getSize().x - text_.getLocalBounds().width;
+        xOffset = getSize().x - text_.getLocalBounds().width;
     }
 
     // FIXME: font height is problematic to calculate as SFML is keeping common baseline
@@ -69,19 +69,19 @@ void Label::recalculatePositionAndSize()
 
     if (isBitSet(alignment_, gui::Alignment::Top))
     {
-        y_offset -= 0;
+        yOffset -= 0;
     }
     else if (isBitSet(alignment_, gui::Alignment::VerticallyCentered))
     {
-        y_offset = getSize().y / 2 - text_.getLocalBounds().height / 2;
+        yOffset = getSize().y / 2 - text_.getLocalBounds().height / 2;
 
     }
     else if (isBitSet(alignment_, gui::Alignment::Bottom))
     {
-        y_offset = getSize().y - text_.getLocalBounds().height;
+        yOffset = getSize().y - text_.getLocalBounds().height;
     }
 
-    text_.setPosition(getGlobalPosition() + sf::Vector2f{x_offset, y_offset});
+    text_.setPosition(getGlobalPosition() + sf::Vector2f{xOffset, yOffset});
 }
 
 void Label::setAlignment(const gui::Alignment& alignment)
