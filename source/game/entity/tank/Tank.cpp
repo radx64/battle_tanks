@@ -40,7 +40,7 @@ Tank::Tank(float x, float y, float rotation,
 {
     renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
-    rigid_body_ = std::make_unique<engine::RigidBody>(
+    rigidBody_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, TANK_RADIUS,
         TANK_MASS, 
@@ -69,13 +69,13 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     // TODO Tanks now does not use rotational speed for rotation 
     // so to other collisions to work it is important to not pass fake angular velociy
     // on contacts
-    tank_rigid_body.angular_velocity_ = 0;
+    tank_rigid_body.angularVelocity_ = 0;
 
     //Convert current direction to 0..360 range
-    current_direction_ = engine::math::signed_fmod(current_direction_, 360.0);
+    current_direction_ = engine::math::signedFmod(current_direction_, 360.0);
 
     float delta = set_direction_ - current_direction_;
-    delta = engine::math::signed_fmod((delta + 180.0), 360.0) - 180.0;
+    delta = engine::math::signedFmod((delta + 180.0), 360.0) - 180.0;
     // If current direction of movement is different(more than 15deg) than current one cut the throttle
     if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = set_throttle_;
     if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
@@ -94,9 +94,9 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
 
     if ((std::fabs(tank_rigid_body.velocity_.x) > 0.01) or (std::fabs(tank_rigid_body.velocity_.y) > 0.01))
     {
-        sf::Vector2f left_track = engine::math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_-15.0),
+        sf::Vector2f left_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_-15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
-        sf::Vector2f right_track = engine::math::rotate_point(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
+        sf::Vector2f right_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
         tracksRenderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);

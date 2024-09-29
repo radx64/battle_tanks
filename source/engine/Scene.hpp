@@ -15,8 +15,7 @@ public:
 
 protected:
     std::vector<std::unique_ptr<GameObject>> objects_;
-    std::vector<std::unique_ptr<GameObject>> objects_to_spawn_;
+    std::vector<std::unique_ptr<GameObject>> objectsToSpawn_;
 };
 
 }  // namespace engine
-

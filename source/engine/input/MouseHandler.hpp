@@ -26,10 +26,9 @@ public:
 
 protected:
     std::vector<MouseReceiver*> receivers_;
-    std::unordered_map<sf::Mouse::Button, bool> buttons_states_;
-    sf::Vector2f mouse_position_;
+    std::unordered_map<sf::Mouse::Button, bool> buttonsStates_;
+    sf::Vector2f mousePosition_;
 };
 
     
 }  // namespace engine::input
-

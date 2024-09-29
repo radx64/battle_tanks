@@ -45,28 +45,28 @@ TEST(Distance, shouldWorkForNegativeCoordinates)
 TEST(DotProduct, shouldCalculateForPositiveVectors)
 {
     float expected_result = 5.f;
-    float dotProduct = engine::math::dot_product(1.0, 1.0, 2.0, 3.0);
+    float dotProduct = engine::math::dotProduct(1.0, 1.0, 2.0, 3.0);
     EXPECT_FLOAT_EQ(expected_result, dotProduct);
 }
 
 TEST(DotProduct, shouldCalculateForNegativeVectors)
 {
     float expected_result = -9.f;
-    float dotProduct = engine::math::dot_product(1.0, 1.0, -2.0, -7.0);
+    float dotProduct = engine::math::dotProduct(1.0, 1.0, -2.0, -7.0);
     EXPECT_FLOAT_EQ(expected_result, dotProduct);
 }
 
 TEST(CrossProduct, shouldCalculateForPositiveVectors)
 {
     float expected_result = 1.f;
-    float crossProduct = engine::math::cross_product(1.0, 1.0, 2.0, 3.0);
+    float crossProduct = engine::math::crossProduct(1.0, 1.0, 2.0, 3.0);
     EXPECT_FLOAT_EQ(expected_result, crossProduct);
 }
 
 TEST(CrossProduct, shouldCalculateForNegativeVectors)
 {
     float expected_result = -5.f;
-    float crossProduct = engine::math::cross_product(1.0, 1.0, -2.0, -7.0);
+    float crossProduct = engine::math::crossProduct(1.0, 1.0, -2.0, -7.0);
     EXPECT_FLOAT_EQ(expected_result, crossProduct);
 }
 
@@ -74,7 +74,7 @@ TEST(NormalizeVector, shouldReturnItsLengthBeforeNormalization)
 {
     float expected_length = 2.f * std::sqrt(2.f);
     sf::Vector2f vector = {2.f, 2.f};
-    float length =  engine::math::normalize_vector(vector);
+    float length =  engine::math::normalizeVector(vector);
     EXPECT_FLOAT_EQ(expected_length, length);
 }
 
@@ -82,7 +82,7 @@ TEST(NormalizeVector, shouldNormalizeVectorWithPositiveValues)
 {
     sf::Vector2f vector = {2.f, 2.f};
     sf::Vector2f expected_vector = {0.707107f, 0.707107f};
-    engine::math::normalize_vector(vector);
+    engine::math::normalizeVector(vector);
     EXPECT_FLOAT_EQ(expected_vector.x, vector.x);
     EXPECT_FLOAT_EQ(expected_vector.y, vector.y);
 }
@@ -91,7 +91,7 @@ TEST(NormalizeVector, shouldNormalizeVectorWithNegativeValues)
 {
     sf::Vector2f vector = {2.f, -5.f};
     sf::Vector2f expected_vector = {0.37139067f, -0.92847669f};
-    engine::math::normalize_vector(vector);
+    engine::math::normalizeVector(vector);
     EXPECT_FLOAT_EQ(expected_vector.x, vector.x);
     EXPECT_FLOAT_EQ(expected_vector.y, vector.y);
 }
@@ -99,41 +99,41 @@ TEST(NormalizeVector, shouldNormalizeVectorWithNegativeValues)
 TEST(SignedFmod, shouldReturnRemainderOfDivisionWithProperSignForNegatives)
 {
     float expected_result = -5.0;
-    float calculated_result = engine::math::signed_fmod(-25.0, -20.0);
+    float calculated_result = engine::math::signedFmod(-25.0, -20.0);
     EXPECT_FLOAT_EQ(expected_result, calculated_result);
 }
 
 TEST(SignedFmod, shouldReturnRemainderOfDivisionWithProperSignForPositives)
 {
     float expected_result = 5.0;
-    float calculated_result = engine::math::signed_fmod(25.0, 20.0);
+    float calculated_result = engine::math::signedFmod(25.0, 20.0);
     EXPECT_FLOAT_EQ(expected_result, calculated_result);
 }
 
 TEST(SignedFmod, shouldReturnNanIfSecondParameterApproachesTowardsZero)
 {
-    float calculated_result = engine::math::signed_fmod(1337.0, 0.0);
+    float calculated_result = engine::math::signedFmod(1337.0, 0.0);
     EXPECT_TRUE(std::isnan(calculated_result));    
 }
 
 TEST(DegreeToRadians, shouldConvertZeroDegree)
 {
     float expected_result = 0.0;
-    float calculated_result = engine::math::degree_to_radians(0.0);
+    float calculated_result = engine::math::degreeToRadians(0.0);
     EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
 TEST(DegreeToRadians, shouldConvertPositiveDegree)
 {
     float expected_result = 2.0943951023931953;
-    float calculated_result = engine::math::degree_to_radians(120.0);
+    float calculated_result = engine::math::degreeToRadians(120.0);
     EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
 TEST(DegreeToRadians, shouldConvertNegativeDegree)
 {
     float expected_result = -0.52359877559829882;
-    float calculated_result = engine::math::degree_to_radians(-30.0);
+    float calculated_result = engine::math::degreeToRadians(-30.0);
     EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
@@ -144,7 +144,7 @@ TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
     sf::Vector2f pivot{1.0f, 1.0f};
 
     sf::Vector2f expected_result{1.0f, 1.0f};
-    auto result = engine::math::rotate_point(point, angle, pivot);
+    auto result = engine::math::rotatePoint(point, angle, pivot);
 
     EXPECT_EQ(expected_result, result);
 }
@@ -156,7 +156,7 @@ TEST(RotatePoint, shouldMovePointAroundPivotWithPositiveAngle)
     sf::Vector2f pivot{0.0f, 0.0f};
 
     sf::Vector2f expected_result{-1.0f, 1.0f};
-    auto result = engine::math::rotate_point(point, angle, pivot);
+    auto result = engine::math::rotatePoint(point, angle, pivot);
 
     EXPECT_FLOAT_EQ(expected_result.x, result.x);
     EXPECT_FLOAT_EQ(expected_result.y, result.y);
@@ -169,7 +169,7 @@ TEST(RotatePoint, shouldMovePointAroundPivotWithNegativeAngle)
     sf::Vector2f pivot{0.0f, 0.0f};
 
     sf::Vector2f expected_result{1.0f, -1.0f};
-    auto result = engine::math::rotate_point(point, angle, pivot);
+    auto result = engine::math::rotatePoint(point, angle, pivot);
 
     EXPECT_FLOAT_EQ(expected_result.x, result.x);
     EXPECT_FLOAT_EQ(expected_result.y, result.y);

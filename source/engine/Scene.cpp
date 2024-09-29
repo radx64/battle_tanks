@@ -8,12 +8,12 @@ namespace engine
 
 Scene::Scene()
 : objects_{}
-, objects_to_spawn_{}
+, objectsToSpawn_{}
 {}
 
-void Scene::spawnObject(std::unique_ptr<GameObject>&& new_object)
+void Scene::spawnObject(std::unique_ptr<GameObject>&& newObject)
 {
-    objects_to_spawn_.push_back(std::move(new_object));
+    objectsToSpawn_.push_back(std::move(newObject));
 }
 
 const std::vector<std::unique_ptr<GameObject>>& Scene::objects()
@@ -28,10 +28,10 @@ void Scene::update()
             [](auto& object){ return object->isDead();}),
         objects_.end());
 
-    if (not objects_to_spawn_.empty())
+    if (not objectsToSpawn_.empty())
     {
-        objects_.insert(objects_.end(), std::make_move_iterator(objects_to_spawn_.begin()), std::make_move_iterator(objects_to_spawn_.end()));
-        objects_to_spawn_.clear();
+        objects_.insert(objects_.end(), std::make_move_iterator(objectsToSpawn_.begin()), std::make_move_iterator(objectsToSpawn_.end()));
+        objectsToSpawn_.clear();
     }
 }
 

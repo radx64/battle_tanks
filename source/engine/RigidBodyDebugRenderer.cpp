@@ -33,28 +33,28 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
         renderWindow.draw(boundary);
     
         // Velocity vectors
-        sf::Vertex velocity_vector[] =
+        sf::Vertex velocityVector[] =
         {
             sf::Vertex(sf::Vector2f(x, y)),
             sf::Vertex(sf::Vector2f(x, y)+ (velocity))
         };
-        renderWindow.draw(velocity_vector, 2, sf::Lines);
+        renderWindow.draw(velocityVector, 2, sf::Lines);
 
-        sf::Vertex velocity_x_vector[] =
+        sf::Vertex velocityXvector[] =
         {
             sf::Vertex(sf::Vector2f(x, y), sf::Color::Red),
             sf::Vertex(sf::Vector2f(x+velocity.x, y), sf::Color::Red)
         };
 
-        renderWindow.draw(velocity_x_vector, 2, sf::Lines);
+        renderWindow.draw(velocityXvector, 2, sf::Lines);
 
-        sf::Vertex velocity_y_vector[] =
+        sf::Vertex velocityYvector[] =
         {
             sf::Vertex(sf::Vector2f(x, y), sf::Color::Green),
             sf::Vertex(sf::Vector2f(x, y+velocity.y), sf::Color::Green)
         };
 
-        renderWindow.draw(velocity_y_vector, 2, sf::Lines);
+        renderWindow.draw(velocityYvector, 2, sf::Lines);
     }
 }
 

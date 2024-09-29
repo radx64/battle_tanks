@@ -29,13 +29,11 @@ public:
     virtual void onUpdate(engine::Scene& scene, float timeStep);
 
     std::unique_ptr<Renderer> renderer_;
-    std::unique_ptr<RigidBody> rigid_body_;
+    std::unique_ptr<RigidBody> rigidBody_;
 
 protected:
-    bool is_dead_;
+    bool isDead_;
 };
 
 
 } // namespace engine
-
-

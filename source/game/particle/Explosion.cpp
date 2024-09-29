@@ -11,7 +11,7 @@ Explosion::Explosion(float x, float y)
 { 
     position_.x = x;
     position_.y = y;
-    angular_velocity_ = 180.f;
+    angularVelocity_ = 180.f;
     auto& explosionBody = graphics::TextureLibrary::get("explosion_smoke_2");
     sprite_.setTexture(explosionBody);
     sf::Vector2u texture_body_size = explosionBody.getSize();

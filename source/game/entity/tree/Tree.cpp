@@ -19,7 +19,7 @@ Tree::Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrun
 { 
     renderer_ = std::make_unique<TreeRenderer>(this, treeBody);
 
-    rigid_body_ = std::make_unique<engine::RigidBody>(
+    rigidBody_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, treeTrunkRadius, 
         TREE_MASS, 

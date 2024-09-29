@@ -16,7 +16,7 @@ constexpr float GROUND_DRAG_COEEF = 0.93;
 Barrel::Barrel(float x, float y, sf::Texture& barrelBody)
 { 
     renderer_ = std::make_unique<BarrelRenderer>(this, barrelBody);
-    rigid_body_ = std::make_unique<engine::RigidBody>(
+    rigidBody_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, BARREL_RADIUS, 
         BARREL_MASS, 

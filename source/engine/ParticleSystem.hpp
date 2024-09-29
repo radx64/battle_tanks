@@ -21,9 +21,8 @@ public:
     void update(float timeStep);
 
 protected:
-    std::vector<std::unique_ptr<Particle>> active_particles_;
-    std::vector<std::unique_ptr<Particle>> particles_to_spawn_;
+    std::vector<std::unique_ptr<Particle>> activeParticles_;
+    std::vector<std::unique_ptr<Particle>> particlesToSpawn_;
 };
 
 }  // namespace engine
-

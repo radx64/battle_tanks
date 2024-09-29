@@ -15,7 +15,7 @@ void KeyboardHandler::subscribe(const std::vector<sf::Keyboard::Key>& keys, Keyb
 {
     for (const auto key : keys)
     {
-        keys_with_receivers_[key].push_back(receiver);
+        keysWithReceivers_[key].push_back(receiver);
     }
 
     receiver->attach(this);
@@ -23,52 +23,52 @@ void KeyboardHandler::subscribe(const std::vector<sf::Keyboard::Key>& keys, Keyb
 
 void KeyboardHandler::subscribe(KeyboardReceiver* receiver)
 {
-    any_key_receivers_.push_back(receiver);
+    anyKeyReceivers_.push_back(receiver);
     receiver->attach(this);
 }
 
 void KeyboardHandler::subscribe(TextEnteredReceiver* receiver)
 {
-    text_entered_receivers_.push_back(receiver);
+    textEnteredReceivers_.push_back(receiver);
     receiver->attach(this);
 }
 
 void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
 {
-    for(auto key_with_receivers_it = std::begin(keys_with_receivers_); key_with_receivers_it != std::end(keys_with_receivers_);)
+    for(auto key_with_receivers_it = std::begin(keysWithReceivers_); key_with_receivers_it != std::end(keysWithReceivers_);)
     {
         auto& receivers = key_with_receivers_it->second;
         std::remove(receivers.begin(), receivers.end(), receiver);
 
         if (receivers.size() == 0)
         {
-            key_with_receivers_it = keys_with_receivers_.erase(key_with_receivers_it);
+            key_with_receivers_it = keysWithReceivers_.erase(key_with_receivers_it);
         }
         else
         {
             ++key_with_receivers_it;
         }
     }
-    any_key_receivers_.erase(
-        std::remove(std::begin(any_key_receivers_), std::end(any_key_receivers_), receiver),
-        std::end(any_key_receivers_));
+    anyKeyReceivers_.erase(
+        std::remove(std::begin(anyKeyReceivers_), std::end(anyKeyReceivers_), receiver),
+        std::end(anyKeyReceivers_));
 }
 
 void KeyboardHandler::unsubscribe(TextEnteredReceiver* receiver)
 {
-    text_entered_receivers_.erase(
-        std::remove(std::begin(text_entered_receivers_), std::end(text_entered_receivers_), receiver),
-        std::end(text_entered_receivers_));
+    textEnteredReceivers_.erase(
+        std::remove(std::begin(textEnteredReceivers_), std::end(textEnteredReceivers_), receiver),
+        std::end(textEnteredReceivers_));
 }
 
 void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
 {
     const auto key = event.code;
-    keys_states_[key] = true;
+    keysStates_[key] = true;
 
-    auto receivers_for_key = keys_with_receivers_.find(key);
+    auto receivers_for_key = keysWithReceivers_.find(key);
 
-    if (receivers_for_key != keys_with_receivers_.end())
+    if (receivers_for_key != keysWithReceivers_.end())
     {
         for (auto* receiver : receivers_for_key->second)
         {
@@ -76,7 +76,7 @@ void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
         }
     }
 
-    for (auto* receiver : any_key_receivers_)
+    for (auto* receiver : anyKeyReceivers_)
     {
         receiver->onKeyPressed(event);
     }
@@ -86,11 +86,11 @@ void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
 void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
 {
     const auto key = event.code;
-    keys_states_[key] = false;
+    keysStates_[key] = false;
 
-    auto receivers_for_key = keys_with_receivers_.find(key);
+    auto receivers_for_key = keysWithReceivers_.find(key);
 
-    if (receivers_for_key != keys_with_receivers_.end())
+    if (receivers_for_key != keysWithReceivers_.end())
     {
         for (auto* receiver : receivers_for_key->second)
         {
@@ -98,7 +98,7 @@ void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
         }
     }
 
-    for (auto* receiver : any_key_receivers_)
+    for (auto* receiver : anyKeyReceivers_)
     {
         receiver->onKeyReleased(event);
     }
@@ -106,7 +106,7 @@ void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
 
 void KeyboardHandler::handleTextEntered(const sf::Event::TextEvent& event)
 {
-    for (auto* receiver : text_entered_receivers_)
+    for (auto* receiver : textEnteredReceivers_)
     {
         receiver->onTextEntered(event.unicode);
     }
@@ -114,8 +114,8 @@ void KeyboardHandler::handleTextEntered(const sf::Event::TextEvent& event)
 
 bool KeyboardHandler::isKeyPressed(sf::Keyboard::Key key)
 {
-    auto iter = keys_states_.find(key);
-    if (iter != keys_states_.end())
+    auto iter = keysStates_.find(key);
+    if (iter != keysStates_.end())
     {
         return iter->second;
     }

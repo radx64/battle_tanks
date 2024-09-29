@@ -31,12 +31,11 @@ public:
     bool isKeyPressed(sf::Keyboard::Key key);
 
 protected:
-    std::unordered_map<sf::Keyboard::Key, std::vector<KeyboardReceiver*>> keys_with_receivers_;
-    std::vector<KeyboardReceiver*> any_key_receivers_;
-    std::vector<TextEnteredReceiver*> text_entered_receivers_;
-    std::unordered_map<sf::Keyboard::Key, bool> keys_states_; // key, is pressed
+    std::unordered_map<sf::Keyboard::Key, std::vector<KeyboardReceiver*>> keysWithReceivers_;
+    std::vector<KeyboardReceiver*> anyKeyReceivers_;
+    std::vector<TextEnteredReceiver*> textEnteredReceivers_;
+    std::unordered_map<sf::Keyboard::Key, bool> keysStates_; // key, is pressed
 };
 
     
 }  // namespace engine::input
-

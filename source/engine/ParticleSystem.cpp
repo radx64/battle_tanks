@@ -6,20 +6,20 @@ namespace engine
 {
 
 ParticleSystem::ParticleSystem()
-: active_particles_{}
-, particles_to_spawn_{}
+: activeParticles_{}
+, particlesToSpawn_{}
 {
 
 }
 
 void ParticleSystem::add(std::unique_ptr<Particle> particle)
 {
-    particles_to_spawn_.push_back(std::move(particle));
+    particlesToSpawn_.push_back(std::move(particle));
 }
 
 void ParticleSystem::draw(sf::RenderWindow& renderWindow)
 {
-    for (const auto& particle : active_particles_)
+    for (const auto& particle : activeParticles_)
     {
         particle->draw(renderWindow);
     }
@@ -27,28 +27,28 @@ void ParticleSystem::draw(sf::RenderWindow& renderWindow)
 
 void ParticleSystem::clear()
 {
-    particles_to_spawn_.clear();
-    active_particles_.clear();
+    particlesToSpawn_.clear();
+    activeParticles_.clear();
 }
 
 // TODO this update method is somewhat simmilar to scene game objects handling
 // Consider making this common
 void ParticleSystem::update(float timeStep)
 {
-    for (auto& particle : active_particles_)
+    for (auto& particle : activeParticles_)
     {
         particle->update(timeStep);
     }
 
-    active_particles_.erase(
-        std::remove_if(active_particles_.begin(), active_particles_.end(),
+    activeParticles_.erase(
+        std::remove_if(activeParticles_.begin(), activeParticles_.end(),
             [](auto& particle){ return particle->isDead();}),
-        active_particles_.end());
+        activeParticles_.end());
 
-    if (not particles_to_spawn_.empty())
+    if (not particlesToSpawn_.empty())
     {
-        active_particles_.insert(active_particles_.end(), std::make_move_iterator(particles_to_spawn_.begin()), std::make_move_iterator(particles_to_spawn_.end()));
-        particles_to_spawn_.clear();
+        activeParticles_.insert(activeParticles_.end(), std::make_move_iterator(particlesToSpawn_.begin()), std::make_move_iterator(particlesToSpawn_.end()));
+        particlesToSpawn_.clear();
     }
 }
 

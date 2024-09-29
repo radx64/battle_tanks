@@ -53,7 +53,7 @@ void Cannon::physics(float timeStep)
 {
     cooldown_ += timeStep;
     float delta = set_rotation_ - current_rotation_;
-    delta = engine::math::signed_fmod((delta + 180.0), 360.0) - 180.0;
+    delta = engine::math::signedFmod((delta + 180.0), 360.0) - 180.0;
 
     if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * timeStep, std::fabs(delta));
     if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * timeStep, std::fabs(delta));   
@@ -63,7 +63,7 @@ void Cannon::fire()
 {
     if (cooldown_ > CANNON_COOLDOWN)
     {
-        sf::Vector2f bullet_spawn_offset = engine::math::rotate_point(sf::Vector2f{CANNON_LENGTH, 0.f}, current_rotation_, sf::Vector2f{0.f, 0.f});
+        sf::Vector2f bullet_spawn_offset = engine::math::rotatePoint(sf::Vector2f{CANNON_LENGTH, 0.f}, current_rotation_, sf::Vector2f{0.f, 0.f});
 
         auto bullet_x = x_ + bullet_spawn_offset.x;
         auto bullet_y = y_ + bullet_spawn_offset.y;

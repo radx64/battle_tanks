@@ -9,8 +9,8 @@ Particle::Particle()
 : position_{0.0f, 0.0f}
 , velocity_{0.0f, 0.0f}
 , rotation_ {0.0f}
-, angular_velocity_ {0.0}
-, is_dead_{false}
+, angularVelocity_ {0.0}
+, isDead_{false}
 {}
 
 void Particle::draw(sf::RenderWindow& renderWindow)
@@ -22,7 +22,7 @@ void Particle::update(float timeStep)
 {
     onUpdate(timeStep);
     position_ += velocity_ * timeStep;
-    rotation_ += angular_velocity_ * timeStep;
+    rotation_ += angularVelocity_ * timeStep;
     rotation_ = std::fmod(rotation_, 360.f);
 }
 
@@ -33,11 +33,11 @@ void Particle::onUpdate(float timeStep)
 
 bool Particle::isDead()
 {
-    return is_dead_;
+    return isDead_;
 }
 void Particle::kill()
 {
-    is_dead_ = true;
+    isDead_ = true;
 }
 
 }  // namespace engine

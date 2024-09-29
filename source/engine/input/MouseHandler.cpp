@@ -23,10 +23,10 @@ void MouseHandler::unsubscribe(MouseReceiver* receiver)
 void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
 {
     const auto button = event.button;
-    buttons_states_[button] = true;
+    buttonsStates_[button] = true;
     for (auto* receiver : receivers_)
     {
-        const auto eventStatus = receiver->onButtonPressed(mouse_position_, button);
+        const auto eventStatus = receiver->onButtonPressed(mousePosition_, button);
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
@@ -34,28 +34,28 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
 void MouseHandler::handleButtonReleased(const sf::Event::MouseButtonEvent& event)
 {
     const auto button = event.button;
-    buttons_states_[button] = false;
+    buttonsStates_[button] = false;
     for (auto* receiver : receivers_)
     {
-        const auto eventStatus = receiver->onButtonReleased(mouse_position_, button);
+        const auto eventStatus = receiver->onButtonReleased(mousePosition_, button);
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
 
 void MouseHandler::handleMouseMoved(const sf::Event::MouseMoveEvent& event)
 {
-    mouse_position_ = sf::Vector2f{static_cast<float>(event.x), static_cast<float>(event.y)};
+    mousePosition_ = sf::Vector2f{static_cast<float>(event.x), static_cast<float>(event.y)};
     for (auto& receiver : receivers_)
     {
-        const auto eventStatus = receiver->onMouseMoved(mouse_position_);
+        const auto eventStatus = receiver->onMouseMoved(mousePosition_);
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
 
 bool MouseHandler::isButtonPressed(sf::Mouse::Button button)
 {
-    auto iter = buttons_states_.find(button);
-    if (iter != buttons_states_.end())
+    auto iter = buttonsStates_.find(button);
+    if (iter != buttonsStates_.end())
         return iter->second;
     else
     {

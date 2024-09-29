@@ -26,7 +26,7 @@ int Application::run()
 {
     try
     {
-        while (is_running_)
+        while (isRunning_)
         {
             clock_.restart();
             processEvents();
@@ -46,7 +46,7 @@ int Application::run()
 }
 void Application::close()
 {
-    is_running_ = false;
+    isRunning_ = false;
     window_.close();
 }
 

@@ -12,17 +12,17 @@ namespace engine
 {
 
 GameObject::GameObject()
-: is_dead_{false}
+: isDead_{false}
 {}
 
 bool GameObject::isDead()
 {
-    return is_dead_;
+    return isDead_;
 }
 
 void GameObject::kill()
 {
-    is_dead_ = true;
+    isDead_ = true;
 }
 
 void GameObject::draw(sf::RenderWindow& renderWindow, float timeStep)
@@ -40,12 +40,12 @@ void GameObject::onUpdate(engine::Scene& scene, float timeStep)
 void GameObject::update(engine::Scene& scene, float timeStep)
 {
     onUpdate(scene, timeStep);
-    if (rigid_body_) rigid_body_->update(timeStep);
+    if (rigidBody_) rigidBody_->update(timeStep);
 }
 
 RigidBody& GameObject::getRigidBody()
 {
-    return *rigid_body_;
+    return *rigidBody_;
 }
 
 Renderer& GameObject::getRenderer()

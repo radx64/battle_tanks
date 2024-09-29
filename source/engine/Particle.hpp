@@ -22,9 +22,8 @@ protected:
     sf::Vector2f position_;
     sf::Vector2f velocity_;
     float rotation_;
-    float angular_velocity_;
-    bool is_dead_;
+    float angularVelocity_;
+    bool isDead_;
 };
 
 }  // namespace engine
-

@@ -21,21 +21,21 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
 : lifetime_{}
 { 
     renderer_ = std::make_unique<BulletRenderer>(this, bulletBody);
-    rigid_body_ = std::make_unique<engine::RigidBody>(
+    rigidBody_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, BULLET_RADIUS, 
         BULLET_MASS, 
         AIR_DRAG_COEEF, 
         engine::RigidBody::Type::DYNAMIC);
 
-    rigid_body_->rotation_ = angle;
+    rigidBody_->rotation_ = angle;
 
-    float angle_rad = engine::math::degree_to_radians(angle);
+    float angle_rad = engine::math::degreeToRadians(angle);
 
     float vx = speed * std::cos(angle_rad);
     float vy = speed * std::sin(angle_rad);
 
-    rigid_body_->applyForce(sf::Vector2f{vx, vy});
+    rigidBody_->applyForce(sf::Vector2f{vx, vy});
 }
 
 void Bullet::onUpdate(engine::Scene& scene, float timeStep)

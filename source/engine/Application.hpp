@@ -34,7 +34,7 @@ protected:
     virtual void onUpdate(float timeStep) = 0;
     virtual void onRender() = 0;
 
-    bool is_running_{true};
+    bool isRunning_{true};
 
     sf::RenderWindow window_;
     sf::Clock clock_;

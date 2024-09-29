@@ -10,9 +10,9 @@ class Camera
 public:
     Camera(const sf::Vector2f& position, const sf::Vector2f& size);
     void setPosition(const float x, const float y);
-    void moveX(const float x_velocity);
-    void moveY(const float y_velocity);
-    void move(const float x_velocity, const float y_velocity);
+    void moveX(const float xVelocity);
+    void moveY(const float yVelocity);
+    void move(const float xVelocity, const float yVelocity);
     void zoomIn();
     void zoomIn(const float x, const float y);
     void zoomOut();
@@ -23,15 +23,13 @@ public:
 
 protected:
     void alignBoundaries();
-    sf::Vector2f current_position_;
-    sf::Vector2f target_position_;
+    sf::Vector2f currentPosition_;
+    sf::Vector2f targetPosition_;
     sf::Vector2f velocity_;
-    const sf::Vector2f original_size_;
-    sf::Vector2f current_size_;
-    sf::Vector2f target_size_;
-    float zoom_level_;
+    const sf::Vector2f originalSize_;
+    sf::Vector2f currentSize_;
+    sf::Vector2f targetSize_;
+    float zoomLevel_;
 };
 
 }  // namespace engine
-
-

@@ -17,7 +17,7 @@ constexpr float GROUND_DRAG_COEEF = 0.85;
 Crate::Crate(float x, float y, sf::Texture& crateBody)
 { 
     renderer_ = std::make_unique<CrateRenderer>(this, crateBody);
-    rigid_body_ = std::make_unique<engine::RigidBody>(
+    rigidBody_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
         x, y, CRATE_RADIUS, 
         CRATE_MASS, 
