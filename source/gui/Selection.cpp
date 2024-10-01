@@ -11,16 +11,10 @@ Selection::Selection(gui::Text& text)
 : text_{text}
 , selectionStartIndex_{}
 , selectionEndIndex_{}
-, isActive_{false}
 , selectionStartPosition_{}
 , selectionEndPosition_{}
 {
     selection_.setFillColor(sf::Color(230,100,100,127));
-}
-
-bool Selection::isActive() const
-{
-    return isActive_;
 }
 
 bool Selection::isEmpty() const
@@ -35,19 +29,17 @@ void Selection::start(const uint32_t index, const sf::Vector2f& position)
 
     selectionEndIndex_ = index;
     selectionEndPosition_ = position;
-
-    assert(isActive_ == false && "Selection is already started, can't move start point!"); 
-    isActive_ = true;
+    update();
 }
 
 size_t Selection::startsAt() const
 {
-    return selectionStartIndex_;
+    return selectionStartIndex_ < selectionEndIndex_ ? selectionStartIndex_ : selectionEndIndex_;
 }
 
 size_t Selection::endsAt() const
 {
-    return selectionEndIndex_;
+    return selectionStartIndex_ < selectionEndIndex_ ? selectionEndIndex_ : selectionStartIndex_;
 }
 
 size_t Selection::length() const
@@ -59,7 +51,6 @@ void Selection::clear()
 {
     selectionEndIndex_ = selectionStartIndex_;
     selectionEndPosition_ = selectionStartPosition_;
-    end();
     update();
 }
 
@@ -67,17 +58,7 @@ void Selection::to(const uint32_t index, const sf::Vector2f& position)
 {
     selectionEndIndex_ = index;
     selectionEndPosition_ = position;
-}   
-
-void Selection::end()
-{
-    isActive_ = false;
-
-    if (selectionStartIndex_ > selectionEndIndex_)
-    {
-        std::swap(selectionStartIndex_, selectionEndIndex_);
-        std::swap(selectionStartPosition_, selectionEndPosition_);
-    }
+    update();
 }
 
 void Selection::update()

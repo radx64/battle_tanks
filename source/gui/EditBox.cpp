@@ -5,19 +5,11 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
 constexpr float EXTRA_END_OFFSET = 5.f;
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 
 namespace gui
 {
-
-// FIXME: Selecting text by mouse and then pressing shift
-// to select further is canceling previous selection
-// which should not happen
-
-
 EditBox::EditBox()
 : text_{}
 , textCursor_{text_}
@@ -105,24 +97,27 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
         return gui::EventStatus::NotConsumed;
     }
 
-    if (mouseButtonPressedEvent.button == gui::event::MouseButton::Left)
+    if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left)
     {
-        mouseLeftButtonPressed_ = true;
+        return gui::EventStatus::NotConsumed;
     }
-    
+
+    mouseLeftButtonPressed_ = true;
+
     focus();
     textCursor_.moveTo(mouseButtonPressedEvent.position.x);
 
-    if (not selection_.isActive())
+    if (anyShiftHeldDown_)
     {
-        selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-        selection_.update();
+        selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
     }
     else
     {
-        selection_.clear();
+        if (not selection_.isEmpty())
+        {
+            selection_.clear();
+        }
         selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-        selection_.update();
     }
 
     return gui::EventStatus::NotConsumed;
@@ -133,7 +128,6 @@ EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEve
     if (mouseButtonReleasedEvent.button == gui::event::MouseButton::Left)
     {
         mouseLeftButtonPressed_ = false;
-        selection_.end();
     }
 
     UNUSED(mouseButtonReleasedEvent);
@@ -146,7 +140,6 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
     {
         textCursor_.moveTo(mouseMovedEvent.position.x);
         selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
-        selection_.update();
     }
 
     return gui::EventStatus::NotConsumed;
@@ -182,24 +175,21 @@ void EditBox::paste()
 
 void EditBox::startSelection()
 {
-    if (not selection_.isActive())
+    if (selection_.isEmpty())
     {
         selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-        selection_.update();
     }
 }
 
 void EditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
 {
-    if (anyShiftHeldDown_ and selection_.isActive())
+    if (anyShiftHeldDown_)
     {
         selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
-        selection_.update();
     }
     
-    if (not anyShiftHeldDown_ and selection_.isActive())
+    if (not anyShiftHeldDown_ and not selection_.isEmpty())
     {
-        selection_.end();
         if (atSelectionEndOnCancel)
         {
             textCursor_.setIndex(selection_.endsAt());
@@ -336,10 +326,9 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
         if (not selection_.isEmpty())
         {
-            selection_.end();
+            //selection_.end();
             text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
             selection_.clear();
-            selection_.update();
             textCursor_.setIndex(selection_.startsAt());
         }
         else
