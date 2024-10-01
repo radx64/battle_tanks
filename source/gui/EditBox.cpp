@@ -286,6 +286,22 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             break;
         }
 
+        case sf::Keyboard::A :
+        {
+            if (keyboardKeyPressed.modifiers.control)
+            {
+                selection_.clear();
+                textCursor_.setIndex(0);
+                textCursor_.update();
+                selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
+
+                textCursor_.setIndex(text_.getText().length());
+                textCursor_.update();
+                selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
+            }
+            break;
+        }
+
         default: break;
     }
 
