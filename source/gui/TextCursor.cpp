@@ -128,14 +128,14 @@ void TextCursor::moveRight(const bool moveWholeWord)
             }
             else
             {
-                characterAfterCursor = cursorPositionWithSkippedSpaces - 1;
+                characterAfterCursor = cursorPositionWithSkippedSpaces + 1;
             }
         }
 
         auto firstSpace = text.find_first_of(' ', characterAfterCursor);
         if (firstSpace != std::string::npos)
         {
-            cursorIndex_ = firstSpace + 1;
+            cursorIndex_ = firstSpace;
         }
         else
         {

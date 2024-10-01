@@ -11,16 +11,16 @@ Selection::Selection(gui::Text& text)
 : text_{text}
 , selectionStartIndex_{}
 , selectionEndIndex_{}
-, isOngoing_{false}
+, isActive_{false}
 , selectionStartPosition_{}
 , selectionEndPosition_{}
 {
     selection_.setFillColor(sf::Color(230,100,100,127));
 }
 
-bool Selection::isOngoing() const
+bool Selection::isActive() const
 {
-    return isOngoing_;
+    return isActive_;
 }
 
 bool Selection::isEmpty() const
@@ -30,12 +30,14 @@ bool Selection::isEmpty() const
 
 void Selection::start(const uint32_t index, const sf::Vector2f& position)
 {
-    assert(not isOngoing_ && "Selection can be started only once");
-    isOngoing_ = true;
     selectionStartIndex_ = index;
     selectionStartPosition_ = position;
-    selectionEndIndex_ = selectionStartIndex_;
-    selectionEndPosition_ = selectionStartPosition_;
+
+    selectionEndIndex_ = index;
+    selectionEndPosition_ = position;
+
+    assert(isActive_ == false && "Selection is already started, can't move start point!"); 
+    isActive_ = true;
 }
 
 size_t Selection::startsAt() const
@@ -61,7 +63,7 @@ void Selection::clear()
     update();
 }
 
-void Selection::updateEnd(const uint32_t index, const sf::Vector2f& position)
+void Selection::to(const uint32_t index, const sf::Vector2f& position)
 {
     selectionEndIndex_ = index;
     selectionEndPosition_ = position;
@@ -69,7 +71,7 @@ void Selection::updateEnd(const uint32_t index, const sf::Vector2f& position)
 
 void Selection::end()
 {
-    isOngoing_ = false;
+    isActive_ = false;
 
     if (selectionStartIndex_ > selectionEndIndex_)
     {

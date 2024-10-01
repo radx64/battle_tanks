@@ -28,6 +28,7 @@ protected:
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
+    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyRelased) override;
     EventStatus on(const event::TextEntered& textEntered) override;
 
     void onFocus() override;
@@ -37,17 +38,16 @@ protected:
 
     void copy();
     void paste();
-    void toggleSelection(const bool enable);
     void startSelection();
-    void endSelection();
-    void updateCursorAndSelection(const size_t cursorIndexOnSelectionCancel);
+    void updateCursorAndSelection(const bool atSelectionEndOnCancel);
 
-    sf::RectangleShape background_;
     gui::Text text_;
+    sf::RectangleShape background_;
     gui::TextCursor textCursor_;
     gui::Selection selection_;
-    bool keyboardSelectionOngoing_;
     uint32_t maxLength_;
+    bool anyShiftHeldDown_;
+    bool mouseLeftButtonPressed_;
 };
 
 }  // namespace gui

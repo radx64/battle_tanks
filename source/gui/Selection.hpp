@@ -15,13 +15,13 @@ class Selection : public TextDisplayModifier
 {
 public:
     Selection(gui::Text& text);
-    bool isOngoing() const;
+    bool isActive() const;
     bool isEmpty() const;
 
     void start(const uint32_t index, const sf::Vector2f& position);
     size_t startsAt() const;
 
-    void updateEnd(const uint32_t index, const sf::Vector2f& position);
+    void to(const uint32_t index, const sf::Vector2f& position);
     void end();
     size_t endsAt() const;
 
@@ -39,7 +39,7 @@ protected:
     size_t selectionStartIndex_;
     size_t selectionEndIndex_;
 
-    bool isOngoing_;
+    bool isActive_;
     sf::Vector2f selectionStartPosition_;
     sf::Vector2f selectionEndPosition_;
 

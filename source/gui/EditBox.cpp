@@ -5,18 +5,26 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
+#include <iostream>
+
 constexpr float EXTRA_END_OFFSET = 5.f;
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 
 namespace gui
 {
 
+// FIXME: Selecting text by mouse and then pressing shift
+// to select further is canceling previous selection
+// which should not happen
+
+
 EditBox::EditBox()
 : text_{}
 , textCursor_{text_}
 , selection_{text_}
-, keyboardSelectionOngoing_{false}
 , maxLength_{DEFAULT_TEXT_MAX_LENGTH}
+, anyShiftHeldDown_{false}
+, mouseLeftButtonPressed_{false}
 {
     text_.addModifier(&selection_);
     text_.addModifier(&textCursor_);
@@ -92,23 +100,29 @@ void EditBox::updateTextVisbleArea()
 
 EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (isInside(mouseButtonPressedEvent.position))
+    if (not isInside(mouseButtonPressedEvent.position))
     {
-        textCursor_.moveTo(mouseButtonPressedEvent.position.x);
-        focus();
+        return gui::EventStatus::NotConsumed;
+    }
 
-        if (not selection_.isOngoing())
-        {
-            selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-            selection_.update();
-        }
-        else
-        {
-            keyboardSelectionOngoing_ = false;
-            selection_.clear();
-            selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-            selection_.update();
-        }
+    if (mouseButtonPressedEvent.button == gui::event::MouseButton::Left)
+    {
+        mouseLeftButtonPressed_ = true;
+    }
+    
+    focus();
+    textCursor_.moveTo(mouseButtonPressedEvent.position.x);
+
+    if (not selection_.isActive())
+    {
+        selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
+        selection_.update();
+    }
+    else
+    {
+        selection_.clear();
+        selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
+        selection_.update();
     }
 
     return gui::EventStatus::NotConsumed;
@@ -116,17 +130,22 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 
 EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
+    if (mouseButtonReleasedEvent.button == gui::event::MouseButton::Left)
+    {
+        mouseLeftButtonPressed_ = false;
+        selection_.end();
+    }
+
     UNUSED(mouseButtonReleasedEvent);
-    selection_.end();
     return gui::EventStatus::NotConsumed;
 }
 
 EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
 {
-    if(selection_.isOngoing() and not keyboardSelectionOngoing_)
+    if(mouseLeftButtonPressed_)
     {
         textCursor_.moveTo(mouseMovedEvent.position.x);
-        selection_.updateEnd(textCursor_.getIndex(), textCursor_.getPosition());
+        selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
         selection_.update();
     }
 
@@ -163,49 +182,33 @@ void EditBox::paste()
 
 void EditBox::startSelection()
 {
-    if (not selection_.isOngoing())
+    if (not selection_.isActive())
     {
         selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
         selection_.update();
     }
 }
 
-void EditBox::endSelection()
+void EditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
 {
-    if (selection_.isOngoing())
+    if (anyShiftHeldDown_ and selection_.isActive())
     {
-        selection_.end();
-    }
-}
-
-void EditBox::toggleSelection(const bool enable)
-{
-    if (enable)
-    {
-        keyboardSelectionOngoing_ = true;
-        startSelection();
-    }
-    else
-    {
-        keyboardSelectionOngoing_ = false;
-        endSelection();
-    } 
-}
-
-void EditBox::updateCursorAndSelection(const size_t cursorIndexOnSelectionCancel)
-{
-    if (selection_.isOngoing())
-    {
-        selection_.updateEnd(textCursor_.getIndex(), textCursor_.getPosition());
+        selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
         selection_.update();
     }
-    else
+    
+    if (not anyShiftHeldDown_ and selection_.isActive())
     {
-        if (not selection_.isEmpty())
+        selection_.end();
+        if (atSelectionEndOnCancel)
         {
-            textCursor_.setIndex(cursorIndexOnSelectionCancel);
-            selection_.clear();
+            textCursor_.setIndex(selection_.endsAt());
         }
+        else
+        {
+            textCursor_.setIndex(selection_.startsAt());
+        }
+        selection_.clear();
     }
 }
 
@@ -215,17 +218,16 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
     std::string newText = text_.getText();
 
-    // FIXME: this toggleSelection is causing an issue when shift 
-    // is released and pressed again as selection
-    // is toggled of so it starts from begining
-    // so this need to be redesigned
-    // either start should be able to restart selection
-    // or I need to figure out something else
-
-    toggleSelection(keyboardKeyPressed.modifiers.shift);
-
     switch (keyboardKeyPressed.key)
     {
+        case sf::Keyboard::LShift :
+        case sf::Keyboard::RShift :
+        {
+            anyShiftHeldDown_ = true;
+            startSelection();
+            return gui::EventStatus::Consumed;
+        }
+
         case sf::Keyboard::Backspace :
         {
             if (not selection_.isEmpty())
@@ -233,6 +235,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
                 newText.erase(selection_.startsAt(), selection_.length());
                 textCursor_.setIndex(selection_.startsAt());
                 selection_.clear();
+                anyShiftHeldDown_ = false;
             }
             else if (newText.empty() || textCursor_.getIndex() == 0)
             {
@@ -262,16 +265,16 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         case sf::Keyboard::Left :
         {
             textCursor_.moveLeft(keyboardKeyPressed.modifiers.control);
-
-            updateCursorAndSelection(selection_.startsAt());
+            constexpr bool AT_START_OF_SELECTION_ON_CANCEL = false;
+            updateCursorAndSelection(AT_START_OF_SELECTION_ON_CANCEL);
             break;
         }
 
         case sf::Keyboard::Right :
         {
             textCursor_.moveRight(keyboardKeyPressed.modifiers.control);
-
-            updateCursorAndSelection(selection_.endsAt());
+            constexpr bool AT_END_OF_SELECTION_ON_CANCEL = true;
+            updateCursorAndSelection(AT_END_OF_SELECTION_ON_CANCEL);
             break;
         }
 
@@ -279,7 +282,6 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         {
             if (keyboardKeyPressed.modifiers.control)
             {
-                selection_.end();
                 copy();
             }
             break;
@@ -301,6 +303,25 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
     return gui::EventStatus::Consumed;
 }
 
+EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyRelased)
+{
+    if (not isFocused()) return gui::EventStatus::NotConsumed;
+
+    switch (keyboardKeyRelased.key)
+    {
+        case sf::Keyboard::LShift :
+        case sf::Keyboard::RShift :
+        {
+            anyShiftHeldDown_ = false;
+            break;
+        }
+        default :
+            break;
+    }
+
+    return gui::EventStatus::Consumed;
+}
+
 EventStatus EditBox::on(const event::TextEntered& textEntered)
 {
     if(not isFocused()) return gui::EventStatus::NotConsumed;
@@ -312,10 +333,10 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
     // FIXME: crude unicode conversion and check to for printable characters
     if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
     {
-        endSelection();
 
         if (not selection_.isEmpty())
         {
+            selection_.end();
             text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
             selection_.clear();
             selection_.update();
