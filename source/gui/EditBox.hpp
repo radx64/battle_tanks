@@ -36,6 +36,7 @@ protected:
 
     void updateTextVisbleArea();
 
+    void cut();
     void copy();
     void paste();
     void startSelection();

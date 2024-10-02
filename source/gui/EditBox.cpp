@@ -145,6 +145,20 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
     return gui::EventStatus::NotConsumed;
 }
 
+void EditBox::cut()
+{
+    if (not selection_.isEmpty())
+    {
+        copy();
+        auto textToUpdate = text_.getText();
+        textToUpdate.replace(selection_.startsAt(), selection_.length(), "", 0);
+        textCursor_.setIndex(selection_.startsAt());
+        selection_.clear();
+        text_.setText(textToUpdate);
+        updateTextVisbleArea();
+    }
+}
+
 void EditBox::copy()
 {
     if (not selection_.isEmpty())
@@ -284,6 +298,15 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
                 paste();
             }
             break;
+        }
+
+        case sf::Keyboard::X :
+        {
+            if (keyboardKeyPressed.modifiers.control)
+            {
+                cut();
+                break;
+            }
         }
 
         case sf::Keyboard::A :
