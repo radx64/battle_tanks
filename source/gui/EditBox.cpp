@@ -306,8 +306,8 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             if (keyboardKeyPressed.modifiers.control)
             {
                 cut();
-                break;
             }
+            break;
         }
 
         case sf::Keyboard::A :
