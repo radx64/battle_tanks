@@ -104,7 +104,8 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 
     mouseLeftButtonPressed_ = true;
 
-    focus();
+    enterEdit();
+
     textCursor_.moveTo(mouseButtonPressedEvent.position.x);
 
     if (anyShiftHeldDown_)
@@ -365,7 +366,6 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
         if (not selection_.isEmpty())
         {
-            //selection_.end();
             text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
             selection_.clear();
             textCursor_.setIndex(selection_.startsAt());
@@ -384,8 +384,9 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
     return gui::EventStatus::NotConsumed;
 }
 
-void EditBox::onFocus()
+void EditBox::enterEdit()
 {
+    focus();
     background_.setFillColor(sf::Color::White);
     textCursor_.enable();
 }

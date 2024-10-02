@@ -31,11 +31,11 @@ protected:
     EventStatus on(const event::KeyboardKeyReleased& keyboardKeyRelased) override;
     EventStatus on(const event::TextEntered& textEntered) override;
 
-    void onFocus() override;
     void onFocusLost() override; 
 
     void updateTextVisbleArea();
 
+    void enterEdit();
     void cut();
     void copy();
     void paste();

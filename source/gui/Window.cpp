@@ -82,12 +82,14 @@ void Window::activate()
     active_ = true;
     header_->activate();
     statusBar_->activate();
+    focus();
 }
 void Window::deactivate()
 {
     active_ = false;
     header_->deactivate();
     statusBar_->deactivate();
+    defocus();
 }
 
 bool Window::isActive() const
