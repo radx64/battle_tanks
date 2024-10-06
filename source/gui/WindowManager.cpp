@@ -140,16 +140,12 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
             (*window)->receive(event::MouseLeft{});
         }
 
-        // Send move events to window only if mouse is over or window is beeing dragged/resized
-        if ((*window)->isInside(mousePosition) or (not (*window)->isIdle()))
-        {
-            auto currentWindowStatus = (*window)->receive(mouseMovedEvent);
+        auto currentWindowStatus = (*window)->receive(mouseMovedEvent);
 
-            if (currentWindowStatus == gui::EventStatus::Consumed) 
-            {
-                status = currentWindowStatus;
-                break; // Stop processing rest of the windows if current one consumed mouse event
-            }
+        if (currentWindowStatus == gui::EventStatus::Consumed) 
+        {
+            status = currentWindowStatus;
+            break; // Stop processing rest of the windows if current one consumed mouse event
         }
     }
 
@@ -180,7 +176,7 @@ EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButton
     return gui::EventStatus::NotConsumed;  
 }
 
-EventStatus WindowManager::receive (const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 {
     EventStatus result{EventStatus::NotConsumed};
 
@@ -198,7 +194,7 @@ EventStatus WindowManager::receive (const event::KeyboardKeyPressed& keyboardKey
     return result;
 }
 
-EventStatus WindowManager::receive (const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
     EventStatus result{EventStatus::NotConsumed};
 
