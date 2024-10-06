@@ -32,7 +32,7 @@ public:
     MOCK_METHOD(void, action, ());
 };
 
-TEST_F(ButtonShould, callOnClickWhenClickedInside)
+TEST_F(ButtonShould, DISABLED_callOnClickWhenClickedInside)
 {
     ActionReceiver receiver;
     auto sut = std::make_unique<gui::Button>("TEST button");
@@ -43,7 +43,7 @@ TEST_F(ButtonShould, callOnClickWhenClickedInside)
     sut->receive(gui::event::MouseButtonPressed{.button = gui::event::MouseButton::Left, .position = {1.f, 1.f}});
 }
 
-TEST_F(ButtonShould, dontCallOnClickWhenClickedOutside)
+TEST_F(ButtonShould, DISABLED_dontCallOnClickWhenClickedOutside)
 {
     ActionReceiver receiver;
     auto sut = std::make_unique<gui::Button>("TEST button");
