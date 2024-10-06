@@ -14,23 +14,8 @@ enum class Alignment
     VerticallyCentered      = 0x40
 };
 
-inline constexpr Alignment operator|(Alignment lhs, Alignment rhs) 
-{
-    return static_cast<Alignment>(static_cast<std::underlying_type_t<Alignment>>(lhs) |
-        static_cast<std::underlying_type_t<Alignment>>(rhs));
-}
-
-inline constexpr Alignment operator&(Alignment lhs, Alignment rhs) 
-{
-    return static_cast<Alignment>(static_cast<std::underlying_type_t<Alignment>>(lhs) &
-        static_cast<std::underlying_type_t<Alignment>>(rhs));
-}
-
-inline bool isBitSet(const Alignment& alignment, const Alignment& bit)
-{
-    return ((alignment & bit) == bit);
-}
+Alignment operator|(Alignment lhs, Alignment rhs);
+Alignment operator&(Alignment lhs, Alignment rhs);
+bool isBitSet(const Alignment& alignment, const Alignment& bit);
 
 }  // namespace gui
-
-

@@ -113,7 +113,7 @@ const StyleSheet& BasicStyleSheetFactory::instance()
     if (stylesheet_) return *stylesheet_;
     else
     {
-        stylesheet_ = new StyleSheet();
+        stylesheet_ = std::make_unique<StyleSheet>();
         stylesheet_->setFont(gui::FontLibrary::get("armata"));
         stylesheet_->setFontSize(16);
         stylesheet_->setFontColor(sf::Color::Black);
@@ -127,6 +127,11 @@ const StyleSheet& BasicStyleSheetFactory::instance()
     }
 }
 
-StyleSheet* BasicStyleSheetFactory::stylesheet_= nullptr;
+void BasicStyleSheetFactory::destroy()
+{
+    stylesheet_.reset();
+}
+
+std::unique_ptr<StyleSheet> BasicStyleSheetFactory::stylesheet_= nullptr;
 
 }  // namespace gui

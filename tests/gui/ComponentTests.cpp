@@ -5,8 +5,6 @@
 
 #include "gui/Component.hpp"
 
-
-
 namespace gui
 {
 

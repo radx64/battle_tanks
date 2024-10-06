@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
+
 #include <SFML/Graphics/Color.hpp>
 
 #include "gui/FontLibrary.hpp"
@@ -46,13 +48,16 @@ protected:
     sf::Color windowInanctiveTopBarColor_;
 };
 
+// FIXME: this is cure factory with some nasty static
+// I need to fix that when proper resource manager will be in place
 class BasicStyleSheetFactory
 {
 public:
     static const StyleSheet& instance();
+    static void destroy();
 
 private:
-    static StyleSheet* stylesheet_;
+    static std::unique_ptr<StyleSheet> stylesheet_;
 };
 
 }  // namespace gui
