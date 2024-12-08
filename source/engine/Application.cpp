@@ -13,6 +13,10 @@ Application::Application(const std::string_view& windowName)
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});
+
+    context_.setScene(&scene_);
+    context_.setParticleSystem(&particleSystem_);
+    context_.setTimerService(&timerService_);
 }
 
 Application::~Application() = default;
@@ -101,6 +105,7 @@ void Application::processEvents()
 
 void Application::update()
 {
+    timerService_.update(timeStep_);
     scene_.update();
     particleSystem_.update(timeStep_);
     onUpdate(timeStep_);

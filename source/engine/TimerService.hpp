@@ -30,6 +30,7 @@ public:
 
     void start(Timer* timer, const TimerType type);
     void cancel(Timer* timer);
+    double getCurrentTime() const;
 
 protected:
     std::vector<TimerInstance> timers_;

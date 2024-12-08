@@ -2,6 +2,10 @@
 
 #include "Config.hpp"
 
+#include "engine/Context.hpp"
+#include "engine/Timer.hpp"
+#include "engine/TimerService.hpp"
+
 #include "gui/Debug.hpp"
 #include "gui/Button.hpp"
 #include "gui/EditBox.hpp"
@@ -20,7 +24,10 @@ Application::Application()
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
+, timer_{2.0, [](){std::cout << "2 seconds heartbeat <3 \n";}}
 {
+    auto& timerService = engine::Context::getTimerService();
+    timerService.start(&timer_, engine::TimerType::Repeating);
 }
 
 void Application::onInit()

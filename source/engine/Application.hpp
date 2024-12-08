@@ -3,10 +3,12 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/CollisionSolver.hpp"
+#include "engine/Context.hpp"
 #include "engine/input/KeyboardHandler.hpp"
 #include "engine/input/MouseHandler.hpp"
 #include "engine/ParticleSystem.hpp"
 #include "engine/Scene.hpp"
+#include "engine/TimerService.hpp"
 
 namespace engine
 {
@@ -46,6 +48,10 @@ protected:
     float timeStep_{1.0f/30.f};
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
+
+    Context context_;
+   
+    engine::TimerService timerService_;
 
 };
 

@@ -12,7 +12,6 @@
 
 #include "engine/math/Math.hpp"
 
-#include "game/Context.hpp"
 #include "game/entity/tank/Tank.hpp"
 #include "game/entity/TracksRenderer.hpp"
 #include "game/WaypointMouseController.hpp"
@@ -47,8 +46,6 @@ protected:
     void renderGameObjects();
     void generateProfiling();
 
-    Context context_;
-   
     engine::FpsCounter fpsCounter_;
 
     const sf::Vector2f cameraInitialPosition_;

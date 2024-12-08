@@ -13,6 +13,19 @@ public:
     MOCK_METHOD(void, notificaiton, ());
 };
 
+TEST(TimerServiceShould, returnCurrentTime)
+{
+    TimerService timerService{};
+
+    EXPECT_FLOAT_EQ(timerService.getCurrentTime(), 0.0);
+    
+    timerService.update(0.1);
+    EXPECT_FLOAT_EQ(timerService.getCurrentTime(), 0.1);
+
+    timerService.update(0.3);
+    EXPECT_FLOAT_EQ(timerService.getCurrentTime(), 0.4);
+}
+
 TEST(TimerServiceShould, callTimerWhenIsOver)
 {
     TimerClientStub timerClientStub;

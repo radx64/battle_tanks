@@ -3,7 +3,9 @@
 namespace engine { class ParticleSystem; }
 namespace engine { class Scene; }
 namespace engine { class Camera; }
-namespace game 
+namespace engine { class TimerService; }
+
+namespace engine 
 {
     
 class Context
@@ -18,11 +20,14 @@ public:
     static engine::Camera& getCamera();
     static void setCamera(engine::Camera* camera);
 
+    static engine::TimerService& getTimerService();
+    static void setTimerService(engine::TimerService* timerService);
+
 protected:
     static engine::ParticleSystem* particleSystem_;
     static engine::Scene* scene_;
     static engine::Camera* camera_;
+    static engine::TimerService* timerService_;
 };
 
-}  // namespace game
-
+}  // namespace engine

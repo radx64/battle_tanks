@@ -65,4 +65,9 @@ void TimerService::cancel(Timer* timer)
     }
 }
 
+double TimerService::getCurrentTime() const
+{
+    return currentTime_;
+} 
+
 }  // namespace engine

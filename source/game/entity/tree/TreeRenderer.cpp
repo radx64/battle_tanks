@@ -2,7 +2,7 @@
 #include "game/entity/tree/Tree.hpp"
 
 #include "engine/Camera.hpp"
-#include "game/Context.hpp"
+#include "engine/Context.hpp"
 #include "engine/math/Math.hpp"
 
 constexpr float HEIGHT_COEFF = 0.005f;
@@ -23,8 +23,8 @@ void TreeRenderer::draw(sf::RenderWindow& renderWindow)
     auto tree_rigid_body = tree_->getRigidBody();
     auto tree_position = sf::Vector2f{tree_rigid_body.x_, tree_rigid_body.y_};
 
-    auto camera_postion = Context::getCamera().getPosition();
-    auto camera_zoom_level = Context::getCamera().getZoom();
+    auto camera_postion = engine::Context::getCamera().getPosition();
+    auto camera_zoom_level = engine::Context::getCamera().getZoom();
 
     auto difference = camera_postion - tree_position;
 

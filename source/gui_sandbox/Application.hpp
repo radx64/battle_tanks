@@ -1,5 +1,8 @@
 #pragma once
+
 #include "engine/Application.hpp"
+#include "engine/Timer.hpp"
+
 #include "gui/WindowManager.hpp"
 #include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
@@ -28,6 +31,8 @@ protected:
 
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;
+
+    engine::Timer timer_;
 };
 
 }  // namespace gui_sandbox

@@ -1,6 +1,6 @@
-#include "game/Context.hpp"
+#include "engine/Context.hpp"
 
-namespace game 
+namespace engine 
 {
 
 engine::ParticleSystem& Context::getParticleSystem()
@@ -32,8 +32,19 @@ void Context::setCamera(engine::Camera* camera)
     camera_ = camera;
 }
 
+engine::TimerService& Context::getTimerService()
+{
+    return *timerService_;
+}
+
+void Context::setTimerService(engine::TimerService* timerService)
+{
+    timerService_ = timerService;
+}
+
 engine::ParticleSystem* Context::particleSystem_{nullptr};
 engine::Scene* Context::scene_{nullptr};
 engine::Camera* Context::camera_{nullptr};
+engine::TimerService* Context::timerService_{nullptr};
 
-}  // namespace game
+}  // namespace engine

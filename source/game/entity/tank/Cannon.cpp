@@ -2,13 +2,14 @@
 
 #include <cmath>
 
-#include "game/Context.hpp"
+#include "engine/Context.hpp"
+#include "engine/math/Math.hpp"
+#include "engine/ParticleSystem.hpp"
+#include "engine/Scene.hpp"
+
 #include "game/entity/bullet/Bullet.hpp"
 #include "game/entity/bullet/BulletFactory.hpp"
 #include "game/particle/Explosion.hpp"
-#include "engine/Scene.hpp"
-#include "engine/ParticleSystem.hpp"
-#include "engine/math/Math.hpp"
 
 namespace game::entity 
 {
@@ -71,11 +72,11 @@ void Cannon::fire()
         auto bullet = entity::BulletFactory::create(entity::BulletFactory::BulletType::Dark,
            bullet_x , bullet_y, current_rotation_, BULLET_SPEED);
 
-        Context::getScene().spawnObject(std::move(bullet));
+        engine::Context::getScene().spawnObject(std::move(bullet));
 
         auto explosion = std::make_unique<game::particle::Explosion>(bullet_x, bullet_y);
 
-        Context::getParticleSystem().add(std::move(explosion));
+        engine::Context::getParticleSystem().add(std::move(explosion));
 
         cooldown_ = 0.f;
     }

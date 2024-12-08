@@ -12,7 +12,6 @@ PUBLIC
 target_sources(game_lib
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/barrel/Barrel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/barrel/BarrelFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/barrel/BarrelRenderer.cpp 
