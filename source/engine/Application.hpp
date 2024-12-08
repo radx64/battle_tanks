@@ -45,7 +45,8 @@ protected:
     engine::input::KeyboardHandler keyboardHandler_;
     engine::input::MouseHandler mouseHandler_;
 
-    float timeStep_{1.0f/30.f};
+    float constantTimeStep_{1.0f/30.f};
+    float realTimeStep_;
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
 

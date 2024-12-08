@@ -107,9 +107,9 @@ void Application::onEvent(const sf::Event& event)
                 case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
                 case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
                 case sf::Keyboard::C        :   waypoints_.clear(); break;
-                case sf::Keyboard::F8       :   {timeStep_ = 1.0f/300.f;} break;
-                case sf::Keyboard::F9       :   {timeStep_ = 1.0f/150.f;} break;
-                case sf::Keyboard::F10      :   {timeStep_ = 1.0f/30.f;} break;
+                case sf::Keyboard::F8       :   {constantTimeStep_ = 1.0f/300.f;} break;
+                case sf::Keyboard::F9       :   {constantTimeStep_ = 1.0f/150.f;} break;
+                case sf::Keyboard::F10      :   {constantTimeStep_ = 1.0f/30.f;} break;
                 case sf::Keyboard::F11      :   {rigidBodyDebug_ = !rigidBodyDebug_;} break;
                 case sf::Keyboard::F12      :   {tankDebugMode_=!tankDebugMode_; entity::Tank::setDebug(tankDebugMode_);} break;
                 case sf::Keyboard::T        :   tracksRenderer_.clear(); break;
@@ -144,7 +144,7 @@ void Application::onUpdate(float timeStep)
     cameraView_.setSize(camera_.getSize());
     for (auto& object : scene_.objects())
     {
-        object->update(scene_, timeStep_);
+        object->update(scene_, constantTimeStep_);
     }
     collisionSolver_.evaluateCollisions();
     physicsTime_ = clock_.getElapsedTime();
@@ -218,7 +218,7 @@ void Application::renderGameObjects()
 
     for (auto& e : objectsToDraw)
     {
-        e.object->draw(window_, timeStep_);
+        e.object->draw(window_, constantTimeStep_);
     }
 
     objectsToDraw.clear();

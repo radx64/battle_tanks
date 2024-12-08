@@ -9,6 +9,7 @@ namespace engine
 
 Application::Application(const std::string_view& windowName)
 : window_(sf::VideoMode(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 32), windowName.data())
+,realTimeStep_{}
 ,collisionSolver_(scene_)
 {
     window_.setKeyRepeatEnabled(false);
@@ -32,7 +33,7 @@ int Application::run()
     {
         while (isRunning_)
         {
-            clock_.restart();
+            realTimeStep_ = clock_.restart().asMilliseconds() / 1000.f;
             processEvents();
             update();
             render();
@@ -105,10 +106,10 @@ void Application::processEvents()
 
 void Application::update()
 {
-    timerService_.update(timeStep_);
+    timerService_.update(realTimeStep_);
     scene_.update();
-    particleSystem_.update(timeStep_);
-    onUpdate(timeStep_);
+    particleSystem_.update(constantTimeStep_);
+    onUpdate(constantTimeStep_);
 }
 
 void Application::render()
