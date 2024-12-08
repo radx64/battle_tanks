@@ -2,7 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Timer.hpp"
+
 #include "gui/TextDisplayModifier.hpp"
+
 
 namespace gui {class Text;}
 
@@ -31,6 +34,7 @@ public:
 
 protected:
     float getGlyphOffset(const std::string& string, const size_t index);
+    void animateCursor();
 
     uint32_t characterSize_;
     const sf::Font* font_;
@@ -40,6 +44,9 @@ protected:
     uint32_t cursorIndex_;
     sf::RectangleShape cursor_;
     bool enabled_;
+    bool isCursorVisible_;
+
+    engine::Timer blinkTimer_;
 };
 
 }  // namespace gui

@@ -367,8 +367,8 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
         if (not selection_.isEmpty())
         {
             text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
-            selection_.clear();
             textCursor_.setIndex(selection_.startsAt());
+            selection_.clear();
         }
         else
         {

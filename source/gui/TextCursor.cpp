@@ -2,6 +2,9 @@
 
 #include <cassert>
 
+#include "engine/Context.hpp"
+#include "engine/TimerService.hpp"
+
 #include "gui/Text.hpp"
 #include "gui/StyleSheet.hpp"
 
@@ -16,11 +19,26 @@ TextCursor::TextCursor(gui::Text& text)
 , textLength_{}
 , cursorIndex_{}
 , enabled_{false}
+, isCursorVisible_{false}
+, blinkTimer_{0.5, [this]{animateCursor();}}
 {
+    auto& timerService = engine::Context::getTimerService();
+    timerService.start(&blinkTimer_, engine::TimerType::Repeating);
+
     auto style = BasicStyleSheetFactory::instance();
     cursor_.setFillColor(sf::Color::Black);
     cursor_.setOutlineColor(sf::Color::Black);
     cursor_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+5.f});
+}
+
+void TextCursor::animateCursor()
+{
+    if (not enabled_)
+    {
+        return;
+    }
+    isCursorVisible_ = !isCursorVisible_;
+    update();
 }
 
 void TextCursor::setCharacterSize(uint32_t characterSize)
@@ -61,7 +79,7 @@ sf::Vector2f TextCursor::getPosition()
 
 void TextCursor::render(sf::RenderTexture& renderTexture)
 {
-    if (enabled_)
+    if (isCursorVisible_)
     {
         renderTexture.draw(cursor_);
     }
@@ -202,11 +220,13 @@ void TextCursor::setIndex(const uint32_t index)
 void TextCursor::disable()
 {
     enabled_ = false;
+    isCursorVisible_ = false;
 }
 
 void TextCursor::enable()
 {
     enabled_ = true;
+    isCursorVisible_ = true;
 }
 
 }  // namespace gui
