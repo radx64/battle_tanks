@@ -22,11 +22,12 @@ public:
     double getDelay();
     void notify();
 
-    void setTimerService(TimerService* service);
-
     ~Timer();
 
 protected:
+    friend class TimerService;
+
+    void setTimerService(TimerService* service);
     TimerService* service_;
     Notification notification_;
     double delay_;

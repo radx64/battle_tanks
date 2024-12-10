@@ -19,7 +19,6 @@ struct TimerInstance
     TimerType type;
     double nextTick;
     bool active;
-
 };
 
 class TimerService final
