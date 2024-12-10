@@ -21,7 +21,7 @@ public:
 friend class MouseHandler;
 
 protected:
-    virtual gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) = 0;
+    virtual gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button, bool doubleClick) = 0;
     virtual gui::EventStatus onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) = 0;
     virtual gui::EventStatus onMouseMoved(const sf::Vector2f& mousePostion) = 0;
 

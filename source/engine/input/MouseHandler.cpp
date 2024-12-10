@@ -1,11 +1,22 @@
 #include "engine/input/MouseHandler.hpp"
+
+#include "Config.hpp"
+
 #include "engine/input/MouseReceiver.hpp"
+#include "engine/TimerService.hpp"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
 namespace engine::input
 {
+
+MouseHandler::MouseHandler(TimerService* timerService)
+: lastLeftClickTimestamp_{}
+, timerService_(timerService)
+{
+
+}
 
 void MouseHandler::subscribe(MouseReceiver* receiver)
 {
@@ -24,9 +35,23 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
 {
     const auto button = event.button;
     buttonsStates_[button] = true;
+
+    bool leftDoubleClicked{false};
+
+    if (button == sf::Mouse::Button::Left)
+    {
+        auto currentTimestamp = timerService_->getCurrentTime();
+
+        if (currentTimestamp - lastLeftClickTimestamp_ < Config::DOUBLE_CLICK_RATE)
+        {
+            leftDoubleClicked = true;
+        }
+        lastLeftClickTimestamp_ = currentTimestamp;
+    }
+
     for (auto* receiver : receivers_)
     {
-        const auto eventStatus = receiver->onButtonPressed(mousePosition_, button);
+        const auto eventStatus = receiver->onButtonPressed(mousePosition_, button, leftDoubleClicked);
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }

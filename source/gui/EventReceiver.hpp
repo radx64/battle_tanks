@@ -26,7 +26,11 @@ public:
         UNUSED(mouseButtonPressedEvent);
         return EventStatus::NotConsumed;
     };
-    
+    virtual EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+    {
+        UNUSED(mouseButtonDoublePressedEvent);
+        return EventStatus::NotConsumed;
+    };  
     virtual EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
     {
         UNUSED(mouseButtonReleasedEvent);

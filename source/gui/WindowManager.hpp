@@ -26,6 +26,7 @@ public:
     void render(sf::RenderWindow& renderWindow);
 
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
 
@@ -36,6 +37,9 @@ public:
     MainWindow& mainWindow();
 
 protected:
+    template<class T>
+    EventStatus processMouseButton(const T& mouseButtonPressedEvent);
+
     std::list<std::unique_ptr<Window>> windows_;
     Window* activeWindowHandle_;
     MainWindow mainWindow_;

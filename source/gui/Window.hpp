@@ -66,6 +66,7 @@ protected:
     void onSizeChange() override;
 
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 

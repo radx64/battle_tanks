@@ -42,6 +42,9 @@ protected:
     sf::Clock clock_;
 
     engine::ParticleSystem particleSystem_;
+    engine::TimerService timerService_;
+    Context context_;
+
     engine::input::KeyboardHandler keyboardHandler_;
     engine::input::MouseHandler mouseHandler_;
 
@@ -50,9 +53,7 @@ protected:
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
 
-    Context context_;
    
-    engine::TimerService timerService_;
 
 };
 

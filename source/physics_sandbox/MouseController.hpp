@@ -16,9 +16,9 @@ MouseController (engine::Scene& scene)
 {}
 
 protected:
-gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
+gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button, bool doubleClick) override
 {
-    UNUSED2(mouse_postion, button);
+    UNUSED3(mouse_postion, button, doubleClick);
     return gui::EventStatus::NotConsumed;
 }
 gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
@@ -50,4 +50,3 @@ engine::Scene& scene_;
 };
 
 }  // namespace sandbox
-

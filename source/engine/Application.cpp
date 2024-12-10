@@ -9,8 +9,9 @@ namespace engine
 
 Application::Application(const std::string_view& windowName)
 : window_(sf::VideoMode(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 32), windowName.data())
-,realTimeStep_{}
-,collisionSolver_(scene_)
+, mouseHandler_{&timerService_}
+, realTimeStep_{}
+, collisionSolver_(scene_)
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});

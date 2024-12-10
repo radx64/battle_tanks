@@ -14,7 +14,7 @@ public:
     MouseController(gui::WindowManager* windowManager, sf::RenderWindow& window, const sf::View& view);
 
 protected:
-    gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button, bool doubleClick) override;
     gui::EventStatus onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
     gui::EventStatus onMouseMoved(const sf::Vector2f& mousePostion) override;
 

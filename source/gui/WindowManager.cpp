@@ -47,9 +47,11 @@ MainWindow& WindowManager::mainWindow()
     return mainWindow_;
 }
 
-EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+template<class T>
+EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
 {    
     // If not left mouse button
+    // FIXME: This can't stay for too long as probably I wan't to send other events 
     if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left) 
     {
         return gui::EventStatus::NotConsumed;
@@ -98,6 +100,16 @@ EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonP
     }
 
     return mainWindow_.receive(mouseButtonPressedEvent);
+}
+
+EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+{
+    return processMouseButton(mouseButtonPressedEvent);
+}
+
+EventStatus WindowManager::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    return processMouseButton(mouseButtonDoublePressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)

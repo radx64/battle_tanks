@@ -5,6 +5,8 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
+#include <iostream>
+
 constexpr float EXTRA_END_OFFSET = 5.f;
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 
@@ -122,6 +124,17 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
     }
 
     return gui::EventStatus::NotConsumed;
+}
+
+EventStatus EditBox::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    if (not isInside(mouseButtonDoublePressedEvent.position))
+    {
+        return gui::EventStatus::NotConsumed;
+    }
+
+    std::cout << "Double clicked" << std::endl;
+    return gui::EventStatus::NotConsumed;  
 }
 
 EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)

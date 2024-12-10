@@ -92,6 +92,12 @@ EventStatus Component::receive(const event::MouseButtonPressed& mouseButtonPress
 {
     return processEvent(mouseButtonPressedEvent, true);
 }
+
+EventStatus Component::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    return processEvent(mouseButtonDoublePressedEvent, true);
+}
+
 EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     return processEvent(mouseButtonReleasedEvent, true);
@@ -141,6 +147,7 @@ EventStatus Component::receive(const event::TextEntered& textEntered)
 
 EMPTY_ON_METHOD(Component, event::MouseMoved);
 EMPTY_ON_METHOD(Component, event::MouseButtonPressed);
+EMPTY_ON_METHOD(Component, event::MouseButtonDoublePressed);
 EMPTY_ON_METHOD(Component, event::MouseButtonReleased);
 EMPTY_ON_METHOD(Component, event::MouseEntered);
 EMPTY_ON_METHOD(Component, event::MouseLeft);

@@ -11,6 +11,7 @@
 
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
+
 namespace gui
 {
 
@@ -100,6 +101,12 @@ bool Window::isActive() const
 bool Window::isIdle() const
 {
     return isInState(Window::State::Idle);
+}
+
+EventStatus Window::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    UNUSED(mouseButtonDoublePressedEvent);
+    return gui::EventStatus::NotConsumed;
 }
 
 EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)

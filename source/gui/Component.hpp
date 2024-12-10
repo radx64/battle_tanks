@@ -56,6 +56,7 @@ public:
     /* Mouse events */
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override final;
+    EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override final;
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override final;
     EventStatus receive(const event::MouseEntered& mouseEnteredEvent) override final;
     EventStatus receive(const event::MouseLeft& mouseLeftEvent) override final;
@@ -66,13 +67,15 @@ public:
     EventStatus receive(const event::TextEntered& textEntered) override final;
 
 protected:
-    // those on methods should be overrided to define handling of mouse events
+    // those on methods should be overrided to define handling 
+    // of mouse and keyboards events
     // those are called when component receives an event
     // first forwards it to it's children
     // and then handles it itself
     // so this is some kind bubbling mechanism
     virtual EventStatus on(const event::MouseMoved& mouseMovedEvent);
     virtual EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent);
+    virtual EventStatus on(const event::MouseButtonDoublePressed& mouseButtonPressedEvent);
     virtual EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent);
     virtual EventStatus on(const event::MouseEntered& mouseEnteredEvent);
     virtual EventStatus on(const event::MouseLeft& mouseLeftEvent);

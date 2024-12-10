@@ -24,6 +24,7 @@ protected:
     void onPositionChange() override;
 
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 

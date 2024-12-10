@@ -12,8 +12,10 @@ WaypointMouseController::WaypointMouseController(gui::WindowManager* windowManag
 , view_(view)
 {}    
 
-gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mousePosition, const sf::Mouse::Button& button)
+gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mousePosition, const sf::Mouse::Button& button, bool doubleClick)
 {
+    UNUSED(doubleClick);
+
     const auto screenCoords = mapPixelToCoords(mousePosition);
 
     if (button != sf::Mouse::Button::Left)

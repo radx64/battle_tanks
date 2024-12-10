@@ -37,6 +37,12 @@ namespace gui::event
         MousePosition position;
     };
 
+    struct MouseButtonDoublePressed
+    {
+        MouseButton button;
+        MousePosition position;
+    };
+
     struct MouseButtonReleased
     {
         MouseButton button;

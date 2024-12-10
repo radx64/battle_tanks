@@ -11,7 +11,7 @@ MouseController::MouseController(gui::WindowManager* windowManager, sf::RenderWi
 , view_(view)
 {}    
 
-gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button)
+gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button, bool doubleClick)
 {
     const auto screenCoords = mapPixelToCoords(mousePostion);
 
@@ -20,15 +20,28 @@ gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mousePosti
         return gui::EventStatus::NotConsumed;
     }
 
-    const auto result = windowManager_->receive(
-        gui::event::MouseButtonPressed{
-            .button = gui::event::MouseButton::Left,
-            .position = {
-                .x = screenCoords.x,
-                .y = screenCoords.y}
-        });
-
-    return result; 
+    if(doubleClick)
+    {
+        const auto result = windowManager_->receive(
+            gui::event::MouseButtonDoublePressed{
+                .button = gui::event::MouseButton::Left,
+                .position = {
+                    .x = screenCoords.x,
+                    .y = screenCoords.y}
+            });
+        return result; 
+    }
+    else
+    {
+        const auto result = windowManager_->receive(
+            gui::event::MouseButtonPressed{
+                .button = gui::event::MouseButton::Left,
+                .position = {
+                    .x = screenCoords.x,
+                    .y = screenCoords.y}
+            });
+        return result; 
+    }
 }
 
 gui::EventStatus MouseController::onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button)
