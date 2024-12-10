@@ -26,6 +26,12 @@ class TimerService final
 {
 public:
     TimerService();
+
+    TimerService(const TimerService&) = delete;
+    TimerService(TimerService&&) = delete;
+    TimerService& operator=(const TimerService&) = delete;
+    TimerService& operator=(TimerService&&) = delete;
+
     void update(double dt);
 
     void start(Timer* timer, const TimerType type);

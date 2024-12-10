@@ -38,7 +38,9 @@ void KeyboardHandler::unsubscribe(KeyboardReceiver* receiver)
     for(auto key_with_receivers_it = std::begin(keysWithReceivers_); key_with_receivers_it != std::end(keysWithReceivers_);)
     {
         auto& receivers = key_with_receivers_it->second;
-        std::remove(receivers.begin(), receivers.end(), receiver);
+        receivers.erase(
+            std::remove(std::begin(receivers), std::end(receivers), receiver),
+            std::end(receivers));
 
         if (receivers.size() == 0)
         {
