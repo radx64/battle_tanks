@@ -51,7 +51,22 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
 
     for (auto* receiver : receivers_)
     {
-        const auto eventStatus = receiver->onButtonPressed(mousePosition_, button, leftDoubleClicked);
+        // In double click scenario send both double click and single
+        // (if double click not consumed) so client can decide what to serve
+
+        auto eventStatus {gui::EventStatus::NotConsumed};
+
+        if (leftDoubleClicked)
+        {
+            eventStatus = receiver->onButtonPressed(mousePosition_, button, leftDoubleClicked);
+        }
+
+        if (eventStatus == gui::EventStatus::NotConsumed)
+        {
+            constexpr bool singleClicked = false;
+            eventStatus = receiver->onButtonPressed(mousePosition_, button, singleClicked);
+        }
+
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }

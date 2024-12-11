@@ -86,7 +86,7 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
             windows_.splice(windows_.begin(), windows_, windowIterator);
         }
 
-        activeWindowHandle_->receive(mouseButtonPressedEvent);
+        auto result = activeWindowHandle_->receive(mouseButtonPressedEvent);
         
         // FIXME: I'm checking twice if window is dead (see top of this method)
         if (activeWindowHandle_->isDead())
@@ -94,7 +94,7 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
             windows_.remove_if([this](auto& window){ return window.get() == activeWindowHandle_;});
             activeWindowHandle_ = nullptr;
         }
-        return gui::EventStatus::Consumed;
+        return result;
         
         windowIterator++;
     }
