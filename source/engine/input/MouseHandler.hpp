@@ -6,6 +6,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+#include "engine/Clock.hpp"
+
 namespace engine::input { class MouseReceiver; }
 namespace engine { class TimerService; }
 
@@ -31,7 +33,7 @@ protected:
     std::unordered_map<sf::Mouse::Button, bool> buttonsStates_;
     sf::Vector2f mousePosition_;
 
-    double lastLeftClickTimestamp_;
+    Clock::time_point lastLeftClickTimestamp_;
     TimerService* timerService_;
 };
 

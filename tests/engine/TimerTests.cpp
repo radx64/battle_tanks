@@ -3,13 +3,15 @@
 
 #include "engine/Timer.hpp"
 
+using namespace std::literals;
+
 namespace engine
 {
 
 TEST(TimerShould, returnConfiguredDelay)
 {
-    Timer timer(100.f, [](){});
-    EXPECT_EQ(timer.getDelay(), 100.f);
+    Timer timer(100ms, [](){});
+    EXPECT_EQ(timer.getDelay().count(), 100);
 }
 
 }  // namespace engine

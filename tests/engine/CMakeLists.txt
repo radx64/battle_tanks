@@ -1,5 +1,6 @@
 add_executable(battle_tanks_testing_engine
     ${CMAKE_SOURCE_DIR}/tests/main.cpp
+    ClockTests.cpp
     TimerServiceTests.cpp
     TimerTests.cpp
 )

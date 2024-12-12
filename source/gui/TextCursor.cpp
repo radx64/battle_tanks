@@ -10,6 +10,8 @@
 
 constexpr float CURSOR_WIDTH = 2.f;
 
+using namespace std::literals;
+
 namespace gui
 {
 
@@ -20,7 +22,7 @@ TextCursor::TextCursor(gui::Text& text)
 , cursorIndex_{}
 , enabled_{false}
 , isCursorVisible_{false}
-, blinkTimer_{0.5, [this]{animateCursor();}}
+, blinkTimer_{500ms, [this]{animateCursor();}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&blinkTimer_, engine::TimerType::Repeating);

@@ -34,7 +34,7 @@ int Application::run()
     {
         while (isRunning_)
         {
-            realTimeStep_ = clock_.restart().asMilliseconds() / 1000.f;
+            realTimeStep_ = std::chrono::milliseconds(clock_.restart().asMilliseconds());
             processEvents();
             update();
             render();

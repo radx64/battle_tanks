@@ -10,13 +10,13 @@ namespace engine
 {
 
 TimerService::TimerService()
-: currentTime_{0.0}
+: currentTime_{}
 {
 
 }
-void TimerService::update(double dt)
+void TimerService::update(const Clock::duration& delta)
 {
-    currentTime_ += dt;
+    currentTime_ += delta;
 
     for (auto& timerInstance : timers_)
     {
@@ -65,7 +65,7 @@ void TimerService::cancel(Timer* timer)
     }
 }
 
-double TimerService::getCurrentTime() const
+const Clock::time_point& TimerService::getCurrentTime() const
 {
     return currentTime_;
 } 

@@ -16,6 +16,8 @@
 
 #include <iostream>
 
+using namespace std::literals;
+
 namespace gui_sandbox
 {
 Application::Application()
@@ -24,7 +26,7 @@ Application::Application()
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
-, timer_{2.0, [](){std::cout << "2 seconds heartbeat <3 \n";}}
+, timer_{2s, [](){std::cout << "2 seconds heartbeat ❤️ \n";}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&timer_, engine::TimerType::Repeating);

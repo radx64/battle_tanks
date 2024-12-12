@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Clock.hpp"
 #include "engine/CollisionSolver.hpp"
 #include "engine/Context.hpp"
 #include "engine/input/KeyboardHandler.hpp"
@@ -49,7 +50,7 @@ protected:
     engine::input::MouseHandler mouseHandler_;
 
     float constantTimeStep_{1.0f/30.f};
-    float realTimeStep_;
+    Clock::duration realTimeStep_;
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
 

@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "engine/Clock.hpp"
+
 namespace engine
 {
 
@@ -17,7 +19,7 @@ struct TimerInstance
 {
     Timer* timer;
     TimerType type;
-    double nextTick;
+    Clock::time_point nextTick;
     bool active;
 };
 
@@ -31,15 +33,15 @@ public:
     TimerService& operator=(const TimerService&) = delete;
     TimerService& operator=(TimerService&&) = delete;
 
-    void update(double dt);
+    void update(const Clock::duration& delta);
 
     void start(Timer* timer, const TimerType type);
     void cancel(Timer* timer);
-    double getCurrentTime() const;
+    const Clock::time_point& getCurrentTime() const;
 
 protected:
     std::vector<TimerInstance> timers_;
-    double currentTime_;
+    Clock::time_point currentTime_;
 };
 
 }  // namespace engine

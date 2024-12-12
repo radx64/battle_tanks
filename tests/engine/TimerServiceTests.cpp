@@ -4,6 +4,8 @@
 #include "engine/Timer.hpp"
 #include "engine/TimerService.hpp"
 
+using namespace std::literals;
+
 namespace engine
 {
 
@@ -17,13 +19,13 @@ TEST(TimerServiceShould, returnCurrentTime)
 {
     TimerService timerService{};
 
-    EXPECT_FLOAT_EQ(timerService.getCurrentTime(), 0.0);
+    EXPECT_EQ(timerService.getCurrentTime(), Clock::time_point(0ms));
     
-    timerService.update(0.1);
-    EXPECT_FLOAT_EQ(timerService.getCurrentTime(), 0.1);
+    timerService.update(Clock::duration(100ms));
+    EXPECT_EQ(timerService.getCurrentTime(), Clock::time_point(100ms));
 
-    timerService.update(0.3);
-    EXPECT_FLOAT_EQ(timerService.getCurrentTime(), 0.4);
+    timerService.update(Clock::duration(300ms));
+    EXPECT_EQ(timerService.getCurrentTime(), Clock::time_point(400ms));
 }
 
 TEST(TimerServiceShould, callTimerWhenIsOver)
@@ -31,14 +33,14 @@ TEST(TimerServiceShould, callTimerWhenIsOver)
     TimerClientStub timerClientStub;
 
     TimerService timerService{};
-    Timer timer(0.5, [&timerClientStub]()
+    Timer timer(Clock::duration(500ms), [&timerClientStub]()
     {
         timerClientStub.notificaiton();
     });
 
     timerService.start(&timer, TimerType::OneShot);
     EXPECT_CALL(timerClientStub, notificaiton).Times(1);
-    timerService.update(0.6);
+    timerService.update(Clock::duration(600ms));
 
 }
 
@@ -49,12 +51,12 @@ TEST(TimerServiceShould, CallRepeatingTimerEveryInterval)
     TimerClientStub timerClientStub;
     TimerClientStub timer2ClientStub;
 
-    Timer timer(0.40, [&timerClientStub]()
+    Timer timer(Clock::duration(400ms), [&timerClientStub]()
     {
         timerClientStub.notificaiton();
     });
 
-    Timer timer2(0.30, [&timer2ClientStub]()
+    Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
     {
         timer2ClientStub.notificaiton();
     });
@@ -67,7 +69,7 @@ TEST(TimerServiceShould, CallRepeatingTimerEveryInterval)
 
     for (size_t i = 0; i < 10; ++i)
     {
-        timerService.update(0.1);
+        timerService.update(Clock::duration(100ms));
     }
 }
 
@@ -78,12 +80,12 @@ TEST(TimerServiceShould, CallOneShotTimerOnlyOnce)
     TimerClientStub timerClientStub;
     TimerClientStub timer2ClientStub;
 
-    Timer timer(0.40, [&timerClientStub]()
+    Timer timer(Clock::duration(400ms), [&timerClientStub]()
     {
         timerClientStub.notificaiton();
     });
 
-    Timer timer2(0.30, [&timer2ClientStub]()
+    Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
     {
         timer2ClientStub.notificaiton();
     });
@@ -96,7 +98,7 @@ TEST(TimerServiceShould, CallOneShotTimerOnlyOnce)
 
     for (size_t i = 0; i < 10; ++i)
     {
-        timerService.update(0.1);
+        timerService.update(Clock::duration(100ms));
     }
 }
 
@@ -107,12 +109,12 @@ TEST(TimerServiceShould, NotCallCanceledTimer)
     TimerClientStub timerClientStub;
     TimerClientStub timer2ClientStub;
 
-    Timer timer(0.40, [&timerClientStub]()
+    Timer timer(Clock::duration(400ms), [&timerClientStub]()
     {
         timerClientStub.notificaiton();
     });
 
-    Timer timer2(0.30, [&timer2ClientStub]()
+    Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
     {
         timer2ClientStub.notificaiton();
     });
@@ -127,7 +129,7 @@ TEST(TimerServiceShould, NotCallCanceledTimer)
 
     for (size_t i = 0; i < 10; ++i)
     {
-        timerService.update(0.1);
+        timerService.update(Clock::duration(100ms));
     }
 }
 
@@ -138,7 +140,7 @@ TEST(TimerServiceShould, HandleTimerGoingOutOfScope)
     TimerClientStub timerClientStub;
     TimerClientStub timer2ClientStub;
 
-    Timer timer(0.40, [&timerClientStub]()
+    Timer timer(Clock::duration(400ms), [&timerClientStub]()
     {
         timerClientStub.notificaiton();
     });
@@ -146,7 +148,7 @@ TEST(TimerServiceShould, HandleTimerGoingOutOfScope)
     timerService.start(&timer, TimerType::OneShot);
 
     {
-        Timer timer2(0.30, [&timer2ClientStub]()
+        Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
         {
             timer2ClientStub.notificaiton();
         });
@@ -159,7 +161,7 @@ TEST(TimerServiceShould, HandleTimerGoingOutOfScope)
 
     for (size_t i = 0; i < 10; ++i)
     {
-        timerService.update(0.1);
+        timerService.update(Clock::duration(100ms));
     }
 }
 
