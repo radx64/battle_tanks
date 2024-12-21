@@ -18,14 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3 
+    - uses: actions/checkout@v3
     - uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr
+        packages: cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr valgrind
         version: 1.0
-    
-    # - name: Compile using script
-    #   run: ./compile.sh
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -49,3 +46,5 @@ jobs:
     - name: Coverage
       run: ./coverage.sh
 
+    - name: Valgrind
+      run: ./valgrind.sh
