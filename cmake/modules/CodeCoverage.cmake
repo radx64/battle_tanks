@@ -102,6 +102,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 		MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
 	ENDIF() # NOT GENHTML_PATH
 
+	SET(IGNORE_LCOV_LIST --ignore-errors inconsistent,usage,unused,mismatch )
+
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
 
@@ -112,8 +114,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 		COMMAND ${_testrunner} ${ARGV3}
 
 		# Capturing lcov counters and generating report
-		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info --ignore-errors inconsistent,usage,unused
-		COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'build/*' 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned --ignore-errors inconsistent,usage,unused
+		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info ${IGNORE_LCOV_LIST}
+		COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'build/*' 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned ${IGNORE_LCOV_LIST}
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info.cleaned
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned
 
