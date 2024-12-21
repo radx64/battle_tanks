@@ -6,7 +6,8 @@ namespace engine
 {
 
 Timer::Timer(const Clock::duration& delay, Timer::Notification notification)
-: notification_(notification)
+: service_{nullptr}
+, notification_(notification)
 , delay_(delay)
 {
 
@@ -25,6 +26,11 @@ void Timer::setTimerService(TimerService* service)
 const Clock::duration& Timer::getDelay() const
 {
     return delay_;
+}
+
+void Timer::setDelay(const Clock::duration& delay)
+{
+    delay_ = delay;
 }
 
 void Timer::notify()

@@ -54,6 +54,26 @@ void TimerService::start(Timer* timer, const TimerType type)
     timer->setTimerService(this);
 }
 
+void TimerService::restart(Timer* timer, const TimerType type)
+{
+    auto timerIt = std::find_if(std::begin(timers_), std::end(timers_),
+         [timer](const auto& timerInstance)
+         {
+            return timerInstance.timer == timer;
+         });
+
+    if (timerIt == std::end(timers_))
+    {
+        start(timer, type);
+    }
+    else
+    {
+        timerIt->type = type,
+        timerIt->nextTick = currentTime_ + timer->getDelay();
+        timerIt->active = true;
+    }
+}
+
 void TimerService::cancel(Timer* timer)
 {
     auto timerInstanceIt = std::find_if(timers_.begin(), timers_.end(),
@@ -68,6 +88,6 @@ void TimerService::cancel(Timer* timer)
 const Clock::time_point& TimerService::getCurrentTime() const
 {
     return currentTime_;
-} 
+}
 
 }  // namespace engine

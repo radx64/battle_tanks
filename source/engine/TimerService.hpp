@@ -36,6 +36,7 @@ public:
     void update(const Clock::duration& delta);
 
     void start(Timer* timer, const TimerType type);
+    void restart(Timer* timer, const TimerType type);
     void cancel(Timer* timer);
     const Clock::time_point& getCurrentTime() const;
 

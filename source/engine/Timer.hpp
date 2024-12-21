@@ -22,6 +22,7 @@ public:
     Timer& operator=(Timer&&) = delete;
 
     const Clock::duration& getDelay() const;
+    void setDelay(const Clock::duration& delay);
     void notify();
 
     ~Timer();

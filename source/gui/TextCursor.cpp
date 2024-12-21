@@ -24,8 +24,7 @@ TextCursor::TextCursor(gui::Text& text)
 , isCursorVisible_{false}
 , blinkTimer_{500ms, [this]{animateCursor();}}
 {
-    auto& timerService = engine::Context::getTimerService();
-    timerService.start(&blinkTimer_, engine::TimerType::Repeating);
+    engine::Context::getTimerService().start(&blinkTimer_, engine::TimerType::Repeating);
 
     auto style = BasicStyleSheetFactory::instance();
     cursor_.setFillColor(sf::Color::Black);
@@ -107,7 +106,7 @@ void TextCursor::moveLeft(const bool moveWholeWord)
             auto cursorPositionWithSkippedSpaces = text.find_last_not_of(' ', characterBeforeCursor);
             if (cursorPositionWithSkippedSpaces == std::string::npos)
             {
-                characterBeforeCursor = 0; 
+                characterBeforeCursor = 0;
             }
             else
             {
@@ -129,7 +128,7 @@ void TextCursor::moveLeft(const bool moveWholeWord)
 }
 
 void TextCursor::moveRight(const bool moveWholeWord)
-{    
+{
     if (not moveWholeWord)
     {
         cursorIndex_++;
@@ -144,7 +143,7 @@ void TextCursor::moveRight(const bool moveWholeWord)
             auto cursorPositionWithSkippedSpaces = text.find_first_not_of(' ', characterAfterCursor);
             if (cursorPositionWithSkippedSpaces == std::string::npos)
             {
-                characterAfterCursor = text.length(); 
+                characterAfterCursor = text.length();
             }
             else
             {
@@ -229,6 +228,7 @@ void TextCursor::enable()
 {
     enabled_ = true;
     isCursorVisible_ = true;
+    engine::Context::getTimerService().restart(&blinkTimer_, engine::TimerType::Repeating);
 }
 
 }  // namespace gui
