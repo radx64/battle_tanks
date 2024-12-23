@@ -35,6 +35,7 @@ public:
 protected:
     float getGlyphOffset(const std::string& string, const size_t index);
     void animateCursor();
+    void restartBlinkAnimation();
 
     uint32_t characterSize_;
     const sf::Font* font_;
@@ -42,7 +43,7 @@ protected:
 
     uint32_t textLength_;
     uint32_t cursorIndex_;
-    sf::RectangleShape cursor_;
+    sf::RectangleShape cursorImage_;
     bool enabled_;
     bool isCursorVisible_;
 

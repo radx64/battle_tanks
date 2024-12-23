@@ -24,12 +24,12 @@ TextCursor::TextCursor(gui::Text& text)
 , isCursorVisible_{false}
 , blinkTimer_{500ms, [this]{animateCursor();}}
 {
-    engine::Context::getTimerService().start(&blinkTimer_, engine::TimerType::Repeating);
+    restartBlinkAnimation();
 
     auto style = BasicStyleSheetFactory::instance();
-    cursor_.setFillColor(sf::Color::Black);
-    cursor_.setOutlineColor(sf::Color::Black);
-    cursor_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+5.f});
+    cursorImage_.setFillColor(sf::Color::Black);
+    cursorImage_.setOutlineColor(sf::Color::Black);
+    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+5.f});
 }
 
 void TextCursor::animateCursor()
@@ -69,25 +69,26 @@ void TextCursor::update()
         cursorPosition.x += getGlyphOffset(fieldText, index);
     }
 
-    cursor_.setPosition(cursorPosition);
+    cursorImage_.setPosition(cursorPosition);
     text_.updateTexture();
 }
 
 sf::Vector2f TextCursor::getPosition()
 {
-    return cursor_.getPosition();
+    return cursorImage_.getPosition();
 }
 
 void TextCursor::render(sf::RenderTexture& renderTexture)
 {
     if (isCursorVisible_)
     {
-        renderTexture.draw(cursor_);
+        renderTexture.draw(cursorImage_);
     }
 }
 
 void TextCursor::moveLeft(const bool moveWholeWord)
 {
+    restartBlinkAnimation();
     if (cursorIndex_ == 0)
     {
         return;
@@ -129,6 +130,7 @@ void TextCursor::moveLeft(const bool moveWholeWord)
 
 void TextCursor::moveRight(const bool moveWholeWord)
 {
+    restartBlinkAnimation();
     if (not moveWholeWord)
     {
         cursorIndex_++;
@@ -180,6 +182,7 @@ float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
 
 void TextCursor::moveTo(float mouseX)
 {
+    restartBlinkAnimation();
     auto fieldText = text_.getText();
     float offset{text_.getGlobalPosition().x + text_.getOffset().x};
     size_t foundIndex{fieldText.length()};
@@ -227,6 +230,12 @@ void TextCursor::disable()
 void TextCursor::enable()
 {
     enabled_ = true;
+    isCursorVisible_ = true;
+    restartBlinkAnimation();
+}
+
+void TextCursor::restartBlinkAnimation()
+{
     isCursorVisible_ = true;
     engine::Context::getTimerService().restart(&blinkTimer_, engine::TimerType::Repeating);
 }
