@@ -5,8 +5,8 @@
 #include "gui/Window.hpp"
 
 constexpr std::string_view helpTextString{
-    "WASD - moves view\n" 
-    "PgUp/PgDn - zoom\n"  
+    "WASD - moves view\n"
+    "PgUp/PgDn - zoom\n"
     "C - clear all waypoints\n"
     "F8 - slow motion 0.1\n"
     "F9 - slow motion 0.5\n"
@@ -23,7 +23,7 @@ namespace game
 class HelpWindow : public gui::Window
 {
 public:
-    HelpWindow(sf::Vector2f position) 
+    HelpWindow(sf::Vector2f position)
     {
         setSize(sf::Vector2f(500.0f, 400.0f));
         setPosition(position);

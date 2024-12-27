@@ -8,10 +8,10 @@ namespace gui
 Button::Button(const std::string_view& text)
 : isButtonHoldDown_(false)
 {
-    auto style = BasicStyleSheetFactory::instance();    
+    auto style = BasicStyleSheetFactory::instance();
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());
-    background_.setOutlineThickness(style.getOutlineThickness()); 
+    background_.setOutlineThickness(style.getOutlineThickness());
     background_.setPosition(getGlobalPosition());
     background_.setSize(Component::getSize());
     auto textPtr = std::make_unique <gui::Label>(text);
@@ -62,17 +62,17 @@ EventStatus Button::on(const event::MouseLeft&)
 EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     if (not isVisible_) return gui::EventStatus::NotConsumed;
-    
+
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
 
     if (isLeftClicked and background_.getGlobalBounds().contains(mousePosition))
     {
         background_.setFillColor(sf::Color(0,255,0,255));
-        if (not isButtonHoldDown_) 
+        if (not isButtonHoldDown_)
         {
             isButtonHoldDown_ = true;
-            if (onClick_) onClick_();  
+            if (onClick_) onClick_();
         }
         return gui::EventStatus::Consumed;
     }

@@ -5,7 +5,7 @@
 namespace gui::debug
 {
 
-static bool debug_enabled{false};
+static bool debug_enabled{true};
 
 void toggle()
 {
@@ -15,13 +15,22 @@ void toggle()
 void drawBounds(sf::RenderTexture& renderWindow, const Component* component)
 {
     if (not debug_enabled) return;
-    
+
     sf::RectangleShape bound_rect;
     bound_rect.setSize(component->getSize());
     bound_rect.setPosition(component->getGlobalPosition());
-    bound_rect.setFillColor(sf::Color::Transparent);
-    bound_rect.setOutlineColor(sf::Color::Magenta);
-    bound_rect.setOutlineThickness(2.f);
+    if (component->isFocused())
+    {
+        bound_rect.setFillColor(sf::Color(255,255,0,127));
+        bound_rect.setOutlineColor(sf::Color::Yellow);
+        bound_rect.setOutlineThickness(4.f);
+    }
+    else
+    {
+        bound_rect.setFillColor(sf::Color::Transparent);
+        bound_rect.setOutlineColor(sf::Color::Magenta);
+        bound_rect.setOutlineThickness(2.f);
+    }
     renderWindow.draw(bound_rect);
 }
 

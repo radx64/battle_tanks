@@ -68,7 +68,8 @@
         "thread": "cpp",
         "bitset": "cpp",
         "charconv": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "source_location": "cpp"
     },
     "editor.tokenColorCustomizations": {
         "textMateRules": [

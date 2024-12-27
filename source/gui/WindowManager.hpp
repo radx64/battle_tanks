@@ -21,7 +21,7 @@ public:
 
     WindowManager(const sf::Vector2f& mainWindowSize);
     virtual ~WindowManager();
-    
+
     void addWindow(std::unique_ptr<Window> window);
     void render(sf::RenderWindow& renderWindow);
 
@@ -33,6 +33,8 @@ public:
     EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
     EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
     EventStatus receive(const event::TextEntered& textEntered) override;
+
+    EventStatus receive(const event::FocusChange& focusChange) override;
 
     MainWindow& mainWindow();
 

@@ -13,11 +13,11 @@ Bunch of random ideas to randomly pick up and implement
 - [x] Fluid camera support with zoom capabilites
 
 ### GUI
-- [x] Basic GUI subsystem support for spawning windows with some text 
+- [x] Basic GUI subsystem support for spawning windows with some text
 - [x] Buttons
 - [x] Closable windows
 - [x] Resizable windows
-    - [x] 🐛: You can close window while resizing by passing cursor over close button 
+    - [x] 🐛: You can close window while resizing by passing cursor over close button
     - [x] 🐛: When window is first resized and then dragged it jumps to some offset position (like where topbar was before resize)
     - [x] 🐛: Window focusing is not working properly after resizing
 - [ ] Some basic dynamic layout support like (consider removing alignment variable in position in favour of layout):
@@ -31,6 +31,7 @@ Bunch of random ideas to randomly pick up and implement
   - [ ] Copy paste mechanics
 - [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
+- [ ] Consider creating render command batches and split gui from sfml implementation
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "engine/Unused.hpp"
 #include "gui/Event.hpp"
 
@@ -14,58 +15,20 @@ enum class EventStatus
 class EventReceiver
 {
 public:
+    virtual EventStatus receive(const event::MouseMoved& mouseMovedEvent);
+    virtual EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent);
+    virtual EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent);
+    virtual EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent);
+    virtual EventStatus receive(const event::MouseEntered& mouseEnteredEvent);
+    virtual EventStatus receive(const event::MouseLeft& mouseLeftEvent);
 
-    // TODO make some macro to generate below empty implenentation
-    virtual EventStatus receive(const event::MouseMoved& mouseMovedEvent)
-    {
-        UNUSED(mouseMovedEvent);
-        return EventStatus::NotConsumed; 
-    };
-    virtual EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
-    {
-        UNUSED(mouseButtonPressedEvent);
-        return EventStatus::NotConsumed;
-    };
-    virtual EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
-    {
-        UNUSED(mouseButtonDoublePressedEvent);
-        return EventStatus::NotConsumed;
-    };  
-    virtual EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
-    {
-        UNUSED(mouseButtonReleasedEvent);
-        return EventStatus::NotConsumed;
-    };
+    virtual EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed);
+    virtual EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased);
+    virtual EventStatus receive(const event::TextEntered& textEntered);
 
-    virtual EventStatus receive(const event::MouseEntered& mouseEnteredEvent)
-    {
-        UNUSED(mouseEnteredEvent);
-        return EventStatus::NotConsumed;
-    };
-
-    virtual EventStatus receive(const event::MouseLeft& mouseLeftEvent)
-    {
-        UNUSED(mouseLeftEvent);
-        return EventStatus::NotConsumed;
-    };
-
-    virtual EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
-    {
-        UNUSED(keyboardKeyPressed);
-        return EventStatus::NotConsumed;
-    }
-
-    virtual EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
-    {
-        UNUSED(keyboardKeyReleased);
-        return EventStatus::NotConsumed;
-    }
-
-    virtual EventStatus receive(const event::TextEntered& textEntered)
-    {
-        UNUSED(textEntered);
-        return EventStatus::NotConsumed;
-    }
+    virtual EventStatus receive(const event::FocusChange& focusChange);
+    virtual EventStatus receive(const event::FocusLost& FocusLost);
+    virtual EventStatus receive(const event::FocusGained& focusGained);
 };
 
 }  // namespace gui

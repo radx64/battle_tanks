@@ -1,6 +1,22 @@
+#include <cassert>
+
 #include "gui/Component.hpp"
 
 #include "gui/Debug.hpp"
+
+#include <iostream>
+
+/*
+TODO:
+    implement focus from click which will overwrite whole focus tree correctly
+    implement backwards focusing (std::prev is tricky as not have anything like past begin iterator)
+    implement onFocusGained and onFocusLost events instead this onFocus() currently used methods
+    implement traits for components to check if component is focusable
+
+    GENERAL: think about debugability in both logs and GDB as curently this is a mess
+        Logger + prefixes
+        InstanceId
+*/
 
 namespace gui
 {
@@ -13,16 +29,41 @@ sf::Vector2f toVector2f(const event::MousePosition& position)
     return sf::Vector2f{position.x, position.y};
 }
 
-}
+class InstanceIdGenerator
+{
+public:
+    static uint32_t getId()
+    {
+        return nextInstanceId++;
+    }
 
-Component::Component()
+protected:
+    static uint32_t nextInstanceId;
+};
+
+uint32_t InstanceIdGenerator::nextInstanceId = 0;
+
+
+#define LOG(text)\
+    std::cout << this << " - "<< logPrefix_ << text << std::endl
+
+#define EMPTY_ON_METHOD(Class, Event)\
+    EventStatus Class::on(const Event& event)\
+    { UNUSED(event); return EventStatus::NotConsumed; }
+
+}  // namespace
+
+Component::Component(const std::source_location location)
 : localPosition_{}
 , parent_{nullptr}
-, canChildrenProcessEvents_{true}
+, childrenEventsProcessingEnabled_{true}
 , children_ {}
+, focusedElement_{nullptr}
 , isVisible_ {true}
 , wasMouseInside_{false}
 , isFocused_{false}
+, id_{InstanceIdGenerator::getId()}
+, logPrefix_{std::string(location.function_name()) + "[" + std::to_string(id_) + "]"}
 {
 }
 
@@ -32,13 +73,13 @@ void Component::render(sf::RenderTexture& renderTexture)
     onRender(renderTexture);
     for (auto& child : children_)
     {
-        child->render(renderTexture); 
+        child->render(renderTexture);
     }
     debug::drawBounds(renderTexture, this);
 }
 
 template <typename T>
-EventStatus Component::processEvent(const T& event, bool isConsumable)
+EventStatus Component::processEvent(const T& event)
 {
     auto eventStatus = EventStatus::NotConsumed;
 
@@ -46,12 +87,12 @@ EventStatus Component::processEvent(const T& event, bool isConsumable)
     // as if child is rendered on top of another
     // it's better if topmost child captures event first
     // so it will not be send to back layer ones
-    if (canChildrenProcessEvents_)
+    if (childrenEventsProcessingEnabled_)
     {
         for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
         {
             eventStatus = (*child)->receive(event);
-            if (isConsumable && eventStatus == EventStatus::Consumed) return eventStatus;
+            if (eventStatus == EventStatus::Consumed) return eventStatus;
         }
     }
 
@@ -85,35 +126,35 @@ EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
         }
     }
 
-    auto status = processEvent(mouseMovedEvent, true);
+    auto status = processEvent(mouseMovedEvent);
     return status;
 }
 EventStatus Component::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    return processEvent(mouseButtonPressedEvent, true);
+    return processEvent(mouseButtonPressedEvent);
 }
 
 EventStatus Component::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
-    return processEvent(mouseButtonDoublePressedEvent, true);
+    return processEvent(mouseButtonDoublePressedEvent);
 }
 
 EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    return processEvent(mouseButtonReleasedEvent, true);
+    return processEvent(mouseButtonReleasedEvent);
 }
 
 /* These two events (entered, left) are generated insde component using MouseMoveEvent*/
 /* This two should not be propagated downwards to child components*/
 EventStatus Component::receive(const event::MouseEntered& mouseEnteredEvent)
 {
-    if (not canChildrenProcessEvents_) return EventStatus::NotConsumed;
+    if (not childrenEventsProcessingEnabled_) return EventStatus::NotConsumed;
     wasMouseInside_ = true;
     return on(mouseEnteredEvent);
 }
 EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
 {
-    if (not canChildrenProcessEvents_) return EventStatus::NotConsumed;
+    if (not childrenEventsProcessingEnabled_) return EventStatus::NotConsumed;
     for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
     {
         if ((*child)->wasMouseInside_)
@@ -128,17 +169,102 @@ EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
 
 EventStatus Component::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
-    return processEvent(keyboardKeyPressed, true);
+    return processEvent(keyboardKeyPressed);
 }
 
 EventStatus Component::receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
 {
-    return processEvent(keyboardKeyReleased, true);
+    return processEvent(keyboardKeyReleased);
 }
 
 EventStatus Component::receive(const event::TextEntered& textEntered)
 {
-    return processEvent(textEntered, true);
+    return processEvent(textEntered);
+}
+
+EventStatus Component::receive(const event::FocusChange& focusChange)
+{
+    if (not childrenEventsProcessingEnabled_)
+    {
+        return EventStatus::NotConsumed;
+    }
+
+    if (focusedElement_ == nullptr)
+    {
+        LOG("Selecting this as a focus");
+        focusedElement_ = this;
+        this->focus();
+        return EventStatus::Consumed;
+    }
+
+    if ((focusedElement_== this) and children_.empty())
+    {
+        LOG("No children to forward the event to");
+        this->defocus();
+        focusedElement_ = nullptr;
+        return EventStatus::NotConsumed;
+    }
+
+    decltype(children_)::iterator currentSelectionIt{};
+
+    if (focusedElement_ == this)
+    {
+        currentSelectionIt = std::begin(children_);
+        LOG("Selecting first child: " << currentSelectionIt->get());
+    }
+    else
+    {
+        currentSelectionIt = std::find_if(std::begin(children_), std::end(children_),
+            [this] (const auto& child) {return child.get() == focusedElement_;});
+        LOG("Selecting next child: " << currentSelectionIt->get());
+    }
+
+    auto result = EventStatus::NotConsumed;
+
+    while (true)
+    {
+        LOG("Trying: " << currentSelectionIt->get());
+        result = (*currentSelectionIt)->receive(focusChange);
+        LOG("Got from child " << (result==EventStatus::Consumed?"Consumed":"NotConsumed"));
+        if (result == EventStatus::Consumed) break;
+
+        currentSelectionIt = std::next(currentSelectionIt);
+        if (currentSelectionIt == std::end(children_))
+        {
+            result = EventStatus::NotConsumed;
+            break;
+        }
+    }
+
+    if (focusedElement_ == this)
+    {
+        LOG("Defocusing this element, leaving children do the work");
+        isFocused_ = false;
+    }
+
+    if (currentSelectionIt != std::end(children_))
+    {
+        focusedElement_ = currentSelectionIt->get();
+    }
+    else
+    {
+        focusedElement_ = nullptr;
+    }
+
+    LOG("Returning " << (result==EventStatus::Consumed?"Consumed":"NotConsumed"));
+
+    return result;
+
+}
+
+EventStatus Component::receive(const event::FocusLost& focusLost)
+{
+    return this->on(focusLost);
+}
+
+EventStatus Component::receive(const event::FocusGained& focusGained)
+{
+    return this->on(focusGained);
 }
 
 #define EMPTY_ON_METHOD(Class, Event)\
@@ -155,6 +281,10 @@ EMPTY_ON_METHOD(Component, event::MouseLeft);
 EMPTY_ON_METHOD(Component, event::KeyboardKeyPressed);
 EMPTY_ON_METHOD(Component, event::KeyboardKeyReleased);
 EMPTY_ON_METHOD(Component, event::TextEntered);
+
+EMPTY_ON_METHOD(Component, event::FocusChange);
+EMPTY_ON_METHOD(Component, event::FocusLost);
+EMPTY_ON_METHOD(Component, event::FocusGained);
 
 #undef EMPTY_ON_METHOD
 
@@ -203,7 +333,7 @@ void Component::setVisibility(bool isVisible)
 
 bool Component::isVisible()
 {
-    return isVisible_; 
+    return isVisible_;
 }
 
 const sf::Vector2f Component::getPosition() const
@@ -246,9 +376,12 @@ void Component::addChild(std::unique_ptr<Component> child)
     child->parent_ = this;
     child->updateGlobalPosition();
     child->onParentSizeChange(getSize());
-    children_.push_back(std::move(child));
+    children_.emplace_back(std::move(child));
 }
 
+// TODO: focus need to proprely defocus children
+// and handle currently focused item updated
+// in whole dependency tree
 void Component::focus()
 {
     isFocused_ = true;
@@ -322,7 +455,7 @@ void Component::updateGlobalPosition()
         globalBoundsPosition = getPosition();
     }
 
-    if (bounds_.left != globalBoundsPosition.x or 
+    if (bounds_.left != globalBoundsPosition.x or
         bounds_.top != globalBoundsPosition.y)
     {
         bounds_.left = globalBoundsPosition.x;
@@ -345,11 +478,11 @@ size_t Component::getChildrenCount() const
 
 void Component::disableChildrenEvents()
 {
-    canChildrenProcessEvents_ = false;
+    childrenEventsProcessingEnabled_ = false;
 }
 void Component::enableChildrenEvents()
 {
-    canChildrenProcessEvents_ = true;
+    childrenEventsProcessingEnabled_ = true;
 }
 
 }  // namespace gui

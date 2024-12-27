@@ -29,10 +29,14 @@ protected:
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
-    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyRelased) override;
+    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
     EventStatus on(const event::TextEntered& textEntered) override;
 
-    void onFocusLost() override; 
+    EventStatus on(const event::FocusChange& focusChange) override;
+    EventStatus on(const event::FocusLost& focusLost) override;
+    EventStatus on(const event::FocusGained& focusGained) override;
+
+    void onFocusLost() override;
 
     void updateTextVisbleArea();
 

@@ -26,7 +26,7 @@ Application::Application()
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
-, timer_{2s, [](){std::cout << "2 seconds heartbeat ❤️ \n";}}
+, timer_{2s, [](){/*std::cout << "2 seconds heartbeat ❤️ \n";*/}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&timer_, engine::TimerType::Repeating);
@@ -212,6 +212,54 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createLayoutWindowButton));
 
+    auto createFocusTestWindowButton = std::make_unique<gui::Button>("Create Focus Test Window");
+    createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
+    createFocusTestWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createFocusTestWindowButton->onClick([this](){
+
+        auto window = std::make_unique<gui::Window>();
+
+        auto hl1 = std::make_unique<gui::HorizontalLayout>();
+        auto edit1 = std::make_unique<gui::EditBox>();
+        auto button1 = std::make_unique<gui::Button>("Button1");
+        hl1->addChild(std::move(edit1));
+        hl1->addChild(std::move(button1));
+
+        auto hl2 = std::make_unique<gui::HorizontalLayout>();
+        auto edit2 = std::make_unique<gui::EditBox>();
+        auto button2 = std::make_unique<gui::Button>("Button2");
+        hl2->addChild(std::move(edit2));
+        hl2->addChild(std::move(button2));
+
+        auto hl3 = std::make_unique<gui::HorizontalLayout>();
+        auto edit3 = std::make_unique<gui::EditBox>();
+        auto button3 = std::make_unique<gui::Button>("Button3");
+        hl3->addChild(std::move(edit3));
+        hl3->addChild(std::move(button3));
+
+        auto hl4 = std::make_unique<gui::HorizontalLayout>();
+        auto edit4 = std::make_unique<gui::EditBox>();
+        auto button4 = std::make_unique<gui::Button>("Button4");
+        hl4->addChild(std::move(edit4));
+        hl4->addChild(std::move(button4));
+
+        auto vl = std::make_unique<gui::VerticalLayout>();
+        vl->addChild(std::move(hl1));
+        vl->addChild(std::move(hl2));
+        vl->addChild(std::move(hl3));
+        vl->addChild(std::move(hl4));
+
+        window->addChild(std::move(vl));
+
+        window->setSize(sf::Vector2f(700.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
+        window->setTitle("I need to focus");
+
+        windowManager_.addWindow(std::move(window));
+    });
+
+    windowManager_.mainWindow().addChild(std::move(createFocusTestWindowButton));
+
     auto leftLabel = std::make_unique<gui::Label>("Left aligned label");
     leftLabel->setPosition({100.f, 20.f});
     leftLabel->setSize({400.f, 40.f});
@@ -249,7 +297,6 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(topLabel));
     windowManager_.mainWindow().addChild(std::move(vcenterLabel));
     windowManager_.mainWindow().addChild(std::move(bottomLabel));
-
 
     auto multilineTopAlignedLabel = std::make_unique<gui::Label>("Top multiline\nlabel is here\nand a bit there");
     multilineTopAlignedLabel->setPosition({100.f, 300.f});

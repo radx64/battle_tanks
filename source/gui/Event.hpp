@@ -1,5 +1,5 @@
 #pragma once
-// I know sfml have own event subsystem but I'm redefining it 
+// I know sfml have own event subsystem but I'm redefining it
 // to separate from SFML later on
 
 #include <cstdint>
@@ -18,7 +18,7 @@ namespace gui::event
     };
 
     enum class MouseButton
-    {   
+    {
         Left,
         Right,
         Middle,
@@ -83,6 +83,26 @@ namespace gui::event
     struct TextEntered
     {
         uint32_t unicode;
+    };
+
+    /* Focus events */
+    struct FocusChange
+    {
+        enum class Type
+        {
+            Next,
+            Previous
+        };
+
+        Type type;
+    };
+
+    struct FocusGained
+    {
+    };
+
+    struct FocusLost
+    {
     };
 
 }  // namespace gui::event

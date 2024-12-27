@@ -10,20 +10,34 @@ KeyboardController::KeyboardController(gui::WindowManager* windowManager)
 
 void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 {
-    windowManager_->receive(gui::event::KeyboardKeyPressed{
+    const auto status = windowManager_->receive(gui::event::KeyboardKeyPressed{
         .key = keyEvent.code,
         .modifiers = {
             .alt = keyEvent.alt,
             .shift = keyEvent.shift,
             .control = keyEvent.control,
             .system = keyEvent.system,
-        }});  
+        }});
+
+    if (status == gui::EventStatus::NotConsumed and keyEvent.code == gui::event::Key::Tab)
+    {
+        if (keyEvent.shift)
+        {
+            windowManager_->receive(gui::event::FocusChange{
+                .type = gui::event::FocusChange::Type::Previous});
+        }
+        else
+        {
+            windowManager_->receive(gui::event::FocusChange{
+                .type = gui::event::FocusChange::Type::Next});
+        }
+    }
 }
 
 void KeyboardController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
 {
     windowManager_->receive(gui::event::KeyboardKeyReleased{
-        .key = keyEvent.code, 
+        .key = keyEvent.code,
         .modifiers = {
             .alt = keyEvent.alt,
             .shift = keyEvent.shift,

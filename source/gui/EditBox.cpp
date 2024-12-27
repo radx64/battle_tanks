@@ -5,6 +5,8 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
+#include <iostream>
+
 constexpr float EXTRA_END_OFFSET = 5.f;
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 
@@ -94,12 +96,12 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 {
     if (not isInside(mouseButtonPressedEvent.position))
     {
-        return gui::EventStatus::NotConsumed;
+        return EventStatus::NotConsumed;
     }
 
     if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left)
     {
-        return gui::EventStatus::NotConsumed;
+        return EventStatus::NotConsumed;
     }
 
     mouseLeftButtonPressed_ = true;
@@ -121,14 +123,14 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
         selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
     }
 
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus EditBox::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
     if (not isInside(mouseButtonDoublePressedEvent.position))
     {
-        return gui::EventStatus::NotConsumed;
+        return EventStatus::NotConsumed;
     }
 
     textCursor_.moveLeft(true);
@@ -136,7 +138,7 @@ EventStatus EditBox::on(const event::MouseButtonDoublePressed& mouseButtonDouble
     textCursor_.moveRight(true);
     selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
 
-    return gui::EventStatus::Consumed;  
+    return EventStatus::Consumed;
 }
 
 EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
@@ -147,7 +149,7 @@ EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEve
     }
 
     UNUSED(mouseButtonReleasedEvent);
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
@@ -158,7 +160,7 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
         selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
     }
 
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 void EditBox::cut()
@@ -217,7 +219,7 @@ void EditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
     {
         selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
     }
-    
+
     if (not anyShiftHeldDown_ and not selection_.isEmpty())
     {
         if (atSelectionEndOnCancel)
@@ -234,7 +236,8 @@ void EditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
 
 EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
-    if(not isFocused()) return gui::EventStatus::NotConsumed;
+    auto result = EventStatus::NotConsumed;
+    if(not isFocused()) return result;
 
     std::string newText = text_.getText();
 
@@ -245,7 +248,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
         {
             anyShiftHeldDown_ = true;
             startSelection();
-            return gui::EventStatus::Consumed;
+            return EventStatus::Consumed;
         }
 
         case sf::Keyboard::Backspace :
@@ -256,30 +259,32 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
                 textCursor_.setIndex(selection_.startsAt());
                 selection_.clear();
                 anyShiftHeldDown_ = false;
+                result = EventStatus::Consumed;
             }
             else if (newText.empty() || textCursor_.getIndex() == 0)
             {
-                return gui::EventStatus::NotConsumed;
+                return EventStatus::NotConsumed;
             }
             else
             {
                 textCursor_.moveLeft(false);
                 newText.erase(textCursor_.getIndex(), 1);
+                result = EventStatus::Consumed;
             }
 
             text_.setText(newText);
             break;
         }
-        case sf::Keyboard::Tab :
-        {
-            defocus();
-            return gui::EventStatus::Consumed;
-        }
+        // case sf::Keyboard::Tab :
+        // {
+        //     defocus();
+        //     return EventStatus::Consumed;
+        // }
 
         case sf::Keyboard::Return :
         {
             defocus();
-            return gui::EventStatus::Consumed;
+            return EventStatus::Consumed;
         }
 
         case sf::Keyboard::Left :
@@ -287,6 +292,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             textCursor_.moveLeft(keyboardKeyPressed.modifiers.control);
             constexpr bool AT_START_OF_SELECTION_ON_CANCEL = false;
             updateCursorAndSelection(AT_START_OF_SELECTION_ON_CANCEL);
+            result = EventStatus::Consumed;
             break;
         }
 
@@ -295,23 +301,26 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             textCursor_.moveRight(keyboardKeyPressed.modifiers.control);
             constexpr bool AT_END_OF_SELECTION_ON_CANCEL = true;
             updateCursorAndSelection(AT_END_OF_SELECTION_ON_CANCEL);
+            result = EventStatus::Consumed;
             break;
         }
 
-        case sf::Keyboard::C : 
+        case sf::Keyboard::C :
         {
             if (keyboardKeyPressed.modifiers.control)
             {
                 copy();
+                result = EventStatus::Consumed;
             }
             break;
         }
-        
-        case sf::Keyboard::V : 
+
+        case sf::Keyboard::V :
         {
             if (keyboardKeyPressed.modifiers.control)
             {
                 paste();
+                result = EventStatus::Consumed;
             }
             break;
         }
@@ -321,6 +330,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             if (keyboardKeyPressed.modifiers.control)
             {
                 cut();
+                result = EventStatus::Consumed;
             }
             break;
         }
@@ -337,6 +347,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
                 textCursor_.setIndex(text_.getText().length());
                 textCursor_.update();
                 selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
+                result = EventStatus::Consumed;
             }
             break;
         }
@@ -345,12 +356,12 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
     }
 
     updateTextVisbleArea();
-    return gui::EventStatus::Consumed;
+    return result;
 }
 
 EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyRelased)
 {
-    if (not isFocused()) return gui::EventStatus::NotConsumed;
+    if (not isFocused()) return EventStatus::NotConsumed;
 
     switch (keyboardKeyRelased.key)
     {
@@ -364,16 +375,16 @@ EventStatus EditBox::on(const event::KeyboardKeyReleased& keyboardKeyRelased)
             break;
     }
 
-    return gui::EventStatus::Consumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus EditBox::on(const event::TextEntered& textEntered)
 {
-    if(not isFocused()) return gui::EventStatus::NotConsumed;
+    if(not isFocused()) return EventStatus::NotConsumed;
 
     std::string text = text_.getText();
 
-    if (text.length() >= maxLength_) return gui::EventStatus::NotConsumed;
+    if (text.length() >= maxLength_) return EventStatus::NotConsumed;
 
     // FIXME: crude unicode conversion and check to for printable characters
     if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
@@ -393,10 +404,10 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
         text_.setText(text);
         updateTextVisbleArea();
         textCursor_.moveRight(false);
-        return gui::EventStatus::Consumed;
+        return EventStatus::Consumed;
     }
 
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 void EditBox::enterEdit()
@@ -412,6 +423,30 @@ void EditBox::onFocusLost()
     textCursor_.disable();
     selection_.clear();
     text_.updateTexture();
+}
+
+EventStatus EditBox::on(const gui::event::FocusChange& focusChange)
+{
+    std::cout << "FocusChange";
+    std::cout << ((focusChange.type == event::FocusChange::Type::Next)?"Next":"Previous");
+    std::cout << std::endl;
+    return EventStatus::NotConsumed;
+}
+
+EventStatus EditBox::on(const gui::event::FocusLost& focusLost)
+{
+    UNUSED(focusLost);
+    std::cout << "FocusLost";
+    std::cout << std::endl;
+    return EventStatus::Consumed;
+}
+
+EventStatus EditBox::on(const gui::event::FocusGained& focusGained)
+{
+    UNUSED(focusGained);
+    std::cout << "FocusGained";
+    std::cout << std::endl;
+    return EventStatus::Consumed;
 }
 
 }  // namespace gui
