@@ -200,7 +200,7 @@ EventStatus Component::receive(const event::FocusChange& focusChange)
     if ((focusedElement_== this) and children_.empty())
     {
         LOG("No children to forward the event to");
-        this->defocus();
+        this->defocusWithAllChildren();
         focusedElement_ = nullptr;
         return EventStatus::NotConsumed;
     }
@@ -236,17 +236,13 @@ EventStatus Component::receive(const event::FocusChange& focusChange)
         }
     }
 
-    if (focusedElement_ == this)
+    if (focusedElement_ == this || isFocused())
     {
         LOG("Defocusing this element, leaving children do the work");
-        isFocused_ = false;
+        defocus();
     }
 
-    if (currentSelectionIt != std::end(children_))
-    {
-        focusedElement_ = currentSelectionIt->get();
-    }
-    else
+    if (currentSelectionIt == std::end(children_))
     {
         focusedElement_ = nullptr;
     }
@@ -379,21 +375,36 @@ void Component::addChild(std::unique_ptr<Component> child)
     children_.emplace_back(std::move(child));
 }
 
-// TODO: focus need to proprely defocus children
-// and handle currently focused item updated
-// in whole dependency tree
+
+void Component::selectFocusedChild(Component* focusedChild)
+{
+    if (focusedElement_ != focusedChild) focusedElement_->defocus();
+
+    focusedElement_ = focusedChild;
+}
+
 void Component::focus()
 {
     isFocused_ = true;
 
     for (auto& child : children_)
     {
-        child->defocus();
+        child->defocusWithAllChildren();
     }
 
     if (parent_)
     {
         parent_->defocusChildrenExcept(this);
+    }
+
+    auto* parent = parent_;
+    auto* current = this;
+
+    while (parent != nullptr)
+    {
+        parent->selectFocusedChild(current);
+        current = parent;
+        parent = parent->parent_;
     }
 
     onFocus();
@@ -402,18 +413,24 @@ void Component::focus()
 void Component::defocus()
 {
     isFocused_ = false;
-
-    for (auto& child : children_)
-    {
-        child->defocus();
-    }
-
-    onFocusLost();
+    focusedElement_ = nullptr;
 }
 
 bool Component::isFocused() const
 {
     return isFocused_;
+}
+
+void Component::defocusWithAllChildren()
+{
+    defocus();
+
+    for (auto& child : children_)
+    {
+        child->defocusWithAllChildren();
+    }
+
+    onFocusLost();
 }
 
 void Component::defocusChildrenExcept(const Component* focusedChild)
@@ -422,7 +439,7 @@ void Component::defocusChildrenExcept(const Component* focusedChild)
     {
         if (child.get() != focusedChild)
         {
-            child->defocus();
+            child->defocusWithAllChildren();
         }
     }
 

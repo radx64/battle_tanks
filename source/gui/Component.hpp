@@ -48,7 +48,9 @@ public:
     void focus();
     void defocus();
     bool isFocused() const;
+    void defocusWithAllChildren();
     void defocusChildrenExcept(const Component* focusedChild);
+    void selectFocusedChild(Component* focusedChild);
 
     /* Below onFocus and onFocusLost methods will be deprecated
         on(Focus... ) events will be used

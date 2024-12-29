@@ -19,7 +19,7 @@ Window::Window()
 : killed_{false}
 , active_{false}
 , state_{State::Idle}
-{   
+{
     auto header = std::make_unique<window::Header>();
     header_ = header.get();
     header_->closeButtonAction([window = this](){window->close();});
@@ -90,7 +90,7 @@ void Window::deactivate()
     active_ = false;
     header_->deactivate();
     statusBar_->deactivate();
-    defocus();
+    defocusWithAllChildren();
 }
 
 bool Window::isActive() const
@@ -116,7 +116,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     // If mouse clicked on top bar and was not yet dragging window
     if (isInsideHeader(mousePosition) and isInState(State::Idle))
     {
-        state_ = State::Dragging; 
+        state_ = State::Dragging;
         disableChildrenEvents();
         draggingOffset_ = getPosition() -  mousePosition;
         return gui::EventStatus::Consumed;
@@ -136,7 +136,7 @@ EventStatus Window::on(const event::MouseButtonReleased& mouseButtonReleasedEven
 {
     UNUSED(mouseButtonReleasedEvent);
 
-    if (state_ != State::Idle) 
+    if (state_ != State::Idle)
     {
         state_ = State::Idle;
         enableChildrenEvents();
@@ -161,7 +161,7 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
     {
         disableChildrenEvents();
         auto windowTopLeftCorner = getGlobalPosition();
-        auto newWindowSize = mousePosition - windowTopLeftCorner 
+        auto newWindowSize = mousePosition - windowTopLeftCorner
             + sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;
         newWindowSize.x = std::max(newWindowSize.x, MINIMUM_WINDOW_WIDTH);
         newWindowSize.y = std::max(newWindowSize.y, MINIMUM_WINDOW_HEIGHT);
@@ -183,7 +183,7 @@ void Window::onSizeChange()
 {
     auto size = getSize();
     header_->setSize({size.x, window::config::HEADER_HEIGHT});
-    windowPanel_->setSize({size.x, size.y - window::config::HEADER_HEIGHT - window::config::RESIZE_BOX_SIZE}); 
+    windowPanel_->setSize({size.x, size.y - window::config::HEADER_HEIGHT - window::config::RESIZE_BOX_SIZE});
     statusBar_->setSize({size.x, window::config::RESIZE_BOX_SIZE});
     statusBar_->setPosition({0.f, getSize().y - window::config::RESIZE_BOX_SIZE});
 }

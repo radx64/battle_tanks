@@ -25,6 +25,7 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
     }
     activeWindowHandle_ = window.get();
     activeWindowHandle_->activate();
+    mainWindow_.defocusWithAllChildren();
     windows_.push_front(std::move(window));
 }
 
@@ -251,8 +252,10 @@ EventStatus WindowManager::receive(const event::FocusChange& focusChange)
     {
         result = activeWindowHandle_->receive(focusChange);
     }
-
-    result = mainWindow_.receive(focusChange);
+    else
+    {
+        result = mainWindow_.receive(focusChange);
+    }
 
     return result;
 }

@@ -283,7 +283,7 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 
         case sf::Keyboard::Return :
         {
-            defocus();
+            defocusWithAllChildren();
             return EventStatus::Consumed;
         }
 
