@@ -83,6 +83,10 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
             if (activeWindowHandle_) activeWindowHandle_->disable();
             activeWindowHandle_ = window;
             activeWindowHandle_->enable();
+
+            // Make sure components in main window are defocused
+            mainWindow_.defocusWithAllChildren();
+
             // bring window to front (rendering back to forth, so top window is at start of this list)
             windows_.splice(windows_.begin(), windows_, windowIterator);
         }
