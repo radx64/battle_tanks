@@ -380,7 +380,10 @@ void Component::addChild(std::unique_ptr<Component> child)
 
 void Component::selectFocusedChild(Component* focusedChild)
 {
-    if (focusedElement_ != focusedChild) focusedElement_->defocus();
+    if (focusedElement_ != nullptr and focusedElement_ != focusedChild)
+    {
+        focusedElement_->defocus();
+    }
 
     focusedElement_ = focusedChild;
 }
@@ -404,6 +407,7 @@ void Component::focus()
 
     while (parent != nullptr)
     {
+        parent->defocus();
         parent->selectFocusedChild(current);
         current = parent;
         parent = parent->parent_;
