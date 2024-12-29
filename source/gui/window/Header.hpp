@@ -20,8 +20,8 @@ public:
 
     void closeButtonAction(std::function<void()> closeButtonAction);
     void setTitle(const std::string_view& text);
-    void activate();
-    void deactivate();
+    void enable();
+    void disable();
 
 protected:
     void onRender(sf::RenderTexture& renderWindow) override;

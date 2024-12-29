@@ -26,7 +26,7 @@ protected:
     float max_{};
     float value_{};
     float progress_{};
-    sf::RectangleShape background_;
+    sf::RectangleShape backgroundShape_;
     sf::RectangleShape bar_;
     gui::Label* text_;
 };

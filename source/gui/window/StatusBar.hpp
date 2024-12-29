@@ -12,8 +12,8 @@ class StatusBar : public Component
 public:
     StatusBar();
 
-    void activate();
-    void deactivate();
+    void enable();
+    void disable();
     bool isInsideResizeGadget(const sf::Vector2f point);
 
 protected:
@@ -22,7 +22,7 @@ protected:
     void onPositionChange() override;
 
     sf::RectangleShape resize_gadget_;
-    sf::RectangleShape background_;
+    sf::RectangleShape backgroundShape_;
 };
 
 

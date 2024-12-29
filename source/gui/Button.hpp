@@ -28,8 +28,11 @@ public:
     EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
     EventStatus on(const event::MouseLeft& mouseLeftEvent) override;
 
+    EventStatus on(const event::FocusLost&) override;
+    EventStatus on(const event::FocusGained&) override;
+
 protected:
-    sf::RectangleShape background_;
+    sf::RectangleShape backgroundShape_;
     gui::Label* text_;
     bool isButtonHoldDown_;
     std::function<void()> onClick_;

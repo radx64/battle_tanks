@@ -10,17 +10,17 @@ namespace gui
 
 ProgressBar::ProgressBar()
 {
-    auto style = BasicStyleSheetFactory::instance();    
-    background_.setFillColor(style.getWindowColor());
-    background_.setOutlineColor(style.getOutlineColor());
-    background_.setOutlineThickness(style.getOutlineThickness()); 
-    background_.setPosition(getGlobalPosition());
-    background_.setSize(Component::getSize());
+    auto style = BasicStyleSheetFactory::instance();
+    backgroundShape_.setFillColor(style.getWindowColor());
+    backgroundShape_.setOutlineColor(style.getOutlineColor());
+    backgroundShape_.setOutlineThickness(style.getOutlineThickness());
+    backgroundShape_.setPosition(getGlobalPosition());
+    backgroundShape_.setSize(Component::getSize());
 
     //FIXME: I need to redesign style "subsystem" :)
     bar_.setFillColor(style.getWindowHeaderColor());
     bar_.setOutlineColor(style.getOutlineColor());
-    bar_.setOutlineThickness(style.getOutlineThickness()); 
+    bar_.setOutlineThickness(style.getOutlineThickness());
     bar_.setPosition(getGlobalPosition());
 
     auto textPtr = std::make_unique <gui::Label>("");
@@ -77,7 +77,7 @@ void ProgressBar::onSizeChange()
 
 void ProgressBar::onRender(sf::RenderTexture& renderTexture)
 {
-    renderTexture.draw(background_);
+    renderTexture.draw(backgroundShape_);
     renderTexture.draw(bar_);
 }
 

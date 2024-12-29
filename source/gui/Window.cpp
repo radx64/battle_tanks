@@ -33,7 +33,6 @@ Window::Window()
     auto statusBar = std::make_unique<gui::window::StatusBar>();
     statusBar_ = statusBar.get();
     statusBar_->setSize(getSize());
-
     Component::addChild(std::move(statusBar));
 }
 
@@ -78,18 +77,20 @@ bool Window::isDead() const
     return killed_;
 }
 
-void Window::activate()
+void Window::enable()
 {
     active_ = true;
-    header_->activate();
-    statusBar_->activate();
+    header_->enable();
+    windowPanel_->enable();
+    statusBar_->enable();
     focus();
 }
-void Window::deactivate()
+void Window::disable()
 {
     active_ = false;
-    header_->deactivate();
-    statusBar_->deactivate();
+    header_->disable();
+    windowPanel_->disable();
+    statusBar_->disable();
     defocusWithAllChildren();
 }
 

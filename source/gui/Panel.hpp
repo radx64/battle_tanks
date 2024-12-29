@@ -12,14 +12,15 @@ class Panel : public Component
 public:
     Panel();
 
+    void enable();
+    void disable();
+
 protected:
     void onSizeChange() override;
     void onPositionChange() override;
     void onRender(sf::RenderTexture& renderWindow) override;
-    void onFocus() override;
-    void onFocusLost() override;
 
-    sf::RectangleShape background_;
+    sf::RectangleShape backgroundShape_;
 };
 
 }  // namespace gui

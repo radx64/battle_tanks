@@ -2,39 +2,41 @@
 
 #include "gui/StyleSheet.hpp"
 
+#include <iostream>
+
 namespace gui
 {
 
 Panel::Panel()
 {
-    background_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
-    background_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
-    background_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
+    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
+    backgroundShape_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+    backgroundShape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
 }
 
 void Panel::onSizeChange()
 {
-    background_.setSize(getSize());
+    backgroundShape_.setSize(getSize());
 }
 
 void Panel::onPositionChange()
 {
-    background_.setPosition(Component::getGlobalPosition());
+    backgroundShape_.setPosition(Component::getGlobalPosition());
 }
 
 void Panel::onRender(sf::RenderTexture& renderWindow)
 {
-    renderWindow.draw(background_);
+    renderWindow.draw(backgroundShape_);
 }
 
-void Panel::onFocus()
+void Panel::enable()
 {
-    background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
 }
 
-void Panel::onFocusLost()
+void Panel::disable()
 {
-    background_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
+    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
 }
 
 }  // namespace gui

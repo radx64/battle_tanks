@@ -9,7 +9,6 @@
 /*
 TODO:
     implement backwards focusing (std::prev is tricky as not have anything like past begin iterator)
-    implement onFocusGained and onFocusLost events instead this onFocus() currently used methods
 
     GENERAL: think about debugability in both logs and GDB as curently this is a mess
         Logger + prefixes
@@ -40,7 +39,6 @@ protected:
 };
 
 uint32_t InstanceIdGenerator::nextInstanceId = 0;
-
 
 #define LOG(text)\
     std::cout << this << " - "<< logPrefix_ << text << std::endl
@@ -413,7 +411,7 @@ void Component::focus()
         parent = parent->parent_;
     }
 
-    onFocus();
+    receive(gui::event::FocusGained{});
 }
 
 void Component::defocus()
@@ -436,7 +434,7 @@ void Component::defocusWithAllChildren()
         child->defocusWithAllChildren();
     }
 
-    onFocusLost();
+    receive(gui::event::FocusLost{});
 }
 
 void Component::defocusChildrenExcept(const Component* focusedChild)
@@ -463,16 +461,6 @@ bool Component::isFocusable() const
 void Component::enableFocus()
 {
     isFocusable_ = true;
-}
-
-void Component::onFocus()
-{
-
-}
-
-void Component::onFocusLost()
-{
-
 }
 
 void Component::updateGlobalPosition()

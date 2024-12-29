@@ -36,11 +36,11 @@ EditBox::EditBox()
     textCursor_.setFont(text_.getFont());
     textCursor_.setCharacterSize(text_.getCharacterSize());
 
-    background_.setFillColor(style.getWindowColor());
-    background_.setOutlineColor(style.getOutlineColor());
-    background_.setOutlineThickness(style.getOutlineThickness());
-    background_.setPosition(getGlobalPosition());
-    background_.setSize(Component::getSize());
+    backgroundShape_.setFillColor(style.getWindowColor());
+    backgroundShape_.setOutlineColor(style.getOutlineColor());
+    backgroundShape_.setOutlineThickness(style.getOutlineThickness());
+    backgroundShape_.setPosition(getGlobalPosition());
+    backgroundShape_.setSize(Component::getSize());
 }
 
 EditBox::~EditBox()
@@ -56,14 +56,14 @@ std::string EditBox::getText()
 
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
-    renderTexture.draw(background_);
+    renderTexture.draw(backgroundShape_);
     renderTexture.draw(text_);
 }
 
 void EditBox::onSizeChange()
 {
     text_.setGlobalPosition(Component::getGlobalPosition());
-    background_.setSize(Component::getSize());
+    backgroundShape_.setSize(Component::getSize());
     text_.setSize(Component::getSize());
     updateTextVisbleArea();
     textCursor_.update();
@@ -73,7 +73,7 @@ void EditBox::onSizeChange()
 void EditBox::onPositionChange()
 {
     text_.setGlobalPosition(Component::getGlobalPosition());
-    background_.setPosition(getGlobalPosition());
+    backgroundShape_.setPosition(getGlobalPosition());
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -108,6 +108,7 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
 
     mouseLeftButtonPressed_ = true;
 
+    focus();
     enterEdit();
 
     textCursor_.moveTo(mouseButtonPressedEvent.position.x);
@@ -414,40 +415,22 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
 void EditBox::enterEdit()
 {
-    focus();
-    background_.setFillColor(sf::Color::White);
+    backgroundShape_.setFillColor(sf::Color::White);
     textCursor_.enable();
 }
 
-void EditBox::onFocusLost()
+EventStatus EditBox::on(const gui::event::FocusLost&)
 {
-    background_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
     textCursor_.disable();
     selection_.clear();
     text_.updateTexture();
-}
-
-EventStatus EditBox::on(const gui::event::FocusChange& focusChange)
-{
-    std::cout << "FocusChange";
-    std::cout << ((focusChange.type == event::FocusChange::Type::Next)?"Next":"Previous");
-    std::cout << std::endl;
-    return EventStatus::NotConsumed;
-}
-
-EventStatus EditBox::on(const gui::event::FocusLost& focusLost)
-{
-    UNUSED(focusLost);
-    std::cout << "FocusLost";
-    std::cout << std::endl;
     return EventStatus::Consumed;
 }
 
-EventStatus EditBox::on(const gui::event::FocusGained& focusGained)
+EventStatus EditBox::on(const gui::event::FocusGained&)
 {
-    UNUSED(focusGained);
-    std::cout << "FocusGained";
-    std::cout << std::endl;
+    enterEdit();
     return EventStatus::Consumed;
 }
 

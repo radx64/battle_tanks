@@ -21,7 +21,7 @@ Header::Header()
     {
         if (closeButtonAction_) closeButtonAction_();
     });
-    close_button_ptr_ = close_button.get();   
+    close_button_ptr_ = close_button.get();
     addChild(std::move(close_button));
 
     auto title_text = std::make_unique<gui::Label>("");
@@ -61,21 +61,20 @@ void Header::onSizeChange()
 void Header::onPositionChange()
 {
     header_shape_.setPosition(getGlobalPosition());
-    
+
     // TODO: placement of text label should be composed by some layout
-    sf::Vector2f tile_text_position {0.0f ,0.0f}; 
+    sf::Vector2f tile_text_position {0.0f ,0.0f};
     title_text_handle_->setPosition(tile_text_position);
 }
 
-void Header::activate()
+void Header::enable()
 {
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getWindowHeaderColor());
 }
 
-void Header::deactivate()
+void Header::disable()
 {
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 }
 
 }  // namespace gui::window
-

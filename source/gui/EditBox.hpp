@@ -32,11 +32,8 @@ protected:
     EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
     EventStatus on(const event::TextEntered& textEntered) override;
 
-    EventStatus on(const event::FocusChange& focusChange) override;
-    EventStatus on(const event::FocusLost& focusLost) override;
-    EventStatus on(const event::FocusGained& focusGained) override;
-
-    void onFocusLost() override;
+    EventStatus on(const event::FocusLost&) override;
+    EventStatus on(const event::FocusGained&) override;
 
     void updateTextVisbleArea();
 
@@ -48,7 +45,7 @@ protected:
     void updateCursorAndSelection(const bool atSelectionEndOnCancel);
 
     gui::Text text_;
-    sf::RectangleShape background_;
+    sf::RectangleShape backgroundShape_;
     gui::TextCursor textCursor_;
     gui::Selection selection_;
     uint32_t maxLength_;

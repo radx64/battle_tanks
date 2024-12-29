@@ -24,7 +24,7 @@ namespace gui
 // Can be used to place GUI components
 // on screen
 // Can't be moved
-// It's size is application window size  
+// It's size is application window size
 class MainWindow : public Component
 {
 public:
@@ -43,8 +43,8 @@ public:
     void close();
     bool isDead() const;
 
-    void activate();
-    void deactivate();
+    void enable();
+    void disable();
     bool isActive() const;
 
     bool isIdle() const;

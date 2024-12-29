@@ -54,12 +54,6 @@ public:
     bool isFocusable() const;
     void enableFocus(); // enable component to receive focus
 
-    /* Below onFocus and onFocusLost methods will be deprecated
-        on(Focus... ) events will be used
-    */
-    virtual void onFocus();
-    virtual void onFocusLost();
-
     void disableChildrenEvents();
     void enableChildrenEvents();
 

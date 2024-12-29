@@ -21,10 +21,10 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
 {
     if (activeWindowHandle_)
     {
-        activeWindowHandle_->deactivate();
+        activeWindowHandle_->disable();
     }
     activeWindowHandle_ = window.get();
-    activeWindowHandle_->activate();
+    activeWindowHandle_->enable();
     mainWindow_.defocusWithAllChildren();
     windows_.push_front(std::move(window));
 }
@@ -80,9 +80,9 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
 
         if (activeWindowHandle_ != window) // Replace active window
         {
-            if (activeWindowHandle_) activeWindowHandle_->deactivate();
+            if (activeWindowHandle_) activeWindowHandle_->disable();
             activeWindowHandle_ = window;
-            activeWindowHandle_->activate();
+            activeWindowHandle_->enable();
             // bring window to front (rendering back to forth, so top window is at start of this list)
             windows_.splice(windows_.begin(), windows_, windowIterator);
         }
