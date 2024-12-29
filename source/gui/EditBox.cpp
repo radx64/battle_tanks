@@ -35,6 +35,7 @@ EditBox::EditBox()
 
     textCursor_.setFont(text_.getFont());
     textCursor_.setCharacterSize(text_.getCharacterSize());
+    textCursor_.disable();
 
     backgroundShape_.setFillColor(style.getWindowColor());
     backgroundShape_.setOutlineColor(style.getOutlineColor());

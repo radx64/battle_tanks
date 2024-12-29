@@ -384,6 +384,7 @@ void Component::selectFocusedChild(Component* focusedChild)
 void Component::focus()
 {
     isFocused_ = true;
+    focusedElement_ = this;
 
     for (auto& child : children_)
     {
@@ -411,8 +412,12 @@ void Component::focus()
 
 void Component::defocus()
 {
-    isFocused_ = false;
-    focusedElement_ = nullptr;
+    if(isFocused())
+    {
+        isFocused_ = false;
+        focusedElement_ = nullptr;
+        receive(gui::event::FocusLost{});
+    }
 }
 
 bool Component::isFocused() const
@@ -429,7 +434,6 @@ void Component::defocusWithAllChildren()
         child->defocusWithAllChildren();
     }
 
-    receive(gui::event::FocusLost{});
 }
 
 void Component::defocusChildrenExcept(const Component* focusedChild)

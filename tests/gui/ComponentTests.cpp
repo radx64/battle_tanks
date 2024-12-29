@@ -24,6 +24,28 @@ public:
     }
 
     MOCK_METHOD(void, onParentSizeChange, (const sf::Vector2f& parent_size), (override));
+
+    void makeSpyFocusable()
+    {
+        enableFocus();
+    }
+
+    MOCK_METHOD(void, focusGained, ());
+    gui::EventStatus on(const gui::event::FocusGained&) override
+    {
+        focusGained();
+        std::cout << "FocusGained" <<std::endl;
+        return EventStatus::Consumed;
+    }
+
+    MOCK_METHOD(void, focusLost, ());
+    gui::EventStatus on(const gui::event::FocusLost&) override
+    {
+        focusLost();
+        std::cout << "focusLost" <<std::endl;
+        return EventStatus::Consumed;
+    }
+
 };
 
 /***************************
@@ -152,6 +174,121 @@ TEST(ComponentShould, DISABLED_renderChildrenOnlyWhenComponentItselfIsVisible)
 /*******************************
       EVENTS HANDLING TESTS
 ********************************/
+
+TEST(ComponentShould, properlyHandleFocusChangedEvent)
+{
+
+    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_1_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_1_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_2_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_2_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_2_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+
+    auto sut_ptr = sut_.get();
+    auto child_1_ptr = child_1.get();
+    auto child_1_2_ptr = child_1_2.get();
+    auto child_2_ptr = child_2.get();
+    auto child_1_1_ptr = child_1_1.get();
+    auto child_2_1_ptr = child_2_1.get();
+    auto child_2_2_ptr = child_2_2.get();
+    auto child_2_3_ptr = child_2_3.get();
+    auto child_3_ptr = child_3.get();
+
+    std::vector allSpies =
+    {
+        sut_ptr,
+        child_1_ptr,
+        child_1_1_ptr,
+        child_1_2_ptr,
+        child_2_ptr,
+        child_2_1_ptr,
+        child_2_2_ptr,
+        child_2_3_ptr,
+        child_3_ptr,
+    };
+
+    for (auto* spy : allSpies)
+    {
+        spy->makeSpyFocusable();
+    }
+
+    /*
+        Components hierarchy: (all focusable)
+        sut
+            child_1
+                child_1_1
+                child_1_2
+            child_2
+                child_2_1
+                child_2_2
+                child_2_3
+            child_3
+    */
+
+    sut_->addChild(std::move(child_1));
+    sut_->addChild(std::move(child_2));
+    sut_->addChild(std::move(child_3));
+
+    child_1_ptr->addChild(std::move(child_1_1));
+    child_1_ptr->addChild(std::move(child_1_2));
+
+    child_2_ptr->addChild(std::move(child_2_1));
+    child_2_ptr->addChild(std::move(child_2_2));
+    child_2_ptr->addChild(std::move(child_2_3));
+
+    auto expectFocusGainedOnlyOn = [&allSpies](auto* expectedSpy)
+    {
+        for (auto* spy : allSpies)
+        {
+            if (spy == expectedSpy)
+            {
+                EXPECT_CALL(*spy, focusGained()).Times(1);
+            }
+            else
+            {
+                EXPECT_CALL(*spy, focusGained()).Times(0);
+            }
+        }
+    };
+
+    auto expectFocusLostOnlyOn = [&allSpies](auto* expectedSpy)
+    {
+        for (auto* spy : allSpies)
+        {
+            if (spy == expectedSpy)
+            {
+                EXPECT_CALL(*spy, focusLost()).Times(1);
+            }
+            else
+            {
+                EXPECT_CALL(*spy, focusLost()).Times(0);
+            }
+        }
+    };
+
+    auto verifyAndClearAllMocks = [&allSpies]()
+    {
+        for (auto* spy : allSpies)
+        {
+            ::testing::Mock::VerifyAndClearExpectations(spy);
+        }
+    };
+
+    for (size_t index=0; index < allSpies.size(); ++index)
+    {
+        expectFocusGainedOnlyOn(allSpies[index]);
+        if (index > 0)
+        {
+            expectFocusLostOnlyOn(allSpies[index-1]);
+        }
+        sut_->receive(gui::event::FocusChange{.type=gui::event::FocusChange::Type::Next});
+        verifyAndClearAllMocks();
+    }
+}
 
 /*******************************
       BOUNDS HANDLING TESTS
