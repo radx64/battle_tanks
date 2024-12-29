@@ -28,9 +28,8 @@ namespace gui
 class MainWindow : public Component
 {
 public:
-    void onRender(sf::RenderTexture& renderTexture) override
+    void onRender(sf::RenderTexture&) override
     {
-        UNUSED(renderTexture);
     }
 };
 

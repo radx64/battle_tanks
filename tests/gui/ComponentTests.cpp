@@ -18,9 +18,8 @@ public:
     }
 
     MOCK_METHOD(void, render_mock, ());
-    void onRender(sf::RenderTexture& renderWindow) override
+    void onRender(sf::RenderTexture&) override
     {
-        UNUSED(renderWindow);
         render_mock();
     }
 

@@ -56,9 +56,8 @@ bool Window::isInsideResizeGadget(const sf::Vector2f point)
     return statusBar_->isInsideResizeGadget(point);
 }
 
-void Window::onRender(sf::RenderTexture& renderTexture)
+void Window::onRender(sf::RenderTexture&)
 {
-    UNUSED(renderTexture);
 }
 
 bool Window::isInState(const Window::State& state) const
@@ -104,9 +103,8 @@ bool Window::isIdle() const
     return isInState(Window::State::Idle);
 }
 
-EventStatus Window::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus Window::on(const event::MouseButtonDoublePressed&)
 {
-    UNUSED(mouseButtonDoublePressedEvent);
     return gui::EventStatus::NotConsumed;
 }
 
@@ -133,10 +131,8 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     return gui::EventStatus::NotConsumed;
 }
 
-EventStatus Window::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus Window::on(const event::MouseButtonReleased&)
 {
-    UNUSED(mouseButtonReleasedEvent);
-
     if (state_ != State::Idle)
     {
         state_ = State::Idle;

@@ -4,8 +4,8 @@ namespace gui
 {
 
 #define EMPTY_RECEIVE_METHOD(Class, Event)\
-    EventStatus Class::receive(const Event& event)\
-    { UNUSED(event); return EventStatus::NotConsumed; }
+    EventStatus Class::receive(const Event&)\
+    { return EventStatus::NotConsumed; }
 
 EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseMoved);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseButtonPressed);

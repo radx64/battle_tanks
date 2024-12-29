@@ -1,6 +1,5 @@
 #pragma once
 
-#include "engine/Unused.hpp"
 #include "gui/Event.hpp"
 
 namespace gui

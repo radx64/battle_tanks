@@ -44,8 +44,8 @@ uint32_t InstanceIdGenerator::nextInstanceId = 0;
     std::cout << this << " - "<< logPrefix_ << text << std::endl
 
 #define EMPTY_ON_METHOD(Class, Event)\
-    EventStatus Class::on(const Event& event)\
-    { UNUSED(event); return EventStatus::NotConsumed; }
+    EventStatus Class::on(const Event& )\
+    { return EventStatus::NotConsumed; }
 
 }  // namespace
 
@@ -263,10 +263,6 @@ EventStatus Component::receive(const event::FocusGained& focusGained)
     return this->on(focusGained);
 }
 
-#define EMPTY_ON_METHOD(Class, Event)\
-    EventStatus Class::on(const Event& event)\
-    { UNUSED(event); return EventStatus::NotConsumed; }
-
 EMPTY_ON_METHOD(Component, event::MouseMoved);
 EMPTY_ON_METHOD(Component, event::MouseButtonPressed);
 EMPTY_ON_METHOD(Component, event::MouseButtonDoublePressed);
@@ -317,9 +313,8 @@ void Component::onSizeChange()
 {
 }
 
-void Component::onParentSizeChange(const sf::Vector2f& parentSize)
+void Component::onParentSizeChange(const sf::Vector2f&)
 {
-    UNUSED(parentSize);
 };
 
 void Component::setVisibility(bool isVisible)

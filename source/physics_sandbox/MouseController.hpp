@@ -16,9 +16,8 @@ MouseController (engine::Scene& scene)
 {}
 
 protected:
-gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button, bool doubleClick) override
+gui::EventStatus onButtonPressed(const sf::Vector2f&, const sf::Mouse::Button&, bool) override
 {
-    UNUSED3(mouse_postion, button, doubleClick);
     return gui::EventStatus::NotConsumed;
 }
 gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
@@ -29,7 +28,7 @@ gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::M
     }
 
     scene_.spawnObject(std::make_unique<Circle>(
-        rand(), 
+        rand(),
         mouse_postion.x,
         mouse_postion.y,
         25,
@@ -39,9 +38,8 @@ gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::M
     return gui::EventStatus::Consumed;
 }
 
-gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override
+gui::EventStatus onMouseMoved(const sf::Vector2f&) override
 {
-    UNUSED(mouse_postion);
     return gui::EventStatus::NotConsumed;
 }
 

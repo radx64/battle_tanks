@@ -151,7 +151,6 @@ EventStatus EditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEve
         mouseLeftButtonPressed_ = false;
     }
 
-    UNUSED(mouseButtonReleasedEvent);
     return EventStatus::NotConsumed;
 }
 

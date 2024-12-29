@@ -10,12 +10,10 @@ WaypointMouseController::WaypointMouseController(gui::WindowManager* windowManag
 , waypoints_(waypoints)
 , window_(window)
 , view_(view)
-{}    
+{}
 
-gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mousePosition, const sf::Mouse::Button& button, bool doubleClick)
+gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mousePosition, const sf::Mouse::Button& button, bool)
 {
-    UNUSED(doubleClick);
-
     const auto screenCoords = mapPixelToCoords(mousePosition);
 
     if (button != sf::Mouse::Button::Left)
@@ -28,15 +26,13 @@ gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mo
     return gui::EventStatus::Consumed;
 }
 
-gui::EventStatus WaypointMouseController::onButtonReleased(const sf::Vector2f& mousePosition, const sf::Mouse::Button& button)
+gui::EventStatus WaypointMouseController::onButtonReleased(const sf::Vector2f&, const sf::Mouse::Button&)
 {
-    UNUSED2(mousePosition, button);
     return gui::EventStatus::NotConsumed;
 }
 
-gui::EventStatus WaypointMouseController::onMouseMoved(const sf::Vector2f& mousePosition)
+gui::EventStatus WaypointMouseController::onMouseMoved(const sf::Vector2f&)
 {
-    UNUSED(mousePosition);
     return gui::EventStatus::NotConsumed;
 }
 

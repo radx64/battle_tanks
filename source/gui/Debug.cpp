@@ -5,7 +5,7 @@
 namespace gui::debug
 {
 
-static bool debug_enabled{true};
+static bool debug_enabled{false};
 
 void toggle()
 {
