@@ -8,6 +8,7 @@ namespace gui
 Button::Button(const std::string_view& text)
 : isButtonHoldDown_(false)
 {
+    enableFocus();
     auto style = BasicStyleSheetFactory::instance();
     background_.setFillColor(style.getWindowColor());
     background_.setOutlineColor(style.getOutlineColor());

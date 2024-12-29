@@ -20,6 +20,8 @@ EditBox::EditBox()
 , anyShiftHeldDown_{false}
 , mouseLeftButtonPressed_{false}
 {
+    enableFocus();
+
     text_.addModifier(&selection_);
     text_.addModifier(&textCursor_);
 

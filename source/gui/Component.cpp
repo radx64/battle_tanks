@@ -8,10 +8,8 @@
 
 /*
 TODO:
-    implement focus from click which will overwrite whole focus tree correctly
     implement backwards focusing (std::prev is tricky as not have anything like past begin iterator)
     implement onFocusGained and onFocusLost events instead this onFocus() currently used methods
-    implement traits for components to check if component is focusable
 
     GENERAL: think about debugability in both logs and GDB as curently this is a mess
         Logger + prefixes
@@ -62,6 +60,7 @@ Component::Component(const std::source_location location)
 , isVisible_ {true}
 , wasMouseInside_{false}
 , isFocused_{false}
+, isFocusable_{false}
 , id_{InstanceIdGenerator::getId()}
 , logPrefix_{std::string(location.function_name()) + "[" + std::to_string(id_) + "]"}
 {
@@ -193,8 +192,11 @@ EventStatus Component::receive(const event::FocusChange& focusChange)
     {
         LOG("Selecting this as a focus");
         focusedElement_ = this;
-        this->focus();
-        return EventStatus::Consumed;
+        if (isFocusable())
+        {
+            this->focus();
+            return EventStatus::Consumed;
+        }
     }
 
     if ((focusedElement_== this) and children_.empty())
@@ -447,6 +449,16 @@ void Component::defocusChildrenExcept(const Component* focusedChild)
     {
         parent_->defocusChildrenExcept(this);
     }
+}
+
+bool Component::isFocusable() const
+{
+    return isFocusable_;
+}
+
+void Component::enableFocus()
+{
+    isFocusable_ = true;
 }
 
 void Component::onFocus()

@@ -51,6 +51,8 @@ public:
     void defocusWithAllChildren();
     void defocusChildrenExcept(const Component* focusedChild);
     void selectFocusedChild(Component* focusedChild);
+    bool isFocusable() const;
+    void enableFocus(); // enable component to receive focus
 
     /* Below onFocus and onFocusLost methods will be deprecated
         on(Focus... ) events will be used
@@ -123,6 +125,7 @@ protected:
     bool isVisible_;
     bool wasMouseInside_;
     bool isFocused_;
+    bool isFocusable_; // can component get focus, if not it should still forward events to children
     uint32_t id_;
     std::string logPrefix_;
 };
