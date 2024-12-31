@@ -107,7 +107,6 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         if (not isButtonHoldDown_)
         {
             isButtonHoldDown_ = true;
-            if (onClick_) onClick_();  
         }
         return gui::EventStatus::Consumed;
     }
@@ -123,6 +122,8 @@ EventStatus Button::on(const event::MouseButtonReleased& mouseButtonReleasedEven
     {
         isButtonHoldDown_ = false;
         backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+        focus();
+        if (onClick_) onClick_();  
         return gui::EventStatus::Consumed;
     }
     return gui::EventStatus::NotConsumed;
