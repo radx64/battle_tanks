@@ -6,7 +6,6 @@
 namespace gui
 {
 Button::Button(const std::string_view& text)
-: isButtonHoldDown_(false)
 {
     enableFocus();
     auto style = BasicStyleSheetFactory::instance();
@@ -69,7 +68,6 @@ EventStatus Button::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
     {
-        isButtonHoldDown_ = true;
         backgroundShape_.setFillColor(sf::Color(0,255,0,255));
 
         return gui::EventStatus::Consumed;
@@ -85,7 +83,6 @@ EventStatus Button::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEven
 
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
     {
-        isButtonHoldDown_ = false;
         backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
         
         if (onClick_) onClick_();
@@ -104,10 +101,6 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     if (isLeftClicked and backgroundShape_.getGlobalBounds().contains(mousePosition))
     {
         backgroundShape_.setFillColor(sf::Color(0,255,0,255));
-        if (not isButtonHoldDown_)
-        {
-            isButtonHoldDown_ = true;
-        }
         return gui::EventStatus::Consumed;
     }
     return gui::EventStatus::NotConsumed;
@@ -115,12 +108,11 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 
 EventStatus Button::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    if (not isButtonHoldDown_) return gui::EventStatus::NotConsumed;
+    auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
 
-    if (isLeftReleased)
+    if (isLeftReleased and backgroundShape_.getGlobalBounds().contains(mousePosition))
     {
-        isButtonHoldDown_ = false;
         backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
         focus();
         if (onClick_) onClick_();  

@@ -37,7 +37,6 @@ public:
 protected:
     sf::RectangleShape backgroundShape_;
     gui::Label* text_;
-    bool isButtonHoldDown_;
     std::function<void()> onClick_;
 };
 
