@@ -24,6 +24,7 @@ void FontLibrary::initialize()
     initFont("armata",      TOSTRING(SOURCE_ROOT)"/fonts/armata.ttf");
     initFont("glassTTY",    TOSTRING(SOURCE_ROOT)"/fonts/Glass_TTY_VT220.ttf");
     initFont("vt323",       TOSTRING(SOURCE_ROOT)"/fonts/vt323-latin-400-normal.ttf");
+    initFont("ibmVGA",       TOSTRING(SOURCE_ROOT)"/fonts/Px437_IBM_VGA_8x16.ttf");
 }
 
 sf::Font& FontLibrary::get(const std::string& name)

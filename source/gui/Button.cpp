@@ -61,6 +61,39 @@ EventStatus Button::on(const event::MouseLeft&)
     return gui::EventStatus::Consumed;
 }
 
+EventStatus Button::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+{
+    if (not isFocused()) return gui::EventStatus::NotConsumed;
+
+    auto& key = keyboardKeyPressedEvent.key;
+
+    if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
+    {
+        isButtonHoldDown_ = true;
+        backgroundShape_.setFillColor(sf::Color(0,255,0,255));
+
+        return gui::EventStatus::Consumed;
+    }
+    return gui::EventStatus::NotConsumed;
+}
+
+EventStatus Button::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+{    
+    if (not isFocused()) return gui::EventStatus::NotConsumed;
+    
+    auto& key = keyboardKeyReleasedEvent.key;
+
+    if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
+    {
+        isButtonHoldDown_ = false;
+        backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+        
+        if (onClick_) onClick_();
+        return gui::EventStatus::Consumed;
+    }
+    return gui::EventStatus::NotConsumed;
+}
+
 EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     if (not isVisible_) return gui::EventStatus::NotConsumed;
@@ -74,7 +107,7 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         if (not isButtonHoldDown_)
         {
             isButtonHoldDown_ = true;
-            if (onClick_) onClick_();
+            if (onClick_) onClick_();  
         }
         return gui::EventStatus::Consumed;
     }
