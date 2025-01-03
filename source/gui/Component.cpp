@@ -8,8 +8,6 @@
 
 /*
 TODO:
-    implement backwards focusing (std::prev is tricky as not have anything like past begin iterator)
-
     GENERAL: think about debugability in both logs and GDB as curently this is a mess
         Logger + prefixes
         InstanceId
@@ -179,13 +177,8 @@ EventStatus Component::receive(const event::TextEntered& textEntered)
     return processEvent(textEntered);
 }
 
-EventStatus Component::receive(const event::FocusChange& focusChange)
+EventStatus Component::processFocusForwardEvent(const event::FocusChange& focusChange)
 {
-    if (not childrenEventsProcessingEnabled_)
-    {
-        return EventStatus::NotConsumed;
-    }
-
     if (focusedElement_ == nullptr)
     {
         LOG("Selecting this as a focus");
@@ -199,7 +192,7 @@ EventStatus Component::receive(const event::FocusChange& focusChange)
 
     if ((focusedElement_== this) and children_.empty())
     {
-        LOG("No children to forward the event to");
+        LOG("No children to forward event to");
         this->defocusWithAllChildren();
         focusedElement_ = nullptr;
         return EventStatus::NotConsumed;
@@ -216,7 +209,6 @@ EventStatus Component::receive(const event::FocusChange& focusChange)
     {
         currentSelectionIt = std::find_if(std::begin(children_), std::end(children_),
             [this] (const auto& child) {return child.get() == focusedElement_;});
-        LOG("Selecting next child: " << currentSelectionIt->get());
     }
 
     auto result = EventStatus::NotConsumed;
@@ -242,15 +234,114 @@ EventStatus Component::receive(const event::FocusChange& focusChange)
         defocus();
     }
 
+    // consider checking EventStatus::NotConsumed here
     if (currentSelectionIt == std::end(children_))
     {
         focusedElement_ = nullptr;
+    }
+    return result;
+}
+
+EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focusChange)
+{
+    if (focusedElement_ == nullptr)
+    {
+        if (children_.empty())
+        {
+            LOG("No children to forward event to. Selecting this as a focus");
+            focusedElement_ = this;
+             if (isFocusable())
+            {
+                this->focus();
+                return EventStatus::Consumed;
+            }
+        }
+        else
+        {
+            LOG("Will selecting last child as a focus");
+        }
+    }
+
+    auto result = EventStatus::NotConsumed;
+
+    decltype(children_)::iterator currentSelectionIt{};
+
+    if (focusedElement_ == nullptr)
+    {
+        currentSelectionIt = std::prev(children_.end());
+        LOG("Selecting last child: " << currentSelectionIt->get());
+    }
+
+    if (focusedElement_ != this and focusedElement_ != nullptr)
+    {
+        currentSelectionIt = std::find_if(std::begin(children_), std::end(children_),
+            [this] (const auto& child) {return child.get() == focusedElement_;});
+    }
+
+    while(true)
+    {
+        if (focusedElement_ == this) break;
+
+        LOG("Trying: " << currentSelectionIt->get());
+        result = (*currentSelectionIt)->receive(focusChange);
+        LOG("Got from child " << (result==EventStatus::Consumed?"Consumed":"NotConsumed"));
+        if (result == EventStatus::Consumed) break;
+
+        currentSelectionIt = std::prev(currentSelectionIt);
+        if (std::distance(std::begin(children_), currentSelectionIt) < 0)
+        {
+            LOG("PASSED std::begin iterator, negative distance");
+            result = EventStatus::NotConsumed;
+            LOG("Trying this now");
+            focusedElement_ = this;
+            break;
+        }
+    }
+
+    if (focusedElement_ == this || isFocused())
+    {
+        LOG("Defocusing this element, leaving parent do the work");
+        defocus();
+    }
+
+    if (focusedElement_ == this and not isFocused())
+    {
+        LOG("FOCUUUUUSSS!!!");
+        if (isFocusable())
+        {
+            this->focus();
+            return EventStatus::Consumed;
+        }
+    }
+
+    if (result == EventStatus::NotConsumed)
+    {
+        focusedElement_ = nullptr;
+    }
+    return result;
+
+}
+
+EventStatus Component::receive(const event::FocusChange& focusChange)
+{
+    if (not childrenEventsProcessingEnabled_)
+    {
+        return EventStatus::NotConsumed;
+    }
+
+    auto result{EventStatus::NotConsumed};
+    if (focusChange.type == event::FocusChange::Type::Next)
+    {
+        result = processFocusForwardEvent(focusChange);
+    }
+    else
+    {
+        result = processFocusBackwardEvent(focusChange);
     }
 
     LOG("Returning " << (result==EventStatus::Consumed?"Consumed":"NotConsumed"));
 
     return result;
-
 }
 
 EventStatus Component::receive(const event::FocusLost& focusLost)

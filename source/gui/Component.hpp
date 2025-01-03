@@ -110,6 +110,9 @@ protected:
     void updateGlobalPosition();
     size_t getChildrenCount() const;
 
+    EventStatus processFocusForwardEvent(const event::FocusChange& focusChange);
+    EventStatus processFocusBackwardEvent(const event::FocusChange& focusChange);
+
     sf::Vector2f localPosition_;   // offset from parent position
     sf::FloatRect bounds_;         // bounds box in global space position
     Component* parent_;
