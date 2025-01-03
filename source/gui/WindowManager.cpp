@@ -107,6 +107,25 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
     return mainWindow_.receive(mouseButtonPressedEvent);
 }
 
+template<class T>
+EventStatus WindowManager::processEventWithActiveWindow(const T& event)
+{
+    EventStatus result{EventStatus::NotConsumed};
+
+    //Forward event to active window
+    if (activeWindowHandle_ && activeWindowHandle_->isActive())
+    {
+        result = activeWindowHandle_->receive(event);
+    }
+
+    if (result ==  EventStatus::NotConsumed)
+    {
+        return mainWindow_.receive(event);
+    }
+
+    return result;
+}
+
 EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     return processMouseButton(mouseButtonPressedEvent);
@@ -176,75 +195,22 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
 
 EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    EventStatus result{EventStatus::NotConsumed};
-
-    //Forward event to active window
-    if (activeWindowHandle_ && activeWindowHandle_->isActive())
-    {
-        result = activeWindowHandle_->receive(mouseButtonReleasedEvent);
-    }
-
-    if (result ==  EventStatus::NotConsumed)
-    {
-        return mainWindow_.receive(mouseButtonReleasedEvent);
-    }
-
-    //There is no active window
-    return gui::EventStatus::NotConsumed;
+    return processEventWithActiveWindow(mouseButtonReleasedEvent);
 }
 
 EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 {
-    EventStatus result{EventStatus::NotConsumed};
-
-    //Forward event to active window
-    if (activeWindowHandle_ && activeWindowHandle_->isActive())
-    {
-        result = activeWindowHandle_->receive(keyboardKeyPressedEvent);
-    }
-
-    if (result ==  EventStatus::NotConsumed)
-    {
-        return mainWindow_.receive(keyboardKeyPressedEvent);
-    }
-
-    return result;
+    return processEventWithActiveWindow(keyboardKeyPressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
-    EventStatus result{EventStatus::NotConsumed};
-
-    //Forward event to active window
-    if (activeWindowHandle_ && activeWindowHandle_->isActive())
-    {
-        result = activeWindowHandle_->receive(keyboardKeyReleasedEvent);
-    }
-
-    if (result == EventStatus::NotConsumed)
-    {
-        return mainWindow_.receive(keyboardKeyReleasedEvent);
-    }
-
-    return result;
+    return processEventWithActiveWindow(keyboardKeyReleasedEvent);
 }
 
 EventStatus WindowManager::receive(const event::TextEntered& textEntered)
 {
-    EventStatus result{EventStatus::NotConsumed};
-
-    //Forward event to active window
-    if (activeWindowHandle_ && activeWindowHandle_->isActive())
-    {
-        result = activeWindowHandle_->receive(textEntered);
-    }
-
-    if (result == EventStatus::NotConsumed)
-    {
-        return mainWindow_.receive(textEntered);
-    }
-
-    return result;
+    return processEventWithActiveWindow(textEntered);
 }
 
 EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusChange)
@@ -258,6 +224,8 @@ EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusCha
     }
     else
     {
+        // Focus change is a bit different than other events. 
+        // I don't wan to forward to main window if there is an active displayed one.
         result = mainWindow_.receive(focusChange);
     }
     return result;
