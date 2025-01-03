@@ -247,11 +247,11 @@ EventStatus WindowManager::receive(const event::TextEntered& textEntered)
     return result;
 }
 
-EventStatus WindowManager::receive(const event::FocusChange& focusChange)
+EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusChange)
 {
     EventStatus result{EventStatus::NotConsumed};
-
-    //Forward event to active window
+    
+    // Forward event to active window
     if (activeWindowHandle_ && activeWindowHandle_->isActive())
     {
         result = activeWindowHandle_->receive(focusChange);
@@ -259,6 +259,18 @@ EventStatus WindowManager::receive(const event::FocusChange& focusChange)
     else
     {
         result = mainWindow_.receive(focusChange);
+    }
+    return result;
+}
+
+EventStatus WindowManager::receive(const event::FocusChange& focusChange)
+{
+    auto result = forwardFocusChange(focusChange);
+
+    if (result == EventStatus::NotConsumed)
+    {
+        //Try  again. It might be a last child that was already focused so this will restart from beggining.
+        forwardFocusChange(focusChange);
     }
 
     return result;

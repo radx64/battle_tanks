@@ -41,6 +41,7 @@ public:
 protected:
     template<class T>
     EventStatus processMouseButton(const T& mouseButtonPressedEvent);
+    EventStatus forwardFocusChange(const event::FocusChange& focusChange);
 
     std::list<std::unique_ptr<Window>> windows_;
     Window* activeWindowHandle_;
