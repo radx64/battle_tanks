@@ -94,6 +94,9 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
         auto result = activeWindowHandle_->receive(mouseButtonPressedEvent);
 
         // FIXME: I'm checking twice if window is dead (see top of this method)
+        // FIXME2: Window manager knows to late that the window is closed
+        //          So it is dead but stil have active handle to it
+        //          For now i will work around on that but I need consider some solution.
         if (activeWindowHandle_->isDead())
         {
             windows_.remove_if([this](auto& window){ return window.get() == activeWindowHandle_;});
@@ -113,7 +116,7 @@ EventStatus WindowManager::processEventWithActiveWindow(const T& event)
     EventStatus result{EventStatus::NotConsumed};
 
     //Forward event to active window
-    if (activeWindowHandle_ && activeWindowHandle_->isActive())
+    if (activeWindowHandle_ and activeWindowHandle_->isActive())
     {
         result = activeWindowHandle_->receive(event);
     }
@@ -218,7 +221,7 @@ EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusCha
     EventStatus result{EventStatus::NotConsumed};
     
     // Forward event to active window
-    if (activeWindowHandle_ && activeWindowHandle_->isActive())
+    if (activeWindowHandle_ and activeWindowHandle_->isActive() and not activeWindowHandle_->isDead())
     {
         result = activeWindowHandle_->receive(focusChange);
     }

@@ -228,7 +228,7 @@ EventStatus Component::processFocusForwardEvent(const event::FocusChange& focusC
         }
     }
 
-    if (focusedElement_ == this || isFocused())
+    if (focusedElement_ == this and isFocused())
     {
         LOG("Defocusing this element, leaving children do the work");
         defocus();
@@ -244,6 +244,8 @@ EventStatus Component::processFocusForwardEvent(const event::FocusChange& focusC
 
 EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focusChange)
 {
+    decltype(children_)::iterator currentSelectionIt{};
+
     if (focusedElement_ == nullptr)
     {
         if (children_.empty())
@@ -257,20 +259,13 @@ EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focus
             }
         }
         else
-        {
-            LOG("Will selecting last child as a focus");
+        {;
+            currentSelectionIt = std::prev(children_.end());
+            LOG("Selecting last child: " << currentSelectionIt->get());
         }
     }
 
     auto result = EventStatus::NotConsumed;
-
-    decltype(children_)::iterator currentSelectionIt{};
-
-    if (focusedElement_ == nullptr)
-    {
-        currentSelectionIt = std::prev(children_.end());
-        LOG("Selecting last child: " << currentSelectionIt->get());
-    }
 
     if (focusedElement_ != this and focusedElement_ != nullptr)
     {
@@ -290,7 +285,7 @@ EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focus
         currentSelectionIt = std::prev(currentSelectionIt);
         if (std::distance(std::begin(children_), currentSelectionIt) < 0)
         {
-            LOG("PASSED std::begin iterator, negative distance");
+            LOG("Passed std::begin iterator, negative distance, can't back more");
             result = EventStatus::NotConsumed;
             LOG("Trying this now");
             focusedElement_ = this;
@@ -298,22 +293,23 @@ EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focus
         }
     }
 
-    if (focusedElement_ == this || isFocused())
+    if (focusedElement_ == this)
     {
-        LOG("Defocusing this element, leaving parent do the work");
-        defocus();
-    }
-
-    if (focusedElement_ == this and not isFocused())
-    {
-        LOG("FOCUUUUUSSS!!!");
-        if (isFocusable())
+        if (isFocused())
         {
-            this->focus();
-            return EventStatus::Consumed;
+            LOG("Defocusing this element, leaving parent do the work");
+            defocus();
+        }
+        else
+        {
+            LOG("Trying to focus this now");
+            if (isFocusable())
+            {
+                this->focus();
+                result = EventStatus::Consumed;
+            }
         }
     }
-
     if (result == EventStatus::NotConsumed)
     {
         focusedElement_ = nullptr;
@@ -460,7 +456,6 @@ void Component::addChild(std::unique_ptr<Component> child)
     child->onParentSizeChange(getSize());
     children_.emplace_back(std::move(child));
 }
-
 
 void Component::selectFocusedChild(Component* focusedChild)
 {
