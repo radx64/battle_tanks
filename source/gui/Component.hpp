@@ -118,7 +118,7 @@ protected:
     Component* parent_;
     bool childrenEventsProcessingEnabled_;
     std::vector<std::unique_ptr<Component>> children_;
-    Component* focusedElement_;
+    Component* focusedChild_;
     bool isVisible_;
     bool wasMouseInside_;
     bool isFocused_;
