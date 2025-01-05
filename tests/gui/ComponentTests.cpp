@@ -34,7 +34,6 @@ public:
     gui::EventStatus on(const gui::event::FocusGained&) override
     {
         focusGained();
-        std::cout << "FocusGained" <<std::endl;
         return EventStatus::Consumed;
     }
 
@@ -42,7 +41,6 @@ public:
     gui::EventStatus on(const gui::event::FocusLost&) override
     {
         focusLost();
-        std::cout << "focusLost" <<std::endl;
         return EventStatus::Consumed;
     }
 
@@ -175,76 +173,74 @@ TEST(ComponentShould, DISABLED_renderChildrenOnlyWhenComponentItselfIsVisible)
       EVENTS HANDLING TESTS
 ********************************/
 
-TEST(ComponentShould, properlyHandleFocusChangedEvent)
+class ComponentsHierarchyShould : public ::testing::Test
 {
+/*
+    Components hierarchy: (all focusable)
+    sut
+        child_1
+            child_1_1
+            child_1_2
+        child_2
+            child_2_1
+            child_2_2
+            child_2_3
+        child_3
+*/
 
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+protected:
 
-    auto sut_ptr = sut_.get();
-    auto child_1_ptr = child_1.get();
-    auto child_1_2_ptr = child_1_2.get();
-    auto child_2_ptr = child_2.get();
-    auto child_1_1_ptr = child_1_1.get();
-    auto child_2_1_ptr = child_2_1.get();
-    auto child_2_2_ptr = child_2_2.get();
-    auto child_2_3_ptr = child_2_3.get();
-    auto child_3_ptr = child_3.get();
-
-    std::vector allSpies =
+    void buildComponentsTree()
     {
-        sut_ptr,
-        child_1_ptr,
-        child_1_1_ptr,
-        child_1_2_ptr,
-        child_2_ptr,
-        child_2_1_ptr,
-        child_2_2_ptr,
-        child_2_3_ptr,
-        child_3_ptr,
-    };
+        sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_1_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_1_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_2_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_2_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_2_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
 
-    for (auto* spy : allSpies)
-    {
-        spy->makeSpyFocusable();
+        child_1_ptr_ = child_1.get();
+        child_1_2_ptr_ = child_1_2.get();
+        child_1_1_ptr_ = child_1_1.get();
+        child_2_ptr_ = child_2.get();
+        child_2_1_ptr_ = child_2_1.get();
+        child_2_2_ptr_ = child_2_2.get();
+        child_2_3_ptr_ = child_2_3.get();
+        child_3_ptr_ = child_3.get();
+
+        allSpies_ = {
+            sut_.get(),
+            child_1_ptr_,
+            child_1_1_ptr_,
+            child_1_2_ptr_,
+            child_2_ptr_,
+            child_2_1_ptr_,
+            child_2_2_ptr_,
+            child_2_3_ptr_,
+            child_3_ptr_,
+        };
+
+        sut_->addChild(std::move(child_1));
+        sut_->addChild(std::move(child_2));
+        sut_->addChild(std::move(child_3));
+
+        child_1_ptr_->addChild(std::move(child_1_1));
+        child_1_ptr_->addChild(std::move(child_1_2));
+
+        child_2_ptr_->addChild(std::move(child_2_1));
+        child_2_ptr_->addChild(std::move(child_2_2));
+        child_2_ptr_->addChild(std::move(child_2_3));
+
     }
 
-    /*
-        Components hierarchy: (all focusable)
-        sut
-            child_1
-                child_1_1
-                child_1_2
-            child_2
-                child_2_1
-                child_2_2
-                child_2_3
-            child_3
-    */
-
-    sut_->addChild(std::move(child_1));
-    sut_->addChild(std::move(child_2));
-    sut_->addChild(std::move(child_3));
-
-    child_1_ptr->addChild(std::move(child_1_1));
-    child_1_ptr->addChild(std::move(child_1_2));
-
-    child_2_ptr->addChild(std::move(child_2_1));
-    child_2_ptr->addChild(std::move(child_2_2));
-    child_2_ptr->addChild(std::move(child_2_3));
-
-    auto expectFocusGainedOnlyOn = [&allSpies](auto* expectedSpy)
+    void expectFocusGainedOnlyOn(ComponentSpy* expected)
     {
-        for (auto* spy : allSpies)
+        for (auto* spy : allSpies_)
         {
-            if (spy == expectedSpy)
+            if (spy == expected)
             {
                 EXPECT_CALL(*spy, focusGained()).Times(1);
             }
@@ -253,13 +249,13 @@ TEST(ComponentShould, properlyHandleFocusChangedEvent)
                 EXPECT_CALL(*spy, focusGained()).Times(0);
             }
         }
-    };
+    }
 
-    auto expectFocusLostOnlyOn = [&allSpies](auto* expectedSpy)
+    void expectFocusLostOnlyOn(ComponentSpy* expected)
     {
-        for (auto* spy : allSpies)
+        for (auto* spy : allSpies_)
         {
-            if (spy == expectedSpy)
+            if (spy == expected)
             {
                 EXPECT_CALL(*spy, focusLost()).Times(1);
             }
@@ -268,24 +264,67 @@ TEST(ComponentShould, properlyHandleFocusChangedEvent)
                 EXPECT_CALL(*spy, focusLost()).Times(0);
             }
         }
-    };
+    }
 
-    auto verifyAndClearAllMocks = [&allSpies]()
+    void verifyAndClearAllMocks()
     {
-        for (auto* spy : allSpies)
+        for (auto* spy : allSpies_)
         {
             ::testing::Mock::VerifyAndClearExpectations(spy);
         }
     };
 
-    for (size_t index=0; index < allSpies.size(); ++index)
+    std::unique_ptr<ComponentSpy> sut_;
+    ComponentSpy* child_1_ptr_;
+    ComponentSpy* child_1_2_ptr_;
+    ComponentSpy* child_1_1_ptr_;
+    ComponentSpy* child_2_ptr_;
+    ComponentSpy* child_2_1_ptr_;
+    ComponentSpy* child_2_2_ptr_;
+    ComponentSpy* child_2_3_ptr_;
+    ComponentSpy* child_3_ptr_;
+
+    std::vector<ComponentSpy*> allSpies_;
+};
+
+TEST_F(ComponentsHierarchyShould, properlyHandleForwardFocusChangedEvent)
+{
+    buildComponentsTree();
+
+    for (auto* spy : allSpies_)
     {
-        expectFocusGainedOnlyOn(allSpies[index]);
+        spy->makeSpyFocusable();
+    }
+
+    for (size_t index=0; index < allSpies_.size(); ++index)
+    {
+        expectFocusGainedOnlyOn(allSpies_[index]);
         if (index > 0)
         {
-            expectFocusLostOnlyOn(allSpies[index-1]);
+            expectFocusLostOnlyOn(allSpies_[index-1]);
         }
         sut_->receive(gui::event::FocusChange{.type=gui::event::FocusChange::Type::Next});
+        verifyAndClearAllMocks();
+    }
+}
+
+TEST_F(ComponentsHierarchyShould, properlyHandleBackwardFocusChangedEvent)
+{
+    buildComponentsTree();
+
+    for (auto* spy : allSpies_)
+    {
+        spy->makeSpyFocusable();
+    }
+
+    for (size_t index = allSpies_.size(); --index > 0;)
+    {
+        expectFocusGainedOnlyOn(allSpies_[index]);
+        if (index < allSpies_.size()-1)
+        {
+            expectFocusLostOnlyOn(allSpies_[index+1]);
+        }
+        sut_->receive(gui::event::FocusChange{.type=gui::event::FocusChange::Type::Previous});
         verifyAndClearAllMocks();
     }
 }

@@ -240,6 +240,13 @@ EventStatus Component::processFocusForwardEvent(const event::FocusChange& focusC
 
 EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focusChange)
 {
+    if (isFocused())
+    {
+        LOG("Defocusing this element, leaving parent do the work");
+        defocus();
+        return EventStatus::NotConsumed;
+    }
+
     auto currentSelectionIt = std::prev(std::begin(children_));
 
     if (focusedChild_ == nullptr)
@@ -285,19 +292,11 @@ EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focus
         LOG("No more children to focus");
     }
 
-    if (isFocused())
-    {
-        LOG("Defocusing this element, leaving parent do the work");
-        defocus();
-    }
-    else
+    if (isFocusable() and (result == EventStatus::NotConsumed))
     {
         LOG("Trying to focus this now");
-        if (isFocusable())
-        {
-            this->focus();
-            result = EventStatus::Consumed;
-        }
+        this->focus();
+        result = EventStatus::Consumed;
     }
     
     if (result == EventStatus::NotConsumed)
