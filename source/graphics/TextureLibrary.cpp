@@ -7,7 +7,7 @@ void TextureLibrary::initTexture(const std::string& name, const std::string& pat
 {
     auto placedElement = textures_.emplace(std::make_pair(name, sf::Texture()));
     bool hasLoaded = placedElement.first->second.loadFromFile(path);
-    if(not hasLoaded) throw std::string("Couldn't load texture file...");
+    if(not hasLoaded) throw std::runtime_error("Couldn't load texture file...");
 }
 
 void TextureLibrary::initialize()
@@ -81,7 +81,7 @@ sf::Texture& TextureLibrary::get(const std::string& name)
 {
     auto texture = textures_.find(name);
     if (texture == textures_.end())
-        throw std::string("No texture called " + name + " found in library");
+        throw std::runtime_error("No texture called " + name + " found in library");
 
     return texture->second;
 }

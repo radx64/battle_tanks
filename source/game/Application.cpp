@@ -10,6 +10,10 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Logger.hpp"
+#include "engine/math/Math.hpp"
+#include "engine/RigidBodyDebugRenderer.hpp"
+
 #include "game/Application.hpp"
 #include "game/entity/barrel/Barrel.hpp"
 #include "game/entity/barrel/BarrelFactory.hpp"
@@ -19,15 +23,15 @@
 #include "game/entity/tree/Tree.hpp"
 #include "game/entity/tree/TreeFactory.hpp"
 #include "game/HelpWindow.hpp"
-#include "engine/RigidBodyDebugRenderer.hpp"
+
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
+
 #include "gui/Button.hpp"
 #include "gui/Event.hpp"
 #include "gui/Label.hpp"
 #include "gui/Layout.hpp"
 #include "gui/Window.hpp"
-#include "engine/math/Math.hpp"
 
 #include "Config.hpp"
 
@@ -229,7 +233,7 @@ void Application::configureGUI()
     auto quitButton = std::make_unique<gui::Button>("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
-    quitButton->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
+    quitButton->onClick([this](){engine::Logger::info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
 
     auto measurementsText = std::make_unique<gui::Label>("");

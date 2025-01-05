@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "engine/Application.hpp"
+
+#include "engine/Logger.hpp"
 
 #include "Config.hpp"
 
@@ -25,11 +25,26 @@ Application::~Application() = default;
 
 void Application::init()
 {
-    onInit();
+    try
+    {
+        Logger::debug("Initializing application.");
+        onInit();
+    }
+    catch (const std::exception& e)
+    {
+        Logger::error(fmt::format("Exception was thrown: {}!",  e.what()));
+        exit(-1);
+    }
+    catch(...)
+    {
+        Logger::error("Unknown exception was thrown!");
+    }
+    
 }
 
 int Application::run()
 {
+    Logger::debug("Starting application.");
     try
     {
         while (isRunning_)
@@ -40,9 +55,9 @@ int Application::run()
             render();
         }
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
-        std::cout << "EXCEPTION THROWN: " << e.what() << std::endl;
+        Logger::error("EXCEPTION THROWN: ",  e.what());
         return -1;
     }
 
@@ -52,6 +67,7 @@ int Application::run()
 }
 void Application::close()
 {
+    Logger::debug("Closing application.");
     isRunning_ = false;
     window_.close();
 }

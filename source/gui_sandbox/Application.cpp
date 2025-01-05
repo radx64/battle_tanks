@@ -3,6 +3,7 @@
 #include "Config.hpp"
 
 #include "engine/Context.hpp"
+#include "engine/Logger.hpp"
 #include "engine/Timer.hpp"
 #include "engine/TimerService.hpp"
 
@@ -48,7 +49,7 @@ void Application::onInit()
     auto quitButton = std::make_unique<gui::Button>("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quitButton->setSize(sf::Vector2f(250.f, 30.f));
-    quitButton->onClick([this](){std::cout << "Quitting...\n"; Application::close();});
+    quitButton->onClick([this](){engine::Logger::info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
 
     auto guiDebug = std::make_unique<gui::Button>("GUI DEBUG");

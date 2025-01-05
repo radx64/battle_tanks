@@ -1,1 +1,1 @@
-sudo apt install cmake libsfml-dev ninja-build libgmock-dev gcovr
+sudo apt install cmake libsfml-dev ninja-build libgmock-dev gcovr libfmt-dev

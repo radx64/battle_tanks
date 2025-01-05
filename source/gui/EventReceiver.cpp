@@ -3,6 +3,16 @@
 namespace gui
 {
 
+const std::string_view toString(const EventStatus eventStatus)
+{
+    switch (eventStatus)
+    {
+        case EventStatus::Consumed : return "Consumed";
+        case EventStatus::NotConsumed : return "NotConsumed";
+        default : return "Unknown status";
+    }
+}
+
 #define EMPTY_RECEIVE_METHOD(Class, Event)\
     EventStatus Class::receive(const Event&)\
     { return EventStatus::NotConsumed; }

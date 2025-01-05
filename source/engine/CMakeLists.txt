@@ -4,7 +4,8 @@ add_subdirectory(math)
 
 target_link_libraries(engine_lib
 PUBLIC
-    engine_math_lib)
+    engine_math_lib
+    fmt)
 
 target_include_directories(engine_lib
 PUBLIC

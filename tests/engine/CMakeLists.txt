@@ -17,7 +17,7 @@ PRIVATE
     gmock
 
     pthread
-
+    fmt
 )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Coverage")

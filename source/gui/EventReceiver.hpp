@@ -11,6 +11,8 @@ enum class EventStatus
     NotConsumed
 };
 
+const std::string_view toString(const EventStatus);
+
 class EventReceiver
 {
 public:
