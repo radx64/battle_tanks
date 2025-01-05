@@ -10,6 +10,9 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
 
+  PACKAGE_LIST: "cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr valgrind libfmt-dev"
+
+
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
@@ -21,7 +24,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr valgrind libfmt-dev
+        packages: ${{env.PACKAGE_LIST}}
         version: 1.0
 
     - name: Configure CMake
@@ -39,7 +42,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr valgrind libfmt-dev
+          packages: ${{env.PACKAGE_LIST}}
           version: 1.0
 
       - name: Configure CMake
@@ -60,7 +63,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr valgrind
+          packages: ${{env.PACKAGE_LIST}}
           version: 1.0
       - name: Coverage
         run: ./coverage.sh
@@ -71,7 +74,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: cmake g++ libsfml-dev ninja-build libgmock-dev lcov gcovr valgrind
+          packages: packages: ${{env.PACKAGE_LIST}}
           version: 1.0
       - name: Valgrind
         run: ./valgrind.sh
