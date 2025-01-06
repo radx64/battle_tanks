@@ -20,12 +20,12 @@ using namespace std::literals;
 namespace gui_sandbox
 {
 Application::Application()
-: engine::Application("GUI sandbox")
+: engine::Application{"GUI sandbox", "GUI Sandbox Application"}
 , windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
-, timer_{5s, [](){engine::Logger::debug("5 seconds heartbeat ❤️ \n");}}
+, timer_{5s, [this](){logger_.debug("5 seconds heartbeat ❤️ \n");}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&timer_, engine::TimerType::Repeating);
@@ -47,7 +47,7 @@ void Application::onInit()
     auto quitButton = std::make_unique<gui::Button>("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quitButton->setSize(sf::Vector2f(250.f, 30.f));
-    quitButton->onClick([this](){engine::Logger::info("Quitting..."); Application::close();});
+    quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
 
     auto guiDebug = std::make_unique<gui::Button>("GUI DEBUG");
@@ -180,8 +180,8 @@ void Application::onInit()
         auto cookingButton = std::make_unique<gui::Button>("IS COOKING");
         auto hardButton = std::make_unique<gui::Button>("HARD");
 
-        helloButton->onClick([](){engine::Logger::info("Hello?");});
-        worldButton->onClick([](){engine::Logger::info("Is it me you looking for?");});
+        helloButton->onClick([this](){logger_.info("Hello?");});
+        worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
 
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));

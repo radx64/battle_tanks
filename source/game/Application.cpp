@@ -45,7 +45,7 @@ constexpr size_t CRATES_COUNT = 10;
 constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
-: engine::Application("Battle tanks")
+: engine::Application("Battle tanks", "Battle tanks")
 , cameraInitialPosition_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
 , cameraInitialSize_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
 , camera_{cameraInitialPosition_, cameraInitialSize_}
@@ -93,7 +93,7 @@ void Application::onInit()
 
 void Application::onClose()
 {
-    engine::Logger::info("Goodbye!");
+    logger_.info("Goodbye!");
     gui::FontLibrary::destroy();
     graphics::TextureLibrary::destroy();
 }
@@ -232,7 +232,7 @@ void Application::configureGUI()
     auto quitButton = std::make_unique<gui::Button>("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
-    quitButton->onClick([this](){engine::Logger::info("Quitting..."); Application::close();});
+    quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
 
     auto measurementsText = std::make_unique<gui::Label>("");
@@ -270,8 +270,8 @@ void Application::configureGUI()
         auto helloButton = std::make_unique<gui::Button>("HELLO");
         auto worldButton = std::make_unique<gui::Button>("WORLD");
 
-        helloButton->onClick([](){engine::Logger::info("Hello?");});
-        worldButton->onClick([](){engine::Logger::info("Is it me you looking for?");});
+        helloButton->onClick([this](){logger_.info("Hello?");});
+        worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
 
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));

@@ -34,4 +34,12 @@ void drawBounds(sf::RenderTexture& renderWindow, const Component* component)
     renderWindow.draw(bound_rect);
 }
 
-}  // namespace gui::debug
+std::string getFunctionNameOnly(const std::source_location& location)
+{
+    auto functionName = std::string{location.function_name()};
+    functionName = functionName.substr(0, functionName.find('('));
+    functionName = functionName.substr(functionName.find_last_of(':') + 1, functionName.size());
+    return functionName;
+}
+
+}  // namespace gui::debugq

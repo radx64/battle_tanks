@@ -1,5 +1,7 @@
 #include "engine/Application.hpp"
 
+#include <fmt/format.h>
+
 #include "engine/Logger.hpp"
 
 #include "Config.hpp"
@@ -7,11 +9,12 @@
 namespace engine
 {
 
-Application::Application(const std::string_view& windowName)
+Application::Application(const std::string_view windowName, const std::string_view logPrefix)
 : window_(sf::VideoMode(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 32), windowName.data())
 , mouseHandler_{&timerService_}
 , realTimeStep_{}
-, collisionSolver_(scene_)
+, collisionSolver_{scene_}
+, logger_{logPrefix}
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});
@@ -27,24 +30,24 @@ void Application::init()
 {
     try
     {
-        Logger::debug("Initializing application.");
+        logger_.debug("Initializing application.");
         onInit();
     }
     catch (const std::exception& e)
     {
-        Logger::error(fmt::format("Exception was thrown: {}!",  e.what()));
+        logger_.error(fmt::format("Exception was thrown: {}!",  e.what()));
         exit(-1);
     }
     catch(...)
     {
-        Logger::error("Unknown exception was thrown!");
+        logger_.error("Unknown exception was thrown!");
     }
     
 }
 
 int Application::run()
 {
-    Logger::debug("Starting application.");
+    logger_.debug("Starting application.");
     try
     {
         while (isRunning_)
@@ -57,7 +60,7 @@ int Application::run()
     }
     catch (const std::exception& e)
     {
-        Logger::error(fmt::format("EXCEPTION THROWN: {}",  e.what()));
+        logger_.error(fmt::format("EXCEPTION THROWN: {}",  e.what()));
         return -1;
     }
 
@@ -67,7 +70,7 @@ int Application::run()
 }
 void Application::close()
 {
-    Logger::debug("Closing application.");
+    logger_.debug("Closing application.");
     isRunning_ = false;
     window_.close();
 }

@@ -31,7 +31,6 @@ protected:
 
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;
-
     engine::Timer timer_;
 };
 

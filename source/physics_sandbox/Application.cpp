@@ -8,7 +8,7 @@ namespace sandbox
 {
 
 Application::Application()
-: engine::Application("Physics sandbox")
+: engine::Application{"Physics sandbox", "Physics sandbox"}
 , mouseController_{scene_}
 {}
 

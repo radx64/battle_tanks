@@ -5,7 +5,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Logger.hpp"
 #include "gui/EventReceiver.hpp"
+
 
 namespace gui
 {
@@ -124,7 +126,7 @@ protected:
     bool isFocused_;
     bool isFocusable_; // can component get focus, if not it should still forward events to children
     uint32_t id_;
-    std::string logPrefix_;
+    engine::Logger logger_;
 };
 
 }  // namespace gui

@@ -7,6 +7,7 @@
 #include "engine/Context.hpp"
 #include "engine/input/KeyboardHandler.hpp"
 #include "engine/input/MouseHandler.hpp"
+#include "engine/Logger.hpp"
 #include "engine/ParticleSystem.hpp"
 #include "engine/Scene.hpp"
 #include "engine/TimerService.hpp"
@@ -17,7 +18,7 @@ namespace engine
 class Application
 {
 public:
-    Application(const std::string_view& windowName);
+    Application(const std::string_view windowName, const std::string_view logPrefix);
     virtual ~Application();
     
     void init();
@@ -53,9 +54,7 @@ protected:
     Clock::duration realTimeStep_;
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
-
-   
-
+    engine::Logger logger_;
 };
 
 }  // namespace engine
