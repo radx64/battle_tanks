@@ -20,18 +20,20 @@ Bunch of random ideas to randomly pick up and implement
     - [x] 🐛: You can close window while resizing by passing cursor over close button
     - [x] 🐛: When window is first resized and then dragged it jumps to some offset position (like where topbar was before resize)
     - [x] 🐛: Window focusing is not working properly after resizing
-- [ ] Some basic dynamic layout support like (consider removing alignment variable in position in favour of layout):
+- [ ] Some basic dynamic layout support like:
   - [x] Horizontal
   - [x] Vertical
   - [ ] Box (like 2x2 grid)
-- [ ] Edit box
+  - [ ] Size constrains
+- [x] Edit box
   - [x] Text input
-  - [ ] Selection support
-    - [ ] 🐛 Moving cursor does not clear previous selection
-  - [ ] Copy paste mechanics
+  - [x] Selection support
+    - [x] 🐛 Moving cursor does not clear previous selection
+  - [x] Copy paste mechanics
 - [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 - [ ] Consider creating render command batches and split gui from sfml implementation
+- [ ] 🐛 Fix font height detection as now some WA is used which sometimes does not work properly
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing
@@ -47,4 +49,4 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] Address in code TODOs and FIXMEs :) meh
 - [x] Create UT target and write few crude tests
 - [ ] Build system should split production and test targets to not build UTs in production
-- [ ] Split github actions to run production and UT separately
+- [x] Split github actions to run production and UT separately

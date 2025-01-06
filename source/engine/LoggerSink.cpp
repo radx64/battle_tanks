@@ -13,7 +13,9 @@ void LoggerSink::print(const fmt::v9::color color,
     const auto date = std::chrono::system_clock::now();  
     const auto milis = std::chrono::duration_cast<std::chrono::milliseconds>(date.time_since_epoch());
 
-    fmt::print(fg(color), "[{:<5}][{:%Y-%m-%d %H:%M:}{:%S}][{}] | {}\n", logType, date, milis, prefix, log);
+    fmt::print("[{:%Y-%m-%d %H:%M:}{:%S}] [", date, milis);
+    fmt::print(fg(color), "{:<5}", logType);
+    fmt::print("] {}: {}\n", prefix, log);
 }
 
 }  // namespace engine

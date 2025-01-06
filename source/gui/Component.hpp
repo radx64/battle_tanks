@@ -8,7 +8,6 @@
 #include "engine/Logger.hpp"
 #include "gui/EventReceiver.hpp"
 
-
 namespace gui
 {
 
