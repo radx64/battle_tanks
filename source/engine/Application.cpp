@@ -57,7 +57,7 @@ int Application::run()
     }
     catch (const std::exception& e)
     {
-        Logger::error("EXCEPTION THROWN: ",  e.what());
+        Logger::error(fmt::format("EXCEPTION THROWN: {}",  e.what()));
         return -1;
     }
 
