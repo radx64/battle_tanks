@@ -15,8 +15,6 @@
 #include "gui/Window.hpp"
 #include "gui/ProgressBar.hpp"
 
-#include <iostream>
-
 using namespace std::literals;
 
 namespace gui_sandbox
@@ -27,7 +25,7 @@ Application::Application()
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
-, timer_{2s, [](){/*std::cout << "2 seconds heartbeat ❤️ \n";*/}}
+, timer_{5s, [](){engine::Logger::debug("2 seconds heartbeat ❤️ \n");}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&timer_, engine::TimerType::Repeating);
@@ -182,8 +180,8 @@ void Application::onInit()
         auto cookingButton = std::make_unique<gui::Button>("IS COOKING");
         auto hardButton = std::make_unique<gui::Button>("HARD");
 
-        helloButton->onClick([](){std::cout << "Hello?" << std::endl;});
-        worldButton->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
+        helloButton->onClick([](){engine::Logger::info("Hello?");});
+        worldButton->onClick([](){engine::Logger::info("Is it me you looking for?");});
 
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));

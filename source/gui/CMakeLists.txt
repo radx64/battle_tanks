@@ -5,6 +5,11 @@ PUBLIC
     ${CMAKE_SOURCE_DIR}/source
 )
 
+target_link_libraries(gui_lib
+PUBLIC
+    engine_lib
+)
+
 target_sources(gui_lib
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Alignment.cpp

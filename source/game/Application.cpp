@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <exception>
-#include <iostream>
 #include <optional>
 #include <string>
 #include <vector>
@@ -94,7 +93,7 @@ void Application::onInit()
 
 void Application::onClose()
 {
-    std::cout << "Goodbye!" << std::endl;
+    engine::Logger::info("Goodbye!");
     gui::FontLibrary::destroy();
     graphics::TextureLibrary::destroy();
 }
@@ -271,8 +270,8 @@ void Application::configureGUI()
         auto helloButton = std::make_unique<gui::Button>("HELLO");
         auto worldButton = std::make_unique<gui::Button>("WORLD");
 
-        helloButton->onClick([](){std::cout << "Hello?" << std::endl;});
-        worldButton->onClick([](){std::cout << "Is it me you looking for?" << std::endl;});
+        helloButton->onClick([](){engine::Logger::info("Hello?");});
+        worldButton->onClick([](){engine::Logger::info("Is it me you looking for?");});
 
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));

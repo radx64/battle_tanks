@@ -4,8 +4,6 @@
 
 #include "Timer.hpp"
 
-#include <iostream>
-
 namespace engine
 {
 

@@ -2,8 +2,6 @@
 
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
 namespace gui
 {
 

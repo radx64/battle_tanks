@@ -5,8 +5,6 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
-#include <iostream>
-
 constexpr float EXTRA_END_OFFSET = 5.f;
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 

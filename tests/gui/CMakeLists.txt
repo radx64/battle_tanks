@@ -10,7 +10,6 @@ PRIVATE
 
 target_link_libraries(battle_tanks_testing_gui 
 PRIVATE
-
     gui_lib
     
     gtest
