@@ -116,7 +116,7 @@ EventStatus WindowManager::processEventWithActiveWindow(const T& event)
     EventStatus result{EventStatus::NotConsumed};
 
     //Forward event to active window
-    if (activeWindowHandle_ and activeWindowHandle_->isActive())
+    if (activeWindowHandle_ and activeWindowHandle_->isActive() and not activeWindowHandle_->isDead())
     {
         result = activeWindowHandle_->receive(event);
     }

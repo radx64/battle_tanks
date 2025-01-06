@@ -25,7 +25,7 @@ Application::Application()
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
-, timer_{5s, [](){engine::Logger::debug("2 seconds heartbeat ❤️ \n");}}
+, timer_{5s, [](){engine::Logger::debug("5 seconds heartbeat ❤️ \n");}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&timer_, engine::TimerType::Repeating);
