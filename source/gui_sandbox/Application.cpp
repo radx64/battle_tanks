@@ -259,6 +259,41 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createFocusTestWindowButton));
 
+    auto createGridLayoutWindowButton = std::make_unique<gui::Button>("Create Grid Layout Window");
+    createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
+    createGridLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createGridLayoutWindowButton->onClick([this](){
+
+        auto window = std::make_unique<gui::Window>();
+        auto gridLayout = std::make_unique<gui::GridLayout>(2, 3);
+
+        auto helloButton = std::make_unique<gui::Button>("HELLO");
+        auto worldButton = std::make_unique<gui::Button>("WORLD");
+        auto somethingButton = std::make_unique<gui::Button>("SOMETHING");
+        auto cookingButton = std::make_unique<gui::Button>("IS COOKING");
+        auto hardButton = std::make_unique<gui::Button>("HARD");
+
+        helloButton->onClick([this](){logger_.info("Hello?");});
+        worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
+
+        gridLayout->addChild(std::move(helloButton));
+        gridLayout->addChild(std::move(worldButton));
+        gridLayout->addChild(std::move(somethingButton));
+        gridLayout->addChild(std::move(cookingButton));
+        gridLayout->addChild(std::move(hardButton));
+
+        window->addChild(std::move(gridLayout));
+
+        window->setSize(sf::Vector2f(700.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
+        window->setTitle("Oh my gosh");
+
+        windowManager_.addWindow(std::move(window));
+
+    });
+
+    windowManager_.mainWindow().addChild(std::move(createGridLayoutWindowButton));
+
     auto leftLabel = std::make_unique<gui::Label>("Left aligned label");
     leftLabel->setPosition({100.f, 20.f});
     leftLabel->setSize({400.f, 40.f});

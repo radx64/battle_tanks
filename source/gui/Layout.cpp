@@ -29,6 +29,68 @@ void FillLayout::onSizeChange()
     }
 }
 
+GridLayout::GridLayout(unsigned int width, unsigned int height)
+: width_{width}
+, height_{height}
+{
+    grid_.resize(width_);
+    for (auto& column : grid_)
+    {
+        column.resize(height_);
+    }
+}
+
+void GridLayout::addChild(std::unique_ptr<Component> child)
+{
+    for (size_t y = 0; y < height_; y++)
+    {
+        for (size_t x = 0; x < width_; x++)
+        {
+            if (grid_[x][y] == nullptr)
+            {
+                auto fillLayoutWrapper = std::make_unique<FillLayout>();
+                fillLayoutWrapper->addChild(std::move(child));
+                grid_[x][y] = fillLayoutWrapper.get();
+                Component::addChild(std::move(fillLayoutWrapper));
+                recalculateChildrenBounds();
+                return;
+            }
+        }
+    }
+    logger_.error("GridLayout is full");
+}
+
+void GridLayout::onParentSizeChange(const sf::Vector2f& parentSize)
+{
+    setSize(parentSize);
+    recalculateChildrenBounds();
+}
+
+void GridLayout::recalculateChildrenBounds()
+{
+    auto layoutSize = getSize();
+    auto cellSize = sf::Vector2f{layoutSize.x / width_, layoutSize.y / height_};
+
+    for (size_t x = 0; x < width_; x++)
+    {
+        for (size_t y = 0; y < height_; y++)
+        {
+            if (grid_[x][y] == nullptr)
+            {
+                continue;
+            }
+            auto cellPosition = sf::Vector2f{x * cellSize.x, y * cellSize.y};
+            grid_[x][y]->setPosition(cellPosition);
+            grid_[x][y]->setSize(cellSize);
+        }
+    }
+}
+
+void GridLayout::onSizeChange()
+{
+    recalculateChildrenBounds();
+}
+
 void BaseLineLayout::addChild(std::unique_ptr<Component> child)
 {
     // Fill layout is used to make an extra abstraction layer

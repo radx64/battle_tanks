@@ -18,8 +18,34 @@ public:
     FillLayout() = default;
     void addChild(std::unique_ptr<Component> child) override;
 
+protected:
     void onParentSizeChange(const sf::Vector2f& parentSize) override;
     void onSizeChange() override;
+};
+
+class GridLayout : public Layout
+{
+/*  TODO:
+    - Add runtime change/removal of components
+    - Add runtime change of grid size
+    - Add support for defining grid size in percentage
+*/
+
+public:
+    GridLayout(unsigned int width, unsigned int height);
+
+    void addChild(std::unique_ptr<Component> child) override;
+
+protected:
+    void onParentSizeChange(const sf::Vector2f& parentSize) override;
+    void onSizeChange() override;
+
+    void recalculateChildrenBounds();
+
+    unsigned int width_;
+    unsigned int height_;
+
+    std::vector<std::vector<Component*>> grid_;
 };
 
 class BaseLineLayout : public Layout
