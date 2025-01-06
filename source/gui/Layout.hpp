@@ -8,14 +8,12 @@ namespace gui
 class Layout : public Component
 {
 public:
-    Layout() = default;
     void onRender(sf::RenderTexture& renderWindow) override;
 };
 
 class FillLayout : public Layout
 {
 public:
-    FillLayout() = default;
     void addChild(std::unique_ptr<Component> child) override;
 
 protected:
@@ -32,9 +30,15 @@ class GridLayout : public Layout
 */
 
 public:
-    GridLayout(unsigned int width, unsigned int height);
+    GridLayout(size_t width, size_t height);
 
     void addChild(std::unique_ptr<Component> child) override;
+    void addNewColumn();
+    void removeLastColumn();
+    void addNewRow();
+    void removeLastRow();
+    size_t getWidth() const;
+    size_t getHeight() const;
 
 protected:
     void onParentSizeChange(const sf::Vector2f& parentSize) override;
@@ -42,8 +46,8 @@ protected:
 
     void recalculateChildrenBounds();
 
-    unsigned int width_;
-    unsigned int height_;
+    size_t width_;
+    size_t  height_;
 
     std::vector<std::vector<Component*>> grid_;
 };
@@ -51,8 +55,6 @@ protected:
 class BaseLineLayout : public Layout
 {
 public:
-    BaseLineLayout() = default;
-
     void addChild(std::unique_ptr<Component> child) override;
 
 protected:
@@ -64,8 +66,6 @@ protected:
 
 class HorizontalLayout : public BaseLineLayout
 {
-public:
-    HorizontalLayout() = default;
 
 protected:
     sf::Vector2f getChildSize(const sf::Vector2f& layoutSize) const override;
@@ -74,8 +74,6 @@ protected:
 
 class VerticalLayout : public BaseLineLayout
 {
-public:
-    VerticalLayout() = default;
 
 protected:
     sf::Vector2f getChildSize(const sf::Vector2f& layoutSize) const override;

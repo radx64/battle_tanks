@@ -29,7 +29,7 @@ void FillLayout::onSizeChange()
     }
 }
 
-GridLayout::GridLayout(unsigned int width, unsigned int height)
+GridLayout::GridLayout(size_t width, size_t height)
 : width_{width}
 , height_{height}
 {
@@ -40,26 +40,105 @@ GridLayout::GridLayout(unsigned int width, unsigned int height)
     }
 }
 
+size_t GridLayout::getWidth() const
+{
+    return width_;
+}
+
+size_t GridLayout::getHeight() const
+{
+    return height_;
+}
+
 void GridLayout::addChild(std::unique_ptr<Component> child)
 {
     for (size_t y = 0; y < height_; y++)
     {
         for (size_t x = 0; x < width_; x++)
         {
-            if (grid_[x][y] == nullptr)
+            if (grid_[x][y] != nullptr)
             {
-                auto fillLayoutWrapper = std::make_unique<FillLayout>();
-                fillLayoutWrapper->addChild(std::move(child));
-                grid_[x][y] = fillLayoutWrapper.get();
-                Component::addChild(std::move(fillLayoutWrapper));
-                recalculateChildrenBounds();
-                return;
+                continue;
             }
+            auto fillLayoutWrapper = std::make_unique<FillLayout>();
+            fillLayoutWrapper->addChild(std::move(child));
+            grid_[x][y] = fillLayoutWrapper.get();
+            Component::addChild(std::move(fillLayoutWrapper));
+            recalculateChildrenBounds();
+            return;
         }
     }
     logger_.error("GridLayout is full");
 }
 
+void GridLayout::addNewColumn()
+{
+    width_++;
+    for (auto& column : grid_)
+    {
+        column.resize(height_);
+    }
+    grid_.emplace_back(height_);
+    recalculateChildrenBounds();
+}
+
+void GridLayout::removeLastColumn()
+{
+    if (width_ == 0)
+    {
+        logger_.error("No columns to remove");
+        return;
+    }
+
+    //remove last column from children
+    for (size_t y = 0; y < height_; y++)
+    {
+        auto* component = grid_[width_-1][y];
+        if (component != nullptr)
+        {
+            removeChild(component);
+        }
+    }
+
+    width_--;
+    grid_.pop_back();
+
+    recalculateChildrenBounds();
+}
+
+void GridLayout::addNewRow()
+{
+    height_++;
+    for (auto& column : grid_)
+    {
+        column.emplace_back(nullptr);
+    }
+    recalculateChildrenBounds();
+}
+
+void GridLayout::removeLastRow()
+{
+    if (height_ == 0)
+    {
+        logger_.error("No rows to remove");
+        return;
+    }
+    height_--;
+    for (auto& column : grid_)
+    {
+        if (column.empty())
+        {
+            continue;
+        }
+        auto* component = column.back();
+        column.pop_back();
+        if (component != nullptr)
+        {
+            removeChild(component);
+        }
+    }
+    recalculateChildrenBounds();
+}
 void GridLayout::onParentSizeChange(const sf::Vector2f& parentSize)
 {
     setSize(parentSize);

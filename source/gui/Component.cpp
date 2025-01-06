@@ -55,6 +55,11 @@ Component::Component(const std::source_location location)
     
 }
 
+Component::~Component()
+{
+    logger_.debug("Destroying");
+}
+
 void Component::render(sf::RenderTexture& renderTexture)
 {
     if (!isVisible_) return;
@@ -437,6 +442,21 @@ void Component::addChild(std::unique_ptr<Component> child)
     child->updateGlobalPosition();
     child->onParentSizeChange(getSize());
     children_.emplace_back(std::move(child));
+}
+
+void Component::removeChild(const Component* child)
+{
+    auto found = std::find_if(children_.begin(), children_.end(),
+        [child](const auto& c) { return c.get() == child; });
+
+    if (found != children_.end())
+    {
+        children_.erase(found);
+    }
+    else
+    {
+        logger_.warning(fmt::format("Trying to remove child {} that is not present", fmt::ptr(child)));
+    }
 }
 
 void Component::selectFocusedChild(Component* focusedChild)

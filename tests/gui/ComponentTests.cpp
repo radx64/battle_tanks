@@ -14,12 +14,14 @@ public:
     MOCK_METHOD(void, die, ());
     ~ComponentSpy() override
     {
+        logger_.debug("Dying");
         die();
     }
 
     MOCK_METHOD(void, render_mock, ());
     void onRender(sf::RenderTexture&) override
     {
+        logger_.debug("onRender called");
         render_mock();
     }
 
@@ -27,12 +29,14 @@ public:
 
     void makeSpyFocusable()
     {
+        logger_.debug("Spy made focusable");
         enableFocus();
     }
 
     MOCK_METHOD(void, focusGained, ());
     gui::EventStatus on(const gui::event::FocusGained&) override
     {
+        logger_.debug("Focus gained");
         focusGained();
         return EventStatus::Consumed;
     }
@@ -40,6 +44,7 @@ public:
     MOCK_METHOD(void, focusLost, ());
     gui::EventStatus on(const gui::event::FocusLost&) override
     {
+        logger_.debug("Focus lost");
         focusLost();
         return EventStatus::Consumed;
     }
@@ -80,6 +85,36 @@ TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyed)
 
     EXPECT_TRUE(::testing::Mock::VerifyAndClearExpectations(sut_.get()));
     sut_.reset();
+}
+
+TEST(ComponentShould, beAbleToRemoveChildrenOnDemand)
+{
+    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+
+    auto child_1_ptr = child_1.get();
+    auto child_2_ptr = child_2.get();
+    auto child_3_ptr = child_3.get();
+
+    sut_->addChild(std::move(child_1));
+    sut_->addChild(std::move(child_2));
+    sut_->addChild(std::move(child_3));
+
+    EXPECT_CALL(*child_1_ptr, die()).Times(1);
+    EXPECT_CALL(*child_2_ptr, die()).Times(1);
+    EXPECT_CALL(*child_3_ptr, die()).Times(0);
+
+    sut_->removeChild(child_1_ptr);
+    sut_->removeChild(child_2_ptr);
+    sut_->removeChild(nullptr);
+
+    // Destructor of test body will destroy mocks nevertheless
+    // so it is important to check before test body ends
+    ::testing::Mock::VerifyAndClearExpectations(child_1_ptr);
+    ::testing::Mock::VerifyAndClearExpectations(child_2_ptr);
+    ::testing::Mock::VerifyAndClearExpectations(child_3_ptr);
 }
 
 TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyedEvenInHierarchy)

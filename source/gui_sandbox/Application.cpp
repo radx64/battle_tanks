@@ -1,5 +1,7 @@
 #include "Application.hpp"
 
+#include <fmt/format.h>
+
 #include "Config.hpp"
 
 #include "engine/Context.hpp"
@@ -265,7 +267,72 @@ void Application::onInit()
     createGridLayoutWindowButton->onClick([this](){
 
         auto window = std::make_unique<gui::Window>();
+
         auto gridLayout = std::make_unique<gui::GridLayout>(2, 3);
+
+        auto verticalLayout = std::make_unique<gui::VerticalLayout>();
+        auto horizontalLayout = std::make_unique<gui::HorizontalLayout>();
+
+        auto gridStatusLabel = std::make_unique<gui::Label>("");
+        gridStatusLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+
+        auto updateGridStatusLabel = [gridLayoutPtr = gridLayout.get(), gridStatusLabelPtr = gridStatusLabel.get()]()
+        {
+            gridStatusLabelPtr->setText(fmt::format("Grid size: {}x{}", gridLayoutPtr->getWidth(), 
+                gridLayoutPtr->getHeight()));
+        };
+
+        updateGridStatusLabel();
+
+        auto addNewColumnButton = std::make_unique<gui::Button>("Add Column");
+        auto removeLastColumnButton = std::make_unique<gui::Button>("Remove Column");
+        auto addNewRowButton = std::make_unique<gui::Button>("Add Row");
+        auto removeLastRowButton = std::make_unique<gui::Button>("Remove Row");
+
+        addNewColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
+            logger_.info("Adding new column to grid layout");
+            gridLayoutPtr->addNewColumn();
+            updateGridStatusLabel();
+
+            for (size_t i = 0; i < gridLayoutPtr->getHeight(); ++i)
+            {
+                auto button = std::make_unique<gui::Button>("NEW BUTTON " + std::to_string(i));
+                gridLayoutPtr->addChild(std::move(button));
+            }
+        });
+
+        removeLastColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
+            logger_.info("Removing last column from grid layout");
+            gridLayoutPtr->removeLastColumn();\
+            updateGridStatusLabel();
+        });
+
+        addNewRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
+            logger_.info("Adding new row to grid layout");
+            gridLayoutPtr->addNewRow();
+            updateGridStatusLabel();
+
+            for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)
+            {
+                auto button = std::make_unique<gui::Button>("NEW BUTTON " + std::to_string(i));
+                gridLayoutPtr->addChild(std::move(button));
+            }
+        });
+
+        removeLastRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
+            logger_.info("Removing last row from grid layout");
+            gridLayoutPtr->removeLastRow();
+            updateGridStatusLabel();
+        });
+
+
+        horizontalLayout->addChild(std::move(addNewColumnButton));
+        horizontalLayout->addChild(std::move(removeLastColumnButton));
+        horizontalLayout->addChild(std::move(addNewRowButton));
+        horizontalLayout->addChild(std::move(removeLastRowButton));
+
+        verticalLayout->addChild(std::move(horizontalLayout));
+        verticalLayout->addChild(std::move(gridStatusLabel));
 
         auto helloButton = std::make_unique<gui::Button>("HELLO");
         auto worldButton = std::make_unique<gui::Button>("WORLD");
@@ -282,7 +349,10 @@ void Application::onInit()
         gridLayout->addChild(std::move(cookingButton));
         gridLayout->addChild(std::move(hardButton));
 
-        window->addChild(std::move(gridLayout));
+
+        verticalLayout->addChild(std::move(gridLayout));
+
+        window->addChild(std::move(verticalLayout));
 
         window->setSize(sf::Vector2f(700.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));

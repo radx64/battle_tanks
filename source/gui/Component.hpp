@@ -23,7 +23,7 @@ class Component : public EventReceiver
 public:
     Component(const std::source_location location =
                std::source_location::current());
-    virtual ~Component() = default;
+    virtual ~Component();
 
     virtual void onRender(sf::RenderTexture& renderTexture) = 0;
 
@@ -45,6 +45,7 @@ public:
 
     const sf::Vector2f getGlobalPosition() const;
     virtual void addChild(std::unique_ptr<Component> child);
+    virtual void removeChild(const Component* child);
 
     void focus();
     void defocus();
