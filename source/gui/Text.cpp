@@ -45,6 +45,11 @@ void Text::setSize(const sf::Vector2f& size)
     size_ = size;
 }
 
+sf::FloatRect Text::getLocalBounds() const
+{
+    return text_.getLocalBounds();
+}
+
 void Text::setText(const std::string_view& text)
 {
     text_.setString(text.data());
@@ -111,8 +116,35 @@ void Text::updateTexture()
 
 void Text::updateSprite()
 {
-    sprite_.setTextureRect(sf::IntRect(-offset_.x, -offset_.y, size_.x, size_.y));
-    sprite_.setPosition(globalPosition_);
+    sf::Vector2f textureStart{0.f, 0.f};
+    sf::Vector2f positionOffset{0.f, 0.f};
+
+    if (offset_.x > 0)
+    {
+        //sprite_.setTextureRect(sf::IntRect(0, 0, size_.x, size_.y));
+        //sprite_.setPosition(globalPosition_ + offset_);
+        textureStart.x = 0;
+        positionOffset.x = offset_.x;
+    }
+    else
+    {
+        textureStart.x = -offset_.x;
+        positionOffset.x = 0;
+    }
+
+    if (offset_.y > 0)
+    {
+        textureStart.y = 0;
+        positionOffset.y = offset_.y;
+    }
+    else
+    {
+        textureStart.y = -offset_.y;
+        positionOffset.y = 0;
+    }
+
+    sprite_.setTextureRect(sf::IntRect(textureStart.x, textureStart.y, size_.x, size_.y));
+    sprite_.setPosition(globalPosition_ + positionOffset);
 }
 
 sf::Vector2f Text::getGlobalPosition() const

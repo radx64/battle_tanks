@@ -2,6 +2,8 @@
 
 #include <type_traits>
 
+#include <SFML/Graphics.hpp>
+
 namespace gui
 {
 enum class Alignment
@@ -17,5 +19,7 @@ enum class Alignment
 Alignment operator|(Alignment lhs, Alignment rhs);
 Alignment operator&(Alignment lhs, Alignment rhs);
 bool isBitSet(const Alignment& alignment, const Alignment& bit);
+
+sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& size, const sf::FloatRect& bounds, const Alignment& alignment);
 
 }  // namespace gui

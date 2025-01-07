@@ -44,42 +44,13 @@ void Label::onPositionChange()
 
 void Label::recalculatePositionAndSize()
 {
-    float xOffset{};
-    float yOffset{};
-
-    if (isBitSet(alignment_, gui::Alignment::Left))
-    {
-        xOffset = 0;
-    }
-    else if (isBitSet(alignment_, gui::Alignment::HorizontallyCentered))
-    {
-        xOffset = getSize().x / 2 -  text_.getLocalBounds().width / 2;
-    }
-    else if (isBitSet(alignment_, gui::Alignment::Right))
-    {
-        xOffset = getSize().x - text_.getLocalBounds().width;
-    }
-
     // FIXME: font height is problematic to calculate as SFML is keeping common baseline
     // so top of a label has an empty space
     // there are few possible solution for vertically centering this
     // I need to work on that later
 
-    if (isBitSet(alignment_, gui::Alignment::Top))
-    {
-        yOffset -= 0;
-    }
-    else if (isBitSet(alignment_, gui::Alignment::VerticallyCentered))
-    {
-        yOffset = getSize().y / 2 - text_.getLocalBounds().height / 2;
-
-    }
-    else if (isBitSet(alignment_, gui::Alignment::Bottom))
-    {
-        yOffset = getSize().y - text_.getLocalBounds().height;
-    }
-
-    text_.setPosition(getGlobalPosition() + sf::Vector2f{xOffset, yOffset});
+    text_.setPosition(getGlobalPosition() + calculateAlignmentOffset(
+        getSize(), text_.getLocalBounds(), alignment_));
 }
 
 void Label::setAlignment(const gui::Alignment& alignment)

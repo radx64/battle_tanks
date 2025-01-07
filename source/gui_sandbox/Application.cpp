@@ -222,18 +222,21 @@ void Application::onInit()
 
         auto hl1 = std::make_unique<gui::HorizontalLayout>();
         auto edit1 = std::make_unique<gui::EditBox>();
+        edit1->setAlignment(gui::Alignment::Left);
         auto button1 = std::make_unique<gui::Button>("Button1");
         hl1->addChild(std::move(edit1));
         hl1->addChild(std::move(button1));
 
         auto hl2 = std::make_unique<gui::HorizontalLayout>();
         auto edit2 = std::make_unique<gui::EditBox>();
+        edit2->setAlignment(gui::Alignment::HorizontallyCentered);
         auto button2 = std::make_unique<gui::Button>("Button2");
         hl2->addChild(std::move(edit2));
         hl2->addChild(std::move(button2));
 
         auto hl3 = std::make_unique<gui::HorizontalLayout>();
         auto edit3 = std::make_unique<gui::EditBox>();
+        edit3->setAlignment(gui::Alignment::Right);
         auto button3 = std::make_unique<gui::Button>("Button3");
         hl3->addChild(std::move(edit3));
         hl3->addChild(std::move(button3));
@@ -278,13 +281,13 @@ void Application::onInit()
         positionLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         auto positionValue = std::make_unique<gui::EditBox>();
         positionValue->setText("0");
+        positionValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
 
         auto* positionValuePtr = positionValue.get();
         (void) positionValuePtr;
 
         positionBox->addChild(std::move(positionLabel));
         positionBox->addChild(std::move(positionValue));
-
 
         auto gridStatusLabel = std::make_unique<gui::Label>("");
         gridStatusLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);

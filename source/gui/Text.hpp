@@ -41,6 +41,7 @@ public:
 
     sf::Vector2f getGlobalPosition() const;
     sf::Vector2f getSize() const;
+    sf::FloatRect getLocalBounds() const;
     float getTextWidth() const;
     float getTextHeight() const;
 

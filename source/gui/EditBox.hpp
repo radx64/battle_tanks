@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "gui/Alignment.hpp"
 #include "gui/Component.hpp"
 #include "gui/Selection.hpp"
 #include "gui/Text.hpp"
@@ -18,6 +19,7 @@ public:
 
     std::string getText();
     void setText(const std::string_view text);
+    void setAlignment(const gui::Alignment& alignment);
 
 protected:
     void onRender(sf::RenderTexture& renderTexture) override;
@@ -52,6 +54,7 @@ protected:
     uint32_t maxLength_;
     bool anyShiftHeldDown_;
     bool mouseLeftButtonPressed_;
+    gui::Alignment alignment_;
 };
 
 }  // namespace gui

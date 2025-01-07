@@ -1,12 +1,22 @@
 #include "gui/EditBox.hpp"
 
+#include <fmt/format.h>
+
 #include "gui/Clipboard.hpp"
 #include "gui/Debug.hpp"
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
+
 constexpr float EXTRA_END_OFFSET = 5.f;
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
+
+/*
+    TODO: 
+    Cursor position is not taken into account when calculating alignment offset
+    Add repetable key press for both moving cursor and entering text
+
+*/
 
 namespace gui
 {
@@ -17,6 +27,7 @@ EditBox::EditBox()
 , maxLength_{DEFAULT_TEXT_MAX_LENGTH}
 , anyShiftHeldDown_{false}
 , mouseLeftButtonPressed_{false}
+, alignment_{gui::Alignment::Left}
 {
     enableFocus();
 
@@ -53,6 +64,12 @@ void EditBox::setText(const std::string_view text)
     updateTextVisbleArea();
 }
 
+void EditBox::setAlignment(const gui::Alignment& alignment)
+{
+    alignment_ = alignment;
+    updateTextVisbleArea();
+}
+
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(backgroundShape_);
@@ -61,9 +78,9 @@ void EditBox::onRender(sf::RenderTexture& renderTexture)
 
 void EditBox::onSizeChange()
 {
+    text_.setSize(Component::getSize());
     text_.setGlobalPosition(Component::getGlobalPosition());
     backgroundShape_.setSize(Component::getSize());
-    text_.setSize(Component::getSize());
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -83,13 +100,22 @@ void EditBox::updateTextVisbleArea()
     float textXoffset = text_.getSize().x - text_.getTextWidth();
     textXoffset -= EXTRA_END_OFFSET;
 
+    auto alignmentOffset = calculateAlignmentOffset(text_.getSize(), text_.getLocalBounds(), alignment_);
+
+    logger_.debug(fmt::format("TextXoffset: {} AlignmentOffset: {} \n", textXoffset, alignmentOffset.x));
+
+    // if text does no fit (alignment offset is negative)
+    // ignore it and behave as normal left alignment so cursor
+    // will be on the right side of the text and stil visible
+    if (alignmentOffset.x < 0) alignmentOffset.x = 0;
+
     if (textXoffset < 0)
     {
-        text_.setOffset({textXoffset, 0.f});
+        text_.setOffset(sf::Vector2f{textXoffset, 0.f} + alignmentOffset);
     }
     else
     {
-        text_.setOffset({0.f, 0.f});
+        text_.setOffset(alignmentOffset);
     }
 }
 
@@ -276,11 +302,6 @@ EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             text_.setText(newText);
             break;
         }
-        // case sf::Keyboard::Tab :
-        // {
-        //     defocus();
-        //     return EventStatus::Consumed;
-        // }
 
         case sf::Keyboard::Return :
         {
