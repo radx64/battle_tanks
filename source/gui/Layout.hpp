@@ -33,10 +33,10 @@ public:
     GridLayout(size_t width, size_t height);
 
     void addChild(std::unique_ptr<Component> child) override;
-    void addNewColumn();
-    void removeLastColumn();
-    void addNewRow();
-    void removeLastRow();
+    bool addColumn(const size_t position);
+    bool removeColumn(const size_t position);
+    bool addRow(const size_t position);
+    bool removeRow(const size_t position);
     size_t getWidth() const;
     size_t getHeight() const;
 
@@ -47,7 +47,7 @@ protected:
     void recalculateChildrenBounds();
 
     size_t width_;
-    size_t  height_;
+    size_t height_;
 
     std::vector<std::vector<Component*>> grid_;
 };

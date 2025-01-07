@@ -22,7 +22,7 @@ using namespace std::literals;
 namespace gui_sandbox
 {
 Application::Application()
-: engine::Application{"GUI sandbox", "GUI Sandbox Application"}
+: engine::Application{"GUI sandbox", "Main application"}
 , windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
@@ -273,6 +273,19 @@ void Application::onInit()
         auto verticalLayout = std::make_unique<gui::VerticalLayout>();
         auto horizontalLayout = std::make_unique<gui::HorizontalLayout>();
 
+        auto positionBox = std::make_unique<gui::VerticalLayout>();
+        auto positionLabel = std::make_unique<gui::Label>("Position:");
+        positionLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto positionValue = std::make_unique<gui::EditBox>();
+        positionValue->setText("0");
+
+        auto* positionValuePtr = positionValue.get();
+        (void) positionValuePtr;
+
+        positionBox->addChild(std::move(positionLabel));
+        positionBox->addChild(std::move(positionValue));
+
+
         auto gridStatusLabel = std::make_unique<gui::Label>("");
         gridStatusLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
 
@@ -282,6 +295,8 @@ void Application::onInit()
                 gridLayoutPtr->getHeight()));
         };
 
+        positionBox->addChild(std::move(gridStatusLabel));
+
         updateGridStatusLabel();
 
         auto addNewColumnButton = std::make_unique<gui::Button>("Add Column");
@@ -289,9 +304,27 @@ void Application::onInit()
         auto addNewRowButton = std::make_unique<gui::Button>("Add Row");
         auto removeLastRowButton = std::make_unique<gui::Button>("Remove Row");
 
-        addNewColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
+        auto getPositionValue = [positionValuePtr]()
+        {
+            return std::stoi(positionValuePtr->getText());
+        }; 
+
+        addNewColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue]{
             logger_.info("Adding new column to grid layout");
-            gridLayoutPtr->addNewColumn();
+            
+            auto position = 0;
+            try
+            {
+                position = getPositionValue();
+            } 
+            catch (const std::invalid_argument& e)
+            {
+                logger_.error(fmt::format("Invalid argument: {}", e.what()));
+                return;
+            }
+
+            if(not gridLayoutPtr->addColumn(position)) return;
+
             updateGridStatusLabel();
 
             for (size_t i = 0; i < gridLayoutPtr->getHeight(); ++i)
@@ -301,15 +334,39 @@ void Application::onInit()
             }
         });
 
-        removeLastColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
-            logger_.info("Removing last column from grid layout");
-            gridLayoutPtr->removeLastColumn();\
+        removeLastColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue]{
+            logger_.info("Removing column from grid layout");
+
+            auto position  = 0;
+            try
+            {
+                position = getPositionValue();
+            } 
+            catch (const std::invalid_argument& e)
+            {
+                logger_.error(fmt::format("Invalid argument: {}", e.what()));
+                return;
+            }
+
+            if(not gridLayoutPtr->removeColumn(position)) return;
             updateGridStatusLabel();
         });
 
-        addNewRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
+        addNewRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue]{
             logger_.info("Adding new row to grid layout");
-            gridLayoutPtr->addNewRow();
+
+            auto position  = 0;
+            try
+            {
+                position = getPositionValue();
+            } 
+            catch (const std::invalid_argument& e)
+            {
+                logger_.error(fmt::format("Invalid argument: {}", e.what()));
+                return;
+            }
+
+            if(not gridLayoutPtr->addRow(position)) return;
             updateGridStatusLabel();
 
             for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)
@@ -319,20 +376,32 @@ void Application::onInit()
             }
         });
 
-        removeLastRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel]{
-            logger_.info("Removing last row from grid layout");
-            gridLayoutPtr->removeLastRow();
+        removeLastRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue]{
+            logger_.info("Removing row from grid layout");
+
+            auto position  = 0;
+            try
+            {
+                position = getPositionValue();
+            } 
+            catch (const std::invalid_argument& e)
+            {
+                logger_.error(fmt::format("Invalid argument: {}", e.what()));
+                return;
+            }
+
+            if(not gridLayoutPtr->removeRow(position)) return;
             updateGridStatusLabel();
         });
 
 
+        horizontalLayout->addChild(std::move(positionBox));
         horizontalLayout->addChild(std::move(addNewColumnButton));
         horizontalLayout->addChild(std::move(removeLastColumnButton));
         horizontalLayout->addChild(std::move(addNewRowButton));
         horizontalLayout->addChild(std::move(removeLastRowButton));
 
         verticalLayout->addChild(std::move(horizontalLayout));
-        verticalLayout->addChild(std::move(gridStatusLabel));
 
         auto helloButton = std::make_unique<gui::Button>("HELLO");
         auto worldButton = std::make_unique<gui::Button>("WORLD");
@@ -356,7 +425,7 @@ void Application::onInit()
 
         window->setSize(sf::Vector2f(700.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
-        window->setTitle("Oh my gosh");
+        window->setTitle("The Grid, a digital frontier...");
 
         windowManager_.addWindow(std::move(window));
 

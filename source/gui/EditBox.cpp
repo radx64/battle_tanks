@@ -42,15 +42,15 @@ EditBox::EditBox()
     backgroundShape_.setSize(Component::getSize());
 }
 
-EditBox::~EditBox()
-{
-    text_.removeModifier(&selection_);
-    text_.removeModifier(&textCursor_);
-}
-
 std::string EditBox::getText()
 {
     return text_.getText();
+}
+
+void EditBox::setText(const std::string_view text)
+{
+    text_.setText(text);
+    updateTextVisbleArea();
 }
 
 void EditBox::onRender(sf::RenderTexture& renderTexture)

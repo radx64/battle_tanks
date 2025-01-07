@@ -1,6 +1,6 @@
 #include "gui/Layout.hpp"
 
-#include <cassert>
+#include <fmt/format.h>
 
 namespace gui
 {
@@ -11,7 +11,11 @@ void Layout::onRender(sf::RenderTexture&)
 
 void FillLayout::addChild(std::unique_ptr<Component> child)
 {
-    assert(getChildrenCount() == 0 && "FillLayout can have only one child object");
+    if (getChildrenCount() > 0)
+    {
+        logger_.error("FillLayout can have only one child");
+    } 
+
     Component::addChild(std::move(child));
 }
 
@@ -36,7 +40,7 @@ GridLayout::GridLayout(size_t width, size_t height)
     grid_.resize(width_);
     for (auto& column : grid_)
     {
-        column.resize(height_);
+        column.resize(height_, nullptr);
     }
 }
 
@@ -71,74 +75,81 @@ void GridLayout::addChild(std::unique_ptr<Component> child)
     logger_.error("GridLayout is full");
 }
 
-void GridLayout::addNewColumn()
+
+bool GridLayout::addColumn(const size_t position)
 {
-    width_++;
-    for (auto& column : grid_)
+    if (position > width_)
     {
-        column.resize(height_);
+        logger_.error(fmt::format("Column {} is out of bounds", position));
+        return false;
     }
-    grid_.emplace_back(height_);
+
+    width_++;
+    grid_.emplace(std::begin(grid_) + position, height_);
     recalculateChildrenBounds();
+    return true;
 }
 
-void GridLayout::removeLastColumn()
+bool GridLayout::removeColumn(const size_t position)
 {
-    if (width_ == 0)
+    if (position >= width_)
     {
-        logger_.error("No columns to remove");
-        return;
-    }
-
-    //remove last column from children
-    for (size_t y = 0; y < height_; y++)
-    {
-        auto* component = grid_[width_-1][y];
-        if (component != nullptr)
-        {
-            removeChild(component);
-        }
+        logger_.error(fmt::format("Column {} is out of bounds", position));
+        return false;
     }
 
     width_--;
-    grid_.pop_back();
-
-    recalculateChildrenBounds();
-}
-
-void GridLayout::addNewRow()
-{
-    height_++;
-    for (auto& column : grid_)
+    for (size_t y = 0; y < height_; y++)
     {
-        column.emplace_back(nullptr);
-    }
-    recalculateChildrenBounds();
-}
-
-void GridLayout::removeLastRow()
-{
-    if (height_ == 0)
-    {
-        logger_.error("No rows to remove");
-        return;
-    }
-    height_--;
-    for (auto& column : grid_)
-    {
-        if (column.empty())
-        {
-            continue;
-        }
-        auto* component = column.back();
-        column.pop_back();
+        auto* component = grid_[position][y];
         if (component != nullptr)
         {
             removeChild(component);
         }
     }
+    grid_.erase(std::begin(grid_) + position);
     recalculateChildrenBounds();
+    return true;
 }
+
+bool GridLayout::addRow(const size_t position)
+{
+    if (position > height_)
+    {
+        logger_.error(fmt::format("Row {} is out of bounds", position));
+        return false;
+    }
+
+    height_++;
+    for (auto& column : grid_)
+    {
+        column.emplace(std::begin(column) + position, nullptr);
+    }
+    recalculateChildrenBounds();
+    return true;
+}
+
+bool GridLayout::removeRow(const size_t position)
+{
+    if (position >= height_)
+    {
+        logger_.error(fmt::format("Row {} is out of bounds", position));
+        return false;
+    }
+
+    height_--;
+    for (auto& column : grid_)
+    {
+        if (column[position] != nullptr)
+        {
+            removeChild(column[position]);
+        }
+        column.erase(std::begin(column) + position);
+    }
+    recalculateChildrenBounds();
+    return true;
+}
+
 void GridLayout::onParentSizeChange(const sf::Vector2f& parentSize)
 {
     setSize(parentSize);

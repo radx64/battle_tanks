@@ -52,7 +52,7 @@ Component::Component(const std::source_location location)
 , id_{InstanceIdGenerator::getId()}
 , logger_{debug::getFunctionNameOnly(location)+ " id:" + std::to_string(id_)}
 {
-    
+    logger_.debug("Creating");
 }
 
 Component::~Component()

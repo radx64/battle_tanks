@@ -14,9 +14,10 @@ class EditBox : public Component
 {
 public:
     EditBox();
-    ~EditBox();
+    ~EditBox() = default;
 
     std::string getText();
+    void setText(const std::string_view text);
 
 protected:
     void onRender(sf::RenderTexture& renderTexture) override;
