@@ -147,6 +147,9 @@ EventStatus Component::receive(const event::MouseEntered& mouseEnteredEvent)
 }
 EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
 {
+    // FIXME: this if statement might be wrong as it also disable event processing
+    // of this component. I need to think about it later
+    // same in MouseEntered event
     if (not childrenEventsProcessingEnabled_) return EventStatus::NotConsumed;
     for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
     {
@@ -157,7 +160,7 @@ EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
     }
 
     wasMouseInside_ = false;
-    return this->on(mouseLeftEvent);
+    return on(mouseLeftEvent);
 }
 
 EventStatus Component::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)

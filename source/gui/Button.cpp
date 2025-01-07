@@ -98,9 +98,17 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
 
-    if (isLeftClicked and backgroundShape_.getGlobalBounds().contains(mousePosition))
+    if (isLeftClicked and wasMouseInside() and backgroundShape_.getGlobalBounds().contains(mousePosition))
     {
+        // wasMouseInside() call is added
+        // due to nondeterministic behaviour of mouseLeft 
+        // and mouseClick events when mouse is moved quickly
+        // There might be a situation that mouseLeft event is send before mouse click
+        // altough click has old position stored
+        // FIXME: I need to sort it out later, but at least I know the reason now
+
         backgroundShape_.setFillColor(sf::Color(0,255,0,255));
+      
         return gui::EventStatus::Consumed;
     }
     return gui::EventStatus::NotConsumed;
