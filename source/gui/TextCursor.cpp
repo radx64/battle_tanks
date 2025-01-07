@@ -8,7 +8,7 @@
 #include "gui/Text.hpp"
 #include "gui/StyleSheet.hpp"
 
-constexpr float CURSOR_WIDTH = 2.f;
+constexpr float CURSOR_WIDTH = 4.f;
 
 using namespace std::literals;
 
@@ -54,7 +54,7 @@ void TextCursor::setFont(const sf::Font* font)
 
 void TextCursor::update()
 {
-    auto cursorPosition = sf::Vector2f{0.f, 0.f};
+    auto cursorPosition = sf::Vector2f{-CURSOR_WIDTH / 2.f, 0.f};
 
     assert(characterSize_ > 0 && "Character size must be > 0");
     assert(font_ != nullptr && "Font* needs to be set");
