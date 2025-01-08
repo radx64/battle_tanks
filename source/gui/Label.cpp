@@ -50,7 +50,7 @@ void Label::recalculatePositionAndSize()
     // I need to work on that later
 
     text_.setPosition(getGlobalPosition() + calculateAlignmentOffset(
-        getSize(), text_.getLocalBounds(), alignment_));
+        getSize(), boundsToSize(text_.getLocalBounds()), alignment_));
 }
 
 void Label::setAlignment(const gui::Alignment& alignment)

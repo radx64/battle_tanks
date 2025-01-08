@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "gui/FontHeightCache.hpp"
 #include "gui/TextDisplayModifier.hpp"
 
 namespace gui
@@ -11,10 +12,10 @@ Text::Text()
 : offset_{0.f, 0.f}
 , sprite_(texture_.getTexture())
 {
-    // TODO decide on size 
-    // According to docs try to not resize as this is costly operation
-    // Consider either alocating it once per text with some reasonable size
-    // or dynamic resize if really really needed
+    // Allocate texture size once per text object to avoid costly resizing operations.
+    // Consider adjusting the size dynamically only if absolutely necessary.
+    // Or make some texture manager that will handle this and share one texture between multiple text objects.
+    // TODO: decide on default size later and behaviour later
     texture_.create(2048,128);
 }
 
@@ -121,8 +122,6 @@ void Text::updateSprite()
 
     if (offset_.x > 0)
     {
-        //sprite_.setTextureRect(sf::IntRect(0, 0, size_.x, size_.y));
-        //sprite_.setPosition(globalPosition_ + offset_);
         textureStart.x = 0;
         positionOffset.x = offset_.x;
     }
@@ -164,7 +163,7 @@ float Text::getTextWidth() const
 
 float Text::getTextHeight() const
 {
-    return text_.getLocalBounds().height;
+    return getFontHeight(*text_.getFont(), text_.getCharacterSize());
 }
 
 void Text::addModifier(TextDisplayModifier* modifier)

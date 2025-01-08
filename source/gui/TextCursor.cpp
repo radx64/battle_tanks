@@ -29,7 +29,7 @@ TextCursor::TextCursor(gui::Text& text)
     auto style = BasicStyleSheetFactory::instance();
     cursorImage_.setFillColor(sf::Color::Black);
     cursorImage_.setOutlineColor(sf::Color::Black);
-    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, (float)style.getFontSize()+5.f});
+    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, static_cast<float>(style.getFontSize()) + 5.f});
 }
 
 void TextCursor::animateCursor()

@@ -64,7 +64,7 @@ void Selection::to(const uint32_t index, const sf::Vector2f& position)
 void Selection::update()
 {
     selection_.setPosition(selectionStartPosition_);
-    selection_.setSize(sf::Vector2f(selectionEndPosition_.x - selectionStartPosition_.x, text_.getTextHeight())); 
+    selection_.setSize(sf::Vector2f(selectionEndPosition_.x - selectionStartPosition_.x, text_.getTextHeight() + 5.f)); 
     text_.updateTexture();
 }
 

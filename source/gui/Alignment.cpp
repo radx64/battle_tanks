@@ -20,7 +20,7 @@ bool isBitSet(const Alignment& alignment, const Alignment& bit)
     return ((alignment & bit) == bit);
 }
 
-sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& size, const sf::FloatRect& bounds, const Alignment& alignment)
+sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& parentSize, const sf::Vector2f& childSize, const Alignment& alignment)
 {
     sf::Vector2f offset {0.0f, 0.0f};
 
@@ -30,11 +30,12 @@ sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& size, const sf::FloatR
     }
     else if (isBitSet(alignment, Alignment::HorizontallyCentered))
     {
-        offset.x = size.x / 2 - bounds.width / 2;
+        //TODO: refacor this division
+        offset.x = parentSize.x / 2.f - childSize.x / 2.f;
     }
     else if (isBitSet(alignment, Alignment::Right))
     {
-        offset.x = size.x - bounds.width;
+        offset.x = parentSize.x - childSize.x;
     }
 
     if (isBitSet(alignment, Alignment::Top))
@@ -43,14 +44,19 @@ sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& size, const sf::FloatR
     }
     else if (isBitSet(alignment, Alignment::VerticallyCentered))
     {
-        offset.y = size.y / 2 - bounds.height / 2;
+        offset.y = parentSize.y / 2.f - childSize.y / 2.f;
     }
     else if (isBitSet(alignment, Alignment::Bottom))
     {
-        offset.y = size.y - bounds.height;
+        offset.y = parentSize.y - childSize.y;
     }
 
     return offset;
+}
+
+sf::Vector2f boundsToSize(const sf::FloatRect& bounds)
+{
+    return sf::Vector2f{bounds.width, bounds.height};
 }
 
 }  // namespace gui

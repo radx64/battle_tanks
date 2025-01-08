@@ -8,7 +8,8 @@
 #include "gui/StyleSheet.hpp"
 
 
-constexpr float EXTRA_END_OFFSET = 5.f;
+const sf::Vector2f EXTRA_END_OFFSET{2.f, 2.f};
+
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 
 /*
@@ -78,7 +79,7 @@ void EditBox::onRender(sf::RenderTexture& renderTexture)
 
 void EditBox::onSizeChange()
 {
-    text_.setSize(Component::getSize());
+    text_.setSize(Component::getSize() - EXTRA_END_OFFSET*2.f);
     text_.setGlobalPosition(Component::getGlobalPosition());
     backgroundShape_.setSize(Component::getSize());
     updateTextVisbleArea();
@@ -98,11 +99,10 @@ void EditBox::onPositionChange()
 void EditBox::updateTextVisbleArea()
 {
     float textXoffset = text_.getSize().x - text_.getTextWidth();
-    textXoffset -= EXTRA_END_OFFSET;
 
-    auto alignmentOffset = calculateAlignmentOffset(text_.getSize(), text_.getLocalBounds(), alignment_);
+    sf::Vector2f textSize = {text_.getTextWidth(), text_.getTextHeight()};
 
-    logger_.debug(fmt::format("TextXoffset: {} AlignmentOffset: {} \n", textXoffset, alignmentOffset.x));
+    auto alignmentOffset = calculateAlignmentOffset(getSize(), textSize, alignment_);
 
     // if text does no fit (alignment offset is negative)
     // ignore it and behave as normal left alignment so cursor

@@ -20,6 +20,7 @@ Alignment operator|(Alignment lhs, Alignment rhs);
 Alignment operator&(Alignment lhs, Alignment rhs);
 bool isBitSet(const Alignment& alignment, const Alignment& bit);
 
-sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& size, const sf::FloatRect& bounds, const Alignment& alignment);
+sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& size, const sf::Vector2f& bounds, const Alignment& alignment);
+sf::Vector2f boundsToSize(const sf::FloatRect& bounds);
 
 }  // namespace gui
