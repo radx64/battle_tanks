@@ -105,12 +105,6 @@ void EditBox::updateTextVisbleArea()
     auto alignmentOffset = calculateAlignmentOffset(getSize(), textSize, alignment_);
 
 
-    // FIMME: I need to work a bit on this alignment
-    // as it is not working how I would like it to work
-    // Something is messing cursor possition on lower case
-    // letters like "u"
-    alignmentOffset.y += text_.getLocalBounds().top;
-
     // if text does no fit (alignment offset is negative)
     // ignore it and behave as normal left alignment so cursor
     // will be on the right side of the text and stil visible

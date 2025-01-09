@@ -38,7 +38,7 @@ float getFontHeight(const sf::Font& font, unsigned int characterSize)
     sf::Text text;
     text.setFont(font);
     text.setCharacterSize(characterSize);
-    text.setString("Ay|");
+    text.setString("Ay|_");
     const auto height = text.getLocalBounds().height;
     logger.debug(fmt::format("Calculated height: {}", height));
 

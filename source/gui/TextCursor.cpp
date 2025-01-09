@@ -25,11 +25,11 @@ TextCursor::TextCursor(gui::Text& text)
 , blinkTimer_{500ms, [this]{animateCursor();}}
 {
     restartBlinkAnimation();
-
-    auto style = BasicStyleSheetFactory::instance();
     cursorImage_.setFillColor(sf::Color::Black);
     cursorImage_.setOutlineColor(sf::Color::Black);
-    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, static_cast<float>(style.getFontSize())});
+
+    //FIXME: Cursor vertical size should be taken from font rendering size (not point size)
+    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, 25.f});
 }
 
 void TextCursor::animateCursor()

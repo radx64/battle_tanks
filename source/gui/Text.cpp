@@ -50,7 +50,12 @@ void Text::setSize(const sf::Vector2f& size)
 
 sf::FloatRect Text::getLocalBounds() const
 {
-    return text_.getLocalBounds();
+    auto bounds = text_.getLocalBounds();
+    // This assures that text text alignment is ignored when sizing 
+    // or aligning component from outside as top is used as origin point
+    // of text object
+    bounds.height += bounds.top; 
+    return bounds;
 }
 
 void Text::setText(const std::string_view& text)
@@ -106,11 +111,6 @@ void Text::updateTexture()
     assert (text_.getLocalBounds().width <= texture_.getSize().x && "Text width exceeded renderable texure width");
 
     texture_.clear(sf::Color::Transparent);
-
-    // This alignes top left corner of text to it's bounding box
-    sf::FloatRect bounds = text_.getLocalBounds();
-    // Assures that rendering letters like "o" then "9" will not change position
-    text_.setOrigin(bounds.left, bounds.top);
 
     texture_.draw(text_);
 
