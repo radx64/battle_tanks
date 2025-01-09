@@ -476,17 +476,17 @@ void Application::onInit()
 
     auto multilineTopAlignedLabel = std::make_unique<gui::Label>("Top multiline\nlabel is here\nand a bit there");
     multilineTopAlignedLabel->setPosition({100.f, 300.f});
-    multilineTopAlignedLabel->setSize({400.f, 40.f});
+    multilineTopAlignedLabel->setSize({400.f, 80.f});
     multilineTopAlignedLabel->setAlignment(gui::Alignment::Top);
 
     auto multilineCenterAlignedLabel = std::make_unique<gui::Label>("Centered multiline\nlabel is here\nand a bit there");
     multilineCenterAlignedLabel->setPosition({100.f, 400.f});
-    multilineCenterAlignedLabel->setSize({400.f, 40.f});
+    multilineCenterAlignedLabel->setSize({400.f, 80.f});
     multilineCenterAlignedLabel->setAlignment(gui::Alignment::VerticallyCentered);
 
     auto multilineBottomAlignedLabel = std::make_unique<gui::Label>("Bottom multiline\nlabel is here\nand a bit there");
     multilineBottomAlignedLabel->setPosition({100.f, 500.f});
-    multilineBottomAlignedLabel->setSize({400.f, 40.f});
+    multilineBottomAlignedLabel->setSize({400.f, 80.f});
     multilineBottomAlignedLabel->setAlignment(gui::Alignment::Bottom);
 
     windowManager_.mainWindow().addChild(std::move(multilineTopAlignedLabel));

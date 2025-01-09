@@ -1,8 +1,7 @@
 #include "gui/Label.hpp"
 
-#include "gui/StyleSheet.hpp"
-
 #include "gui/Debug.hpp"
+#include "gui/StyleSheet.hpp"
 
 namespace gui 
 {
@@ -18,7 +17,8 @@ Label::Label(const std::string_view& text)
     text_.setOutlineThickness(style.getOutlineThickness());
     setText(text.data());
     setPosition({0.0f, 0.0f});
-    text_.setPosition(Component::getGlobalPosition());
+    text_.setSize(getSize());
+    text_.setGlobalPosition(Component::getGlobalPosition());
 }
 
 void Label::onRender(sf::RenderTexture& renderTexture)
@@ -28,7 +28,7 @@ void Label::onRender(sf::RenderTexture& renderTexture)
 
 void Label::setText(const std::string_view& text)
 {
-    text_.setString(text.data());
+    text_.setText(text);
     recalculatePositionAndSize();
 }
 
@@ -48,8 +48,10 @@ void Label::recalculatePositionAndSize()
     // so top of a label has an empty space
     // there are few possible solution for vertically centering this
     // I need to work on that later
-
-    text_.setPosition(getGlobalPosition() + calculateAlignmentOffset(
+    text_.setSize(getSize());
+    text_.setGlobalPosition(getGlobalPosition());
+    
+    text_.setOffset(calculateAlignmentOffset(
         getSize(), boundsToSize(text_.getLocalBounds()), alignment_));
 }
 

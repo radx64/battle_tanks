@@ -4,6 +4,7 @@
 
 #include "gui/Alignment.hpp"
 #include "gui/Component.hpp"
+#include "gui/Text.hpp"
 
 namespace gui
 {
@@ -21,9 +22,8 @@ protected:
     void onSizeChange() override;
     void onPositionChange() override;
     void recalculatePositionAndSize();
-    sf::Text text_;
+    gui::Text text_;
     gui::Alignment alignment_;
 };
 
 }  // namespace gui
-
