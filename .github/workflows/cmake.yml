@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: ${{env.PACKAGE_LIST}}
@@ -39,7 +39,7 @@ jobs:
   test-UT:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: ${{env.PACKAGE_LIST}}
@@ -60,7 +60,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: ${{env.PACKAGE_LIST}}
@@ -71,7 +71,7 @@ jobs:
   valgrind:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: ${{env.PACKAGE_LIST}}
