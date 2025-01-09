@@ -17,8 +17,7 @@ Label::Label(const std::string_view& text)
     text_.setOutlineThickness(style.getOutlineThickness());
     setText(text.data());
     setPosition({0.0f, 0.0f});
-    text_.setSize(getSize());
-    text_.setGlobalPosition(Component::getGlobalPosition());
+    recalculatePositionAndSize();
 }
 
 void Label::onRender(sf::RenderTexture& renderTexture)
@@ -50,7 +49,7 @@ void Label::recalculatePositionAndSize()
     // I need to work on that later
     text_.setSize(getSize());
     text_.setGlobalPosition(getGlobalPosition());
-    
+
     text_.setOffset(calculateAlignmentOffset(
         getSize(), boundsToSize(text_.getLocalBounds()), alignment_));
 }

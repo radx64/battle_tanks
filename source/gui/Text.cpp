@@ -5,6 +5,8 @@
 #include "gui/FontHeightCache.hpp"
 #include "gui/TextDisplayModifier.hpp"
 
+#include <gui/Alignment.hpp>
+
 namespace gui
 {
 
@@ -104,7 +106,12 @@ void Text::updateTexture()
     assert (text_.getLocalBounds().width <= texture_.getSize().x && "Text width exceeded renderable texure width");
 
     texture_.clear(sf::Color::Transparent);
-    text_.setPosition(sf::Vector2f{0.f, 0.f});
+
+    // This alignes top left corner of text to it's bounding box
+    sf::FloatRect bounds = text_.getLocalBounds();
+    // Assures that rendering letters like "o" then "9" will not change position
+    text_.setOrigin(bounds.left, bounds.top);
+
     texture_.draw(text_);
 
     for (auto* modifier : modifiers_)
