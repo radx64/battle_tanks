@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "engine/Clock.hpp"
+#include "engine/Logger.hpp"
 
 namespace engine
 {
@@ -36,13 +37,13 @@ public:
     void update(const Clock::duration& delta);
 
     void start(Timer* timer, const TimerType type);
-    void restart(Timer* timer, const TimerType type);
     void cancel(Timer* timer);
     const Clock::time_point& getCurrentTime() const;
 
 protected:
     std::vector<TimerInstance> timers_;
     Clock::time_point currentTime_;
+    Logger logger_;
 };
 
 }  // namespace engine

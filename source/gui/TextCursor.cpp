@@ -237,7 +237,7 @@ void TextCursor::enable()
 void TextCursor::restartBlinkAnimation()
 {
     isCursorVisible_ = true;
-    engine::Context::getTimerService().restart(&blinkTimer_, engine::TimerType::Repeating);
+    engine::Context::getTimerService().start(&blinkTimer_, engine::TimerType::Repeating);
 }
 
 }  // namespace gui

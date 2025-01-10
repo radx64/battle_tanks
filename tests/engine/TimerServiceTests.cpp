@@ -189,19 +189,23 @@ TEST(TimerServiceShould, restartNotActiveTimerWithUpdateValues)
     timerService.update(Clock::duration(1000ms));
 }
 
-TEST(TimerServiceShould, startNotKnownTimerWithRestartSameAsStart)
+TEST(TimerServiceShould, properlyCancelNewTimerWithPreviouslyUsedAddress)
 {
     TimerClientStub timerClientStub;
 
     TimerService timerService{};
-    Timer timer{Clock::duration(500ms), [&timerClientStub]()
+    Timer timer{Clock::duration(60s), [&timerClientStub]()
     {
         timerClientStub.notificaiton();
     }};
 
-    timerService.restart(&timer, TimerType::OneShot);
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
-    timerService.update(Clock::duration(600ms));
+    timerService.start(&timer, TimerType::OneShot);
+    timerService.cancel(&timer);
+    timerService.start(&timer, TimerType::OneShot);
+    timerService.cancel(&timer);
+    
+    EXPECT_CALL(timerClientStub, notificaiton).Times(0);
+    timerService.update(Clock::duration(61s));
 }
 
 }  // namespace engine
