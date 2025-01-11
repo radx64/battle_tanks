@@ -36,11 +36,13 @@ public:
 
     void update(const Clock::duration& delta);
 
-    void start(Timer* timer, const TimerType type);
+    void start(Timer* timer, const TimerType type);    
+    void restart(Timer* timer, const TimerType type);
     void cancel(Timer* timer);
     const Clock::time_point& getCurrentTime() const;
 
 protected:
+    void startImpl(Timer* timer, const TimerType type);
     std::vector<TimerInstance> timers_;
     Clock::time_point currentTime_;
     Logger logger_;

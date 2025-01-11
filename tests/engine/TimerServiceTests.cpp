@@ -12,7 +12,7 @@ namespace engine
 class TimerClientStub
 {
 public:
-    MOCK_METHOD(void, notificaiton, ());
+    MOCK_METHOD(void, notification, ());
 };
 
 TEST(TimerServiceShould, returnCurrentTime)
@@ -30,16 +30,16 @@ TEST(TimerServiceShould, returnCurrentTime)
 
 TEST(TimerServiceShould, callTimerWhenIsOver)
 {
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
 
     TimerService timerService{};
     Timer timer{Clock::duration(500ms), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     timerService.start(&timer, TimerType::OneShot);
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
     timerService.update(Clock::duration(600ms));
 }
 
@@ -47,24 +47,24 @@ TEST(TimerServiceShould, CallRepeatingTimerEveryInterval)
 {
     TimerService timerService{};
 
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
     TimerClientStub timer2ClientStub;
 
     Timer timer{Clock::duration(400ms), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
     {
-        timer2ClientStub.notificaiton();
+        timer2ClientStub.notification();
     });
 
     timerService.start(&timer, TimerType::Repeating);
     timerService.start(&timer2, TimerType::Repeating);
 
-    EXPECT_CALL(timerClientStub, notificaiton).Times(2);
-    EXPECT_CALL(timer2ClientStub, notificaiton).Times(3);
+    EXPECT_CALL(timerClientStub, notification).Times(2);
+    EXPECT_CALL(timer2ClientStub, notification).Times(3);
 
     for (size_t i = 0; i < 10; ++i)
     {
@@ -76,24 +76,24 @@ TEST(TimerServiceShould, CallOneShotTimerOnlyOnce)
 {
     TimerService timerService{};
 
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
     TimerClientStub timer2ClientStub;
 
     Timer timer{Clock::duration(400ms), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
     {
-        timer2ClientStub.notificaiton();
+        timer2ClientStub.notification();
     });
 
     timerService.start(&timer, TimerType::OneShot);
     timerService.start(&timer2, TimerType::OneShot);
 
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
-    EXPECT_CALL(timer2ClientStub, notificaiton).Times(1);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
+    EXPECT_CALL(timer2ClientStub, notification).Times(1);
 
     for (size_t i = 0; i < 10; ++i)
     {
@@ -105,24 +105,24 @@ TEST(TimerServiceShould, NotCallCanceledTimer)
 {
     TimerService timerService{};
 
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
     TimerClientStub timer2ClientStub;
 
     Timer timer{Clock::duration(400ms), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
     {
-        timer2ClientStub.notificaiton();
+        timer2ClientStub.notification();
     });
 
     timerService.start(&timer, TimerType::OneShot);
     timerService.start(&timer2, TimerType::OneShot);
 
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
-    EXPECT_CALL(timer2ClientStub, notificaiton).Times(0);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
+    EXPECT_CALL(timer2ClientStub, notification).Times(0);
 
     timerService.cancel(&timer2);
 
@@ -136,12 +136,12 @@ TEST(TimerServiceShould, HandleTimerGoingOutOfScope)
 {
     TimerService timerService{};
 
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
     TimerClientStub timer2ClientStub;
 
     Timer timer{Clock::duration(400ms), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     timerService.start(&timer, TimerType::OneShot);
@@ -149,14 +149,14 @@ TEST(TimerServiceShould, HandleTimerGoingOutOfScope)
     {
         Timer timer2(Clock::duration(300ms), [&timer2ClientStub]()
         {
-            timer2ClientStub.notificaiton();
+            timer2ClientStub.notification();
         });
 
         timerService.start(&timer2, TimerType::OneShot);
     }
 
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
-    EXPECT_CALL(timer2ClientStub, notificaiton).Times(0);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
+    EXPECT_CALL(timer2ClientStub, notification).Times(0);
 
     for (size_t i = 0; i < 10; ++i)
     {
@@ -164,39 +164,39 @@ TEST(TimerServiceShould, HandleTimerGoingOutOfScope)
     }
 }
 
-TEST(TimerServiceShould, restartNotActiveTimerWithUpdateValues)
+TEST(TimerServiceShould, RestartNotActiveTimerWithUpdateValues)
 {
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
 
     TimerService timerService{};
     Timer timer{Clock::duration(500ms), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     timerService.start(&timer, TimerType::OneShot);
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
     timerService.update(Clock::duration(600ms));
 
     timer.setDelay(Clock::duration(2000ms));
 
     timerService.start(&timer, TimerType::OneShot);
 
-    EXPECT_CALL(timerClientStub, notificaiton).Times(0);
+    EXPECT_CALL(timerClientStub, notification).Times(0);
     timerService.update(Clock::duration(1000ms));
 
-    EXPECT_CALL(timerClientStub, notificaiton).Times(1);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
     timerService.update(Clock::duration(1000ms));
 }
 
-TEST(TimerServiceShould, properlyCancelNewTimerWithPreviouslyUsedAddress)
+TEST(TimerServiceShould, ProperlyCancelNewTimerWithPreviouslyUsedAddress)
 {
-    TimerClientStub timerClientStub;
+    TimerClientStub timerClientStub{};
 
     TimerService timerService{};
     Timer timer{Clock::duration(60s), [&timerClientStub]()
     {
-        timerClientStub.notificaiton();
+        timerClientStub.notification();
     }};
 
     timerService.start(&timer, TimerType::OneShot);
@@ -204,7 +204,42 @@ TEST(TimerServiceShould, properlyCancelNewTimerWithPreviouslyUsedAddress)
     timerService.start(&timer, TimerType::OneShot);
     timerService.cancel(&timer);
     
-    EXPECT_CALL(timerClientStub, notificaiton).Times(0);
+    EXPECT_CALL(timerClientStub, notification).Times(0);
+    timerService.update(Clock::duration(61s));
+}
+
+TEST(TimerServiceShould, RestartCancelledButNotYetRemovedTimer)
+{
+    TimerClientStub timerClientStub{};
+
+    TimerService timerService{};
+
+    Timer timer{Clock::duration(60s), [&timerClientStub]()
+    {
+        timerClientStub.notification();
+    }};
+
+    timerService.start(&timer, TimerType::OneShot);
+    timerService.cancel(&timer);
+    timerService.restart(&timer, TimerType::OneShot);
+
+    EXPECT_CALL(timerClientStub, notification).Times(1);
+    timerService.update(Clock::duration(61s));
+}
+
+TEST(TimerServiceShould, StartTimerUsingRestartMethod)
+{
+    TimerClientStub timerClientStub{};
+
+    TimerService timerService{};
+
+    Timer timer{Clock::duration(60s), [&timerClientStub]()
+    {
+        timerClientStub.notification();
+    }};
+
+    timerService.restart(&timer, TimerType::OneShot);
+    EXPECT_CALL(timerClientStub, notification).Times(1);
     timerService.update(Clock::duration(61s));
 }
 

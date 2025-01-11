@@ -35,7 +35,8 @@ public:
 protected:
     float getGlyphOffset(const std::string& string, const size_t index);
     void animateCursor();
-    void restartBlinkAnimation();
+    void startBlinkAnimation();
+    void stopBlinkAnimation();
 
     uint32_t characterSize_;
     const sf::Font* font_;

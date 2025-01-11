@@ -24,7 +24,6 @@ TextCursor::TextCursor(gui::Text& text)
 , isCursorVisible_{false}
 , blinkTimer_{500ms, [this]{animateCursor();}}
 {
-    restartBlinkAnimation();
     cursorImage_.setFillColor(sf::Color::Black);
     cursorImage_.setOutlineColor(sf::Color::Black);
 
@@ -88,7 +87,7 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
 
 void TextCursor::moveLeft(const bool moveWholeWord)
 {
-    restartBlinkAnimation();
+    //startBlinkAnimation();
     if (cursorIndex_ == 0)
     {
         return;
@@ -130,7 +129,7 @@ void TextCursor::moveLeft(const bool moveWholeWord)
 
 void TextCursor::moveRight(const bool moveWholeWord)
 {
-    restartBlinkAnimation();
+    //startBlinkAnimation();
     if (not moveWholeWord)
     {
         cursorIndex_++;
@@ -182,7 +181,7 @@ float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
 
 void TextCursor::moveTo(float mouseX)
 {
-    restartBlinkAnimation();
+    //startBlinkAnimation();
     auto fieldText = text_.getText();
     float offset{text_.getGlobalPosition().x + text_.getOffset().x};
     size_t foundIndex{fieldText.length()};
@@ -223,21 +222,28 @@ void TextCursor::setIndex(const uint32_t index)
 
 void TextCursor::disable()
 {
+    if (not enabled_) return;
     enabled_ = false;
-    isCursorVisible_ = false;
+    stopBlinkAnimation();
 }
 
 void TextCursor::enable()
 {
+    if (enabled_) return;
     enabled_ = true;
-    isCursorVisible_ = true;
-    restartBlinkAnimation();
+    startBlinkAnimation();
 }
 
-void TextCursor::restartBlinkAnimation()
+void TextCursor::startBlinkAnimation()
 {
     isCursorVisible_ = true;
     engine::Context::getTimerService().start(&blinkTimer_, engine::TimerType::Repeating);
+}
+
+void TextCursor::stopBlinkAnimation()
+{
+    isCursorVisible_ = false;
+    engine::Context::getTimerService().cancel(&blinkTimer_);
 }
 
 }  // namespace gui
