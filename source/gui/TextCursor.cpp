@@ -87,7 +87,7 @@ void TextCursor::render(sf::RenderTexture& renderTexture)
 
 void TextCursor::moveLeft(const bool moveWholeWord)
 {
-    //startBlinkAnimation();
+    startBlinkAnimation();
     if (cursorIndex_ == 0)
     {
         return;
@@ -129,7 +129,7 @@ void TextCursor::moveLeft(const bool moveWholeWord)
 
 void TextCursor::moveRight(const bool moveWholeWord)
 {
-    //startBlinkAnimation();
+    startBlinkAnimation();
     if (not moveWholeWord)
     {
         cursorIndex_++;
@@ -181,7 +181,7 @@ float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
 
 void TextCursor::moveTo(float mouseX)
 {
-    //startBlinkAnimation();
+    startBlinkAnimation();
     auto fieldText = text_.getText();
     float offset{text_.getGlobalPosition().x + text_.getOffset().x};
     size_t foundIndex{fieldText.length()};
@@ -217,6 +217,7 @@ uint32_t TextCursor::getIndex() const
 void TextCursor::setIndex(const uint32_t index)
 {
     cursorIndex_ = index;
+    startBlinkAnimation();
     update();
 }
 
@@ -237,7 +238,7 @@ void TextCursor::enable()
 void TextCursor::startBlinkAnimation()
 {
     isCursorVisible_ = true;
-    engine::Context::getTimerService().start(&blinkTimer_, engine::TimerType::Repeating);
+    engine::Context::getTimerService().restart(&blinkTimer_, engine::TimerType::Repeating);
 }
 
 void TextCursor::stopBlinkAnimation()
