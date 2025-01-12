@@ -4,7 +4,7 @@
 
 #include "gui/Component.hpp"
 
-namespace gui
+namespace gui::window
 {
 
 class Panel : public Component
@@ -23,4 +23,4 @@ protected:
     sf::RectangleShape backgroundShape_;
 };
 
-}  // namespace gui
+}  // namespace gui::window

@@ -1,8 +1,8 @@
-#include "gui/Panel.hpp"
+#include "gui/window/Panel.hpp"
 
 #include "gui/StyleSheet.hpp"
 
-namespace gui
+namespace gui::window
 {
 
 Panel::Panel()
@@ -37,4 +37,4 @@ void Panel::disable()
     backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
 }
 
-}  // namespace gui
+}  // namespace gui::window

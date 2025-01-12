@@ -174,12 +174,7 @@ sf::Vector2f Text::getSize() const
     return size_;
 }
 
-float Text::getTextWidth() const
-{
-    return text_.getLocalBounds().width;
-}
-
-float Text::getTextHeight() const
+float Text::getTextSingleLineHeight() const
 {
     return getFontHeight(*text_.getFont(), text_.getCharacterSize());
 }

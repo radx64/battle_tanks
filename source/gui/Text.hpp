@@ -42,8 +42,7 @@ public:
     sf::Vector2f getGlobalPosition() const;
     sf::Vector2f getSize() const;
     sf::FloatRect getTextBounds() const;
-    float getTextWidth() const;
-    float getTextHeight() const;
+    float getTextSingleLineHeight() const;
 
     void addModifier(TextDisplayModifier* modifier);
     void removeModifier(TextDisplayModifier* modifier);
@@ -62,5 +61,5 @@ protected:
 
     std::vector<TextDisplayModifier*> modifiers_;
 };
-    
+
 }  // namespace gui

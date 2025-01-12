@@ -7,7 +7,9 @@
 #include "gui/Button.hpp"
 #include "gui/Component.hpp"
 #include "gui/Label.hpp"
-#include "gui/Panel.hpp"
+#include "gui/window/Header.hpp"
+#include "gui/window/Panel.hpp"
+#include "gui/window/StatusBar.hpp"
 
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
@@ -16,8 +18,8 @@ namespace gui
 {
 
 Window::Window()
-: killed_{false}
-, active_{false}
+: isDead_{false}
+, isActive_{false}
 , state_{State::Idle}
 {
     auto header = std::make_unique<window::Header>();
@@ -26,7 +28,7 @@ Window::Window()
     header_->setSize({getSize().x, window::config::HEADER_HEIGHT});
     Component::addChild(std::move(header));
 
-    auto windowPanel = std::make_unique<gui::Panel>();
+    auto windowPanel = std::make_unique<gui::window::Panel>();
     windowPanel_ = windowPanel.get();
     Component::addChild(std::move(windowPanel));
 
@@ -46,7 +48,7 @@ void Window::setTitle(const std::string_view& text)
     header_->setTitle(text);
 }
 
-bool Window::isInsideHeader(const sf::Vector2f point)
+bool Window::isInsideHeader(const sf::Vector2f& point)
 {
     return header_->isInside(point);
 }
@@ -68,17 +70,17 @@ bool Window::isInState(const Window::State& state) const
 void Window::close()
 {
     setVisibility(false);
-    killed_ = true;
+    isDead_ = true;
 }
 
 bool Window::isDead() const
 {
-    return killed_;
+    return isDead_;
 }
 
 void Window::enable()
 {
-    active_ = true;
+    isActive_ = true;
     header_->enable();
     windowPanel_->enable();
     statusBar_->enable();
@@ -86,7 +88,7 @@ void Window::enable()
 }
 void Window::disable()
 {
-    active_ = false;
+    isActive_ = false;
     header_->disable();
     windowPanel_->disable();
     statusBar_->disable();
@@ -95,7 +97,7 @@ void Window::disable()
 
 bool Window::isActive() const
 {
-    return active_;
+    return isActive_;
 }
 
 bool Window::isIdle() const

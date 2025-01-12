@@ -10,11 +10,11 @@
 #include "gui/StyleSheet.hpp"
 #include "gui/window/Config.hpp"
 
-#include "gui/window/StatusBar.hpp"
-#include "gui/window/Header.hpp"
-
 namespace gui { class Label; }
-namespace gui { class Panel; }
+
+namespace gui::window { class Panel; }
+namespace gui::window { class Header; }
+namespace gui::window { class StatusBar; }
 
 namespace gui
 {
@@ -57,7 +57,7 @@ protected:
         Resizing
     };
     bool isInState(const Window::State& state) const;
-    bool isInsideHeader(const sf::Vector2f point);
+    bool isInsideHeader(const sf::Vector2f& point);
     bool isInsideResizeGadget(const sf::Vector2f point);
 
     void onRender(sf::RenderTexture& renderTexture) override;
@@ -69,13 +69,13 @@ protected:
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
-    bool killed_;
-    bool active_;
+    bool isDead_;
+    bool isActive_;
     State state_;
     sf::Vector2f draggingOffset_;
 
     gui::window::Header* header_;
-    gui::Panel* windowPanel_;
+    gui::window::Panel* windowPanel_;
     gui::window::StatusBar* statusBar_;
 };
 

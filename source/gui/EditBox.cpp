@@ -98,7 +98,7 @@ void EditBox::onPositionChange()
 
 void EditBox::updateTextVisbleArea()
 {
-    float textXoffset = text_.getSize().x - text_.getTextWidth();
+    float textXoffset = text_.getSize().x - text_.getTextBounds().width;
 
     sf::Vector2f textSize = boundsToSize(text_.getTextBounds());
 
