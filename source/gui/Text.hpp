@@ -17,7 +17,7 @@ namespace gui
 class Text : public sf::Drawable
 {
 public:
-    Text();
+    Text(const bool alignToBaseLine);
 
     void setText(const std::string_view& text);
     std::string getText() const;
@@ -41,7 +41,7 @@ public:
 
     sf::Vector2f getGlobalPosition() const;
     sf::Vector2f getSize() const;
-    sf::FloatRect getLocalBounds() const;
+    sf::FloatRect getTextBounds() const;
     float getTextWidth() const;
     float getTextHeight() const;
 
@@ -58,6 +58,7 @@ protected:
     sf::RenderTexture texture_;
     sf::Sprite sprite_;
     sf::Text text_;
+    bool alignToBaseLine_;
 
     std::vector<TextDisplayModifier*> modifiers_;
 };

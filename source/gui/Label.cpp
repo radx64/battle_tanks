@@ -3,11 +3,14 @@
 #include "gui/Debug.hpp"
 #include "gui/StyleSheet.hpp"
 
+constexpr bool DONT_ALIGN_TEXT_TO_BASELINE = false;
+
 namespace gui 
 {
 
 Label::Label(const std::string_view& text)
 : alignment_(gui::Alignment::Left)
+, text_{DONT_ALIGN_TEXT_TO_BASELINE}
 {
     auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());
@@ -23,6 +26,8 @@ Label::Label(const std::string_view& text)
 void Label::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(text_);
+
+    debug::drawBox(renderTexture, getGlobalPosition(), getSize(), sf::Color::Cyan, -2.f);
 }
 
 void Label::setText(const std::string_view& text)
@@ -43,15 +48,11 @@ void Label::onPositionChange()
 
 void Label::recalculatePositionAndSize()
 {
-    // FIXME: font height is problematic to calculate as SFML is keeping common baseline
-    // so top of a label has an empty space
-    // there are few possible solution for vertically centering this
-    // I need to work on that later
-    text_.setSize(getSize());
     text_.setGlobalPosition(getGlobalPosition());
+    text_.setSize(getSize());
 
     text_.setOffset(calculateAlignmentOffset(
-        getSize(), boundsToSize(text_.getLocalBounds()), alignment_));
+        getSize(), boundsToSize(text_.getTextBounds()), alignment_));
 }
 
 void Label::setAlignment(const gui::Alignment& alignment)

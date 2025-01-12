@@ -9,8 +9,8 @@
 
 
 const sf::Vector2f EXTRA_END_OFFSET{2.f, 2.f};
-
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
+constexpr bool ALIGN_TEXT_TO_BASELINE = true;
 
 /*
     TODO: 
@@ -22,7 +22,7 @@ constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 namespace gui
 {
 EditBox::EditBox()
-: text_{}
+: text_{ALIGN_TEXT_TO_BASELINE}
 , textCursor_{text_}
 , selection_{text_}
 , maxLength_{DEFAULT_TEXT_MAX_LENGTH}
@@ -100,14 +100,14 @@ void EditBox::updateTextVisbleArea()
 {
     float textXoffset = text_.getSize().x - text_.getTextWidth();
 
-    sf::Vector2f textSize = {text_.getTextWidth(), text_.getTextHeight()};
+    sf::Vector2f textSize = boundsToSize(text_.getTextBounds());
 
     auto alignmentOffset = calculateAlignmentOffset(getSize(), textSize, alignment_);
-
 
     // if text does no fit (alignment offset is negative)
     // ignore it and behave as normal left alignment so cursor
     // will be on the right side of the text and stil visible
+
     if (alignmentOffset.x < 0) alignmentOffset.x = 0;
 
     if (textXoffset < 0)

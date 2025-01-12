@@ -8,7 +8,10 @@ namespace gui::debug
 {
     void toggle();
 
-    void drawBounds(sf::RenderTexture& renderWindow, const Component* component);
+    void drawBounds(sf::RenderTarget& renderTarget, const Component* component);
+
+    void drawBox(sf::RenderTarget& renderTarget, const sf::Vector2f position, 
+        const sf::Vector2f size, const sf::Color color, const float thickness);
 
     std::string getFunctionNameOnly(const std::source_location& location);
 

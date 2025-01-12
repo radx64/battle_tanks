@@ -1,5 +1,6 @@
 #include "gui/KeyboardController.hpp"
 
+#include "gui/Debug.hpp"
 #include "gui/WindowManager.hpp"
 
 namespace gui
@@ -36,6 +37,11 @@ void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 
 void KeyboardController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
 {
+    if (keyEvent.code == gui::event::Key::F12)
+    {
+        gui::debug::toggle();
+    } 
+
     windowManager_->receive(gui::event::KeyboardKeyReleased{
         .key = keyEvent.code,
         .modifiers = {

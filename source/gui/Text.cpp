@@ -2,17 +2,20 @@
 
 #include <cassert>
 
+#include "gui/Alignment.hpp"
 #include "gui/FontHeightCache.hpp"
 #include "gui/TextDisplayModifier.hpp"
 
-#include <gui/Alignment.hpp>
+
+#include "gui/Debug.hpp"
 
 namespace gui
 {
 
-Text::Text()
+Text::Text(const bool alignToBaseLine)
 : offset_{0.f, 0.f}
 , sprite_(texture_.getTexture())
+, alignToBaseLine_{alignToBaseLine}
 {
     // Allocate texture size once per text object to avoid costly resizing operations.
     // Consider adjusting the size dynamically only if absolutely necessary.
@@ -24,6 +27,11 @@ Text::Text()
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(sprite_, states);
+
+    debug::drawBox(target, getGlobalPosition(), getSize(), sf::Color::Red, -4.f);
+
+    debug::drawBox(target, sprite_.getPosition(), boundsToSize(getTextBounds()), 
+        sf::Color::Green, -2.f);
 }
 
 void Text::setOffset(const sf::Vector2f& offset)
@@ -48,14 +56,9 @@ void Text::setSize(const sf::Vector2f& size)
     size_ = size;
 }
 
-sf::FloatRect Text::getLocalBounds() const
+sf::FloatRect Text::getTextBounds() const
 {
-    auto bounds = text_.getLocalBounds();
-    // This assures that text text alignment is ignored when sizing 
-    // or aligning component from outside as top is used as origin point
-    // of text object
-    bounds.height += bounds.top; 
-    return bounds;
+    return text_.getLocalBounds();
 }
 
 void Text::setText(const std::string_view& text)
@@ -111,6 +114,14 @@ void Text::updateTexture()
     assert (text_.getLocalBounds().width <= texture_.getSize().x && "Text width exceeded renderable texure width");
 
     texture_.clear(sf::Color::Transparent);
+
+    text_.setPosition({0.f, 0.f});
+
+    if(not alignToBaseLine_)
+    {
+        // this offsets the text to keep the bottom of the text at the same position
+        text_.setOrigin(text_.getLocalBounds().left, text_.getLocalBounds().top);
+    }
 
     texture_.draw(text_);
 

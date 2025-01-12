@@ -22,8 +22,8 @@ protected:
     void onSizeChange() override;
     void onPositionChange() override;
     void recalculatePositionAndSize();
-    gui::Text text_;
     gui::Alignment alignment_;
+    gui::Text text_;
 };
 
 }  // namespace gui
