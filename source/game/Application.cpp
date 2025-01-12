@@ -63,8 +63,6 @@ Application::Application()
 
 void Application::onInit()
 {
-    context_.setParticleSystem(&particleSystem_);
-    context_.setScene(&scene_);
     context_.setCamera(&camera_);
     gui::FontLibrary::initialize();
     graphics::TextureLibrary::initialize();
@@ -237,12 +235,14 @@ void Application::configureGUI()
 
     auto measurementsText = std::make_unique<gui::Label>("");
     measurementsText->setPosition(sf::Vector2f(20.f, 20.f));
+    measurementsText->setSize(sf::Vector2f(200.f, 200.f));
     measurementsTextHandle_ = measurementsText.get();
 
     windowManager_.mainWindow().addChild(std::move(measurementsText));
 
     auto measurementsAverageText = std::make_unique<gui::Label>("");
     measurementsAverageText->setPosition(sf::Vector2f(200.f, 20.f));
+    measurementsAverageText->setSize(sf::Vector2f(200.f, 200.f));
     measurementsAverageTextHandle_ = measurementsAverageText.get();
 
     windowManager_.mainWindow().addChild(std::move(measurementsAverageText));
@@ -257,46 +257,6 @@ void Application::configureGUI()
         windowManager_.addWindow(std::move(helpWindow));
     });
     windowManager_.mainWindow().addChild(std::move(button));
-
-    auto spawnWindowButton = std::make_unique<gui::Button>("Spawn new window");
-    spawnWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 250.f));
-    spawnWindowButton->setSize(sf::Vector2f(150.f, 30.f));
-    spawnWindowButton->onClick([this](){
-        float randomX = rand() % 200;
-        float randomY = rand() % 200;
-        auto window = std::make_unique<gui::Window>();
-
-        auto horizontalLayout = std::make_unique<gui::HorizontalLayout>();
-        auto helloButton = std::make_unique<gui::Button>("HELLO");
-        auto worldButton = std::make_unique<gui::Button>("WORLD");
-
-        helloButton->onClick([this](){logger_.info("Hello?");});
-        worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
-
-        horizontalLayout->addChild(std::move(helloButton));
-        horizontalLayout->addChild(std::move(worldButton));
-
-        auto horizontalLayout2   = std::make_unique<gui::HorizontalLayout>();
-        auto testing = std::make_unique<gui::Button>("TESTING");
-        auto things = std::make_unique<gui::Button>("THINGS");
-
-        horizontalLayout2->addChild(std::move(testing));
-        horizontalLayout2->addChild(std::move(things));
-
-        auto verticalLayout = std::make_unique<gui::VerticalLayout>();
-
-        verticalLayout->addChild(std::move(horizontalLayout));
-        verticalLayout->addChild(std::move(horizontalLayout2));
-
-        window->addChild(std::move(verticalLayout));
-
-        window->setSize(sf::Vector2f(500.0f, 400.0f));
-        window->setPosition(sf::Vector2f((Config::WINDOW_WIDTH+randomX)/2, 400.0f+randomY));
-        window->setTitle("Oh my gosh");
-
-        windowManager_.addWindow(std::move(window));
-    });
-    windowManager_.mainWindow().addChild(std::move(spawnWindowButton));
 }
 
 void Application::spawnSomeTanks()

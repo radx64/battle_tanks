@@ -21,7 +21,7 @@ Text::Text(const bool alignToBaseLine)
     // Consider adjusting the size dynamically only if absolutely necessary.
     // Or make some texture manager that will handle this and share one texture between multiple text objects.
     // TODO: decide on default size later and behaviour later
-    texture_.create(2048,128);
+    texture_.create(2048,2048);
 }
 
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const

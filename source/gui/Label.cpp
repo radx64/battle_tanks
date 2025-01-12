@@ -20,6 +20,7 @@ Label::Label(const std::string_view& text)
     text_.setOutlineThickness(style.getOutlineThickness());
     setText(text.data());
     setPosition({0.0f, 0.0f});
+    setSize({20.f, 20.f});
     recalculatePositionAndSize();
 }
 

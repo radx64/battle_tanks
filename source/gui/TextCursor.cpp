@@ -226,6 +226,7 @@ void TextCursor::disable()
     if (not enabled_) return;
     enabled_ = false;
     stopBlinkAnimation();
+    update();
 }
 
 void TextCursor::enable()
@@ -233,6 +234,7 @@ void TextCursor::enable()
     if (enabled_) return;
     enabled_ = true;
     startBlinkAnimation();
+    update();
 }
 
 void TextCursor::startBlinkAnimation()
