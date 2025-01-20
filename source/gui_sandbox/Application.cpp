@@ -282,12 +282,19 @@ void Application::onInit()
         auto positionValue = std::make_unique<gui::EditBox>();
         positionValue->setText("0");
         positionValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-
         auto* positionValuePtr = positionValue.get();
-        (void) positionValuePtr;
+
+        auto ratioLabel = std::make_unique<gui::Label>("Ratio:");
+        ratioLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto ratioValue = std::make_unique<gui::EditBox>();
+        ratioValue->setText("0.25");
+        ratioValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto* ratioValuePtr = ratioValue.get();
 
         positionBox->addChild(std::move(positionLabel));
         positionBox->addChild(std::move(positionValue));
+        positionBox->addChild(std::move(ratioLabel));
+        positionBox->addChild(std::move(ratioValue));
 
         auto gridStatusLabel = std::make_unique<gui::Label>("");
         gridStatusLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
@@ -312,13 +319,21 @@ void Application::onInit()
             return std::stoi(positionValuePtr->getText());
         }; 
 
-        addNewColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue]{
+        auto getRatioValue = [ratioValuePtr]()
+        {
+            return std::stof(ratioValuePtr->getText());
+        };
+
+
+        addNewColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue, getRatioValue]{
             logger_.info("Adding new column to grid layout");
             
             auto position = 0;
+            auto ratio = 0.0f;
             try
             {
                 position = getPositionValue();
+                ratio = getRatioValue();
             } 
             catch (const std::invalid_argument& e)
             {
@@ -327,6 +342,8 @@ void Application::onInit()
             }
 
             if(not gridLayoutPtr->addColumn(position)) return;
+
+            gridLayoutPtr->setColumnSize(position, ratio);
 
             updateGridStatusLabel();
 
@@ -355,13 +372,15 @@ void Application::onInit()
             updateGridStatusLabel();
         });
 
-        addNewRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue]{
+        addNewRowButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue, getRatioValue]{
             logger_.info("Adding new row to grid layout");
 
             auto position  = 0;
+            auto ratio = 0.0f;
             try
             {
                 position = getPositionValue();
+                ratio = getRatioValue();
             } 
             catch (const std::invalid_argument& e)
             {
@@ -370,6 +389,7 @@ void Application::onInit()
             }
 
             if(not gridLayoutPtr->addRow(position)) return;
+            gridLayoutPtr->setRowSize(position, ratio);
             updateGridStatusLabel();
 
             for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)

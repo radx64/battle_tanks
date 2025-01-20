@@ -42,6 +42,9 @@ GridLayout::GridLayout(size_t width, size_t height)
     {
         column.resize(height_, nullptr);
     }
+
+    columnSize_.setElementCount(width_);
+    rowSize_.setElementCount(height_);
 }
 
 size_t GridLayout::getWidth() const
@@ -86,6 +89,7 @@ bool GridLayout::addColumn(const size_t position)
 
     width_++;
     grid_.emplace(std::begin(grid_) + position, height_);
+    columnSize_.addElementAtIndex(position);
     recalculateChildrenBounds();
     return true;
 }
@@ -108,6 +112,7 @@ bool GridLayout::removeColumn(const size_t position)
         }
     }
     grid_.erase(std::begin(grid_) + position);
+    columnSize_.removeElementAtIndex(position);
     recalculateChildrenBounds();
     return true;
 }
@@ -125,6 +130,8 @@ bool GridLayout::addRow(const size_t position)
     {
         column.emplace(std::begin(column) + position, nullptr);
     }
+
+    rowSize_.addElementAtIndex(position);
     recalculateChildrenBounds();
     return true;
 }
@@ -153,13 +160,14 @@ bool GridLayout::removeRow(const size_t position)
 void GridLayout::onParentSizeChange(const sf::Vector2f& parentSize)
 {
     setSize(parentSize);
+    columnSize_.setSize(parentSize.x);
+    rowSize_.setSize(parentSize.y);
     recalculateChildrenBounds();
 }
 
 void GridLayout::recalculateChildrenBounds()
 {
-    auto layoutSize = getSize();
-    auto cellSize = sf::Vector2f{layoutSize.x / width_, layoutSize.y / height_};
+    auto cellPosition = sf::Vector2f{0.f, 0.f};
 
     for (size_t x = 0; x < width_; x++)
     {
@@ -169,16 +177,28 @@ void GridLayout::recalculateChildrenBounds()
             {
                 continue;
             }
-            auto cellPosition = sf::Vector2f{x * cellSize.x, y * cellSize.y};
+            auto cellSize = sf::Vector2f{columnSize_.getElementSize(x), rowSize_.getElementSize(y)};
             grid_[x][y]->setPosition(cellPosition);
             grid_[x][y]->setSize(cellSize);
+            cellPosition.y += cellSize.y;
         }
+        cellPosition.y = 0.f;
+        cellPosition.x += columnSize_.getElementSize(x);
     }
 }
 
 void GridLayout::onSizeChange()
 {
     recalculateChildrenBounds();
+}
+
+void GridLayout::setColumnSize(const size_t column, const float ratio)
+{
+    columnSize_.setElementSize(column, ratio); 
+}
+void GridLayout::setRowSize(const size_t position, const float ratio)
+{
+    rowSize_.setElementSize(position, ratio);
 }
 
 void BaseLineLayout::addChild(std::unique_ptr<Component> child)
