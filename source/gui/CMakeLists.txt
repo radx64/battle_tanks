@@ -17,6 +17,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Component.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Clipboard.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DimensionConstraintScaler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp

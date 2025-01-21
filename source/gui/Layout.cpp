@@ -36,6 +36,8 @@ void FillLayout::onSizeChange()
 GridLayout::GridLayout(size_t width, size_t height)
 : width_{width}
 , height_{height}
+, columnSize_{"GridLayout::columnSize_"}
+, rowSize_{"GridLayout::rowSize_"}
 {
     grid_.resize(width_);
     for (auto& column : grid_)
@@ -153,6 +155,7 @@ bool GridLayout::removeRow(const size_t position)
         }
         column.erase(std::begin(column) + position);
     }
+    rowSize_.removeElementAtIndex(position);
     recalculateChildrenBounds();
     return true;
 }

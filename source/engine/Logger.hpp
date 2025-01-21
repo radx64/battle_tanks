@@ -11,10 +11,10 @@ class Logger
 public:
     Logger(const std::string_view prefix);
 
-    void error(const std::string_view log);
-    void warning(const std::string_view log);
-    void info(const std::string_view log);
-    void debug(const std::string_view log);
+    void error(const std::string_view log) const;
+    void warning(const std::string_view log) const;
+    void info(const std::string_view log) const;
+    void debug(const std::string_view log) const;
 
 protected:
     std::string prefix_;

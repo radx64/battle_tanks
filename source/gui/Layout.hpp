@@ -1,8 +1,7 @@
 #pragma once
 
 #include "gui/Component.hpp"
-
-#include <optional>
+#include "gui/DimensionConstraintScaler.hpp"
 
 namespace gui
 {
@@ -23,108 +22,8 @@ protected:
     void onSizeChange() override;
 };
 
-class DimensionRatioScaler
-{
-public:
-    /* TODO:
-    - move this to separate file
-    - write some UTs
-    - implement corner cases handling and error logging
-    - consider defining some percentage suffix with operator""_percent"
-    */
-
-    DimensionRatioScaler() = default;
-
-    void setSize(const float size)
-    {
-        size_ = size;
-    }
-    
-    void setElementCount(const size_t count)
-    {
-        elements_.resize(count);
-    }
-
-    void setElementSize(const size_t index, const float ratio)
-    {
-        if (index >= elements_.size())
-        {
-            //loger error
-            return;
-        }
-        elements_[index] = ratio;
-    }
-
-    void addElementAtIndex(const size_t index)
-    {
-        if (index > elements_.size())
-        {
-            //loger error
-            return;
-        }
-        elements_.insert(std::begin(elements_) + index, std::nullopt);
-    }
-
-    void removeElementAtIndex(const size_t index)
-    {
-        if (index >= elements_.size())
-        {
-            //loger error
-            return;
-        }
-        elements_.erase(std::begin(elements_) + index);
-    }
-
-    float getElementSize(const size_t index) const
-    {
-        if (index >= elements_.size())
-        {
-            //loger error
-            return 0.f;
-        }
-
-        auto elementSize = elements_[index];
-
-        if (elementSize.has_value())
-        {
-            return elementSize.value() * size_;
-        }
-        else
-        {
-            //return average size of empty elements
-            auto emptyElements = std::count(std::cbegin(elements_), std::cend(elements_), std::nullopt);
-            if (emptyElements == 0)
-            {
-                // log error or handle case where there are no empty elements so element might not be visible
-                return 0.f;
-            }
-
-            float usedRatioSum = 0.f;
-            for (const auto& element : elements_)
-            {
-                if (element.has_value())
-                {
-                    usedRatioSum += element.value();
-                }
-            }
-
-            float remainingSize = size_ * (1.f - usedRatioSum);
-            return remainingSize / emptyElements;
-            return size_ / emptyElements;
-        }
-    }
-
-protected:
-    std::vector<std::optional<float>> elements_;
-    float size_;
-};
-
 class GridLayout : public Layout
 {
-/*  TODO:
-    - Add support for defining grid size in ratio
-*/
-
 public:
     GridLayout(size_t width, size_t height);
 
@@ -147,8 +46,8 @@ protected:
     size_t width_;
     size_t height_;
 
-    DimensionRatioScaler columnSize_;
-    DimensionRatioScaler rowSize_;
+    DimensionConstraintScaler columnSize_;
+    DimensionConstraintScaler rowSize_;
 
     std::vector<std::vector<Component*>> grid_;
 };
