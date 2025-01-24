@@ -20,11 +20,11 @@ Bunch of random ideas to randomly pick up and implement
     - [x] 🐛: You can close window while resizing by passing cursor over close button
     - [x] 🐛: When window is first resized and then dragged it jumps to some offset position (like where topbar was before resize)
     - [x] 🐛: Window focusing is not working properly after resizing
-- [ ] Some basic dynamic layout support like:
+- [x] Some basic dynamic layout support like:
   - [x] Horizontal
   - [x] Vertical
-  - [ ] Box (like 2x2 grid)
-  - [ ] Size constrains
+  - [x] Box (like 2x2 grid)
+  - [x] Size constrains
 - [x] Edit box
   - [x] Text input
   - [x] Selection support
@@ -33,7 +33,6 @@ Bunch of random ideas to randomly pick up and implement
 - [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 - [ ] Consider creating render command batches and split gui from sfml implementation
-- [ ] 🐛 Fix font height detection as now some WA is used which sometimes does not work properly
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing

@@ -34,7 +34,6 @@ void DimensionConstraintScaler::setElementCount(const size_t count)
 
 void DimensionConstraintScaler::setElementSize(const size_t index, const float ratio)
 {
-
     if (index >= elements_.size())
     {
         logger_.error(fmt::format("setElementSize: Index {} is out of bounds", index));

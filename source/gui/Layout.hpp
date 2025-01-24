@@ -52,32 +52,32 @@ protected:
     std::vector<std::vector<Component*>> grid_;
 };
 
-class BaseLineLayout : public Layout
+
+class HorizontalLayout : public GridLayout
 {
 public:
+    HorizontalLayout();
+    HorizontalLayout(size_t width);
     void addChild(std::unique_ptr<Component> child) override;
 
-protected:
-    virtual sf::Vector2f getChildSize(const sf::Vector2f& layoutSize) const = 0;
-    virtual sf::Vector2f getNthChildPosition(const sf::Vector2f& childSize, size_t childIndex) const = 0;
-    void recalculateChildrenBounds();
-    void onParentSizeChange(const sf::Vector2f& parentSize) override;
+    // TODO: I don't like this solution, consider doing something more sophisticated later
+    // like reversing it and combining grid layout from two 1D layouts?
+    // Same for Vertical layout
+    bool addRow(const size_t position) = delete;
+    bool removeRow(const size_t position) = delete;
+    void setRowSize(const size_t position, const float ratio) = delete;
 };
 
-class HorizontalLayout : public BaseLineLayout
+class VerticalLayout : public GridLayout
 {
+public:
+    VerticalLayout();
+    VerticalLayout(size_t height);
 
-protected:
-    sf::Vector2f getChildSize(const sf::Vector2f& layoutSize) const override;
-    sf::Vector2f getNthChildPosition(const sf::Vector2f& childSize, size_t childIndex) const override;
-};
-
-class VerticalLayout : public BaseLineLayout
-{
-
-protected:
-    sf::Vector2f getChildSize(const sf::Vector2f& layoutSize) const override;
-    sf::Vector2f getNthChildPosition(const sf::Vector2f& childSize, size_t childIndex) const override;
+    void addChild(std::unique_ptr<Component> child) override;
+    bool addColumn(const size_t position) = delete;
+    bool removeColumn(const size_t position) = delete;
+    void setColumnSize(const size_t column, const float ratio) = delete;
 };
 
 }  // namespace gui

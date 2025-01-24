@@ -204,70 +204,40 @@ void GridLayout::setRowSize(const size_t position, const float ratio)
     rowSize_.setElementSize(position, ratio);
 }
 
-void BaseLineLayout::addChild(std::unique_ptr<Component> child)
+
+HorizontalLayout::HorizontalLayout() 
+: GridLayout(0, 1)
 {
-    // Fill layout is used to make an extra abstraction layer
-    // especially when you try to stack layouts on each other
-    // where layout always fits size of it's parent
-    // Fill layout wrapper is some kind of barrier
-    auto fillLayoutWrapper = std::make_unique<FillLayout>();
-    fillLayoutWrapper->addChild(std::move(child));
-    Component::addChild(std::move(fillLayoutWrapper));
-    recalculateChildrenBounds();
+
 }
 
-void BaseLineLayout::recalculateChildrenBounds()
+HorizontalLayout::HorizontalLayout(size_t width) 
+: GridLayout(width, 1)
 {
-    auto layoutSize = getSize();
 
-    auto childSize = getChildSize(layoutSize);
-
-    size_t childIndex{0};
-    for (auto& child : children_)
-    {
-        auto childPosition = getNthChildPosition(childSize, childIndex);
-
-        child->setPosition(childPosition);
-        child->setSize(childSize);
-        childIndex++;
-    }
 }
 
-void BaseLineLayout::onParentSizeChange(const sf::Vector2f& parentSize)
+void HorizontalLayout::addChild(std::unique_ptr<Component> child)
 {
-    // set layout size to it's parent size
-    setSize(parentSize);
-    // recalculate childen to resize them
-    recalculateChildrenBounds();
+    addColumn(width_);
+    GridLayout::addChild(std::move(child));
 }
 
-sf::Vector2f HorizontalLayout::getChildSize(const sf::Vector2f& layoutSize) const
+VerticalLayout::VerticalLayout() : GridLayout(1, 0)
 {
-    auto childWidth = layoutSize.x / (float) Component::getChildrenCount();
-    auto childHeight = layoutSize.y;
-    return sf::Vector2f{childWidth, childHeight};
+
 }
 
-sf::Vector2f HorizontalLayout::getNthChildPosition(const sf::Vector2f& childSize,size_t childIndex) const
+VerticalLayout::VerticalLayout(size_t height) : GridLayout(1, height)
 {
-    float childX = childIndex * childSize.x;
-    float childY = 0.f;
-    return sf::Vector2f{childX, childY};
+
 }
 
-
-sf::Vector2f VerticalLayout::getChildSize(const sf::Vector2f& layoutSize) const
+void VerticalLayout::addChild(std::unique_ptr<Component> child)
 {
-    auto childWidth = layoutSize.x;
-    auto childHeight = layoutSize.y / (float) Component::getChildrenCount();
-    return sf::Vector2f{childWidth, childHeight};
+    addRow(height_);
+    GridLayout::addChild(std::move(child));
 }
 
-sf::Vector2f VerticalLayout::getNthChildPosition(const sf::Vector2f& childSize,size_t childIndex) const
-{
-    float childX = 0.f;
-    float childY = childIndex * childSize.y;
-    return sf::Vector2f{childX, childY};
-}
 
 }  // namespace gui
