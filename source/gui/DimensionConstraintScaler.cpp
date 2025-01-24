@@ -34,6 +34,13 @@ void DimensionConstraintScaler::setElementCount(const size_t count)
 
 void DimensionConstraintScaler::setElementSize(const size_t index, const float ratio)
 {
+
+    if (index >= elements_.size())
+    {
+        logger_.error(fmt::format("setElementSize: Index {} is out of bounds", index));
+        return;
+    }
+
     std::optional<float> newElementRatio = ratio;
     if (newElementRatio > 1.0f)
     {
@@ -48,12 +55,6 @@ void DimensionConstraintScaler::setElementSize(const size_t index, const float r
     {
         logger_.warning(fmt::format("setElementSize: New ratio {:.4f} exceedes maximum allowed sum of ratios! Changing to auto size!", newElementRatio.value()));
         newElementRatio = std::nullopt;
-    }
-
-    if (index >= elements_.size())
-    {
-        logger_.error(fmt::format("setElementSize: Index {} is out of bounds", index));
-        return;
     }
 
     elements_[index] = newElementRatio;
