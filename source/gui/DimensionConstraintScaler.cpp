@@ -1,14 +1,24 @@
 #include "gui/DimensionConstraintScaler.hpp"
 
 #include <algorithm>
+#include <numeric>
 
 #include <fmt/format.h>
 
 namespace gui
 {
 
+namespace
+{
+    auto sumOptionalOperator = [](float a, std::optional<float> b)
+    {
+        return a + b.value_or(0.f);
+    };
+}  // namespace 
+
 DimensionConstraintScaler::DimensionConstraintScaler(const std::string_view logPrefix)
-: logger_{std::string(logPrefix) + "/DimensionConstraintScaler"}
+: size_{}
+, logger_{std::string(logPrefix) + "/DimensionConstraintScaler"}
 {
 }
 
@@ -24,12 +34,29 @@ void DimensionConstraintScaler::setElementCount(const size_t count)
 
 void DimensionConstraintScaler::setElementSize(const size_t index, const float ratio)
 {
+    std::optional<float> newElementRatio = ratio;
+    if (newElementRatio > 1.0f)
+    {
+        logger_.warning(fmt::format("setElementSize: Ratio = {:.4f} is > 1.0! Limiting to 1.0", newElementRatio.value()));
+        newElementRatio = 1.0f;
+    }
+
+    auto currentConstaraintsSum = std::accumulate(std::begin(elements_), std::end(elements_), 0.f, sumOptionalOperator);
+    auto oldElementRatio = elements_[index].value_or(0.f);
+
+    if (currentConstaraintsSum - oldElementRatio + newElementRatio.value() > 1.0f)
+    {
+        logger_.warning(fmt::format("setElementSize: New ratio {:.4f} exceedes maximum allowed sum of ratios! Changing to auto size!", newElementRatio.value()));
+        newElementRatio = std::nullopt;
+    }
+
     if (index >= elements_.size())
     {
         logger_.error(fmt::format("setElementSize: Index {} is out of bounds", index));
         return;
     }
-    elements_[index] = ratio;
+
+    elements_[index] = newElementRatio;
 }
 
 void DimensionConstraintScaler::clearElementSize(const size_t index)

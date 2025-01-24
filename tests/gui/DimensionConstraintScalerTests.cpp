@@ -182,4 +182,28 @@ TEST(DimensionConstraintScalerShould, handleInvalidIndex)
     EXPECT_FLOAT_EQ(sut.getElementSize(99), 0.f);
 }
 
+TEST(DimensionConstraintScalerShould, notExceedSizeWhenCalculatingDimensionsForEachObject)
+{
+    DimensionConstraintScaler sut{"sut"};
+    sut.setSize(100.f);
+    sut.setElementCount(3);
+    sut.setElementSize(0, 0.4f);
+    sut.setElementSize(1, 0.4f);
+    sut.setElementSize(2, 0.5f);
+
+    auto sum  = sut.getElementSize(0) + sut.getElementSize(1) + sut.getElementSize(2);
+    EXPECT_FLOAT_EQ(100.f, sum);
+
+    sut.clearElementSize(1);
+
+    sum  = sut.getElementSize(0) + sut.getElementSize(1) + sut.getElementSize(2);
+    EXPECT_FLOAT_EQ(100.f, sum);
+
+    sut.setElementCount(1);
+    sut.setElementSize(0, 2.0f);
+
+    sum  = sut.getElementSize(0);
+    EXPECT_FLOAT_EQ(100.f, sum);
+}
+
 } // namespace gui

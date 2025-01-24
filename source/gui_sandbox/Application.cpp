@@ -287,7 +287,7 @@ void Application::onInit()
         auto ratioLabel = std::make_unique<gui::Label>("Ratio:");
         ratioLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         auto ratioValue = std::make_unique<gui::EditBox>();
-        ratioValue->setText("0.25");
+        ratioValue->setText("0.20");
         ratioValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         auto* ratioValuePtr = ratioValue.get();
 
@@ -319,17 +319,25 @@ void Application::onInit()
             return std::stoi(positionValuePtr->getText());
         }; 
 
-        auto getRatioValue = [ratioValuePtr]()
+        auto getRatioValue = [ratioValuePtr]() -> std::optional<float>
         {
-            return std::stof(ratioValuePtr->getText());
-        };
+            auto text = ratioValuePtr->getText();
 
+            if (text.size() > 0)
+            {
+                return std::stof(text);
+            }
+            else
+            {
+                return std::nullopt;
+            }
+        };
 
         addNewColumnButton->onClick([this, gridLayoutPtr = gridLayout.get(), updateGridStatusLabel, getPositionValue, getRatioValue]{
             logger_.info("Adding new column to grid layout");
             
             auto position = 0;
-            auto ratio = 0.0f;
+            std::optional<float> ratio = 0.0f;
             try
             {
                 position = getPositionValue();
@@ -343,7 +351,7 @@ void Application::onInit()
 
             if(not gridLayoutPtr->addColumn(position)) return;
 
-            gridLayoutPtr->setColumnSize(position, ratio);
+            if (ratio.has_value()) gridLayoutPtr->setColumnSize(position, ratio.value());
 
             updateGridStatusLabel();
 
@@ -376,7 +384,7 @@ void Application::onInit()
             logger_.info("Adding new row to grid layout");
 
             auto position  = 0;
-            auto ratio = 0.0f;
+            std::optional<float> ratio = 0.0f;
             try
             {
                 position = getPositionValue();
@@ -389,7 +397,7 @@ void Application::onInit()
             }
 
             if(not gridLayoutPtr->addRow(position)) return;
-            gridLayoutPtr->setRowSize(position, ratio);
+            if (ratio.has_value()) gridLayoutPtr->setRowSize(position, ratio.value());
             updateGridStatusLabel();
 
             for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)
