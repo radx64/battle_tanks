@@ -25,8 +25,6 @@ public:
         render_mock();
     }
 
-    MOCK_METHOD(void, onParentSizeChange, (const sf::Vector2f& parent_size), (override));
-
     void makeSpyFocusable()
     {
         logger_.debug("Spy made focusable");
@@ -374,26 +372,6 @@ TEST(ComponentShould, setAndGetItsSize)
     sut_->setSize(required_size);
 
     EXPECT_EQ(sut_->getSize(), required_size);
-}
-
-TEST(ComponentShould, callOnParentSizeChangedForChildrenWhenParentSizeIsChanged)
-{
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-
-    auto child_1_ptr = child_1.get();
-    auto child_2_ptr = child_2.get();
-
-    sut_->addChild(std::move(child_1));
-    sut_->addChild(std::move(child_2));
-
-    auto expected_parent_size = sf::Vector2f{0.f, 0.f};
-
-    EXPECT_CALL(*child_1_ptr, onParentSizeChange(expected_parent_size)).Times(1);
-    EXPECT_CALL(*child_2_ptr, onParentSizeChange(expected_parent_size)).Times(1);
-
-    sut_->setSize(expected_parent_size);
 }
 
 TEST(ComponentShould, KnowOwnPositionWithoutParent)
