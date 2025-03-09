@@ -52,29 +52,27 @@ void Camera::move(const float xVelocity, const float yVelocity)
     moveY(yVelocity);
 }
 
-// TODO: combine zoomIn and zoomIn (x,y) methods later
 void Camera::zoomIn()
 {
-    if (zoomLevel_ >= MAX_ZOOM_LEVEL) return;
-    zoomLevel_+=0.5f;
-
-    targetSize_.x = originalSize_.x / zoomLevel_;
-    targetSize_.y = originalSize_.y / zoomLevel_;
-    alignBoundaries();
+    zoomIn(targetPosition_.x, targetPosition_.y);
 }
 
 void Camera::zoomIn(const float x, const float y)
 {
     if (zoomLevel_ >= MAX_ZOOM_LEVEL) return;
-    zoomIn();
+    zoomLevel_ += 0.5f;
 
-    auto halfOfTargetSize = targetSize_/2.0f;
+    targetSize_.x = originalSize_.x / zoomLevel_;
+    targetSize_.y = originalSize_.y / zoomLevel_;
+    alignBoundaries();
+
+    auto halfOfTargetSize = targetSize_ / 2.0f;
 
     const float localX = x / zoomLevel_;
     const float localY = y / zoomLevel_;
 
-    const float newPositionX  = targetPosition_.x + (localX - halfOfTargetSize.x);
-    const float newPositionY  = targetPosition_.y + (localY - halfOfTargetSize.y);
+    const float newPositionX = targetPosition_.x + (localX - halfOfTargetSize.x);
+    const float newPositionY = targetPosition_.y + (localY - halfOfTargetSize.y);
     setPosition(newPositionX, newPositionY);
 }
 

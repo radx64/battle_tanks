@@ -30,8 +30,7 @@ sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& parentSize, const sf::
     }
     else if (isBitSet(alignment, Alignment::HorizontallyCentered))
     {
-        //TODO: refacor this division
-        offset.x = parentSize.x / 2.f - childSize.x / 2.f;
+        offset.x = (parentSize.x - childSize.x) / 2.f;
     }
     else if (isBitSet(alignment, Alignment::Right))
     {
@@ -44,7 +43,7 @@ sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& parentSize, const sf::
     }
     else if (isBitSet(alignment, Alignment::VerticallyCentered))
     {
-        offset.y = parentSize.y / 2.f - childSize.y / 2.f;
+        offset.y = (parentSize.y - childSize.y) / 2.f;
     }
     else if (isBitSet(alignment, Alignment::Bottom))
     {
