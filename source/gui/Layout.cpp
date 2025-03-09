@@ -9,30 +9,6 @@ void Layout::onRender(sf::RenderTexture&)
 {
 }
 
-void FillLayout::addChild(std::unique_ptr<Component> child)
-{
-    if (getChildrenCount() > 0)
-    {
-        logger_.error("FillLayout can have only one child");
-    } 
-
-    Component::addChild(std::move(child));
-}
-
-void FillLayout::onParentSizeChange(const sf::Vector2f& parentSize)
-{
-    setSize(parentSize);
-}
-
-void FillLayout::onSizeChange()
-{
-    for (const auto& child : children_)
-    {
-        child->setSize(getSize());
-        child->setPosition({0.f, 0.f});
-    }
-}
-
 GridLayout::GridLayout(size_t width, size_t height)
 : width_{width}
 , height_{height}
@@ -69,10 +45,8 @@ void GridLayout::addChild(std::unique_ptr<Component> child)
             {
                 continue;
             }
-            auto fillLayoutWrapper = std::make_unique<FillLayout>();
-            fillLayoutWrapper->addChild(std::move(child));
-            grid_[x][y] = fillLayoutWrapper.get();
-            Component::addChild(std::move(fillLayoutWrapper));
+            grid_[x][y] = child.get();
+            Component::addChild(std::move(child));
             recalculateChildrenBounds();
             return;
         }
@@ -160,14 +134,6 @@ bool GridLayout::removeRow(const size_t position)
     return true;
 }
 
-void GridLayout::onParentSizeChange(const sf::Vector2f& parentSize)
-{
-    setSize(parentSize);
-    columnSize_.setSize(parentSize.x);
-    rowSize_.setSize(parentSize.y);
-    recalculateChildrenBounds();
-}
-
 void GridLayout::recalculateChildrenBounds()
 {
     auto cellPosition = sf::Vector2f{0.f, 0.f};
@@ -192,6 +158,8 @@ void GridLayout::recalculateChildrenBounds()
 
 void GridLayout::onSizeChange()
 {
+    columnSize_.setSize(getSize().x);
+    rowSize_.setSize(getSize().y);
     recalculateChildrenBounds();
 }
 

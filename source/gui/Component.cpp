@@ -41,6 +41,7 @@ uint32_t InstanceIdGenerator::nextInstanceId = 0;
 
 Component::Component(const std::source_location location)
 : localPosition_{}
+, bounds_{}
 , parent_{nullptr}
 , childrenEventsProcessingEnabled_{true}
 , children_ {}
@@ -379,20 +380,11 @@ void Component::setSize(const sf::Vector2f& size)
     bounds_.height = size.y;
     updateGlobalPosition();
     onSizeChange();
-
-    for (auto& child : children_)
-    {
-        child->onParentSizeChange(size);
-    }
 }
 
 void Component::onSizeChange()
 {
 }
-
-void Component::onParentSizeChange(const sf::Vector2f&)
-{
-};
 
 void Component::setVisibility(bool isVisible)
 {
@@ -418,7 +410,7 @@ bool Component::isInside(sf::Vector2f point) const
     return bounds_.contains(point);
 }
 
-bool Component::isInside(const event::MousePosition& position) const\
+bool Component::isInside(const event::MousePosition& position) const
 {
     return isInside(toVector2f(position));
 }
@@ -443,7 +435,6 @@ void Component::addChild(std::unique_ptr<Component> child)
     }
     child->parent_ = this;
     child->updateGlobalPosition();
-    child->onParentSizeChange(getSize());
     children_.emplace_back(std::move(child));
 }
 
@@ -475,7 +466,6 @@ void Component::selectFocusedChild(Component* focusedChild)
 void Component::focus()
 {
     isFocused_ = true;
-    //focusedElement_ = this;
 
     for (auto& child : children_)
     {

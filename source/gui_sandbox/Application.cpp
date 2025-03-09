@@ -80,14 +80,7 @@ void Application::onInit()
     createSimpleWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
         auto simpleButton = std::make_unique<gui::Button>("THIS IS BUTTON!");
-        simpleButton->setSize({100.f, 100.f});
-        simpleButton->setPosition({10.f, 10.f});
-
-        auto fillLayout = std::make_unique<gui::FillLayout>();
-
-        fillLayout->addChild(std::move(simpleButton));
-
-        window->addChild(std::move(fillLayout));
+        window->addChild(std::move(simpleButton));
 
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
@@ -208,7 +201,6 @@ void Application::onInit()
         window->setTitle("Oh my gosh");
 
         windowManager_.addWindow(std::move(window));
-
     });
 
     windowManager_.mainWindow().addChild(std::move(createLayoutWindowButton));

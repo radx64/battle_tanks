@@ -12,9 +12,19 @@ Panel::Panel()
     backgroundShape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
 }
 
+void Panel::addChild(std::unique_ptr<Component> child)
+{
+    child->setSize(getSize());
+    Component::addChild(std::move(child));
+}
+
 void Panel::onSizeChange()
 {
     backgroundShape_.setSize(getSize());
+    for (auto& child : children_)
+    {
+        child->setSize(getSize());
+    }
 }
 
 void Panel::onPositionChange()

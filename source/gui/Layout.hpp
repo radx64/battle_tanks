@@ -12,15 +12,6 @@ public:
     void onRender(sf::RenderTexture& renderWindow) override;
 };
 
-class FillLayout : public Layout
-{
-public:
-    void addChild(std::unique_ptr<Component> child) override;
-
-protected:
-    void onParentSizeChange(const sf::Vector2f& parentSize) override;
-    void onSizeChange() override;
-};
 
 class GridLayout : public Layout
 {
@@ -38,7 +29,6 @@ public:
     size_t getHeight() const;
 
 protected:
-    void onParentSizeChange(const sf::Vector2f& parentSize) override;
     void onSizeChange() override;
 
     void recalculateChildrenBounds();

@@ -3,7 +3,6 @@
 #include "gui/Alignment.hpp"
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
-#include "gui/Layout.hpp"
 
 constexpr std::string_view helpTextString{
     "WASD - moves view\n"
@@ -28,13 +27,9 @@ public:
     {
         setSize(sf::Vector2f(500.0f, 400.0f));
         setPosition(position);
-
-        auto fillLayout = std::make_unique<gui::FillLayout>();
         auto helpText = std::make_unique<gui::Label>(helpTextString.data());
         helpText->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        fillLayout->addChild(std::move(helpText));
-
-        addChild(std::move(fillLayout));
+        addChild(std::move(helpText));
     }
 };
 

@@ -15,6 +15,8 @@ public:
     void enable();
     void disable();
 
+    void addChild(std::unique_ptr<Component> child) override;
+
 protected:
     void onSizeChange() override;
     void onPositionChange() override;

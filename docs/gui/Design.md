@@ -21,6 +21,10 @@ as well as some basic position and size control
 ![](Component.drawio.svg "Component diagram")
 
 
+Component derivate should implement required behaviour of below methods
+- onSizeChange
+  - By default component is not handling children sizes. Specific component like WindowPanel or GridLayout could define own ways of handling children position and size.
+
 
 ## Window
 Implements simple closable window (managed by WindowManager). It can contain any `Component` 

@@ -104,7 +104,6 @@ protected:
 
     virtual void onPositionChange();
     virtual void onSizeChange();
-    virtual void onParentSizeChange(const sf::Vector2f& parentSize);
 
     template <typename T>
     EventStatus processEvent(const T& event);
