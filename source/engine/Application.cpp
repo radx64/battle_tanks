@@ -6,6 +6,8 @@
 
 #include "Config.hpp"
 
+#include "LoggerSink.hpp"
+
 constexpr unsigned int ANTI_ALIASING_LEVEL = 8;
 
 namespace engine
@@ -27,7 +29,10 @@ Application::Application(const std::string_view windowName, const std::string_vi
     context_.setTimerService(&timerService_);
 }
 
-Application::~Application() = default;
+Application::~Application()
+{
+    LoggerSink::instance().stop();
+}
 
 void Application::init()
 {
