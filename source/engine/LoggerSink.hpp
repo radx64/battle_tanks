@@ -5,9 +5,7 @@
 #include <queue>
 #include <string_view>
 
-#include <fmt/core.h>
 #include <fmt/color.h>
-#include <fmt/chrono.h>
 
 namespace engine
 {
@@ -27,35 +25,29 @@ class LoggerSink
 public:
     static LoggerSink& instance();
 
-    void stop();
-    
     LoggerSink(const LoggerSink&) = delete;
     LoggerSink& operator=(const LoggerSink&) = delete;
     
-protected:
+    void log(const fmt::v9::color& color, 
+        const std::string& logType,
+        const std::string& prefix,
+        const std::string& text);
+
+ protected:
     LoggerSink();
-    ~LoggerSink() = default;
-
-    void log(const fmt::v9::color color, 
-        const std::string logType,
-        const std::string prefix,
-        const std::string text);
-
-
+    ~LoggerSink();
+    void stop();
     void processLogs();
-
-    static void print(const fmt::v9::color color, 
+    void print(const fmt::v9::color color, 
         const std::string_view logType,
         const std::string_view prefix,
         const std::string_view log);
 
-    friend class Logger;
-
     std::atomic<bool> running_;
-    std::thread logThread;
-    std::queue<Log> logQueue;
-    std::mutex queueMutex;
-    std::condition_variable cv;
+    std::thread logThread_;
+    std::queue<Log> logQueue_;
+    std::mutex logQueueMutex_;
+    std::condition_variable cv_;
 
 };
 

@@ -1,6 +1,7 @@
 #include "engine/Logger.hpp"
 
 #include "engine/LoggerSink.hpp"
+#include "engine/Unused.hpp"
 
 namespace engine
 {
@@ -27,7 +28,12 @@ void Logger::info(const std::string_view log) const
 
 void Logger::debug(const std::string_view log) const
 {
+#ifdef NDEBUG
+    UNUSED(log);
+    return;
+#else
     LoggerSink::instance().log(fmt::color::cornflower_blue, "debug", prefix_, std::string(log));
+#endif
 }
 
 }  // namespace engine

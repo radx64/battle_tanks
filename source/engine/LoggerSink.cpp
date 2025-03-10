@@ -2,6 +2,9 @@
 
 #include <chrono>
 
+#include <fmt/core.h>
+#include <fmt/chrono.h>
+
 namespace engine
 {
 
@@ -13,14 +16,17 @@ LoggerSink& LoggerSink::instance()
 
 void LoggerSink::processLogs()
 {
-    while (running_ || !logQueue.empty()) {
-        std::unique_lock<std::mutex> lock(queueMutex);
-        cv.wait(lock, [this] { return !logQueue.empty() || !running_; });
+    while (running_ || !logQueue_.empty()) {
+        std::unique_lock<std::mutex> lock(logQueueMutex_);
+        cv_.wait(lock, [this]
+        { 
+            return !logQueue_.empty() || !running_; 
+        });
 
-        while (!logQueue.empty()) {
-
-            const auto logEvent = logQueue.front();
-            logQueue.pop();
+        while (!logQueue_.empty()) 
+        {
+            const auto logEvent = logQueue_.front();
+            logQueue_.pop();
             lock.unlock();
 
             print(logEvent.color, logEvent.logType, logEvent.prefix, logEvent.text);
@@ -30,14 +36,24 @@ void LoggerSink::processLogs()
     }
 };
 
-LoggerSink::LoggerSink(): running_{true}, logThread{&LoggerSink::processLogs, this}
+LoggerSink::LoggerSink()
+: running_{true}
+, logThread_{&LoggerSink::processLogs, this}
 {
 }
 
-void LoggerSink::log(const fmt::v9::color color, 
-    const std::string logType,
-    const std::string prefix,
-    const std::string text)
+LoggerSink::~LoggerSink()
+{
+    if (running_)
+    {
+        stop();
+    }
+}
+
+void LoggerSink::log(const fmt::v9::color& color, 
+    const std::string& logType,
+    const std::string& prefix,
+    const std::string& text)
 {
     auto date = std::chrono::system_clock::now();
 
@@ -51,18 +67,19 @@ void LoggerSink::log(const fmt::v9::color color,
     };
 
     {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        logQueue.push(logEvent);
+        std::lock_guard<std::mutex> lock(logQueueMutex_);
+        logQueue_.push(logEvent);
     }
-    cv.notify_one(); 
+    cv_.notify_one(); 
 }
 
 void LoggerSink::stop()
 {
     running_ = false;
-    cv.notify_one();
-    if (logThread.joinable()) {
-        logThread.join();
+    cv_.notify_one();
+    if (logThread_.joinable()) 
+    {
+        logThread_.join();
     }
 }
 

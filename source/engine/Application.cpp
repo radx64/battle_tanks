@@ -31,7 +31,6 @@ Application::Application(const std::string_view windowName, const std::string_vi
 
 Application::~Application()
 {
-    LoggerSink::instance().stop();
 }
 
 void Application::init()
