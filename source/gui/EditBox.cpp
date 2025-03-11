@@ -7,10 +7,12 @@
 #include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
 
-
+namespace 
+{
 const sf::Vector2f EXTRA_END_OFFSET{2.f, 2.f};
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 constexpr bool ALIGN_TEXT_TO_BASELINE = true;
+}  // namespace
 
 /*
     TODO: 
@@ -21,6 +23,12 @@ constexpr bool ALIGN_TEXT_TO_BASELINE = true;
 
 namespace gui
 {
+
+std::unique_ptr<EditBox> EditBox::create()
+{
+    return std::unique_ptr<EditBox>{new EditBox{}};
+}
+
 EditBox::EditBox()
 : text_{ALIGN_TEXT_TO_BASELINE}
 , textCursor_{text_}

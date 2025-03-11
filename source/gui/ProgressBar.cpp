@@ -8,6 +8,11 @@
 namespace gui
 {
 
+ std::unique_ptr<ProgressBar> ProgressBar::create()
+ {
+    return std::unique_ptr<ProgressBar>{new ProgressBar{}};
+ }
+
 ProgressBar::ProgressBar()
 {
     auto style = BasicStyleSheetFactory::instance();
@@ -23,7 +28,7 @@ ProgressBar::ProgressBar()
     bar_.setOutlineThickness(style.getOutlineThickness());
     bar_.setPosition(getGlobalPosition());
 
-    auto textPtr = std::make_unique <gui::Label>("");
+    auto textPtr = gui::Label::create("");
     text_ = textPtr.get();
     text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
     addChild(std::move(textPtr));

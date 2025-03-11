@@ -8,6 +8,11 @@ constexpr bool DONT_ALIGN_TEXT_TO_BASELINE = false;
 namespace gui 
 {
 
+ std::unique_ptr<Label> Label::create(const std::string_view& text)
+{
+    return std::unique_ptr<Label>{new Label{text}};
+}
+
 Label::Label(const std::string_view& text)
 : alignment_(gui::Alignment::Left)
 , text_{DONT_ALIGN_TEXT_TO_BASELINE}

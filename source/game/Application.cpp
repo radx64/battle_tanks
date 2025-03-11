@@ -227,27 +227,27 @@ void Application::renderGameObjects()
 
 void Application::configureGUI()
 {
-    auto quitButton = std::make_unique<gui::Button>("Quit");
+    auto quitButton = gui::Button::create("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
 
-    auto measurementsText = std::make_unique<gui::Label>("");
+    auto measurementsText = gui::Label::create("");
     measurementsText->setPosition(sf::Vector2f(20.f, 20.f));
     measurementsText->setSize(sf::Vector2f(200.f, 200.f));
     measurementsTextHandle_ = measurementsText.get();
 
     windowManager_.mainWindow().addChild(std::move(measurementsText));
 
-    auto measurementsAverageText = std::make_unique<gui::Label>("");
+    auto measurementsAverageText = gui::Label::create("");
     measurementsAverageText->setPosition(sf::Vector2f(200.f, 20.f));
     measurementsAverageText->setSize(sf::Vector2f(200.f, 200.f));
     measurementsAverageTextHandle_ = measurementsAverageText.get();
 
     windowManager_.mainWindow().addChild(std::move(measurementsAverageText));
 
-    auto button = std::make_unique<gui::Button>("Help");
+    auto button = gui::Button::create("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){

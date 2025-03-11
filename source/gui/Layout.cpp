@@ -9,6 +9,11 @@ void Layout::onRender(sf::RenderTexture&)
 {
 }
 
+std::unique_ptr<GridLayout> GridLayout::create(size_t width, size_t height)
+{
+    return std::unique_ptr<GridLayout>{new GridLayout{width, height}};
+}
+
 GridLayout::GridLayout(size_t width, size_t height)
 : width_{width}
 , height_{height}
@@ -173,16 +178,15 @@ void GridLayout::setRowSize(const size_t position, const float ratio)
 }
 
 
-HorizontalLayout::HorizontalLayout() 
-: GridLayout(0, 1)
+std::unique_ptr<HorizontalLayout> HorizontalLayout::create(size_t width)
 {
-
+    return std::unique_ptr<HorizontalLayout>{new HorizontalLayout{width}};
 }
+
 
 HorizontalLayout::HorizontalLayout(size_t width) 
 : GridLayout(width, 1)
 {
-
 }
 
 void HorizontalLayout::addChild(std::unique_ptr<Component> child)
@@ -191,9 +195,9 @@ void HorizontalLayout::addChild(std::unique_ptr<Component> child)
     GridLayout::addChild(std::move(child));
 }
 
-VerticalLayout::VerticalLayout() : GridLayout(1, 0)
+std::unique_ptr<VerticalLayout> VerticalLayout::create(size_t height)
 {
-
+    return std::unique_ptr<VerticalLayout>{new VerticalLayout{height}};
 }
 
 VerticalLayout::VerticalLayout(size_t height) : GridLayout(1, height)

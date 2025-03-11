@@ -5,6 +5,12 @@
 
 namespace gui
 {
+
+std::unique_ptr<Button> Button::create(const std::string_view& text)
+{
+    return std::unique_ptr<Button>{new Button{text}};
+}
+
 Button::Button(const std::string_view& text)
 {
     enableFocus();
@@ -15,7 +21,7 @@ Button::Button(const std::string_view& text)
     backgroundShape_.setPosition(getGlobalPosition());
     backgroundShape_.setSize(Component::getSize());
 
-    auto textPtr = std::make_unique <gui::Label>(text);
+    auto textPtr = gui::Label::create(text);
     text_ = textPtr.get();
     text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
     addChild(std::move(textPtr));

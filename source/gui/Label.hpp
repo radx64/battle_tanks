@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
 #include "gui/Alignment.hpp"
@@ -12,12 +14,13 @@ namespace gui
 class Label : public Component
 {
 public:
-    Label(const std::string_view& text);
+    static std::unique_ptr<Label> create(const std::string_view& text);
 
     void setText(const std::string_view& text);
     void setAlignment(const gui::Alignment& alignment);
 
 protected:
+    Label(const std::string_view& text);
     void onRender(sf::RenderTexture& renderTexture) override;
     void onSizeChange() override;
     void onPositionChange() override;

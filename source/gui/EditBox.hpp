@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
 #include "gui/Alignment.hpp"
@@ -14,7 +16,8 @@ namespace gui
 class EditBox : public Component
 {
 public:
-    EditBox();
+    static std::unique_ptr<EditBox> create();
+
     ~EditBox() = default;
 
     std::string getText();
@@ -22,6 +25,7 @@ public:
     void setAlignment(const gui::Alignment& alignment);
 
 protected:
+    EditBox();
     void onRender(sf::RenderTexture& renderTexture) override;
     void onSizeChange() override;
     void onPositionChange() override;

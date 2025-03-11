@@ -15,7 +15,7 @@ Header::Header()
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 
     // TODO add layout component for button and title text
-    auto close_button = std::make_unique<gui::Button>("X");
+    auto close_button = gui::Button::create("X");
     close_button->setSize(sf::Vector2f(20.f, window::config::HEADER_HEIGHT));
     close_button->onClick([this]()
     {
@@ -24,7 +24,7 @@ Header::Header()
     close_button_ptr_ = close_button.get();
     addChild(std::move(close_button));
 
-    auto title_text = std::make_unique<gui::Label>("");
+    auto title_text = gui::Label::create("");
     title_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
     title_text_handle_ = title_text.get();
     title_text_handle_->setSize(getSize());
