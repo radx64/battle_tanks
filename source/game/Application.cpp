@@ -65,7 +65,8 @@ void Application::onInit()
 {
     context_.setCamera(&camera_);
     gui::FontLibrary::initialize();
-    graphics::TextureLibrary::initialize();
+    graphics::TextureLibrary::init();
+
     tilemap_ = std::make_unique<graphics::Tilemap>();
 
     mouseHandler_.subscribe(&guiMouseController_);
@@ -93,7 +94,6 @@ void Application::onClose()
 {
     logger_.info("Goodbye!");
     gui::FontLibrary::destroy();
-    graphics::TextureLibrary::destroy();
 }
 
 

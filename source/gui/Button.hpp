@@ -42,4 +42,15 @@ protected:
     std::function<void()> onClick_;
 };
 
+class ButtonWithIcon : public Button
+{
+public:
+    static std::unique_ptr<ButtonWithIcon> create(const std::string_view& text, const std::string_view& icon);
+    
+    void onRender(sf::RenderTexture& renderTexture) override;
+protected:
+    ButtonWithIcon(const std::string_view& text, const std::string_view& icon);
+    sf::Sprite icon_;
+};
+
 }  // namespace gui

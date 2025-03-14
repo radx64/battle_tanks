@@ -14,11 +14,11 @@ sf::Texture& getBarrelTexture(const BarrelFactory::BarrelType type)
 {
     switch (type)
     {
-        case BarrelFactory::BarrelType::Red    : return graphics::TextureLibrary::get("barrel_red");
-        case BarrelFactory::BarrelType::Rust   : return graphics::TextureLibrary::get("barrel_rust");
-        case BarrelFactory::BarrelType::Green  : return graphics::TextureLibrary::get("barrel_green");
-        case BarrelFactory::BarrelType::Black  : return graphics::TextureLibrary::get("barrel_black");
-        default                                : return graphics::TextureLibrary::get("barrel_rust");
+        case BarrelFactory::BarrelType::Red    : return graphics::TextureLibrary::instance().get("barrel_red");
+        case BarrelFactory::BarrelType::Rust   : return graphics::TextureLibrary::instance().get("barrel_rust");
+        case BarrelFactory::BarrelType::Green  : return graphics::TextureLibrary::instance().get("barrel_green");
+        case BarrelFactory::BarrelType::Black  : return graphics::TextureLibrary::instance().get("barrel_black");
+        default                                : return graphics::TextureLibrary::instance().get("barrel_rust");
     }
 };
 }  // namespace

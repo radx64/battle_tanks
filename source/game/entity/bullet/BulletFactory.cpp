@@ -14,8 +14,8 @@ sf::Texture& getBulletTexture(const BulletFactory::BulletType type)
 {
     switch (type)
     {
-        case BulletFactory::BulletType::Dark   : return graphics::TextureLibrary::get("bullet_dark");
-        default                                : return graphics::TextureLibrary::get("bullet_dark");
+        case BulletFactory::BulletType::Dark   : return graphics::TextureLibrary::instance().get("bullet_dark");
+        default                                : return graphics::TextureLibrary::instance().get("bullet_dark");
     }
 };
 }  // namespace

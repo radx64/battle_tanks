@@ -16,11 +16,11 @@ sf::Texture& getTreeTexture(const TreeFactory::TreeType type)
 {
     switch (type)
     {
-        case TreeFactory::TreeType::Brown_Large    : return graphics::TextureLibrary::get("tree_brown_large");
-        case TreeFactory::TreeType::Brown_Small    : return graphics::TextureLibrary::get("tree_brown_small"); 
-        case TreeFactory::TreeType::Green_Large    : return graphics::TextureLibrary::get("tree_green_large");
-        case TreeFactory::TreeType::Green_Small    : return graphics::TextureLibrary::get("tree_green_small");
-        default                                    : return graphics::TextureLibrary::get("tree_green_small");
+        case TreeFactory::TreeType::Brown_Large    : return graphics::TextureLibrary::instance().get("tree_brown_large");
+        case TreeFactory::TreeType::Brown_Small    : return graphics::TextureLibrary::instance().get("tree_brown_small"); 
+        case TreeFactory::TreeType::Green_Large    : return graphics::TextureLibrary::instance().get("tree_green_large");
+        case TreeFactory::TreeType::Green_Small    : return graphics::TextureLibrary::instance().get("tree_green_small");
+        default                                    : return graphics::TextureLibrary::instance().get("tree_green_small");
     };
 }
 

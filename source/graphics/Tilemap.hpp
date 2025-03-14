@@ -96,7 +96,7 @@ class Tile
 public:
     Tile(const float x, const float y, const TileType type)
     {  
-        sprite_.setTexture(TextureLibrary::get(toTextureName(type)));
+        sprite_.setTexture(TextureLibrary::instance().get(toTextureName(type)));
         sprite_.setPosition(x, y);
     }
 
@@ -201,5 +201,3 @@ private:
 };
 
 }  // namespace graphics
-
-

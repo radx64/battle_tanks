@@ -14,9 +14,9 @@ sf::Texture& getCrateTexture(const CrateFactory::CrateType type)
 {
     switch (type)
     {
-        case CrateFactory::CrateType::Wood    : return graphics::TextureLibrary::get("crate_wood");
-        case CrateFactory::CrateType::Metal   : return graphics::TextureLibrary::get("crate_metal");
-        default                               : return graphics::TextureLibrary::get("crate_wood");
+        case CrateFactory::CrateType::Wood    : return graphics::TextureLibrary::instance().get("crate_wood");
+        case CrateFactory::CrateType::Metal   : return graphics::TextureLibrary::instance().get("crate_metal");
+        default                               : return graphics::TextureLibrary::instance().get("crate_wood");
     }
 };
 }  // namespace

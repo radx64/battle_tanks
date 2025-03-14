@@ -15,8 +15,8 @@ Header::Header()
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 
     // TODO add layout component for button and title text
-    auto close_button = gui::Button::create("X");
-    close_button->setSize(sf::Vector2f(20.f, window::config::HEADER_HEIGHT));
+    auto close_button = gui::ButtonWithIcon::create("", "red_check_square");
+    close_button->setSize(sf::Vector2f(32.f, window::config::HEADER_HEIGHT));
     close_button->onClick([this]()
     {
         if (closeButtonAction_) closeButtonAction_();
@@ -55,7 +55,7 @@ void Header::onSizeChange()
     header_size.y = window::config::HEADER_HEIGHT;
     header_shape_.setSize(header_size);
     title_text_handle_->setSize(header_size);
-    close_button_ptr_->setPosition(sf::Vector2f{header_size.x - 20.f, 0.f});
+    close_button_ptr_->setPosition(sf::Vector2f{header_size.x - 32.f, 0.f});
 }
 
 void Header::onPositionChange()

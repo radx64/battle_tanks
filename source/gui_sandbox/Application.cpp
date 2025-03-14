@@ -17,6 +17,8 @@
 #include "gui/Window.hpp"
 #include "gui/ProgressBar.hpp"
 
+#include "gui/TextureLibrary.hpp"
+
 using namespace std::literals;
 
 namespace gui_sandbox
@@ -36,6 +38,7 @@ Application::Application()
 void Application::onInit()
 {
     gui::FontLibrary::initialize();
+    gui::TextureLibrary::init();
 
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);

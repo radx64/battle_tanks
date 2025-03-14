@@ -2,6 +2,7 @@
 
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
+#include "gui/TextureLibrary.hpp"
 
 namespace gui
 {
@@ -148,6 +149,29 @@ EventStatus Button::on(const event::FocusGained&)
     backgroundShape_.setOutlineColor(sf::Color::Red);
     backgroundShape_.setOutlineThickness(-4.f);
     return gui::EventStatus::Consumed;
+}
+
+
+// This ButtonWithIcon need to be properly reimplemented but for simple testing it will do the trick
+ButtonWithIcon::ButtonWithIcon(const std::string_view& text, const std::string_view& icon)
+    : Button{text}
+{
+    icon_.setTexture(gui::TextureLibrary::instance().get(std::string(icon)));
+    icon_.setPosition(getGlobalPosition());
+    icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));
+}
+
+std::unique_ptr<ButtonWithIcon> ButtonWithIcon::create(const std::string_view& text, const std::string_view& icon)
+{
+    return std::unique_ptr<ButtonWithIcon>{new ButtonWithIcon{text, icon}};
+}
+
+void ButtonWithIcon::onRender(sf::RenderTexture& renderTexture)
+{
+    icon_.setPosition(getGlobalPosition());
+    icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));
+    Button::onRender(renderTexture);
+    renderTexture.draw(icon_);
 }
 
 }  // namespace gui

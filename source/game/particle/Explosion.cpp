@@ -12,7 +12,7 @@ Explosion::Explosion(float x, float y)
     position_.x = x;
     position_.y = y;
     angularVelocity_ = 180.f;
-    auto& explosionBody = graphics::TextureLibrary::get("explosion_smoke_2");
+    auto& explosionBody = graphics::TextureLibrary::instance().get("explosion_smoke_2");
     sprite_.setTexture(explosionBody);
     sf::Vector2u texture_body_size = explosionBody.getSize();
     auto middle_point = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
