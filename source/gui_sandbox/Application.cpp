@@ -49,19 +49,19 @@ void Application::onInit()
     keyboardHandler_.subscribe(&keyboardController_);
     keyboardHandler_.subscribe(&textEnteredController_);
 
-    auto quitButton = gui::Button::create("Quit");
+    auto quitButton = gui::TextButton::create("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quitButton->setSize(sf::Vector2f(250.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
 
-    auto guiDebug = gui::Button::create("GUI DEBUG");
+    auto guiDebug = gui::TextButton::create("GUI DEBUG");
     guiDebug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
     guiDebug->setSize(sf::Vector2f(250.f, 30.f));
     guiDebug->onClick([](){gui::debug::toggle();});
     windowManager_.mainWindow().addChild(std::move(guiDebug));
 
-    auto createEmptyWindowButton = gui::Button::create("Create Empty Window");
+    auto createEmptyWindowButton = gui::TextButton::create("Empty Window");
     createEmptyWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
     createEmptyWindowButton->setSize(sf::Vector2f(250.f, 30.f));
 
@@ -76,13 +76,13 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createEmptyWindowButton));
 
-    auto createSimpleWindowButton = gui::Button::create("Create Simple Window");
+    auto createSimpleWindowButton = gui::TextButton::create("Simple Window");
     createSimpleWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
     createSimpleWindowButton->setSize(sf::Vector2f(250.f, 30.f));
 
     createSimpleWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
-        auto simpleButton = gui::Button::create("THIS IS BUTTON!");
+        auto simpleButton = gui::TextButton::create("THIS IS BUTTON!");
         window->addChild(std::move(simpleButton));
 
         window->setSize(sf::Vector2f(400.0f, 400.0f));
@@ -95,7 +95,7 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createSimpleWindowButton));
 
-    auto createProgressWindowButton = gui::Button::create("Create ProgressBar Window");
+    auto createProgressWindowButton = gui::TextButton::create("ProgressBar Window");
     createProgressWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
     createProgressWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createProgressWindowButton->onClick([this](){
@@ -105,9 +105,9 @@ void Application::onInit()
         window->setTitle("I see some progress :D");
 
         auto verticalLayout = gui::VerticalLayout::create();
-        auto minusButton = gui::Button::create("-");
+        auto minusButton = gui::TextButton::create("-");
         auto progressBar = gui::ProgressBar::create();
-        auto plusButton = gui::Button::create("+");
+        auto plusButton = gui::TextButton::create("+");
 
 
         progressBar->setRange(0.f, 25.f);
@@ -132,7 +132,7 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createProgressWindowButton));
 
-    auto createEditboxWindowButton = gui::Button::create("Create Edit Box Window");
+    auto createEditboxWindowButton = gui::TextButton::create("Edit Box Window");
     createEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
     createEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createEditboxWindowButton->onClick([this](){
@@ -143,7 +143,7 @@ void Application::onInit()
         window->setTitle("I can now read text from keyboard :D");
 
         auto verticalLayout = gui::VerticalLayout::create();
-        auto button = gui::Button::create("CLICK HERE");
+        auto button = gui::TextButton::create("CLICK HERE");
         auto editBox = gui::EditBox::create();
         auto editBox2 = gui::EditBox::create();
 
@@ -163,20 +163,20 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createEditboxWindowButton));
 
-    auto createLayoutWindowButton = gui::Button::create("Create Layout Window");
+    auto createLayoutWindowButton = gui::TextButton::create("Layout Window");
     createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
     createLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createLayoutWindowButton->onClick([this](){
 
         auto window = std::make_unique<gui::Window>();
         auto horizontalLayout = gui::HorizontalLayout::create();
-        auto helloButton = gui::Button::create("HELLO");
-        auto worldButton = gui::Button::create("WORLD");
+        auto helloButton = gui::TextButton::create("HELLO");
+        auto worldButton = gui::TextButton::create("WORLD");
 
         auto horizontalLayout2 = gui::HorizontalLayout::create();
-        auto somethingButton = gui::Button::create("SOMETHING");
-        auto cookingButton = gui::Button::create("IS COOKING");
-        auto hardButton = gui::Button::create("HARD");
+        auto somethingButton = gui::TextButton::create("SOMETHING");
+        auto cookingButton = gui::TextButton::create("IS COOKING");
+        auto hardButton = gui::TextButton::create("HARD");
 
         helloButton->onClick([this](){logger_.info("Hello?");});
         worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
@@ -208,7 +208,7 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createLayoutWindowButton));
 
-    auto createFocusTestWindowButton = gui::Button::create("Create Focus Test Window");
+    auto createFocusTestWindowButton = gui::TextButton::create("Focus Test Window");
     createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
     createFocusTestWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createFocusTestWindowButton->onClick([this](){
@@ -218,27 +218,27 @@ void Application::onInit()
         auto hl1 = gui::HorizontalLayout::create();
         auto edit1 = gui::EditBox::create();
         edit1->setAlignment(gui::Alignment::Left);
-        auto button1 = gui::Button::create("Button1");
+        auto button1 = gui::TextButton::create("Button1");
         hl1->addChild(std::move(edit1));
         hl1->addChild(std::move(button1));
 
         auto hl2 = gui::HorizontalLayout::create();
         auto edit2 = gui::EditBox::create();
         edit2->setAlignment(gui::Alignment::HorizontallyCentered);
-        auto button2 = gui::Button::create("Button2");
+        auto button2 = gui::TextButton::create("Button2");
         hl2->addChild(std::move(edit2));
         hl2->addChild(std::move(button2));
 
         auto hl3 = gui::HorizontalLayout::create();
         auto edit3 = gui::EditBox::create();
         edit3->setAlignment(gui::Alignment::Right);
-        auto button3 = gui::Button::create("Button3");
+        auto button3 = gui::TextButton::create("Button3");
         hl3->addChild(std::move(edit3));
         hl3->addChild(std::move(button3));
 
         auto hl4 = gui::HorizontalLayout::create();
         auto edit4 = gui::EditBox::create();
-        auto button4 = gui::Button::create("Button4");
+        auto button4 = gui::TextButton::create("Button4");
         hl4->addChild(std::move(edit4));
         hl4->addChild(std::move(button4));
 
@@ -259,7 +259,7 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createFocusTestWindowButton));
 
-    auto createGridLayoutWindowButton = gui::Button::create("Create Grid Layout Window");
+    auto createGridLayoutWindowButton = gui::TextButton::create("Grid Layout Window");
     createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
     createGridLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createGridLayoutWindowButton->onClick([this](){
@@ -304,10 +304,10 @@ void Application::onInit()
 
         updateGridStatusLabel();
 
-        auto addNewColumnButton = gui::Button::create("Add Column");
-        auto removeLastColumnButton = gui::Button::create("Remove Column");
-        auto addNewRowButton = gui::Button::create("Add Row");
-        auto removeLastRowButton = gui::Button::create("Remove Row");
+        auto addNewColumnButton = gui::TextButton::create("Add Column");
+        auto removeLastColumnButton = gui::TextButton::create("Remove Column");
+        auto addNewRowButton = gui::TextButton::create("Add Row");
+        auto removeLastRowButton = gui::TextButton::create("Remove Row");
 
         auto getPositionValue = [positionValuePtr]()
         {
@@ -352,7 +352,7 @@ void Application::onInit()
 
             for (size_t i = 0; i < gridLayoutPtr->getHeight(); ++i)
             {
-                auto button = gui::Button::create("NEW BUTTON " + std::to_string(i));
+                auto button = gui::TextButton::create("NEW BUTTON " + std::to_string(i));
                 gridLayoutPtr->addChild(std::move(button));
             }
         });
@@ -397,7 +397,7 @@ void Application::onInit()
 
             for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)
             {
-                auto button = gui::Button::create("NEW BUTTON " + std::to_string(i));
+                auto button = gui::TextButton::create("NEW BUTTON " + std::to_string(i));
                 gridLayoutPtr->addChild(std::move(button));
             }
         });
@@ -429,11 +429,11 @@ void Application::onInit()
 
         verticalLayout->addChild(std::move(horizontalLayout));
 
-        auto helloButton = gui::Button::create("HELLO");
-        auto worldButton = gui::Button::create("WORLD");
-        auto somethingButton = gui::Button::create("SOMETHING");
-        auto cookingButton = gui::Button::create("IS COOKING");
-        auto hardButton = gui::Button::create("HARD");
+        auto helloButton = gui::TextButton::create("HELLO");
+        auto worldButton = gui::TextButton::create("WORLD");
+        auto somethingButton = gui::TextButton::create("SOMETHING");
+        auto cookingButton = gui::TextButton::create("IS COOKING");
+        auto hardButton = gui::TextButton::create("HARD");
 
         helloButton->onClick([this](){logger_.info("Hello?");});
         worldButton->onClick([this](){logger_.info("Is it me you looking for?");});

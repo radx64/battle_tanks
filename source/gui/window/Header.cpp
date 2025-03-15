@@ -4,6 +4,7 @@
 #include "gui/Button.hpp"
 #include "gui/Label.hpp"
 #include "gui/window/Config.hpp"
+#include "gui/TextureLibrary.hpp"
 
 namespace gui::window
 {
@@ -15,7 +16,7 @@ Header::Header()
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 
     // TODO add layout component for button and title text
-    auto close_button = gui::ButtonWithIcon::create("", "red_check_square");
+    auto close_button = gui::IconButton::create(gui::TextureLibrary::instance().get("red_icon_outline_cross"));
     close_button->setSize(sf::Vector2f(32.f, window::config::HEADER_HEIGHT));
     close_button->onClick([this]()
     {

@@ -21,8 +21,8 @@ Label::Label(const std::string_view& text)
     text_.setFont(style.getFont());
     text_.setCharacterSize(style.getFontSize());
     text_.setFillColor(style.getFontColor());
-    text_.setOutlineColor(style.getOutlineColor());
-    text_.setOutlineThickness(style.getOutlineThickness());
+    //text_.setOutlineColor(style.getOutlineColor());
+    //text_.setOutlineThickness(1);
     setText(text.data());
     setPosition({0.0f, 0.0f});
     setSize({20.f, 20.f});

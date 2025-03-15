@@ -115,7 +115,7 @@ const StyleSheet& BasicStyleSheetFactory::instance()
     {
         stylesheet_ = std::make_unique<StyleSheet>();
         stylesheet_->setFont(gui::FontLibrary::get("ibmVGA"));
-        stylesheet_->setFontSize(20);
+        stylesheet_->setFontSize(22);
         stylesheet_->setFontColor(sf::Color::Black);
         stylesheet_->setOutlineColor(sf::Color(127,127,127,255));
         stylesheet_->setOutlineThickness(1);

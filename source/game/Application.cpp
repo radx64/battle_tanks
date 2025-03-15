@@ -227,7 +227,7 @@ void Application::renderGameObjects()
 
 void Application::configureGUI()
 {
-    auto quitButton = gui::Button::create("Quit");
+    auto quitButton = gui::TextButton::create("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
@@ -247,7 +247,7 @@ void Application::configureGUI()
 
     windowManager_.mainWindow().addChild(std::move(measurementsAverageText));
 
-    auto button = gui::Button::create("Help");
+    auto button = gui::TextButton::create("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){

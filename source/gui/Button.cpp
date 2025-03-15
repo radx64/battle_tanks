@@ -4,15 +4,21 @@
 #include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
 
+namespace
+{
+    sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const sf::Vector2f& objectSize)
+    {
+        return {objectSize.x / textureSize.x, objectSize.y / textureSize.y};
+    }
+}  // namespace
+
 namespace gui
 {
 
-std::unique_ptr<Button> Button::create(const std::string_view& text)
-{
-    return std::unique_ptr<Button>{new Button{text}};
-}
-
-Button::Button(const std::string_view& text)
+ButtonBase::ButtonBase()
+: hoverTexture_{TextureLibrary::instance().get("red_button_hover")}
+, normalTexture_{TextureLibrary::instance().get("red_button_normal")}
+, pressedTexture_{TextureLibrary::instance().get("red_button_pressed")}
 {
     enableFocus();
     auto style = BasicStyleSheetFactory::instance();
@@ -22,52 +28,54 @@ Button::Button(const std::string_view& text)
     backgroundShape_.setPosition(getGlobalPosition());
     backgroundShape_.setSize(Component::getSize());
 
-    auto textPtr = gui::Label::create(text);
-    text_ = textPtr.get();
-    text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-    addChild(std::move(textPtr));
+    background_.setTexture(normalTexture_);
 }
 
-void Button::onSizeChange()
+void ButtonBase::onSizeChange()
 {
+    backgroundShape_.setSize(getSize());
+
+    auto backgroundTextureSize = background_.getTexture()->getSize();
     auto buttonSize = getSize();
-    backgroundShape_.setSize(buttonSize);
-    text_->setSize(buttonSize);
+    background_.setScale(getScalingFactor(backgroundTextureSize, buttonSize));
 }
 
-void Button::onPositionChange()
+void ButtonBase::onPositionChange()
 {
     backgroundShape_.setPosition(Component::getGlobalPosition());
+
+    background_.setPosition(Component::getGlobalPosition());
 }
 
-void Button::setText(const std::string_view& text)
+void ButtonBase::onRender(sf::RenderTexture& renderTexture)
 {
-    text_->setText(text);
-    text_->setSize(getSize());
+    //renderTexture.draw(backgroundShape_);
+    renderTexture.draw(background_);
 }
 
-void Button::onRender(sf::RenderTexture& renderTexture)
-{
-    renderTexture.draw(backgroundShape_);
-}
-
-void Button::onClick(std::function<void()> onClickCallback)
+void ButtonBase::onClick(std::function<void()> onClickCallback)
 {
     onClick_ = onClickCallback;
 }
 
-EventStatus Button::on(const event::MouseEntered&)
+EventStatus ButtonBase::on(const event::MouseEntered&)
 {
     backgroundShape_.setFillColor(sf::Color(255,0,0,255));
+
+    background_.setTexture(hoverTexture_);
+
     return gui::EventStatus::Consumed;
 }
-EventStatus Button::on(const event::MouseLeft&)
+EventStatus ButtonBase::on(const event::MouseLeft&)
 {
     backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+
+    background_.setTexture(normalTexture_);
+
     return gui::EventStatus::Consumed;
 }
 
-EventStatus Button::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 {
     if (not isFocused()) return gui::EventStatus::NotConsumed;
 
@@ -77,12 +85,14 @@ EventStatus Button::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
     {
         backgroundShape_.setFillColor(sf::Color(0,255,0,255));
 
+        background_.setTexture(pressedTexture_);
+
         return gui::EventStatus::Consumed;
     }
     return gui::EventStatus::NotConsumed;
 }
 
-EventStatus Button::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus ButtonBase::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return gui::EventStatus::NotConsumed;
     
@@ -91,6 +101,8 @@ EventStatus Button::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEven
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
     {
         backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+
+        background_.setTexture(normalTexture_);
         
         if (onClick_) onClick_();
         return gui::EventStatus::Consumed;
@@ -98,7 +110,7 @@ EventStatus Button::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEven
     return gui::EventStatus::NotConsumed;
 }
 
-EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     if (not isVisible_) return gui::EventStatus::NotConsumed;
 
@@ -115,13 +127,15 @@ EventStatus Button::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         // FIXME: I need to sort it out later, but at least I know the reason now
 
         backgroundShape_.setFillColor(sf::Color(0,255,0,255));
+
+        background_.setTexture(pressedTexture_);
       
         return gui::EventStatus::Consumed;
     }
     return gui::EventStatus::NotConsumed;
 }
 
-EventStatus Button::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
@@ -129,6 +143,9 @@ EventStatus Button::on(const event::MouseButtonReleased& mouseButtonReleasedEven
     if (isLeftReleased and backgroundShape_.getGlobalBounds().contains(mousePosition))
     {
         backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+
+        background_.setTexture(hoverTexture_);
+
         focus();
         if (onClick_) onClick_();  
         return gui::EventStatus::Consumed;
@@ -136,7 +153,7 @@ EventStatus Button::on(const event::MouseButtonReleased& mouseButtonReleasedEven
     return gui::EventStatus::NotConsumed;
 }
 
-EventStatus Button::on(const event::FocusLost&)
+EventStatus ButtonBase::on(const event::FocusLost&)
 {
     auto& style = BasicStyleSheetFactory::instance();
     backgroundShape_.setOutlineColor(style.getOutlineColor());
@@ -144,34 +161,79 @@ EventStatus Button::on(const event::FocusLost&)
     return gui::EventStatus::Consumed;
 }
 
-EventStatus Button::on(const event::FocusGained&)
+EventStatus ButtonBase::on(const event::FocusGained&)
 {
     backgroundShape_.setOutlineColor(sf::Color::Red);
     backgroundShape_.setOutlineThickness(-4.f);
     return gui::EventStatus::Consumed;
 }
 
-
-// This ButtonWithIcon need to be properly reimplemented but for simple testing it will do the trick
-ButtonWithIcon::ButtonWithIcon(const std::string_view& text, const std::string_view& icon)
-    : Button{text}
+std::unique_ptr<TextButton> TextButton::create(const std::string_view& text)
 {
-    icon_.setTexture(gui::TextureLibrary::instance().get(std::string(icon)));
+    return std::unique_ptr<TextButton>{new TextButton{text}};
+}
+
+TextButton::TextButton(const std::string_view& text)
+{
+    auto textPtr = gui::Label::create(text);
+    text_ = textPtr.get();
+    text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+    addChild(std::move(textPtr));
+}
+
+void TextButton::setText(const std::string_view& text)
+{
+    text_->setText(text);
+    text_->setSize(getSize());
+}
+
+void TextButton::onSizeChange()
+{
+    ButtonBase::onSizeChange();
+    text_->setSize(getSize());
+}
+
+std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon)
+{
+    return std::unique_ptr<IconButton>{new IconButton{icon}};
+}
+
+IconButton::IconButton(const sf::Texture& icon)
+{
+    icon_.setTexture(icon);
     icon_.setPosition(getGlobalPosition());
     icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));
 }
 
-std::unique_ptr<ButtonWithIcon> ButtonWithIcon::create(const std::string_view& text, const std::string_view& icon)
+void IconButton::setIcon(const sf::Texture& icon)
 {
-    return std::unique_ptr<ButtonWithIcon>{new ButtonWithIcon{text, icon}};
+    icon_.setTexture(icon);
+    icon_.setPosition(getGlobalPosition());
+    icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));   
 }
 
-void ButtonWithIcon::onRender(sf::RenderTexture& renderTexture)
+void IconButton::onRender(sf::RenderTexture& renderTexture)
 {
-    icon_.setPosition(getGlobalPosition());
-    icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));
-    Button::onRender(renderTexture);
+    ButtonBase::onRender(renderTexture);
     renderTexture.draw(icon_);
+}
+
+void IconButton::onSizeChange()
+{
+    ButtonBase::onSizeChange();
+
+    sf::Vector2u textureSize = icon_.getTexture()->getSize();
+    sf::Vector2f buttonSize = getSize();
+    sf::Vector2f scale = getScalingFactor(textureSize, buttonSize);
+
+    icon_.setScale(scale);
+    icon_.setTextureRect(sf::IntRect(0,0,buttonSize.x / scale.x, buttonSize.y / scale.y));
+}
+
+void IconButton::onPositionChange()
+{
+    ButtonBase::onPositionChange();
+    icon_.setPosition(getGlobalPosition());
 }
 
 }  // namespace gui

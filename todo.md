@@ -29,8 +29,10 @@ Bunch of random ideas to randomly pick up and implement
   - [x] Text input
   - [x] Selection support
     - [x] 🐛 Moving cursor does not clear previous selection
-  - [x] Copy paste mechanics
+  - [x] Copy paste mechanic
+    - [ ] 🐛 Pasting text over selected text moves cursor to wrong place
 - [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
+- [ ] 🐛 When layout constrains are exceeding maximum possible ration should fallback to auto mode, but it doesn't
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 - [ ] Consider creating render command batches and split gui from sfml implementation
 

@@ -35,7 +35,7 @@ public:
 TEST_F(ButtonShould, DISABLED_callOnClickWhenClickedInside)
 {
     ActionReceiver receiver;
-    auto sut = gui::Button::create("TEST button");
+    auto sut = gui::TextButton::create("TEST button");
     sut->setSize(sf::Vector2f{10.f, 10.f});
     sut->setPosition(sf::Vector2f{0.f,0.f});
     sut->onClick([&receiver](){receiver.action();});
@@ -46,7 +46,7 @@ TEST_F(ButtonShould, DISABLED_callOnClickWhenClickedInside)
 TEST_F(ButtonShould, DISABLED_dontCallOnClickWhenClickedOutside)
 {
     ActionReceiver receiver;
-    auto sut = gui::Button::create("TEST button");
+    auto sut = gui::TextButton::create("TEST button");
     sut->setSize(sf::Vector2f{10.f, 10.f});
     sut->setPosition(sf::Vector2f{0.f,0.f});
     sut->onClick([&receiver](){receiver.action();});

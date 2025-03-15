@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 #include <string_view>
+#include <optional>
 
 #include <SFML/Graphics.hpp>
 
@@ -13,14 +14,16 @@ namespace gui { class Label; }
 namespace gui
 {
 
-class Button : public Component
+class ButtonBase : public Component
 {
 public:
-    static std::unique_ptr<Button> create(const std::string_view& text);
+    // static std::unique_ptr<Button> create(
+    //     const std::optional<const std::string_view&>& text,
+    //     const std::optional<sf::Texture&>& icon);
     
     void onSizeChange() override;
     void onPositionChange() override;
-    void setText(const std::string_view& text);
+
     void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
     
@@ -36,20 +39,44 @@ public:
     EventStatus on(const event::FocusGained&) override;
     
 protected:
-    Button(const std::string_view& text);
+    ButtonBase();
     sf::RectangleShape backgroundShape_;
-    gui::Label* text_;
+    sf::Sprite background_;
+
+    const sf::Texture& hoverTexture_;
+    const sf::Texture& normalTexture_;
+    const sf::Texture& pressedTexture_;
+
     std::function<void()> onClick_;
 };
 
-class ButtonWithIcon : public Button
+class TextButton : public ButtonBase
 {
 public:
-    static std::unique_ptr<ButtonWithIcon> create(const std::string_view& text, const std::string_view& icon);
+    static std::unique_ptr<TextButton> create(const std::string_view& text);
+
+    void setText(const std::string_view& text);
     
-    void onRender(sf::RenderTexture& renderTexture) override;
 protected:
-    ButtonWithIcon(const std::string_view& text, const std::string_view& icon);
+    TextButton(const std::string_view& text);
+    void onSizeChange() override;
+    
+    gui::Label* text_;
+};
+
+class IconButton : public ButtonBase
+{  
+public:
+    static std::unique_ptr<IconButton> create(const sf::Texture& icon);
+
+    void setIcon(const sf::Texture& icon);
+    void onRender(sf::RenderTexture& renderTexture) override;
+
+protected:
+    IconButton(const sf::Texture& icon);
+    void onSizeChange() override;
+    void onPositionChange() override;
+
     sf::Sprite icon_;
 };
 
