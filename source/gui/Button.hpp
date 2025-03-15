@@ -17,6 +17,11 @@ namespace gui
 class ButtonBase : public Component
 {
 public:
+
+    //TODO: cleanup some of this implementation
+    // eg. stop using backgroundShape_ rectangle and use only sprite
+    // focus texture is not here yet
+
     // static std::unique_ptr<Button> create(
     //     const std::optional<const std::string_view&>& text,
     //     const std::optional<sf::Texture&>& icon);
