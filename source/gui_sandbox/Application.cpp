@@ -16,6 +16,7 @@
 #include "gui/Layout.hpp"
 #include "gui/Window.hpp"
 #include "gui/ProgressBar.hpp"
+#include "gui/FramedSprite.hpp"
 
 #include "gui/TextureLibrary.hpp"
 
@@ -515,6 +516,28 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(multilineTopAlignedLabel));
     windowManager_.mainWindow().addChild(std::move(multilineCenterAlignedLabel));
     windowManager_.mainWindow().addChild(std::move(multilineBottomAlignedLabel));
+
+    auto layout = gui::FramedSprite::LayoutConfig
+    {
+        .cornerSizes = 
+        {
+            .topLeft        = {20.f, 20.f},
+            .bottomRight    = {20.f, 20.f}
+        },
+        .uvs = 
+        {
+            .topLeft        = {0.0f, 0.0f, 1.0f, 1.0f},
+            .topRight       = {2.0f, 0.0f, 1.0f, 1.0f},
+            .bottomLeft     = {0.0f, 2.0f, 1.0f, 1.0f},
+            .bottomRight    = {2.0f, 2.0f, 1.0f, 1.0f},
+        }
+    };
+
+    framedSpriteTest_ = std::make_unique<gui::FramedSprite>(layout);
+    framedSpriteTest_->setTexture(gui::TextureLibrary::instance().get("framedSpriteTest"));
+    framedSpriteTest_->setPosition(200.f, 400.f);
+    framedSpriteTest_->setSize({300.f, 300.f});
+
 }
 
 void Application::onClose()
@@ -529,6 +552,12 @@ void Application::onEvent(const sf::Event& event)
 
 void Application::onUpdate(float timeStep)
 {
+    static float time = 0.f;
+    time += timeStep;
+    float scaleX = std::sin(time) * 0.5f + 1.f; // scale oscillates between 0.5 and 1.5
+    float scaleY = std::cos(time) * 0.5f + 1.f;
+    framedSpriteTest_->setSize({300.f * scaleX, 300.f * scaleY});
+
     (void) timeStep;
 }
 
@@ -576,6 +605,7 @@ void Application::onRender()
 {
     window_.clear(sf::Color(20, 110, 158));
     window_.draw(backgroundSprite_);
+    window_.draw(*framedSpriteTest_);
     windowManager_.render(window_);
 }
 

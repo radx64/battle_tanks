@@ -7,6 +7,7 @@
 #include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
 #include "gui/TextEnteredController.hpp"
+#include "gui/FramedSprite.hpp"
 
 namespace gui_sandbox
 {
@@ -31,6 +32,7 @@ protected:
 
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;
+    std::unique_ptr<gui::FramedSprite> framedSpriteTest_;
     engine::Timer timer_;
 };
 
