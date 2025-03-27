@@ -200,9 +200,7 @@ std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon)
 
 IconButton::IconButton(const sf::Texture& icon)
 {
-    icon_.setTexture(icon);
-    icon_.setPosition(getGlobalPosition());
-    icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));
+    setIcon(icon);
 }
 
 void IconButton::setIcon(const sf::Texture& icon)

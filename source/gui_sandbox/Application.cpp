@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include <chrono>
 #include <fmt/format.h>
 
 #include "Config.hpp"
@@ -538,6 +539,27 @@ void Application::onInit()
     framedSpriteTest_->setPosition(200.f, 400.f);
     framedSpriteTest_->setSize({300.f, 300.f});
 
+    layout = gui::FramedSprite::LayoutConfig
+    {
+        .cornerSizes = 
+        {
+            .topLeft        = {30.f, 30.f},
+            .bottomRight    = {30.f, 50.f}
+        },
+        .uvs = 
+        {
+            .topLeft        = {0.0f,   0.0f,   6.0f, 6.0f},
+            .topRight       = {185.0f, 0.0f,   6.0f, 6.0f},
+            .bottomLeft     = {0.0f,   53.0f,  6.0f, 10.0f},
+            .bottomRight    = {185.0f, 53.0f,  6.0f, 10.0f},
+        }
+    };
+
+    framedSpriteTest2_ = std::make_unique<gui::FramedSprite>(layout);
+    framedSpriteTest2_->setTexture(gui::TextureLibrary::instance().get("red_button_normal"));
+    framedSpriteTest2_->setPosition(600.f, 400.f);
+    framedSpriteTest2_->setSize({300.f, 300.f});
+
 }
 
 void Application::onClose()
@@ -552,13 +574,13 @@ void Application::onEvent(const sf::Event& event)
 
 void Application::onUpdate(float timeStep)
 {
-    static float time = 0.f;
-    time += timeStep;
-    float scaleX = std::sin(time) * 0.5f + 1.f; // scale oscillates between 0.5 and 1.5
-    float scaleY = std::cos(time) * 0.5f + 1.f;
-    framedSpriteTest_->setSize({300.f * scaleX, 300.f * scaleY});
-
     (void) timeStep;
+
+    auto time = std::chrono::duration_cast<std::chrono::milliseconds>(timerService_.getCurrentTime().time_since_epoch()).count();
+    float scaleX = std::sin(time / 500.f) * 0.5f + 1.f; // scale oscillates between 0.5 and 1.5
+    float scaleY = std::cos(time / 500.f) * 0.5f + 1.f;
+    framedSpriteTest_->setSize({300.f * scaleX, 300.f * scaleY});
+    framedSpriteTest2_->setSize({300.f * scaleY, 300.f * scaleX});
 }
 
 void Application::generateBackground()
@@ -606,6 +628,7 @@ void Application::onRender()
     window_.clear(sf::Color(20, 110, 158));
     window_.draw(backgroundSprite_);
     window_.draw(*framedSpriteTest_);
+    window_.draw(*framedSpriteTest2_);
     windowManager_.render(window_);
 }
 

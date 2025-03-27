@@ -33,6 +33,7 @@ protected:
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;
     std::unique_ptr<gui::FramedSprite> framedSpriteTest_;
+    std::unique_ptr<gui::FramedSprite> framedSpriteTest2_;
     engine::Timer timer_;
 };
 

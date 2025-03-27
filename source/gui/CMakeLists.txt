@@ -22,6 +22,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/EventReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontHeightCache.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FramedSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/keyboard/Utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.cpp
