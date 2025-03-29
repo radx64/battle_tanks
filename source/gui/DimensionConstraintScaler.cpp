@@ -50,7 +50,7 @@ void DimensionConstraintScaler::setElementSize(const size_t index, const float r
     auto currentConstaraintsSum = std::accumulate(std::begin(elements_), std::end(elements_), 0.f, sumOptionalOperator);
     auto oldElementRatio = elements_[index].value_or(0.f);
 
-    if (currentConstaraintsSum - oldElementRatio + newElementRatio.value() > 1.0f)
+    if ((currentConstaraintsSum - oldElementRatio + newElementRatio.value()) > 1.0f)
     {
         logger_.warning(fmt::format("setElementSize: New ratio {:.4f} exceedes maximum allowed sum of ratios! Changing to auto size!", newElementRatio.value()));
         newElementRatio = std::nullopt;
