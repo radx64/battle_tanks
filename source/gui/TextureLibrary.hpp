@@ -21,6 +21,7 @@ public:
             {"blue_check_square",            concat(texturePath, "blue/check_square_grey_cross.png")},
             {"red_check_square",             concat(texturePath, "red/check_square_grey_cross.png")},
             {"red_icon_outline_cross",       concat(texturePath, "red/icon_outline_cross.png")},
+            {"red_button_focus",             concat(texturePath, "red/button_rectangle_line.png")},
             {"red_button_hover",             concat(texturePath, "red/button_rectangle_depth_flat.png")},
             {"red_button_pressed",           concat(texturePath, "red/button_rectangle_flat.png")},
             {"red_button_normal",            concat(texturePath, "extra/button_rectangle_depth_line.png")},

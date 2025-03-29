@@ -60,6 +60,7 @@ public:
     void setSize(const sf::Vector2f& size);
     const sf::Vector2f& getSize() const;
     void setTexture(const sf::Texture& texture);
+    void setLayoutConfig(const LayoutConfig& layoutConfig);
     const sf::Texture& getTexture() const;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void recalculateVerticies();
@@ -70,7 +71,7 @@ protected:
 
     sf::VertexArray verticies_;
     sf::Vector2f size_;
-    const LayoutConfig layoutConfig_;
+    LayoutConfig layoutConfig_;
     const sf::Texture* texture_;
 };
 

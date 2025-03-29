@@ -7,6 +7,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "gui/FramedSprite.hpp"
+
 #include "gui/Component.hpp"
 
 namespace gui { class Label; }
@@ -17,15 +19,6 @@ namespace gui
 class ButtonBase : public Component
 {
 public:
-
-    //TODO: cleanup some of this implementation
-    // eg. stop using backgroundShape_ rectangle and use only sprite
-    // focus texture is not here yet
-
-    // static std::unique_ptr<Button> create(
-    //     const std::optional<const std::string_view&>& text,
-    //     const std::optional<sf::Texture&>& icon);
-    
     void onSizeChange() override;
     void onPositionChange() override;
 
@@ -45,12 +38,23 @@ public:
     
 protected:
     ButtonBase();
-    sf::RectangleShape backgroundShape_;
-    sf::Sprite background_;
+
+    enum class State
+    {
+        Normal,
+        Hover,
+        Pressed,    // TODO add disabled in the future
+    };
+
+    void updateTexture();
+    gui::FramedSprite background_;
 
     const sf::Texture& hoverTexture_;
+    const sf::Texture& focusTexture_;
     const sf::Texture& normalTexture_;
     const sf::Texture& pressedTexture_;
+
+    State state_;
 
     std::function<void()> onClick_;
 };

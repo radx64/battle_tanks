@@ -34,6 +34,12 @@ void FramedSprite::setTexture(const sf::Texture& texture)
     texture_ = &texture;
 }
 
+void FramedSprite::setLayoutConfig(const LayoutConfig& layoutConfig)
+{
+    layoutConfig_ = layoutConfig;
+    recalculateVerticies();
+}
+
 const sf::Texture& FramedSprite::getTexture() const
 {
     return *texture_;
