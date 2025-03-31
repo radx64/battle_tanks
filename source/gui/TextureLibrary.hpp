@@ -26,6 +26,10 @@ public:
             {"red_button_pressed",           concat(texturePath, "red/button_rectangle_flat.png")},
             {"red_button_normal",            concat(texturePath, "extra/button_rectangle_depth_line.png")},
             {"framedSpriteTest",             concat(texturePath, "framedSpriteTestTex.png")},
+            {"button_normal",                concat(texturePath, "classic/button.png")},
+            {"button_focus",                 concat(texturePath, "classic/button_focus.png")},
+            {"button_hover",                 concat(texturePath, "classic/button_hover.png")},
+            {"button_pressed",               concat(texturePath, "classic/button_pressed.png")},
 
         };
         return assets;

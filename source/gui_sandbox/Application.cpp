@@ -543,20 +543,20 @@ void Application::onInit()
     {
         .cornerSizes = 
         {
-            .topLeft        = {30.f, 30.f},
-            .bottomRight    = {30.f, 50.f}
+            .topLeft        = {20.f, 20.f},
+            .bottomRight    = {20.f, 20.f}
         },
         .uvs = 
         {
-            .topLeft        = {0.0f,   0.0f,   6.0f, 6.0f},
-            .topRight       = {185.0f, 0.0f,   6.0f, 6.0f},
-            .bottomLeft     = {0.0f,   53.0f,  6.0f, 10.0f},
-            .bottomRight    = {185.0f, 53.0f,  6.0f, 10.0f},
+            .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
+            .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
+            .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
+            .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
         }
     };
 
     framedSpriteTest2_ = std::make_unique<gui::FramedSprite>(layout);
-    framedSpriteTest2_->setTexture(gui::TextureLibrary::instance().get("red_button_normal"));
+    framedSpriteTest2_->setTexture(gui::TextureLibrary::instance().get("button_focus"));
     framedSpriteTest2_->setPosition(600.f, 400.f);
     framedSpriteTest2_->setSize({300.f, 300.f});
 

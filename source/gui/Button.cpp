@@ -28,16 +28,16 @@ namespace
     {
         return gui::FramedSprite::LayoutConfig::UVs
         {
-            .topLeft        = {0.0f,   0.0f,   8.0f, 8.0f},
-            .topRight       = {182.0f, 0.0f,   8.0f, 8.0f},
-            .bottomLeft     = {0.0f,   54.0f,  8.0f, 8.0f},
-            .bottomRight    = {182.0f, 54.0f,  8.0f, 8.0f},
+            .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
+            .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
+            .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
+            .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
         };
     }
 
     gui::FramedSprite::LayoutConfig buildLayoutConfigForButtonTexture()
     {
-        static auto layout = buildLayoutConfig({10.f, 10.f}, buildUVsForButtonTexture());
+        static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForButtonTexture());
         return layout;
     }
 
@@ -48,12 +48,13 @@ namespace gui
 
 ButtonBase::ButtonBase()
 : background_ {buildLayoutConfigForButtonTexture()}
-, hoverTexture_{TextureLibrary::instance().get("red_button_hover")}
-, focusTexture_{TextureLibrary::instance().get("red_button_focus")}
-, normalTexture_{TextureLibrary::instance().get("red_button_normal")}
-, pressedTexture_{TextureLibrary::instance().get("red_button_pressed")}
+, hoverTexture_{TextureLibrary::instance().get("button_hover")}
+, focusTexture_{TextureLibrary::instance().get("button_focus")}
+, normalTexture_{TextureLibrary::instance().get("button_normal")}
+, pressedTexture_{TextureLibrary::instance().get("button_pressed")}
 , state_{State::Normal}
 {
+    focusTexture_.setRepeated(true);
     enableFocus();
     background_.setTexture(normalTexture_);
 }
