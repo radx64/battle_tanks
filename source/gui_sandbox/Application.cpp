@@ -10,14 +10,15 @@
 #include "engine/Timer.hpp"
 #include "engine/TimerService.hpp"
 
-#include "gui/Debug.hpp"
 #include "gui/Button.hpp"
+#include "gui/Debug.hpp"
 #include "gui/EditBox.hpp"
 #include "gui/FontLibrary.hpp"
-#include "gui/Layout.hpp"
-#include "gui/Window.hpp"
-#include "gui/ProgressBar.hpp"
 #include "gui/FramedSprite.hpp"
+#include "gui/Label.hpp"
+#include "gui/Layout.hpp"
+#include "gui/ProgressBar.hpp"
+#include "gui/Window.hpp"
 
 #include "gui/TextureLibrary.hpp"
 

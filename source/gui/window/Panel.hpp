@@ -21,8 +21,6 @@ protected:
     void onSizeChange() override;
     void onPositionChange() override;
     void onRender(sf::RenderTexture& renderWindow) override;
-
-    sf::RectangleShape backgroundShape_;
 };
 
 }  // namespace gui::window

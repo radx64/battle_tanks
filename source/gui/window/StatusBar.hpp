@@ -7,6 +7,8 @@
 namespace gui::window
 {
 
+//TODO: add statusbar inset texture
+
 class StatusBar : public Component
 {
 public:
@@ -21,9 +23,8 @@ protected:
     void onSizeChange() override;
     void onPositionChange() override;
 
-    sf::RectangleShape resize_gadget_;
-    sf::RectangleShape backgroundShape_;
+    sf::Sprite resize_gadget_;
+    const sf::Texture& resize_gadget_texture_;
 };
-
 
 }  // namespace gui::window

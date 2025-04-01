@@ -4,9 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Button.hpp"
 #include "gui/Component.hpp"
-#include "gui/Label.hpp"
+#include "gui/FramedSprite.hpp"
 #include "gui/StyleSheet.hpp"
 #include "gui/window/Config.hpp"
 
@@ -77,6 +76,10 @@ protected:
     gui::window::Header* header_;
     gui::window::Panel* windowPanel_;
     gui::window::StatusBar* statusBar_;
+
+    const sf::Texture& activeTexture_;
+    const sf::Texture& inactiveTexture_;
+    gui::FramedSprite background_;
 };
 
 }  // namespace gui

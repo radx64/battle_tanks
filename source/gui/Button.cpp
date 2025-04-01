@@ -54,7 +54,11 @@ ButtonBase::ButtonBase()
 , pressedTexture_{TextureLibrary::instance().get("button_pressed")}
 , state_{State::Normal}
 {
-    focusTexture_.setRepeated(true);
+
+    // TODO:
+    // Implement focus as a nice repeated dot border over normal/hover texture
+    // as a separate layer (using texture or primitives?)
+
     enableFocus();
     background_.setTexture(normalTexture_);
 }

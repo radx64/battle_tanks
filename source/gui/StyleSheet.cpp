@@ -14,8 +14,8 @@ StyleSheet::StyleSheet()
 , outlineThickness_(0)
 , windowColor_(sf::Color(127, 127, 127, 200))
 , windowInactiveColor_(sf::Color(100, 100, 100, 200))
-, windowTopBarColor_(sf::Color(100, 100, 100, 255))
-, windowInanctiveTopBarColor_(sf::Color(100, 100, 100, 255))
+, windowHeaderColor_(sf::Color(100, 100, 100, 255))
+, windowInanctiveHeaderColor_(sf::Color(100, 100, 100, 255))
 { }
 
 sf::Font& StyleSheet::getFont() const
@@ -90,22 +90,22 @@ void StyleSheet::setInactiveWindowColor(const sf::Color& color)
 
 const sf::Color& StyleSheet::getWindowHeaderColor() const
 {
-    return windowTopBarColor_;
+    return windowHeaderColor_;
 }
 
-void StyleSheet::setTopBarWindowColor(const sf::Color& color)
+void StyleSheet::setWindowHeaderColor(const sf::Color& color)
 {
-    windowTopBarColor_ = color;
+    windowHeaderColor_ = color;
 }
 
 const sf::Color& StyleSheet::getInactiveWindowHeaderColor() const
 {
-    return windowInanctiveTopBarColor_;
+    return windowInanctiveHeaderColor_;
 }
 
-void StyleSheet::setInactiveTopBarWindowColor(const sf::Color& color)
+void StyleSheet::setInactiveWindowHeaderColor(const sf::Color& color)
 {
-    windowInanctiveTopBarColor_ = color;
+    windowInanctiveHeaderColor_ = color;
 }
 
 const StyleSheet& BasicStyleSheetFactory::instance()
@@ -121,8 +121,8 @@ const StyleSheet& BasicStyleSheetFactory::instance()
         stylesheet_->setOutlineThickness(1);
         stylesheet_->setWindowColor(sf::Color(200,200,200,200));
         stylesheet_->setInactiveWindowColor(sf::Color(100,100,100,200));
-        stylesheet_->setTopBarWindowColor(sf::Color(230,100,100,255));
-        stylesheet_->setInactiveTopBarWindowColor(sf::Color(130,100,100,255));
+        stylesheet_->setWindowHeaderColor(sf::Color(0,0,128,255));
+        stylesheet_->setInactiveWindowHeaderColor(sf::Color(140,140,140,255));
         return *stylesheet_;
     }
 }

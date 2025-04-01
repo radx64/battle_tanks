@@ -48,7 +48,6 @@ EditBox::EditBox()
     text_.setCharacterSize(style.getFontSize());
     text_.setFillColor(style.getFontColor());
     text_.setOutlineColor(style.getOutlineColor());
-    text_.setOutlineThickness(style.getOutlineThickness());
     text_.setGlobalPosition(Component::getGlobalPosition());
 
     textCursor_.setFont(text_.getFont());

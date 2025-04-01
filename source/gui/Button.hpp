@@ -50,7 +50,7 @@ protected:
     gui::FramedSprite background_;
 
     const sf::Texture& hoverTexture_;
-    sf::Texture& focusTexture_;
+    const sf::Texture& focusTexture_;
     const sf::Texture& normalTexture_;
     const sf::Texture& pressedTexture_;
 

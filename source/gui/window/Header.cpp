@@ -16,8 +16,7 @@ Header::Header()
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 
     // TODO add layout component for button and title text
-    auto close_button = gui::IconButton::create(gui::TextureLibrary::instance().get("red_icon_outline_cross"));
-    close_button->setSize(sf::Vector2f(32.f, window::config::HEADER_HEIGHT));
+    auto close_button = gui::TextButton::create("X");
     close_button->onClick([this]()
     {
         if (closeButtonAction_) closeButtonAction_();
@@ -29,6 +28,7 @@ Header::Header()
     title_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
     title_text_handle_ = title_text.get();
     title_text_handle_->setSize(getSize());
+    title_text_handle_->setFontColor(sf::Color::White);
     addChild(std::move(title_text));
 }
 
@@ -53,10 +53,10 @@ void Header::onRender(sf::RenderTexture& renderTexture)
 void Header::onSizeChange()
 {
     auto header_size = getSize();
-    header_size.y = window::config::HEADER_HEIGHT;
     header_shape_.setSize(header_size);
     title_text_handle_->setSize(header_size);
-    close_button_ptr_->setPosition(sf::Vector2f{header_size.x - 32.f, 0.f});
+    close_button_ptr_->setSize(sf::Vector2f(config::CLOSE_BUTTON_WIDTH, header_size.y - config::CLOSE_BUTTON_OFFSET.y * 2.f));
+    close_button_ptr_->setPosition(sf::Vector2f{header_size.x - config::CLOSE_BUTTON_WIDTH - config::CLOSE_BUTTON_OFFSET.x, config::CLOSE_BUTTON_OFFSET.y});
 }
 
 void Header::onPositionChange()

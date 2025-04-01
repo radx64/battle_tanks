@@ -7,12 +7,48 @@
 #include "gui/Button.hpp"
 #include "gui/Component.hpp"
 #include "gui/Label.hpp"
+#include "gui/TextureLibrary.hpp"
 #include "gui/window/Header.hpp"
 #include "gui/window/Panel.hpp"
 #include "gui/window/StatusBar.hpp"
 
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
+
+
+namespace
+{
+    gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
+    {
+        gui::FramedSprite::LayoutConfig layoutConfig{
+            .cornerSizes = 
+            {
+                .topLeft        = {cornerSizes.x, cornerSizes.y},
+                .bottomRight    = {cornerSizes.x, cornerSizes.y}
+            },
+            .uvs = uvs
+        };
+
+        return layoutConfig;
+    } 
+
+    gui::FramedSprite::LayoutConfig::UVs buildUVsForWindowTexture()
+    {
+        return gui::FramedSprite::LayoutConfig::UVs
+        {
+            .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
+            .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
+            .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
+            .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
+        };
+    }
+    gui::FramedSprite::LayoutConfig buildLayoutConfigForWindowTexture()
+    {
+        static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForWindowTexture());
+        return layout;
+    }
+
+}  // namespace
 
 namespace gui
 {
@@ -21,7 +57,11 @@ Window::Window()
 : isDead_{false}
 , isActive_{false}
 , state_{State::Idle}
+, activeTexture_{TextureLibrary::instance().get("window_normal")}
+, inactiveTexture_{TextureLibrary::instance().get("window_inactive")}
+, background_ {buildLayoutConfigForWindowTexture()}
 {
+    background_.setTexture(inactiveTexture_);
     auto header = std::make_unique<window::Header>();
     header_ = header.get();
     header_->closeButtonAction([window = this](){window->close();});
@@ -36,6 +76,9 @@ Window::Window()
     statusBar_ = statusBar.get();
     statusBar_->setSize(getSize());
     Component::addChild(std::move(statusBar));
+
+    header_->setPosition(window::config::WINDOW_BORDER_OFFSET);
+    windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
 }
 
 void Window::addChild(std::unique_ptr<Component> component)
@@ -58,8 +101,9 @@ bool Window::isInsideResizeGadget(const sf::Vector2f point)
     return statusBar_->isInsideResizeGadget(point);
 }
 
-void Window::onRender(sf::RenderTexture&)
+void Window::onRender(sf::RenderTexture& renderTexture)
 {
+    renderTexture.draw(background_);
 }
 
 bool Window::isInState(const Window::State& state) const
@@ -84,6 +128,7 @@ void Window::enable()
     header_->enable();
     windowPanel_->enable();
     statusBar_->enable();
+    background_.setTexture(activeTexture_);
     focus();
 }
 void Window::disable()
@@ -92,6 +137,7 @@ void Window::disable()
     header_->disable();
     windowPanel_->disable();
     statusBar_->disable();
+    background_.setTexture(inactiveTexture_);
     defocusWithAllChildren();
 }
 
@@ -173,18 +219,20 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 
 void Window::onPositionChange()
 {
-    header_->setPosition({0.f,0.f});
-    windowPanel_->setPosition({0.f, window::config::HEADER_HEIGHT});
-    statusBar_->setPosition({0.f, getSize().y - window::config::RESIZE_BOX_SIZE});
+    background_.setPosition(Component::getGlobalPosition());
 }
 
 void Window::onSizeChange()
 {
     auto size = getSize();
-    header_->setSize({size.x, window::config::HEADER_HEIGHT});
-    windowPanel_->setSize({size.x, size.y - window::config::HEADER_HEIGHT - window::config::RESIZE_BOX_SIZE});
-    statusBar_->setSize({size.x, window::config::RESIZE_BOX_SIZE});
-    statusBar_->setPosition({0.f, getSize().y - window::config::RESIZE_BOX_SIZE});
+
+    header_->setSize(sf::Vector2f{size.x, window::config::HEADER_HEIGHT} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    windowPanel_->setSize(sf::Vector2f{size.x, size.y - window::config::HEADER_HEIGHT - window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    
+    statusBar_->setSize(sf::Vector2f{size.x, window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    statusBar_->setPosition({0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});
+
+    background_.setSize(getSize());
 }
 
 }  // namespace gui

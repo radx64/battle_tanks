@@ -2,56 +2,46 @@
 
 #include "gui/StyleSheet.hpp"
 #include "gui/window/Config.hpp"
+#include "gui/TextureLibrary.hpp"
 
 namespace gui::window
 {
 StatusBar::StatusBar()
+: resize_gadget_texture_{TextureLibrary::instance().get("window_resize_handle")}
 {
-    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
-    backgroundShape_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
-    backgroundShape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
-
-    resize_gadget_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
-    resize_gadget_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
-    resize_gadget_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
-
-    resize_gadget_.setSize(sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE});
+    resize_gadget_.setTexture(resize_gadget_texture_);
 }
 
 void StatusBar::onRender(sf::RenderTexture& renderWindow)
 {
-    renderWindow.draw(backgroundShape_);
     renderWindow.draw(resize_gadget_);
 }
 
-// FIXME component size should be same as renderable
 void StatusBar::onSizeChange()
 {
-    auto bottom_bar_size = getSize();
-    bottom_bar_size.y = window::config::RESIZE_BOX_SIZE;
-    backgroundShape_.setSize(bottom_bar_size);
-
+    auto statusBarHeight = getSize().y;
+    
     resize_gadget_.setPosition(
         Component::getGlobalPosition() + Component::getSize()
-        - sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE});
+        - sf::Vector2f{window::config::RESIZE_BOX_SIZE, statusBarHeight}); 
 }
 
 void StatusBar::onPositionChange()
 {
-    backgroundShape_.setPosition(getGlobalPosition());
+    auto statusBarHeight = getSize().y;
 
     resize_gadget_.setPosition(
         Component::getGlobalPosition() + Component::getSize()
-        - sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE});
+        - sf::Vector2f{window::config::RESIZE_BOX_SIZE, statusBarHeight});
 }
 
 void StatusBar::enable()
 {
-    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+
 }
 void StatusBar::disable()
 {
-    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowColor());
+
 }
 
 bool StatusBar::isInsideResizeGadget(const sf::Vector2f point)

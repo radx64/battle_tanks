@@ -32,9 +32,9 @@ public:
     const sf::Color& getInactiveWindowColor() const;
     void setInactiveWindowColor(const sf::Color& color);
     const sf::Color& getWindowHeaderColor() const;
-    void setTopBarWindowColor(const sf::Color& color);
+    void setWindowHeaderColor(const sf::Color& color);
     const sf::Color& getInactiveWindowHeaderColor() const;
-    void setInactiveTopBarWindowColor(const sf::Color& color);
+    void setInactiveWindowHeaderColor(const sf::Color& color);
 protected:
     sf::Font& font_;
     uint32_t fontSize_;
@@ -44,8 +44,8 @@ protected:
 
     sf::Color windowColor_;
     sf::Color windowInactiveColor_;
-    sf::Color windowTopBarColor_;
-    sf::Color windowInanctiveTopBarColor_;
+    sf::Color windowHeaderColor_;
+    sf::Color windowInanctiveHeaderColor_;
 };
 
 // FIXME: this is cure factory with some nasty static

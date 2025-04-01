@@ -18,7 +18,8 @@ Selection::Selection(gui::Text& text)
 , selectionStartPosition_{}
 , selectionEndPosition_{}
 {
-    selection_.setFillColor(sf::Color(230,100,100,127));
+    //TODO move this color selection to stylesheet
+    selection_.setFillColor(sf::Color(100,100,230,127));
 }
 
 bool Selection::isEmpty() const

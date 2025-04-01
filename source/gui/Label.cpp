@@ -29,6 +29,11 @@ Label::Label(const std::string_view& text)
     recalculatePositionAndSize();
 }
 
+void Label::setFontColor(const sf::Color& color)
+{
+    text_.setFillColor(color);
+}
+
 void Label::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(text_);
