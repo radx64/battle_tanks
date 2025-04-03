@@ -200,6 +200,12 @@ EventStatus EditBox::on(const event::MouseButtonDoublePressed& mouseButtonDouble
         return EventStatus::NotConsumed;
     }
 
+    if (not isFocused())
+    {
+        focus();
+        enterEdit();
+    }
+
     textCursor_.moveLeft(true);
     selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
     textCursor_.moveRight(true);
