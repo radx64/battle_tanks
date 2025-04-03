@@ -4,14 +4,46 @@
 
 #include "gui/Clipboard.hpp"
 #include "gui/Debug.hpp"
-#include "gui/keyboard/Utils.hpp"
 #include "gui/StyleSheet.hpp"
+#include "gui/TextureLibrary.hpp"
 
 namespace 
 {
-const sf::Vector2f EXTRA_END_OFFSET{2.f, 2.f};
+const sf::Vector2f EXTRA_END_OFFSET{2.f, 4.f};
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
 constexpr bool ALIGN_TEXT_TO_BASELINE = true;
+
+gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
+{
+    gui::FramedSprite::LayoutConfig layoutConfig{
+        .cornerSizes = 
+        {
+            .topLeft        = {cornerSizes.x, cornerSizes.y},
+            .bottomRight    = {cornerSizes.x, cornerSizes.y}
+        },
+        .uvs = uvs
+    };
+
+    return layoutConfig;
+} 
+
+gui::FramedSprite::LayoutConfig::UVs buildUVsForEditBoxTexture()
+{
+    return gui::FramedSprite::LayoutConfig::UVs
+    {
+        .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
+        .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
+        .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
+        .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
+    };
+}
+
+gui::FramedSprite::LayoutConfig buildLayoutConfigForEditBoxTexture()
+{
+    static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForEditBoxTexture());
+    return layout;
+}
+
 }  // namespace
 
 /*
@@ -30,7 +62,10 @@ std::unique_ptr<EditBox> EditBox::create()
 }
 
 EditBox::EditBox()
-: text_{ALIGN_TEXT_TO_BASELINE}
+: background_{buildLayoutConfigForEditBoxTexture()}
+, focusTexture_{TextureLibrary::instance().get("editbox_active")}
+, normalTexture_{TextureLibrary::instance().get("editbox_inactive")}
+, text_{ALIGN_TEXT_TO_BASELINE}
 , textCursor_{text_}
 , selection_{text_}
 , maxLength_{DEFAULT_TEXT_MAX_LENGTH}
@@ -54,11 +89,7 @@ EditBox::EditBox()
     textCursor_.setCharacterSize(text_.getCharacterSize());
     textCursor_.disable();
 
-    backgroundShape_.setFillColor(style.getWindowColor());
-    backgroundShape_.setOutlineColor(style.getOutlineColor());
-    backgroundShape_.setOutlineThickness(style.getOutlineThickness());
-    backgroundShape_.setPosition(getGlobalPosition());
-    backgroundShape_.setSize(Component::getSize());
+    background_.setTexture(normalTexture_);
 }
 
 std::string EditBox::getText()
@@ -80,15 +111,15 @@ void EditBox::setAlignment(const gui::Alignment& alignment)
 
 void EditBox::onRender(sf::RenderTexture& renderTexture)
 {
-    renderTexture.draw(backgroundShape_);
+    renderTexture.draw(background_);
     renderTexture.draw(text_);
 }
 
 void EditBox::onSizeChange()
 {
-    text_.setSize(Component::getSize() - EXTRA_END_OFFSET*2.f);
-    text_.setGlobalPosition(Component::getGlobalPosition());
-    backgroundShape_.setSize(Component::getSize());
+    text_.setSize(Component::getSize() - EXTRA_END_OFFSET * 2.f);
+    text_.setGlobalPosition(Component::getGlobalPosition() + EXTRA_END_OFFSET);
+    background_.setSize(Component::getSize());
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -96,8 +127,8 @@ void EditBox::onSizeChange()
 
 void EditBox::onPositionChange()
 {
-    text_.setGlobalPosition(Component::getGlobalPosition());
-    backgroundShape_.setPosition(getGlobalPosition());
+    text_.setGlobalPosition(Component::getGlobalPosition() + EXTRA_END_OFFSET);
+    background_.setPosition(getGlobalPosition());
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -442,13 +473,13 @@ EventStatus EditBox::on(const event::TextEntered& textEntered)
 
 void EditBox::enterEdit()
 {
-    backgroundShape_.setFillColor(sf::Color::White);
+    background_.setTexture(focusTexture_);
     textCursor_.enable();
 }
 
 EventStatus EditBox::on(const gui::event::FocusLost&)
 {
-    backgroundShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowColor());
+    background_.setTexture(normalTexture_);
     textCursor_.disable();
     selection_.clear();
     text_.updateTexture();

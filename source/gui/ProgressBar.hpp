@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Component.hpp"
+#include "gui/FramedSprite.hpp"
 
 namespace gui { class Label; }
 
@@ -23,11 +24,16 @@ protected:
     void onSizeChange() override;
     void onRender(sf::RenderTexture& renderTexture) override;
 
+    void recalculateSize();
+
     float min_{};
     float max_{};
     float value_{};
     float progress_{};
-    sf::RectangleShape backgroundShape_;
+
+    gui::FramedSprite background_;
+    const sf::Texture& normalTexture_;
+
     sf::RectangleShape bar_;
     gui::Label* text_;
 };

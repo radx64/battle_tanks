@@ -5,41 +5,41 @@
 
 namespace
 {
-    sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const sf::Vector2f& objectSize)
-    {
-        return {objectSize.x / textureSize.x, objectSize.y / textureSize.y};
-    }
+sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const sf::Vector2f& objectSize)
+{
+    return {objectSize.x / textureSize.x, objectSize.y / textureSize.y};
+}
 
-    gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
-    {
-        gui::FramedSprite::LayoutConfig layoutConfig{
-            .cornerSizes = 
-            {
-                .topLeft        = {cornerSizes.x, cornerSizes.y},
-                .bottomRight    = {cornerSizes.x, cornerSizes.y}
-            },
-            .uvs = uvs
-        };
-
-        return layoutConfig;
-    } 
-
-    gui::FramedSprite::LayoutConfig::UVs buildUVsForButtonTexture()
-    {
-        return gui::FramedSprite::LayoutConfig::UVs
+gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
+{
+    gui::FramedSprite::LayoutConfig layoutConfig{
+        .cornerSizes = 
         {
-            .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
-            .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
-            .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
-            .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
-        };
-    }
+            .topLeft        = {cornerSizes.x, cornerSizes.y},
+            .bottomRight    = {cornerSizes.x, cornerSizes.y}
+        },
+        .uvs = uvs
+    };
 
-    gui::FramedSprite::LayoutConfig buildLayoutConfigForButtonTexture()
+    return layoutConfig;
+} 
+
+gui::FramedSprite::LayoutConfig::UVs buildUVsForButtonTexture()
+{
+    return gui::FramedSprite::LayoutConfig::UVs
     {
-        static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForButtonTexture());
-        return layout;
-    }
+        .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
+        .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
+        .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
+        .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
+    };
+}
+
+gui::FramedSprite::LayoutConfig buildLayoutConfigForButtonTexture()
+{
+    static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForButtonTexture());
+    return layout;
+}
 
 }  // namespace
 

@@ -6,6 +6,7 @@
 
 #include "gui/Alignment.hpp"
 #include "gui/Component.hpp"
+#include "gui/FramedSprite.hpp"
 #include "gui/Selection.hpp"
 #include "gui/Text.hpp"
 #include "gui/TextCursor.hpp"
@@ -51,8 +52,10 @@ protected:
     void startSelection();
     void updateCursorAndSelection(const bool atSelectionEndOnCancel);
 
+    gui::FramedSprite background_;
+    const sf::Texture& focusTexture_;
+    const sf::Texture& normalTexture_;
     gui::Text text_;
-    sf::RectangleShape backgroundShape_;
     gui::TextCursor textCursor_;
     gui::Selection selection_;
     uint32_t maxLength_;

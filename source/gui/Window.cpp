@@ -57,7 +57,7 @@ Window::Window()
 : isDead_{false}
 , isActive_{false}
 , state_{State::Idle}
-, activeTexture_{TextureLibrary::instance().get("window_normal")}
+, activeTexture_{TextureLibrary::instance().get("window_active")}
 , inactiveTexture_{TextureLibrary::instance().get("window_inactive")}
 , background_ {buildLayoutConfigForWindowTexture()}
 {
