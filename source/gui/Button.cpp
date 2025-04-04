@@ -70,7 +70,7 @@ void ButtonBase::onSizeChange()
 
 void ButtonBase::onPositionChange()
 {
-    background_.setPosition(Component::getGlobalPosition());
+    background_.setPosition(getGlobalPosition());
 }
 
 void ButtonBase::onRender(sf::RenderTexture& renderTexture)
@@ -88,19 +88,19 @@ EventStatus ButtonBase::on(const event::MouseEntered&)
     state_ = State::Hover;
     updateTexture();
 
-    return gui::EventStatus::Consumed;
+    return EventStatus::Consumed;
 }
 EventStatus ButtonBase::on(const event::MouseLeft&)
 {
     state_ = State::Normal;
     updateTexture();
 
-    return gui::EventStatus::Consumed;
+    return EventStatus::Consumed;
 }
 
 EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 {
-    if (not isFocused()) return gui::EventStatus::NotConsumed;
+    if (not isFocused()) return EventStatus::NotConsumed;
 
     auto& key = keyboardKeyPressedEvent.key;
 
@@ -109,14 +109,14 @@ EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEv
         state_ = State::Pressed;
         updateTexture();
 
-        return gui::EventStatus::Consumed;
+        return EventStatus::Consumed;
     }
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus ButtonBase::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {    
-    if (not isFocused()) return gui::EventStatus::NotConsumed;
+    if (not isFocused()) return EventStatus::NotConsumed;
     
     auto& key = keyboardKeyReleasedEvent.key;
 
@@ -126,14 +126,14 @@ EventStatus ButtonBase::on(const event::KeyboardKeyReleased& keyboardKeyReleased
         updateTexture();
         
         if (onClick_) onClick_();
-        return gui::EventStatus::Consumed;
+        return EventStatus::Consumed;
     }
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (not isVisible_) return gui::EventStatus::NotConsumed;
+    if (not isVisible_) return EventStatus::NotConsumed;
 
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
@@ -151,9 +151,9 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
         updateTexture();
 
       
-        return gui::EventStatus::Consumed;
+        return EventStatus::Consumed;
     }
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
@@ -169,21 +169,21 @@ EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleased
         updateTexture();
 
         if (onClick_) onClick_();  
-        return gui::EventStatus::Consumed;
+        return EventStatus::Consumed;
     }
-    return gui::EventStatus::NotConsumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus ButtonBase::on(const event::FocusLost&)
 {
     updateTexture();
-    return gui::EventStatus::Consumed;
+    return EventStatus::Consumed;
 }
 
 EventStatus ButtonBase::on(const event::FocusGained&)
 {
     updateTexture();
-    return gui::EventStatus::Consumed;
+    return EventStatus::Consumed;
 }
 
 void ButtonBase::updateTexture()

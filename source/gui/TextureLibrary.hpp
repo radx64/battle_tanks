@@ -29,6 +29,10 @@ public:
             {"window_inactive",              concat(texturePath, "classic/window_inactive.png")},
             {"window_resize_handle",         concat(texturePath, "classic/window_resize_handle.png")},
             {"progressbar_background",       concat(texturePath, "classic/progressbar_background.png")},
+            {"checkbox_normal",              concat(texturePath, "classic/checkbox_normal.png")},
+            {"checkbox_hover",               concat(texturePath, "classic/checkbox_hover.png")},
+            {"checkbox_focus",               concat(texturePath, "classic/checkbox_focus.png")},
+            {"checkbox_checked",             concat(texturePath, "classic/checkbox_checked.png")},
         };
         return assets;
     }

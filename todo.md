@@ -36,10 +36,12 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] 🐛 When layout constrains are exceeding maximum possible ration should fallback to auto mode, but it doesn't
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 - [ ] Consider creating render command batches and split gui from sfml implementation
-- [ ] Focus on buttons is now marked as different hue of button face, change it to classic dotted border look
-- [ ] Checkbox
+- [ ] Focus on controls is now marked as different hue of face, change it to classic dotted border look
+- [x] Checkbox
+  - [ ] Implement keyboard events support
 - [ ] Radiobox
 - [ ] Sliders
+- [ ] Move render logic to some renderer subclasses (so that representation of gui elements can be reimplemented)
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing

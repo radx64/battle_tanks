@@ -19,12 +19,21 @@ namespace gui
 class ButtonBase : public Component
 {
 public:
-    void onSizeChange() override;
-    void onPositionChange() override;
-
     void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
     
+protected:
+    ButtonBase();
+    void updateTexture();
+    
+    enum class State
+    {
+        Normal,
+        Hover,
+        Pressed,    // TODO add disabled in the future
+    };
+    
+
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
@@ -35,18 +44,10 @@ public:
     
     EventStatus on(const event::FocusLost&) override;
     EventStatus on(const event::FocusGained&) override;
-    
-protected:
-    ButtonBase();
 
-    enum class State
-    {
-        Normal,
-        Hover,
-        Pressed,    // TODO add disabled in the future
-    };
+    void onSizeChange() override;
+    void onPositionChange() override;
 
-    void updateTexture();
     gui::FramedSprite background_;
 
     const sf::Texture& hoverTexture_;

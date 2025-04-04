@@ -11,6 +11,7 @@
 #include "engine/TimerService.hpp"
 
 #include "gui/Button.hpp"
+#include "gui/Checkbox.hpp"
 #include "gui/Debug.hpp"
 #include "gui/EditBox.hpp"
 #include "gui/FontLibrary.hpp"
@@ -18,9 +19,8 @@
 #include "gui/Label.hpp"
 #include "gui/Layout.hpp"
 #include "gui/ProgressBar.hpp"
-#include "gui/Window.hpp"
-
 #include "gui/TextureLibrary.hpp"
+#include "gui/Window.hpp"
 
 using namespace std::literals;
 
@@ -177,9 +177,12 @@ void Application::onInit()
         auto worldButton = gui::TextButton::create("WORLD");
 
         auto horizontalLayout2 = gui::HorizontalLayout::create();
-        auto somethingButton = gui::TextButton::create("SOMETHING");
-        auto cookingButton = gui::TextButton::create("IS COOKING");
-        auto hardButton = gui::TextButton::create("HARD");
+
+        auto checkbox = gui::Checkbox::create(false);
+        auto text = gui::Label::create("Checkbox");
+        text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+
+        auto testButton = gui::TextButton::create("TEST");
 
         helloButton->onClick([this](){logger_.info("Hello?");});
         worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
@@ -187,11 +190,11 @@ void Application::onInit()
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));
 
-        horizontalLayout2->addChild(std::move(somethingButton));
+        horizontalLayout2->addChild(std::move(checkbox));
 
         auto verticalLayout2 = gui::VerticalLayout::create();
-        verticalLayout2->addChild(std::move(cookingButton));
-        verticalLayout2->addChild(std::move(hardButton));
+        verticalLayout2->addChild(std::move(text));
+        verticalLayout2->addChild(std::move(testButton));
 
         horizontalLayout2->addChild(std::move(verticalLayout2));
 
