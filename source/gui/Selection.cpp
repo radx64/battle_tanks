@@ -68,8 +68,7 @@ void Selection::to(const uint32_t index, const sf::Vector2f& position)
 
 void Selection::update()
 {
-    const auto textBounds = text_.getTextBounds();
-    selection_.setPosition(selectionStartPosition_ + sf::Vector2f{textBounds.left, textBounds.top - CURSOR_EXTRA_HEIGHT / 2.f});
+    selection_.setPosition(selectionStartPosition_);
     selection_.setSize(sf::Vector2f(selectionEndPosition_.x - selectionStartPosition_.x, text_.getTextSingleLineHeight() + CURSOR_EXTRA_HEIGHT)); 
     text_.updateTexture();
 }

@@ -6,21 +6,21 @@
 #include "gui/FontHeightCache.hpp"
 #include "gui/TextDisplayModifier.hpp"
 
+#include <fmt/format.h>
 
 #include "gui/Debug.hpp"
 
 namespace gui
 {
 
-Text::Text(const bool alignToBaseLine)
+Text::Text()
 : offset_{0.f, 0.f}
 , sprite_(texture_.getTexture())
-, alignToBaseLine_{alignToBaseLine}
 {
     // Allocate texture size once per text object to avoid costly resizing operations.
     // Consider adjusting the size dynamically only if absolutely necessary.
     // Or make some texture manager that will handle this and share one texture between multiple text objects.
-    // TODO: decide on default size later and behaviour later
+    // TODO: decide on default size and behaviour later
     texture_.create(1024,1024);
 }
 
@@ -58,7 +58,12 @@ void Text::setSize(const sf::Vector2f& size)
 
 sf::FloatRect Text::getTextBounds() const
 {
-    return text_.getLocalBounds();
+    auto height = getTextSingleLineHeight();
+    auto textBounds = text_.getLocalBounds();
+
+    textBounds.height = height;
+
+    return textBounds;
 }
 
 void Text::setText(const std::string_view& text)
@@ -116,12 +121,6 @@ void Text::updateTexture()
     texture_.clear(sf::Color::Transparent);
 
     text_.setPosition({0.f, 0.f});
-
-    if(not alignToBaseLine_)
-    {
-        // this offsets the text to keep the bottom of the text at the same position
-        text_.setOrigin(text_.getLocalBounds().left, text_.getLocalBounds().top);
-    }
 
     texture_.draw(text_);
 

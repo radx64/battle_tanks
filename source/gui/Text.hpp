@@ -17,7 +17,7 @@ namespace gui
 class Text : public sf::Drawable
 {
 public:
-    Text(const bool alignToBaseLine);
+    Text();
 
     void setText(const std::string_view& text);
     std::string getText() const;
@@ -57,7 +57,6 @@ protected:
     sf::RenderTexture texture_;
     sf::Sprite sprite_;
     sf::Text text_;
-    bool alignToBaseLine_;
 
     std::vector<TextDisplayModifier*> modifiers_;
 };

@@ -9,9 +9,8 @@
 
 namespace 
 {
-const sf::Vector2f EXTRA_END_OFFSET{2.f, 4.f};
+const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 128;
-constexpr bool ALIGN_TEXT_TO_BASELINE = true;
 
 gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
 {
@@ -65,7 +64,6 @@ EditBox::EditBox()
 : background_{buildLayoutConfigForEditBoxTexture()}
 , focusTexture_{TextureLibrary::instance().get("editbox_active")}
 , normalTexture_{TextureLibrary::instance().get("editbox_inactive")}
-, text_{ALIGN_TEXT_TO_BASELINE}
 , textCursor_{text_}
 , selection_{text_}
 , maxLength_{DEFAULT_TEXT_MAX_LENGTH}
@@ -138,9 +136,10 @@ void EditBox::updateTextVisbleArea()
 {
     float textXoffset = text_.getSize().x - text_.getTextBounds().width;
 
-    sf::Vector2f textSize = boundsToSize(text_.getTextBounds());
+    sf::Vector2f textBounds = boundsToSize(text_.getTextBounds());
 
-    auto alignmentOffset = calculateAlignmentOffset(getSize(), textSize, alignment_);
+    
+    auto alignmentOffset = calculateAlignmentOffset(text_.getSize() - EXTRA_END_OFFSET, textBounds, alignment_);
 
     // if text does no fit (alignment offset is negative)
     // ignore it and behave as normal left alignment so cursor

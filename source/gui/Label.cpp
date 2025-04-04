@@ -3,8 +3,6 @@
 #include "gui/Debug.hpp"
 #include "gui/StyleSheet.hpp"
 
-constexpr bool DONT_ALIGN_TEXT_TO_BASELINE = false;
-
 namespace gui 
 {
 
@@ -15,7 +13,6 @@ namespace gui
 
 Label::Label(const std::string_view& text)
 : alignment_(gui::Alignment::Left)
-, text_{DONT_ALIGN_TEXT_TO_BASELINE}
 {
     auto style = BasicStyleSheetFactory::instance();
     text_.setFont(style.getFont());

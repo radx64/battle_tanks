@@ -9,6 +9,7 @@
 #include "gui/StyleSheet.hpp"
 
 constexpr float CURSOR_WIDTH = 4.f;
+constexpr float CURSOR_EXTRA_HEIGHT = 5.f;
 
 using namespace std::literals;
 
@@ -26,9 +27,6 @@ TextCursor::TextCursor(gui::Text& text)
 {
     cursorImage_.setFillColor(sf::Color::Black);
     cursorImage_.setOutlineColor(sf::Color::Black);
-
-    //FIXME: Cursor vertical size should be taken from font rendering size (not point size)
-    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, 25.f});
 }
 
 void TextCursor::animateCursor()
@@ -44,6 +42,7 @@ void TextCursor::animateCursor()
 void TextCursor::setCharacterSize(uint32_t characterSize)
 {
     characterSize_ = characterSize;
+    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, static_cast<float>(characterSize) + CURSOR_EXTRA_HEIGHT});
 }
 
 void TextCursor::setFont(const sf::Font* font)
