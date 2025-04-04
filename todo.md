@@ -31,10 +31,15 @@ Bunch of random ideas to randomly pick up and implement
     - [x] 🐛 Moving cursor does not clear previous selection
   - [x] Copy paste mechanic
     - [ ] 🐛 Pasting text over selected text moves cursor to wrong place
+  - [ ] Current layout of text in EditBox is messy not centered vertically and buggy due to dynamic font height changes
 - [x] 🐛 Event polling is generating events every render frame, also creating some nice events would be easier to handle
 - [ ] 🐛 When layout constrains are exceeding maximum possible ration should fallback to auto mode, but it doesn't
 - [ ] 🏎️ Render gui on separate texture and rerender only on changes
 - [ ] Consider creating render command batches and split gui from sfml implementation
+- [ ] Focus on buttons is now marked as different hue of button face, change it to classic dotted border look
+- [ ] Checkbox
+- [ ] Radiobox
+- [ ] Sliders
 
 ## Gameplay
 - [x] Basic waypoint travel mechanism for physics and visual testing
