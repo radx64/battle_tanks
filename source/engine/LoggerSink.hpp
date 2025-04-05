@@ -1,6 +1,7 @@
 #pragma once
 
-#include <condition_variable>
+#include <atomic>
+#include <thread>
 #include <mutex>
 #include <queue>
 #include <string_view>
@@ -43,11 +44,10 @@ public:
         const std::string_view prefix,
         const std::string_view log);
 
-    std::atomic<bool> running_;
+    std::atomic<bool> stop_;
     std::thread logThread_;
     std::queue<Log> logQueue_;
     std::mutex logQueueMutex_;
-    std::condition_variable cv_;
 
 };
 

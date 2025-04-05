@@ -1,8 +1,7 @@
 #include "gui/Checkbox.hpp"
 
+#include "gui/Alignment.hpp"
 #include "gui/TextureLibrary.hpp"
-
-
 
 namespace gui
 {
@@ -111,7 +110,7 @@ EventStatus Checkbox::on(const event::MouseLeft&)
 
 void Checkbox::onPositionChange()
 {
-    auto position = getGlobalPosition() + (getSize()/2.f) - background_.getLocalBounds().getSize() / 2.f;
+    auto position = getGlobalPosition() + (getSize()/2.f) - boundsToSize(background_.getLocalBounds()) / 2.f;
     background_.setPosition(position);
     tick_.setPosition(position);
 }

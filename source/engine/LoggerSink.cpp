@@ -16,38 +16,35 @@ LoggerSink& LoggerSink::instance()
 
 void LoggerSink::processLogs()
 {
-    while (running_ || !logQueue_.empty()) {
-        std::unique_lock<std::mutex> lock(logQueueMutex_);
-        cv_.wait(lock, [this]
-        { 
-            return !logQueue_.empty() || !running_; 
-        });
-
-        while (!logQueue_.empty()) 
+    while (!stop_) 
+    {
         {
-            const auto logEvent = logQueue_.front();
-            logQueue_.pop();
-            lock.unlock();
+            std::unique_lock<std::mutex> lock(logQueueMutex_);
+            while (!logQueue_.empty()) 
+            {
+                const auto logEvent = logQueue_.front();
+                logQueue_.pop();
+                lock.unlock();
 
-            print(logEvent.color, logEvent.logType, logEvent.prefix, logEvent.text);
+                print(logEvent.color, logEvent.logType, logEvent.prefix, logEvent.text);
 
-            lock.lock();
+                // Reacquire the lock and check `stop_` again
+                lock.lock();
+            }
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-};
+}
 
 LoggerSink::LoggerSink()
-: running_{true}
+: stop_{false}
 , logThread_{&LoggerSink::processLogs, this}
 {
 }
 
 LoggerSink::~LoggerSink()
 {
-    if (running_)
-    {
-        stop();
-    }
+    stop();
 }
 
 void LoggerSink::log(const fmt::v9::color& color, 
@@ -70,16 +67,14 @@ void LoggerSink::log(const fmt::v9::color& color,
         std::lock_guard<std::mutex> lock(logQueueMutex_);
         logQueue_.push(logEvent);
     }
-    cv_.notify_one(); 
+
 }
 
 void LoggerSink::stop()
 {
-    running_ = false;
-    cv_.notify_one();
-    if (logThread_.joinable()) 
-    {
-        logThread_.join();
+    stop_ = true;
+    if (logThread_.joinable()) {
+        logThread_.join();  // Wait for the thread to finish
     }
 }
 
