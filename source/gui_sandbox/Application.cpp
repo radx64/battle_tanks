@@ -21,6 +21,7 @@
 #include "gui/ProgressBar.hpp"
 #include "gui/TextureLibrary.hpp"
 #include "gui/Window.hpp"
+#include "gui/RadioButton.hpp"
 
 using namespace std::literals;
 
@@ -32,7 +33,7 @@ Application::Application()
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
 , textEnteredController_{&windowManager_}
-, timer_{5s, [this](){logger_.debug("5 seconds heartbeat ❤️ \n");}}
+, timer_{5s, [this](){logger_.info("5 seconds heartbeat ❤️ \n");}}
 {
     auto& timerService = engine::Context::getTimerService();
     timerService.start(&timer_, engine::TimerType::Repeating);
@@ -173,36 +174,37 @@ void Application::onInit()
     createLayoutWindowButton->onClick([this](){
 
         auto window = std::make_unique<gui::Window>();
+
         auto horizontalLayout = gui::HorizontalLayout::create();
         auto helloButton = gui::TextButton::create("HELLO");
         auto worldButton = gui::TextButton::create("WORLD");
-
-        auto horizontalLayout2 = gui::HorizontalLayout::create();
-
-        auto checkbox = gui::Checkbox::create(false);
-        auto text = gui::Label::create("Checkbox");
-        text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-
-        auto testButton = gui::TextButton::create("TEST");
-
         helloButton->onClick([this](){logger_.info("Hello?");});
         worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
-
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));
 
+        
+        auto horizontalLayout2 = gui::HorizontalLayout::create();
+        auto checkbox = gui::Checkbox::create(false);
+        auto checkbox_text = gui::Label::create("Checkbox");
+        checkbox_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         horizontalLayout2->addChild(std::move(checkbox));
-
-        auto verticalLayout2 = gui::VerticalLayout::create();
-        verticalLayout2->addChild(std::move(text));
-        verticalLayout2->addChild(std::move(testButton));
-
-        horizontalLayout2->addChild(std::move(verticalLayout2));
+        horizontalLayout2->addChild(std::move(checkbox_text));
+        
+        auto horizontalLayout3 = gui::HorizontalLayout::create();
+        auto radiobutton = gui::RadioButton::create(true);
+        auto radiobutton_text = gui::Label::create("RadioButton");
+        radiobutton_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        horizontalLayout3->addChild(std::move(radiobutton));
+        horizontalLayout3->addChild(std::move(radiobutton_text));
+        
+        
 
         auto verticalLayout = gui::VerticalLayout::create();
 
         verticalLayout->addChild(std::move(horizontalLayout));
         verticalLayout->addChild(std::move(horizontalLayout2));
+        verticalLayout->addChild(std::move(horizontalLayout3));
 
         window->addChild(std::move(verticalLayout));
 

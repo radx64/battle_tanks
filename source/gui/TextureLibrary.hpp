@@ -33,6 +33,10 @@ public:
             {"checkbox_hover",               concat(texturePath, "classic/checkbox_hover.png")},
             {"checkbox_focus",               concat(texturePath, "classic/checkbox_focus.png")},
             {"checkbox_checked",             concat(texturePath, "classic/checkbox_checked.png")},
+            {"radiobutton_normal",           concat(texturePath, "classic/radiobutton_normal.png")},
+            {"radiobutton_hover",            concat(texturePath, "classic/radiobutton_hover.png")},
+            {"radiobutton_focus",            concat(texturePath, "classic/radiobutton_focus.png")},
+            {"radiobutton_checked",          concat(texturePath, "classic/radiobutton_checked.png")},
         };
         return assets;
     }

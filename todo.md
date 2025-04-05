@@ -38,8 +38,9 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] Consider creating render command batches and split gui from sfml implementation
 - [ ] Focus on controls is now marked as different hue of face, change it to classic dotted border look
 - [x] Checkbox
-  - [ ] Implement keyboard events support
-- [ ] Radiobox
+  - [x] Implement keyboard events support
+- [x] Radiobutton
+  - [ ] Radio button groups support 
 - [ ] Sliders
 - [ ] Move render logic to some renderer subclasses (so that representation of gui elements can be reimplemented)
 

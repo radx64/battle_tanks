@@ -6,19 +6,34 @@
 namespace gui
 {
 
-Checkbox::Checkbox(bool isChecked)
-    : isChecked_{isChecked}
-    , state_{State::Normal}
-    , background_(sf::Sprite())
-    , tick_(sf::Sprite())
-    , hoverTexture_(TextureLibrary::instance().get("checkbox_hover"))
-    , focusTexture_(TextureLibrary::instance().get("checkbox_focus"))
-    , normalTexture_(TextureLibrary::instance().get("checkbox_normal"))
-    , checkedTexture_(TextureLibrary::instance().get("checkbox_checked"))
+
+Checkbox::Checkbox(const bool isChecked,
+    const sf::Texture& normalTexture,
+    const sf::Texture& hoverTexture,
+    const sf::Texture& focusTexture,
+    const sf::Texture& checkedTexture)
+: isChecked_{isChecked}
+, state_{State::Normal}
+, background_(sf::Sprite())
+, tick_(sf::Sprite())
+, hoverTexture_(hoverTexture)
+, focusTexture_(focusTexture)
+, normalTexture_(normalTexture)
+, checkedTexture_(checkedTexture)
 {
     enableFocus();
     background_.setTexture(normalTexture_);
     tick_.setTexture(checkedTexture_);
+}
+
+Checkbox::Checkbox(const bool isChecked)
+: Checkbox(isChecked,
+    TextureLibrary::instance().get("checkbox_normal"),
+    TextureLibrary::instance().get("checkbox_hover"),
+    TextureLibrary::instance().get("checkbox_focus"),
+    TextureLibrary::instance().get("checkbox_checked"))
+{
+
 }
 
 std::unique_ptr<Checkbox> Checkbox::create(const bool isChecked)

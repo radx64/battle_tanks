@@ -30,6 +30,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Layout.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RadioButton.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Selection.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp

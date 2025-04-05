@@ -21,7 +21,14 @@ public:
     bool isChecked() const;
     
 protected:
+    Checkbox(const bool isChecked,
+        const sf::Texture& normalTexture,
+        const sf::Texture& hoverTexture,
+        const sf::Texture& focusTexture,
+        const sf::Texture& checkedTexture);
+
     Checkbox(const bool isChecked);
+    
     void updateTexture();
 
     enum class State
