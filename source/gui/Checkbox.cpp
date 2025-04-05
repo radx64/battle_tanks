@@ -68,6 +68,24 @@ bool Checkbox::isChecked() const
     return isChecked_;
 }
 
+EventStatus Checkbox::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+{    
+    if (not isFocused()) return EventStatus::NotConsumed;
+
+    auto& key = keyboardKeyReleasedEvent.key;
+
+    if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
+    {
+        isChecked_ = !isChecked_;
+        updateTexture();
+        
+        if (onClick_) onClick_(isChecked());
+        return EventStatus::Consumed;
+    }
+    return EventStatus::NotConsumed;
+
+}
+
 EventStatus Checkbox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     if (mouseButtonReleasedEvent.button != gui::event::MouseButton::Left)

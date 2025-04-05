@@ -30,7 +30,7 @@ protected:
         Hover, // TODO add disabled in the future
     };
 
-
+    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
     EventStatus on(const event::MouseLeft& mouseLeftEvent) override;

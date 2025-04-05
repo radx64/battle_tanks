@@ -148,8 +148,9 @@ void Application::onInit()
         auto verticalLayout = gui::VerticalLayout::create();
         auto button = gui::TextButton::create("CLICK HERE");
         auto editBox = gui::EditBox::create();
+        editBox->setAlignment(gui::Alignment::VerticallyCentered);
         auto editBox2 = gui::EditBox::create();
-
+        editBox2->setAlignment(gui::Alignment::VerticallyCentered);
         button->onClick([editBoxPtr = editBox.get(), editBox2Ptr = editBox2.get(), button_ptr = button.get()]{
             button_ptr->setText(editBoxPtr->getText() + " | " + editBox2Ptr->getText());
         });
