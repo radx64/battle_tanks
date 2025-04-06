@@ -47,7 +47,7 @@ void Checkbox::onRender(sf::RenderTexture& renderTexture)
     if (isChecked_) renderTexture.draw(tick_);
 }
 
-void Checkbox::onClick(std::function<void(bool)> onClickCallback)
+void Checkbox::onStateChange(std::function<void(bool)> onClickCallback)
 {
     onClick_ = onClickCallback;
 }
@@ -76,6 +76,10 @@ void Checkbox::setState(const bool checked)
 {
     isChecked_ = checked;
     updateTexture();
+    if (onClick_)
+    {
+        onClick_(isChecked());
+    }
 }
 
 bool Checkbox::isChecked() const
@@ -91,10 +95,7 @@ EventStatus Checkbox::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEv
 
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
     {
-        isChecked_ = !isChecked_;
-        updateTexture();
-        
-        if (onClick_) onClick_(isChecked());
+        setState(!isChecked());
         return EventStatus::Consumed;
     }
     return EventStatus::NotConsumed;
@@ -115,16 +116,8 @@ EventStatus Checkbox::on(const event::MouseButtonReleased& mouseButtonReleasedEv
         return EventStatus::NotConsumed;
     }
 
-    isChecked_ = !isChecked_;
-    updateTexture();
-    if (onClick_)
-    {
-        onClick_(isChecked_);
-    }
+    setState(!isChecked());
     return EventStatus::Consumed;
-
-    
-    return EventStatus::NotConsumed;
 }
 
 EventStatus Checkbox::on(const event::MouseEntered&)
@@ -141,11 +134,21 @@ EventStatus Checkbox::on(const event::MouseLeft&)
     return EventStatus::Consumed;
 }
 
-void Checkbox::onPositionChange()
+void Checkbox::recalculateSpritesPositions()
 {
     auto position = getGlobalPosition() + (getSize()/2.f) - boundsToSize(background_.getLocalBounds()) / 2.f;
     background_.setPosition(position);
     tick_.setPosition(position);
+}
+
+void Checkbox::onPositionChange()
+{
+    recalculateSpritesPositions();
+}
+
+void Checkbox::onSizeChange()
+{
+    recalculateSpritesPositions();
 }
 
 EventStatus Checkbox::on(const event::FocusLost&)

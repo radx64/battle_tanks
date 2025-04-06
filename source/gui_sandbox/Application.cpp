@@ -22,6 +22,7 @@
 #include "gui/TextureLibrary.hpp"
 #include "gui/Window.hpp"
 #include "gui/RadioButton.hpp"
+#include "gui/RadioButtonGroup.hpp"
 
 using namespace std::literals;
 
@@ -186,25 +187,81 @@ void Application::onInit()
         
         auto horizontalLayout2 = gui::HorizontalLayout::create();
         auto checkbox = gui::Checkbox::create(false);
-        auto checkbox_text = gui::Label::create("Checkbox");
+        checkbox->onStateChange([this](bool state)
+        {
+            logger_.info(fmt::format("Checkbox 1 state changed, new state: {}", state));
+        });
+        auto checkbox_text = gui::Label::create("Checkbox 1");
         checkbox_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         horizontalLayout2->addChild(std::move(checkbox));
         horizontalLayout2->addChild(std::move(checkbox_text));
-        
+
         auto horizontalLayout3 = gui::HorizontalLayout::create();
+        auto checkbox2 = gui::Checkbox::create(false);
+        checkbox2->onStateChange([this](bool state)
+        {
+            logger_.info(fmt::format("Checkbox 2 state changed, new state: {}", state));
+        });
+
+        auto checkbox_text2 = gui::Label::create("Checkbox 2");
+        checkbox_text2->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        horizontalLayout3->addChild(std::move(checkbox2));
+        horizontalLayout3->addChild(std::move(checkbox_text2));
+        
+        auto horizontalLayout4 = gui::HorizontalLayout::create();
         auto radiobutton = gui::RadioButton::create(true);
-        auto radiobutton_text = gui::Label::create("RadioButton");
+        radiobutton->setState(false);
+        auto radiobutton_text = gui::Label::create("RadioButton 1");
         radiobutton_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        horizontalLayout3->addChild(std::move(radiobutton));
-        horizontalLayout3->addChild(std::move(radiobutton_text));
         
+        auto horizontalLayout5 = gui::HorizontalLayout::create();
+        auto radiobutton2 = gui::RadioButton::create(true);
+        radiobutton2->setState(false);
+        auto radiobutton_text2 = gui::Label::create("RadioButton 2");
+        radiobutton_text2->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         
+        auto horizontalLayout6 = gui::HorizontalLayout::create();
+        auto radiobutton3 = gui::RadioButton::create(true);
+        radiobutton3->setState(false);
+        auto radiobutton_text3 = gui::Label::create("RadioButton 3");
+        radiobutton_text3->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+
+        auto radioButtonGroup = gui::RadioButtonGroup::create();
+        radioButtonGroup->add(radiobutton.get());
+        radioButtonGroup->add(radiobutton2.get());
+        radioButtonGroup->add(radiobutton3.get());
+
+        radiobutton->onStateChange([this](bool state)
+        {
+            logger_.info(fmt::format("Radiobutton 1 state changed, new state: {}", state));
+        });
+
+        radiobutton2->onStateChange([this](bool state)
+        {
+            logger_.info(fmt::format("Radiobutton 2 state changed, new state: {}", state));
+        });
+
+        radiobutton3->onStateChange([this](bool state)
+        {
+            logger_.info(fmt::format("Radiobutton 3 state changed, new state: {}", state));
+        });
+
+        horizontalLayout4->addChild(std::move(radiobutton));
+        horizontalLayout4->addChild(std::move(radiobutton_text));
+
+        horizontalLayout5->addChild(std::move(radiobutton2));
+        horizontalLayout5->addChild(std::move(radiobutton_text2));
+
+        horizontalLayout6->addChild(std::move(radiobutton3));
+        horizontalLayout6->addChild(std::move(radiobutton_text3));   
 
         auto verticalLayout = gui::VerticalLayout::create();
-
         verticalLayout->addChild(std::move(horizontalLayout));
         verticalLayout->addChild(std::move(horizontalLayout2));
         verticalLayout->addChild(std::move(horizontalLayout3));
+        verticalLayout->addChild(std::move(horizontalLayout4));   
+        verticalLayout->addChild(std::move(horizontalLayout5));  
+        verticalLayout->addChild(std::move(horizontalLayout6));  
 
         window->addChild(std::move(verticalLayout));
 
@@ -525,47 +582,7 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(multilineCenterAlignedLabel));
     windowManager_.mainWindow().addChild(std::move(multilineBottomAlignedLabel));
 
-    auto layout = gui::FramedSprite::LayoutConfig
-    {
-        .cornerSizes = 
-        {
-            .topLeft        = {20.f, 20.f},
-            .bottomRight    = {20.f, 20.f}
-        },
-        .uvs = 
-        {
-            .topLeft        = {0.0f, 0.0f, 1.0f, 1.0f},
-            .topRight       = {2.0f, 0.0f, 1.0f, 1.0f},
-            .bottomLeft     = {0.0f, 2.0f, 1.0f, 1.0f},
-            .bottomRight    = {2.0f, 2.0f, 1.0f, 1.0f},
-        }
-    };
 
-    framedSpriteTest_ = std::make_unique<gui::FramedSprite>(layout);
-    framedSpriteTest_->setTexture(gui::TextureLibrary::instance().get("framedSpriteTest"));
-    framedSpriteTest_->setPosition(200.f, 400.f);
-    framedSpriteTest_->setSize({300.f, 300.f});
-
-    layout = gui::FramedSprite::LayoutConfig
-    {
-        .cornerSizes = 
-        {
-            .topLeft        = {20.f, 20.f},
-            .bottomRight    = {20.f, 20.f}
-        },
-        .uvs = 
-        {
-            .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
-            .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
-            .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
-            .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
-        }
-    };
-
-    framedSpriteTest2_ = std::make_unique<gui::FramedSprite>(layout);
-    framedSpriteTest2_->setTexture(gui::TextureLibrary::instance().get("button_focus"));
-    framedSpriteTest2_->setPosition(600.f, 400.f);
-    framedSpriteTest2_->setSize({300.f, 300.f});
 
 }
 
@@ -582,12 +599,6 @@ void Application::onEvent(const sf::Event& event)
 void Application::onUpdate(float timeStep)
 {
     (void) timeStep;
-
-    auto time = std::chrono::duration_cast<std::chrono::milliseconds>(timerService_.getCurrentTime().time_since_epoch()).count();
-    float scaleX = std::sin(time / 500.f) * 0.5f + 1.f; // scale oscillates between 0.5 and 1.5
-    float scaleY = std::cos(time / 500.f) * 0.5f + 1.f;
-    framedSpriteTest_->setSize({300.f * scaleX, 300.f * scaleY});
-    framedSpriteTest2_->setSize({300.f * scaleY, 300.f * scaleX});
 }
 
 void Application::generateBackground()
@@ -634,8 +645,6 @@ void Application::onRender()
 {
     window_.clear(sf::Color(20, 110, 158));
     window_.draw(backgroundSprite_);
-    window_.draw(*framedSpriteTest_);
-    window_.draw(*framedSpriteTest2_);
     windowManager_.render(window_);
 }
 

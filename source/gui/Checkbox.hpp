@@ -16,7 +16,7 @@ public:
     static std::unique_ptr<Checkbox> create(const bool isChecked);
 
     void onRender(sf::RenderTexture& renderTexture) override;
-    void onClick(std::function<void(bool)> onClickCallback);
+    void onStateChange(std::function<void(bool)> onClickCallback);
     void setState(const bool checked);
     bool isChecked() const;
     
@@ -30,6 +30,7 @@ protected:
     Checkbox(const bool isChecked);
     
     void updateTexture();
+    void recalculateSpritesPositions();
 
     enum class State
     {
@@ -46,6 +47,7 @@ protected:
     EventStatus on(const event::FocusGained&) override;
 
     void onPositionChange() override;
+    void onSizeChange() override;
 
     bool isChecked_ = false;
     std::function<void(bool)> onClick_;
