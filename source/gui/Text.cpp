@@ -61,7 +61,7 @@ sf::FloatRect Text::getTextBounds() const
     auto height = getTextSingleLineHeight();
     auto textBounds = text_.getLocalBounds();
 
-    textBounds.height = height;
+    textBounds.height = std::max(height, textBounds.height);
 
     return textBounds;
 }
