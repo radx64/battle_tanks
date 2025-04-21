@@ -111,7 +111,7 @@ EventStatus Slider::on(const event::MouseButtonReleased& mouseButtonReleasedEven
     auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
 
-    if (isLeftReleased and isInside(mousePosition))
+    if (isLeftReleased and state_ == State::Dragging)
     {
         processMovement(mousePosition);
         state_ = State::Idle;
