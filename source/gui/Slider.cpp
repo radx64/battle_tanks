@@ -45,7 +45,7 @@ void Slider::onValueChange(std::function<void(float)> onValueChangeCallback)
 void Slider::onSizeChange()
 {
     track_.setSize(sf::Vector2f{getSize().x - BOUNDS_THICKNESS * 2.f, TRACK_THICKNESS});
-
+    updateTexture();
 }
 
 void Slider::onPositionChange()
