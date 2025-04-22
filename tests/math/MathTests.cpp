@@ -210,40 +210,4 @@ TEST(Average, shouldThrowIfAverageWindowIsLessThen2)
     ASSERT_NO_THROW(engine::math::Average(2));
 }
 
-TEST(Clamp, shouldReturnNormalValueWhenNotOutOfBounds)
-{
-    float value = 5.0f;
-    float min = 0.0f;
-    float max = 10.0f;
-
-    float expected_result = 5.0f;
-    float result = engine::math::clamp(value, min, max);
-
-    EXPECT_FLOAT_EQ(expected_result, result);
-}
-
-TEST(Clamp, shouldReturnMinimumValueWhenOutOfBounds)
-{
-    float value = -5.0f;
-    float min = 0.0f;
-    float max = 10.0f;
-
-    float expected_result = 0.0f;
-    float result = engine::math::clamp(value, min, max);
-
-    EXPECT_FLOAT_EQ(expected_result, result);
-}
-
-TEST(Clamp, shouldReturnMaximumValueWhenOutOfBounds)
-{
-    float value = 15.0f;
-    float min = 0.0f;
-    float max = 10.0f;
-
-    float expected_result = 10.0f;
-    float result = engine::math::clamp(value, min, max);
-
-    EXPECT_FLOAT_EQ(expected_result, result);
-}
-
 }  // namespace engine::math

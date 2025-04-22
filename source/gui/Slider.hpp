@@ -19,11 +19,10 @@ namespace gui
 
 */
 
-class Slider : public Component
+template <typename SliderSpec>
+class SliderBase : public Component
 {
 public:
-    static std::unique_ptr<Slider> create();
-
     void onRender(sf::RenderTexture& renderTexture) override;
     void onValueChange(std::function<void(float)> onValueChangeCallback);
 
@@ -34,7 +33,7 @@ protected:
         Dragging,
     };
 
-    Slider();
+    SliderBase();
 
     void onSizeChange() override;
     void onPositionChange() override;
@@ -45,9 +44,7 @@ protected:
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
 
-    void updateTexture();
     void processMovement(sf::Vector2f& mousePosition);
-    float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
 
     sf::RectangleShape track_;
     sf::RectangleShape thumb_;
@@ -55,6 +52,27 @@ protected:
     float value_;
     std::function<void(float)> onValueChange_;
     State state_;
+};
+
+class HorizontalSlider : public SliderBase<HorizontalSlider>
+{
+public:
+    static std::unique_ptr<HorizontalSlider> create();
+
+    float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
+    sf::Vector2f getTrackSize();
+    void updateTexture();
+
+};
+
+class VerticalSlider : public SliderBase<VerticalSlider>
+{
+public:
+    static std::unique_ptr<VerticalSlider> create();
+
+    float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
+    sf::Vector2f getTrackSize();
+    void updateTexture();
 };
 
 }  // namespace gui

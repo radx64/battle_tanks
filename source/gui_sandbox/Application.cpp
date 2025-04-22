@@ -535,21 +535,34 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("Slidinnn.....");
 
-        auto verticalLayout = gui::VerticalLayout::create();
-        auto progressBar = gui::ProgressBar::create();
-        progressBar->setRange(0.f, 1.f);
-        gui::ProgressBar* progressBarPtr = progressBar.get();
+        auto gridLayout = gui::GridLayout::create(2,2);
+        auto hProgressBar = gui::ProgressBar::create();
+        hProgressBar->setRange(0.f, 1.f);
+        gui::ProgressBar* hProgressBarPtr = hProgressBar.get();
 
-        verticalLayout->addChild(std::move(progressBar));
+        gridLayout->addChild(std::move(hProgressBar));
 
-        auto slider = gui::Slider::create();
-        slider->onValueChange([progressBarPtr](float value)
+        auto hSlider = gui::HorizontalSlider::create();
+        hSlider->onValueChange([hProgressBarPtr](float value)
         {
-            progressBarPtr->setValue(value);
+            hProgressBarPtr->setValue(value);
         });
-        verticalLayout->addChild(std::move(slider));
+        gridLayout->addChild(std::move(hSlider));
 
-        window->addChild(std::move(verticalLayout));
+        auto vProgressBar = gui::ProgressBar::create();
+        vProgressBar->setRange(0.f, 1.f);
+        gui::ProgressBar* vProgressBarPtr = vProgressBar.get();
+
+        gridLayout->addChild(std::move(vProgressBar));
+
+        auto vSlider = gui::VerticalSlider::create();
+        vSlider->onValueChange([vProgressBarPtr](float value)
+        {
+            vProgressBarPtr->setValue(value);
+        });
+        gridLayout->addChild(std::move(vSlider));
+
+        window->addChild(std::move(gridLayout));
         windowManager_.addWindow(std::move(window));
 
     });

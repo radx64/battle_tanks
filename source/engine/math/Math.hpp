@@ -17,7 +17,6 @@ float degreeToRadians(float degree);
 sf::Vector2f rotatePoint(sf::Vector2f pointToRotate, float angle, sf::Vector2f pivot);
 sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t);
 float lerp(const float a, const float b, float t);
-float clamp(float value, float min, float max);
 
 class Average
 {
