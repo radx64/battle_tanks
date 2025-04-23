@@ -26,6 +26,11 @@ public:
     void onRender(sf::RenderTexture& renderTexture) override;
     void onValueChange(std::function<void(float)> onValueChangeCallback);
 
+    void setRange(const float min, const float max);
+    void setValue(const float value);
+    float getValue() const;
+    void setStep(const float step);
+
 protected:
     enum class State
     {
@@ -37,6 +42,8 @@ protected:
 
     void onSizeChange() override;
     void onPositionChange() override;
+
+    float normalizeValue();
 
     EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
     
@@ -50,6 +57,10 @@ protected:
     sf::RectangleShape thumb_;
 
     float value_;
+    float step_;
+    float min_;
+    float max_;
+    
     std::function<void(float)> onValueChange_;
     State state_;
 };

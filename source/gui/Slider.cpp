@@ -11,11 +11,13 @@ namespace gui
 constexpr float TRACK_THICKNESS = 5.f;
 constexpr float THUMB_THICKNESS = 20.f;
 constexpr float BOUNDS_THICKNESS = 10.f;
-constexpr float STEP = 0.05f;
 
 template <typename SliderSpec>
 SliderBase<SliderSpec>::SliderBase()
 : value_{0.0f}
+, step_{0.01f}
+, min_{0.0f}
+, max_{1.0f}
 , onValueChange_{nullptr}
 , state_{State::Idle}
 {
@@ -41,6 +43,35 @@ void SliderBase<SliderSpec>::onValueChange(std::function<void(float)> onValueCha
 }
 
 template <typename SliderSpec>
+void SliderBase<SliderSpec>::setRange(const float min, const float max)
+{
+    min_ = min;
+    max_ = max;
+    value_ = std::clamp(value_, min_, max_);
+    static_cast<SliderSpec*>(this)->updateTexture();
+}
+
+template <typename SliderSpec>
+void SliderBase<SliderSpec>::setValue(const float value)
+{
+    value_ = std::clamp(value, min_, max_);
+    static_cast<SliderSpec*>(this)->updateTexture();
+    if (onValueChange_) onValueChange_(value_);
+}
+
+template <typename SliderSpec>
+float SliderBase<SliderSpec>::getValue() const
+{
+    return value_;
+}
+
+template <typename SliderSpec>
+void SliderBase<SliderSpec>::setStep(const float step)
+{
+    step_ = step;
+}
+
+template <typename SliderSpec>
 void SliderBase<SliderSpec>::onSizeChange()
 {
     track_.setSize(static_cast<SliderSpec*>(this)->getTrackSize());
@@ -54,6 +85,12 @@ void SliderBase<SliderSpec>::onPositionChange()
 }
 
 template <typename SliderSpec>
+float SliderBase<SliderSpec>::normalizeValue()
+{
+    return (value_ - min_) / (max_ - min_);
+}
+
+template <typename SliderSpec>
 EventStatus SliderBase<SliderSpec>::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
@@ -62,18 +99,18 @@ EventStatus SliderBase<SliderSpec>::on(const event::KeyboardKeyReleased& keyboar
 
     if (key == gui::event::Key::Left)
     {
-        value_ -= STEP;
+        value_ -= step_;
     }
     else if (key == gui::event::Key::Right)
     {
-        value_ += STEP;
+        value_ += step_;
     }
     else
     {
         return EventStatus::NotConsumed;
     }
 
-    value_ = std::clamp(value_, 0.f, 1.f);
+    value_ = std::clamp(value_, min_, max_);
     static_cast<SliderSpec*>(this)->updateTexture();
     if (onValueChange_) onValueChange_(value_);
 
@@ -105,6 +142,7 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseMoved& mouseMovedEvent)
         processMovement(mousePosition);
         return EventStatus::Consumed;
     }
+
     return EventStatus::NotConsumed;
 }
 
@@ -138,13 +176,19 @@ float HorizontalSlider::translateMousePositionToThumbValue(const sf::Vector2f& m
     auto trackSize = track_.getSize();
     auto thumbXPositionOffset = mousePosition.x - getGlobalPosition().x - trackPositionOffset.x;
 
-    // STEP below needs to be multiplied by track size as it varies depending on slider width
-    float stepSize = STEP * trackSize.x;
+    // STEP below needs to be multiplied by track size as it varies depending on slider size
+    // FIXME: this stepSize is not correct
+    // which leads to increments of 25 percent when step is set to 0.25.
+    float stepSize = step_ * trackSize.x;
 
     // Calculate the nearest step by rounding instead of truncating
-    float alignedThumbXPosition = std::round(thumbXPositionOffset / stepSize) * stepSize;
+    float stepAlignedThumbXPosition = std::round(thumbXPositionOffset / stepSize) * stepSize;
+    // Normalize to 0.f to 1.f range
+    float normalizedThumbXPosition = stepAlignedThumbXPosition / trackSize.x;
+    // Map to set range
+    float rangeMappedThumbXPosition = (max_ - min_) * normalizedThumbXPosition + min_;   
 
-    return std::clamp(alignedThumbXPosition / trackSize.x, 0.f, 1.f);
+    return std::clamp(rangeMappedThumbXPosition, min_, max_);
 }
 
 sf::Vector2f HorizontalSlider::getTrackSize()
@@ -158,7 +202,7 @@ void HorizontalSlider::updateTexture()
     track_.setPosition(getGlobalPosition() + trackPositionOffset);
     auto trackSize = track_.getSize();
 
-    auto thumbXPositionOffset = value_ * (trackSize.x) + BOUNDS_THICKNESS;
+    auto thumbXPositionOffset = normalizeValue() * (trackSize.x) + BOUNDS_THICKNESS;
     auto thumbYPositionOffset = getSize().y / 2.f;
     
     auto thumbPositionOffset = sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
@@ -171,13 +215,19 @@ float VerticalSlider::translateMousePositionToThumbValue(const sf::Vector2f& mou
     auto trackSize = track_.getSize();
     auto thumbYPositionOffset =  getGlobalPosition().y + trackSize.y - mousePosition.y + trackPositionOffset.y;
 
-    // STEP below needs to be multiplied by track size as it varies depending on slider width
-    float stepSize = STEP * trackSize.y;
+    // STEP below needs to be multiplied by track size as it varies depending on slider size
+    float stepSize = step_ * trackSize.y;
 
     // Calculate the nearest step by rounding instead of truncating
-    float alignedThumbYPosition = std::round(thumbYPositionOffset / stepSize) * stepSize;
+    float stepAlignedThumbYPosition = std::round(thumbYPositionOffset / stepSize) * stepSize;
 
-    return std::clamp(alignedThumbYPosition / trackSize.y, 0.f, 1.f);
+    // Normalize to 0.f to 1.f range
+    float normalizedThumbYPosition = stepAlignedThumbYPosition / trackSize.y;
+
+    // Map to set range
+    float rangeMappedThumbYPosition = (max_ - min_) * normalizedThumbYPosition + min_;
+
+    return std::clamp(rangeMappedThumbYPosition, min_, max_);
 }
 
 sf::Vector2f VerticalSlider::getTrackSize()
@@ -192,7 +242,7 @@ void VerticalSlider::updateTexture()
     auto trackSize = track_.getSize();
 
     auto thumbXPositionOffset = getSize().x / 2.f;
-    auto thumbYPositionOffset = (1.f - value_) * (trackSize.y) + BOUNDS_THICKNESS;
+    auto thumbYPositionOffset = (1.f - normalizeValue()) * (trackSize.y) + BOUNDS_THICKNESS;
     // TODO: this 1.f - value might be problematic when value range will be different than 0.f to 1.f
     // it should be calculated based on the range (when range is implemented)
     

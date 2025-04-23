@@ -535,7 +535,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
         window->setTitle("Slidinnn.....");
 
-        auto gridLayout = gui::GridLayout::create(2,2);
+        auto gridLayout = gui::GridLayout::create(2,4);
         auto hProgressBar = gui::ProgressBar::create();
         hProgressBar->setRange(0.f, 1.f);
         gui::ProgressBar* hProgressBarPtr = hProgressBar.get();
@@ -549,6 +549,21 @@ void Application::onInit()
         });
         gridLayout->addChild(std::move(hSlider));
 
+        auto hProgressBar2 = gui::ProgressBar::create();
+        hProgressBar2->setRange(0.f, 100.f);
+        gui::ProgressBar* hProgressBarPtr2 = hProgressBar2.get();
+
+        gridLayout->addChild(std::move(hProgressBar2));
+
+        auto hSlider2 = gui::HorizontalSlider::create();
+        hSlider2->setRange(25.f, 75.f);
+        hSlider2->setStep(0.25f);
+        hSlider2->onValueChange([hProgressBarPtr2](float value)
+        {
+            hProgressBarPtr2->setValue(value);
+        });
+        gridLayout->addChild(std::move(hSlider2));
+
         auto vProgressBar = gui::ProgressBar::create();
         vProgressBar->setRange(0.f, 1.f);
         gui::ProgressBar* vProgressBarPtr = vProgressBar.get();
@@ -561,6 +576,23 @@ void Application::onInit()
             vProgressBarPtr->setValue(value);
         });
         gridLayout->addChild(std::move(vSlider));
+
+
+        auto vProgressBar2 = gui::ProgressBar::create();
+        vProgressBar2->setRange(0.f, 100.f);
+        gui::ProgressBar* vProgressBarPtr2 = vProgressBar2.get();
+
+        gridLayout->addChild(std::move(vProgressBar2));
+
+        auto vSlider2 = gui::VerticalSlider::create();
+        vSlider2->setRange(25.f, 75.f);
+        vSlider2->setStep(0.25f);
+        vSlider2->onValueChange([vProgressBarPtr2](float value)
+        {
+            vProgressBarPtr2->setValue(value);
+        });
+        gridLayout->addChild(std::move(vSlider2));
+
 
         window->addChild(std::move(gridLayout));
         windowManager_.addWindow(std::move(window));
