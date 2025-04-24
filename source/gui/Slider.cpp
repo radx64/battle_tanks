@@ -176,10 +176,8 @@ float HorizontalSlider::translateMousePositionToThumbValue(const sf::Vector2f& m
     auto trackSize = track_.getSize();
     auto thumbXPositionOffset = mousePosition.x - getGlobalPosition().x - trackPositionOffset.x;
 
-    // STEP below needs to be multiplied by track size as it varies depending on slider size
-    // FIXME: this stepSize is not correct
-    // which leads to increments of 25 percent when step is set to 0.25.
-    float stepSize = step_ * trackSize.x;
+    // Calculate screen step size
+    float stepSize = trackSize.x  / (max_ - min_) * step_;
 
     // Calculate the nearest step by rounding instead of truncating
     float stepAlignedThumbXPosition = std::round(thumbXPositionOffset / stepSize) * stepSize;
@@ -215,8 +213,7 @@ float VerticalSlider::translateMousePositionToThumbValue(const sf::Vector2f& mou
     auto trackSize = track_.getSize();
     auto thumbYPositionOffset =  getGlobalPosition().y + trackSize.y - mousePosition.y + trackPositionOffset.y;
 
-    // STEP below needs to be multiplied by track size as it varies depending on slider size
-    float stepSize = step_ * trackSize.y;
+    float stepSize = trackSize.y  / (max_ - min_) * step_;
 
     // Calculate the nearest step by rounding instead of truncating
     float stepAlignedThumbYPosition = std::round(thumbYPositionOffset / stepSize) * stepSize;
