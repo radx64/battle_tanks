@@ -35,6 +35,7 @@ protected:
     {
         Idle,
         Dragging,
+        Hover   // TODo add disabled in the future
     };
 
     SliderBase();
@@ -50,11 +51,19 @@ protected:
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
 
+    EventStatus on(const event::FocusLost&) override;
+    EventStatus on(const event::FocusGained&) override;
+
     void processMovement(sf::Vector2f& mousePosition);
+    void updateTextureGeneral();
 
     gui::FramedSprite track_;
+    gui::FramedSprite thumb_;
 
-    sf::RectangleShape thumb_;
+    const sf::Texture& hoverTexture_;
+    const sf::Texture& focusTexture_;
+    const sf::Texture& normalTexture_;
+    const sf::Texture& pressedTexture_;
 
     float value_;
     float step_;
@@ -72,7 +81,7 @@ public:
 
     float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
     sf::Vector2f getTrackSize();
-    void updateTexture();
+    void updateTextureSpecific();
 
 };
 
@@ -83,7 +92,7 @@ public:
 
     float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
     sf::Vector2f getTrackSize();
-    void updateTexture();
+    void updateTextureSpecific();
 };
 
 }  // namespace gui
