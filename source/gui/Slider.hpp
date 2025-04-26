@@ -11,11 +11,9 @@
 namespace gui
 {
 
-/* TODO
-
-- mouse wheel support
-- skinning
-
+/* TODO:
+    - mouse wheel support
+    - render steps marks (implement after focus frame rendering is done)
 */
 
 template <typename SliderSpec>
