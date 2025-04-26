@@ -6,14 +6,13 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Component.hpp"
+#include "gui/FramedSprite.hpp"
 
 namespace gui
 {
 
 /* TODO
 
-- ranges instead of ange 0.f to 1.f
-- discrete step
 - mouse wheel support
 - skinning
 
@@ -53,7 +52,8 @@ protected:
 
     void processMovement(sf::Vector2f& mousePosition);
 
-    sf::RectangleShape track_;
+    gui::FramedSprite track_;
+
     sf::RectangleShape thumb_;
 
     float value_;

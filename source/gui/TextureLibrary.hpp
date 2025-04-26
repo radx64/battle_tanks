@@ -37,6 +37,8 @@ public:
             {"radiobutton_hover",            concat(texturePath, "classic/radiobutton_hover.png")},
             {"radiobutton_focus",            concat(texturePath, "classic/radiobutton_focus.png")},
             {"radiobutton_checked",          concat(texturePath, "classic/radiobutton_checked.png")},
+            {"slider_track",                 concat(texturePath, "classic/slider_track.png")},
+        
         };
         return assets;
     }
