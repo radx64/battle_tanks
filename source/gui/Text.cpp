@@ -160,7 +160,8 @@ void Text::updateSprite()
     }
 
     sprite_.setTextureRect(sf::IntRect(textureStart.x, textureStart.y, size_.x, size_.y));
-    sprite_.setPosition(globalPosition_ + positionOffset);
+    auto newPosition = globalPosition_ + positionOffset;
+    sprite_.setPosition(sf::Vector2f{std::round(newPosition.x), std::round(newPosition.y)});
 }
 
 sf::Vector2f Text::getGlobalPosition() const

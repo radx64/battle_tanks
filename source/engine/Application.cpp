@@ -8,7 +8,7 @@
 
 #include "LoggerSink.hpp"
 
-constexpr unsigned int ANTI_ALIASING_LEVEL = 8;
+constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
 
 namespace engine
 {

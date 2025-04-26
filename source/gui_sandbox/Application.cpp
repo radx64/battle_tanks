@@ -19,10 +19,11 @@
 #include "gui/Label.hpp"
 #include "gui/Layout.hpp"
 #include "gui/ProgressBar.hpp"
-#include "gui/TextureLibrary.hpp"
-#include "gui/Window.hpp"
 #include "gui/RadioButton.hpp"
 #include "gui/RadioButtonGroup.hpp"
+#include "gui/Slider.hpp"
+#include "gui/TextureLibrary.hpp"
+#include "gui/Window.hpp"
 
 using namespace std::literals;
 
@@ -525,6 +526,81 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createGridLayoutWindowButton));
 
+    auto createSliderWindowButton = gui::TextButton::create("Slider Window");
+    createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
+    createSliderWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createSliderWindowButton->onClick([this](){
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(400.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2, 400.0f));
+        window->setTitle("Slidinnn.....");
+
+        auto gridLayout = gui::GridLayout::create(2,4);
+        auto hProgressBar = gui::ProgressBar::create();
+        hProgressBar->setRange(0.f, 1.f);
+        gui::ProgressBar* hProgressBarPtr = hProgressBar.get();
+
+        gridLayout->addChild(std::move(hProgressBar));
+
+        auto hSlider = gui::HorizontalSlider::create();
+        hSlider->onValueChange([hProgressBarPtr](float value)
+        {
+            hProgressBarPtr->setValue(value);
+        });
+        gridLayout->addChild(std::move(hSlider));
+
+        auto hProgressBar2 = gui::ProgressBar::create();
+        hProgressBar2->setRange(0.f, 100.f);
+        gui::ProgressBar* hProgressBarPtr2 = hProgressBar2.get();
+
+        gridLayout->addChild(std::move(hProgressBar2));
+
+        auto hSlider2 = gui::HorizontalSlider::create();
+        hSlider2->setRange(25.f, 75.f);
+        hSlider2->setStep(0.25f);
+        hSlider2->onValueChange([hProgressBarPtr2](float value)
+        {
+            hProgressBarPtr2->setValue(value);
+        });
+        gridLayout->addChild(std::move(hSlider2));
+
+        auto vProgressBar = gui::ProgressBar::create();
+        vProgressBar->setRange(0.f, 1.f);
+        gui::ProgressBar* vProgressBarPtr = vProgressBar.get();
+
+        gridLayout->addChild(std::move(vProgressBar));
+
+        auto vSlider = gui::VerticalSlider::create();
+        vSlider->onValueChange([vProgressBarPtr](float value)
+        {
+            vProgressBarPtr->setValue(value);
+        });
+        gridLayout->addChild(std::move(vSlider));
+
+
+        auto vProgressBar2 = gui::ProgressBar::create();
+        vProgressBar2->setRange(0.f, 100.f);
+        gui::ProgressBar* vProgressBarPtr2 = vProgressBar2.get();
+
+        gridLayout->addChild(std::move(vProgressBar2));
+
+        auto vSlider2 = gui::VerticalSlider::create();
+        vSlider2->setRange(25.f, 75.f);
+        vSlider2->setStep(0.25f);
+        vSlider2->onValueChange([vProgressBarPtr2](float value)
+        {
+            vProgressBarPtr2->setValue(value);
+        });
+        gridLayout->addChild(std::move(vSlider2));
+
+
+        window->addChild(std::move(gridLayout));
+        windowManager_.addWindow(std::move(window));
+
+    });
+
+    windowManager_.mainWindow().addChild(std::move(createSliderWindowButton));
+
     auto leftLabel = gui::Label::create("Left aligned label");
     leftLabel->setPosition({100.f, 20.f});
     leftLabel->setSize({400.f, 40.f});
@@ -581,9 +657,6 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(multilineTopAlignedLabel));
     windowManager_.mainWindow().addChild(std::move(multilineCenterAlignedLabel));
     windowManager_.mainWindow().addChild(std::move(multilineBottomAlignedLabel));
-
-
-
 }
 
 void Application::onClose()
