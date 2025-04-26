@@ -170,7 +170,7 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createEditboxWindowButton));
 
-    auto createLayoutWindowButton = gui::TextButton::create("Layout Window");
+    auto createLayoutWindowButton = gui::TextButton::create("Simple Layout Window");
     createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
     createLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createLayoutWindowButton->onClick([this](){
@@ -264,6 +264,9 @@ void Application::onInit()
         verticalLayout->addChild(std::move(horizontalLayout5));  
         verticalLayout->addChild(std::move(horizontalLayout6));  
 
+        verticalLayout->setRowSize(0, gui::SizeConstraint::Fixed(30.f, gui::SizeConstraint::Unit::Pixels));
+        verticalLayout->setRowSize(1, gui::SizeConstraint::Auto());
+
         window->addChild(std::move(verticalLayout));
 
         window->setSize(sf::Vector2f(700.0f, 400.0f));
@@ -346,16 +349,16 @@ void Application::onInit()
         positionValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         auto* positionValuePtr = positionValue.get();
 
-        auto ratioLabel = gui::Label::create("Ratio:");
-        ratioLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto percentageLabel = gui::Label::create("Percentage:");
+        percentageLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         auto ratioValue = gui::EditBox::create();
-        ratioValue->setText("0.20");
+        ratioValue->setText("20");
         ratioValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
         auto* ratioValuePtr = ratioValue.get();
 
         positionBox->addChild(std::move(positionLabel));
         positionBox->addChild(std::move(positionValue));
-        positionBox->addChild(std::move(ratioLabel));
+        positionBox->addChild(std::move(percentageLabel));
         positionBox->addChild(std::move(ratioValue));
 
         auto gridStatusLabel = gui::Label::create("");
@@ -411,9 +414,14 @@ void Application::onInit()
                 return;
             }
 
-            if(not gridLayoutPtr->addColumn(position)) return;
-
-            if (ratio.has_value()) gridLayoutPtr->setColumnSize(position, ratio.value());
+            if (ratio.has_value()) 
+            {
+                if(not  gridLayoutPtr->addColumn(position, gui::SizeConstraint::Fixed(ratio.value(), gui::SizeConstraint::Unit::Percentage))) return;
+            }
+            else
+            {
+                if(not gridLayoutPtr->addColumn(position, gui::SizeConstraint::Auto())) return;
+            }
 
             updateGridStatusLabel();
 
@@ -458,8 +466,16 @@ void Application::onInit()
                 return;
             }
 
-            if(not gridLayoutPtr->addRow(position)) return;
-            if (ratio.has_value()) gridLayoutPtr->setRowSize(position, ratio.value());
+            if (ratio.has_value()) 
+            {
+                if(not  gridLayoutPtr->addRow(position, gui::SizeConstraint::Fixed(ratio.value(), gui::SizeConstraint::Unit::Percentage))) return;
+            }
+            else
+            {
+                if(not gridLayoutPtr->addRow(position, gui::SizeConstraint::Auto())) return;
+            }
+
+
             updateGridStatusLabel();
 
             for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)

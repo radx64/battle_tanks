@@ -60,81 +60,81 @@ void GridLayout::addChild(std::unique_ptr<Component> child)
 }
 
 
-bool GridLayout::addColumn(const size_t position)
+bool GridLayout::addColumn(const size_t index, const SizeConstraint& constraint)
 {
-    if (position > width_)
+    if (index > width_)
     {
-        logger_.error(fmt::format("Column {} is out of bounds", position));
+        logger_.error(fmt::format("Column {} is out of bounds", index));
         return false;
     }
 
     width_++;
-    grid_.emplace(std::begin(grid_) + position, height_);
-    columnSize_.addElementAtIndex(position);
+    grid_.emplace(std::begin(grid_) + index, height_);
+    columnSize_.addElementAtIndex(index, constraint);
     recalculateChildrenBounds();
     return true;
 }
 
-bool GridLayout::removeColumn(const size_t position)
+bool GridLayout::removeColumn(const size_t index)
 {
-    if (position >= width_)
+    if (index >= width_)
     {
-        logger_.error(fmt::format("Column {} is out of bounds", position));
+        logger_.error(fmt::format("Column {} is out of bounds", index));
         return false;
     }
 
     width_--;
     for (size_t y = 0; y < height_; y++)
     {
-        auto* component = grid_[position][y];
+        auto* component = grid_[index][y];
         if (component != nullptr)
         {
             removeChild(component);
         }
     }
-    grid_.erase(std::begin(grid_) + position);
-    columnSize_.removeElementAtIndex(position);
+    grid_.erase(std::begin(grid_) + index);
+    columnSize_.removeElementAtIndex(index);
     recalculateChildrenBounds();
     return true;
 }
 
-bool GridLayout::addRow(const size_t position)
+bool GridLayout::addRow(const size_t index, const SizeConstraint& constraint)
 {
-    if (position > height_)
+    if (index > height_)
     {
-        logger_.error(fmt::format("Row {} is out of bounds", position));
+        logger_.error(fmt::format("Row {} is out of bounds", index));
         return false;
     }
 
     height_++;
     for (auto& column : grid_)
     {
-        column.emplace(std::begin(column) + position, nullptr);
+        column.emplace(std::begin(column) + index, nullptr);
     }
 
-    rowSize_.addElementAtIndex(position);
+    rowSize_.addElementAtIndex(index, constraint);
     recalculateChildrenBounds();
     return true;
 }
 
-bool GridLayout::removeRow(const size_t position)
+bool GridLayout::removeRow(const size_t index)
 {
-    if (position >= height_)
+    if (index >= height_)
     {
-        logger_.error(fmt::format("Row {} is out of bounds", position));
+        logger_.error(fmt::format("Row {} is out of bounds", index));
         return false;
     }
 
     height_--;
     for (auto& column : grid_)
     {
-        if (column[position] != nullptr)
+        if (column[index] != nullptr)
         {
-            removeChild(column[position]);
+            removeChild(column[index]);
         }
-        column.erase(std::begin(column) + position);
+        column.erase(std::begin(column) + index);
     }
-    rowSize_.removeElementAtIndex(position);
+    rowSize_.removeElementAtIndex(index);
     recalculateChildrenBounds();
     return true;
 }
@@ -163,20 +163,19 @@ void GridLayout::recalculateChildrenBounds()
 
 void GridLayout::onSizeChange()
 {
-    columnSize_.setSize(getSize().x);
-    rowSize_.setSize(getSize().y);
+    columnSize_.setTotalSize(getSize().x);
+    rowSize_.setTotalSize(getSize().y);
     recalculateChildrenBounds();
 }
 
-void GridLayout::setColumnSize(const size_t column, const float ratio)
+void GridLayout::setColumnSize(const size_t index, const SizeConstraint& constraint)
 {
-    columnSize_.setElementSize(column, ratio); 
+    columnSize_.setElementSize(index, constraint); 
 }
-void GridLayout::setRowSize(const size_t position, const float ratio)
+void GridLayout::setRowSize(const size_t index, const SizeConstraint& constraint)
 {
-    rowSize_.setElementSize(position, ratio);
+    rowSize_.setElementSize(index, constraint);
 }
-
 
 std::unique_ptr<HorizontalLayout> HorizontalLayout::create(size_t width)
 {
@@ -191,7 +190,7 @@ HorizontalLayout::HorizontalLayout(size_t width)
 
 void HorizontalLayout::addChild(std::unique_ptr<Component> child)
 {
-    addColumn(width_);
+    addColumn(width_, SizeConstraint::Auto());
     GridLayout::addChild(std::move(child));
 }
 
@@ -207,9 +206,8 @@ VerticalLayout::VerticalLayout(size_t height) : GridLayout(1, height)
 
 void VerticalLayout::addChild(std::unique_ptr<Component> child)
 {
-    addRow(height_);
+    addRow(height_, SizeConstraint::Auto());
     GridLayout::addChild(std::move(child));
 }
-
 
 }  // namespace gui

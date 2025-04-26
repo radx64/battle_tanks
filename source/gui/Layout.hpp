@@ -22,12 +22,12 @@ public:
     static std::unique_ptr<GridLayout> create(size_t width, size_t height);
 
     void addChild(std::unique_ptr<Component> child) override;
-    bool addColumn(const size_t position);
-    bool removeColumn(const size_t position);
-    void setColumnSize(const size_t column, const float ratio);
-    bool addRow(const size_t position);
-    bool removeRow(const size_t position);
-    void setRowSize(const size_t position, const float ratio);
+    bool addColumn(const size_t index, const SizeConstraint& constraint);
+    bool removeColumn(const size_t index);
+    void setColumnSize(const size_t column, const SizeConstraint& constraint);
+    bool addRow(const size_t index, const SizeConstraint& constraint);
+    bool removeRow(const size_t index);
+    void setRowSize(const size_t index, const SizeConstraint& constraint);
     size_t getWidth() const;
     size_t getHeight() const;
     
@@ -59,7 +59,7 @@ public:
     // Same for Vertical layout
     bool addRow(const size_t position) = delete;
     bool removeRow(const size_t position) = delete;
-    void setRowSize(const size_t position, const float ratio) = delete;
+    void setRowSize(const size_t position, const SizeConstraint& constraint) = delete;
 protected:
     HorizontalLayout(size_t width);
 };
@@ -72,7 +72,7 @@ public:
     void addChild(std::unique_ptr<Component> child) override;
     bool addColumn(const size_t position) = delete;
     bool removeColumn(const size_t position) = delete;
-    void setColumnSize(const size_t column, const float ratio) = delete;
+    void setColumnSize(const size_t column, const SizeConstraint& constraint) = delete;
 protected:
     VerticalLayout(size_t height);
 };

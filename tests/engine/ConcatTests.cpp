@@ -9,7 +9,6 @@ namespace engine
 TEST(ConcatShould, concatenateTwoStrings)
 {
     auto result = concat("first", "second");
-    std::cout << "returned: " << result << std::endl;
     EXPECT_STREQ(result.c_str(), "firstsecond");
 }
 
