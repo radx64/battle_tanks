@@ -204,7 +204,7 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseMoved& mouseMovedEvent)
     else
     {
         bool isMouseInside = isInside(mousePosition);
-        if (isMouseInside and state_ != State::Hover and not isFocused())
+        if (isMouseInside and state_ != State::Hover)
         {
             state_ = State::Hover;
             updateTextureGeneral();
@@ -264,7 +264,14 @@ void SliderBase<SliderSpec>::updateTextureGeneral()
             thumb_.setTexture(pressedTexture_);
             break;
         case State::Hover:
-            thumb_.setTexture(hoverTexture_);
+            if(isFocused())
+            {
+                thumb_.setTexture(focusTexture_);
+            }
+            else
+            {
+                thumb_.setTexture(hoverTexture_);
+            }
             break;
     }
 
