@@ -201,6 +201,22 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseMoved& mouseMovedEvent)
         processMovement(mousePosition);
         return EventStatus::Consumed;
     }
+    else
+    {
+        bool isMouseInside = isInside(mousePosition);
+        if (isMouseInside and state_ != State::Hover and not isFocused())
+        {
+            state_ = State::Hover;
+            updateTextureGeneral();
+            return EventStatus::Consumed;
+        }
+        else if (not isMouseInside and state_ == State::Hover)
+        {
+            state_ = State::Idle;
+            updateTextureGeneral();
+            return EventStatus::Consumed;
+        }
+    }
 
     return EventStatus::NotConsumed;
 }

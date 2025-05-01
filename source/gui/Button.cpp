@@ -144,13 +144,12 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
         // due to nondeterministic behaviour of mouseLeft 
         // and mouseClick events when mouse is moved quickly
         // There might be a situation that mouseLeft event is send before mouse click
-        // altough click has old position stored
+        // although click has old position stored
         // FIXME: I need to sort it out later, but at least I know the reason now
 
         state_ = State::Pressed;
         updateTexture();
 
-      
         return EventStatus::Consumed;
     }
     return EventStatus::NotConsumed;
