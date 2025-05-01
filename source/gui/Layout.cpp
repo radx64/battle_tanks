@@ -147,13 +147,12 @@ void GridLayout::recalculateChildrenBounds()
     {
         for (size_t y = 0; y < height_; y++)
         {
-            if (grid_[x][y] == nullptr)
-            {
-                continue;
-            }
             auto cellSize = sf::Vector2f{columnSize_.getElementSize(x), rowSize_.getElementSize(y)};
-            grid_[x][y]->setPosition(cellPosition);
-            grid_[x][y]->setSize(cellSize);
+            if (grid_[x][y] != nullptr)
+            {
+                grid_[x][y]->setPosition(cellPosition);
+                grid_[x][y]->setSize(cellSize);
+            }
             cellPosition.y += cellSize.y;
         }
         cellPosition.y = 0.f;
@@ -175,6 +174,46 @@ void GridLayout::setColumnSize(const size_t index, const SizeConstraint& constra
 void GridLayout::setRowSize(const size_t index, const SizeConstraint& constraint)
 {
     rowSize_.setElementSize(index, constraint);
+}
+
+void GridLayout::setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element)
+{
+    if (x >= width_ || y >= height_)
+    {
+        logger_.error(fmt::format("Element at ({}, {}) is out of bounds", x, y));
+        return;
+    }
+
+    if (grid_[x][y] != nullptr)
+    {
+        removeChild(grid_[x][y]);
+    }
+
+    if (element == nullptr)
+    {
+        grid_[x][y] = nullptr;
+        return;
+    }
+    else
+    {
+        grid_[x][y] = element.get();
+        Component::addChild(std::move(element));
+    }
+    recalculateChildrenBounds();
+}
+Component* GridLayout::getElementAt(const size_t x, const size_t y) const
+{
+    if (x >= width_ || y >= height_)
+    {
+        logger_.error(fmt::format("Element at ({}, {}) is out of bounds", x, y));
+        return nullptr;
+    }
+    return grid_[x][y];
+}
+
+void GridLayout::removeElementAt(const size_t x, const size_t y)
+{
+    setElementAt(x, y, nullptr);
 }
 
 std::unique_ptr<HorizontalLayout> HorizontalLayout::create(size_t width)

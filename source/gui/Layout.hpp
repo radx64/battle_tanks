@@ -30,6 +30,10 @@ public:
     void setRowSize(const size_t index, const SizeConstraint& constraint);
     size_t getWidth() const;
     size_t getHeight() const;
+
+    void setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element);
+    Component* getElementAt(const size_t x, const size_t y) const;
+    void removeElementAt(const size_t x, const size_t y);
     
 protected:
     GridLayout(size_t width, size_t height);

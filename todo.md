@@ -41,7 +41,7 @@ Bunch of random ideas to randomly pick up and implement
   - [x] Implement keyboard events support
 - [x] Radiobutton
   - [ ] Radio button groups support 
-- [ ] Sliders
+- [x] Sliders
 - [ ] Move render logic to some renderer subclasses (so that representation of gui elements can be reimplemented)
 
 ## Gameplay

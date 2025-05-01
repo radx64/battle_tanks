@@ -243,4 +243,20 @@ TEST(DimensionConstraintScalerShould, notExceedSizeWhenCalculatingDimensionsForE
     EXPECT_FLOAT_EQ(100.f, sum);
 }
 
+TEST(DimensionConstraintScalerShould, scaleElementsWhenResized)
+{
+    DimensionConstraintScaler sut{"sut"};
+    sut.setTotalSize(100.f);
+    sut.setElementCount(2);
+    sut.setElementSize(0, SizeConstraint::Auto());
+    sut.setElementSize(1, SizeConstraint::Pixels(40.f));
+
+    EXPECT_FLOAT_EQ(60.f, sut.getElementSize(0));
+    EXPECT_FLOAT_EQ(40.f, sut.getElementSize(1));
+
+    sut.setTotalSize(200.f);
+    EXPECT_FLOAT_EQ(160.f, sut.getElementSize(0));
+    EXPECT_FLOAT_EQ(40.f, sut.getElementSize(1));
+}
+
 } // namespace gui
