@@ -21,6 +21,7 @@ class GridLayout : public Layout
 public:
     static std::unique_ptr<GridLayout> create(size_t width, size_t height);
 
+    
     void addChild(std::unique_ptr<Component> child) override;
     bool addColumn(const size_t index, const SizeConstraint& constraint);
     bool removeColumn(const size_t index);
@@ -51,34 +52,38 @@ protected:
 };
 
 
-class HorizontalLayout : public GridLayout
+class HorizontalLayout : public Layout
 {
 public:
     static std::unique_ptr<HorizontalLayout> create(size_t width = 0);
 
     void addChild(std::unique_ptr<Component> child) override;
+    bool addColumn(const size_t index, const SizeConstraint& constraint);
+    bool removeColumn(const size_t index);
+    void setColumnSize(const size_t index, const SizeConstraint& constraint);
     
-    // TODO: I don't like this solution, consider doing something more sophisticated later
-    // like reversing it and combining grid layout from two 1D layouts?
-    // Same for Vertical layout
-    bool addRow(const size_t position) = delete;
-    bool removeRow(const size_t position) = delete;
-    void setRowSize(const size_t position, const SizeConstraint& constraint) = delete;
-protected:
+protected:    
     HorizontalLayout(size_t width);
+    void onSizeChange() override;
+
+    GridLayout* layoutImpl_;
 };
 
-class VerticalLayout : public GridLayout
+class VerticalLayout : public Layout
 {
 public:
     static std::unique_ptr<VerticalLayout> create(size_t height = 0);
 
     void addChild(std::unique_ptr<Component> child) override;
-    bool addColumn(const size_t position) = delete;
-    bool removeColumn(const size_t position) = delete;
-    void setColumnSize(const size_t column, const SizeConstraint& constraint) = delete;
+    bool addRow(const size_t index, const SizeConstraint& constraint);
+    bool removeRow(const size_t index);
+    void setRowSize(const size_t index, const SizeConstraint& constraint);
+
 protected:
     VerticalLayout(size_t height);
+    void onSizeChange() override;
+
+    GridLayout* layoutImpl_;
 };
 
 }  // namespace gui

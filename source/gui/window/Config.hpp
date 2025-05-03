@@ -4,7 +4,7 @@
 
 namespace gui::window::config
 {
-
+    
     constexpr auto RESIZE_BOX_SIZE = 20.f;
 
     constexpr auto HEADER_HEIGHT = 40.f;
