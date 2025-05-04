@@ -5,49 +5,12 @@
 
 #include "gui/Component.hpp"
 
+#include "tests/mocks/ComponentSpy.hpp"
+
 namespace gui
 {
 
-class ComponentSpy : public Component
-{
-public:
-    MOCK_METHOD(void, die, ());
-    ~ComponentSpy() override
-    {
-        logger_.debug("Dying");
-        die();
-    }
-
-    MOCK_METHOD(void, render_mock, ());
-    void onRender(sf::RenderTexture&) override
-    {
-        logger_.debug("onRender called");
-        render_mock();
-    }
-
-    void makeSpyFocusable()
-    {
-        logger_.debug("Spy made focusable");
-        enableFocus();
-    }
-
-    MOCK_METHOD(void, focusGained, ());
-    gui::EventStatus on(const gui::event::FocusGained&) override
-    {
-        logger_.debug("Focus gained");
-        focusGained();
-        return EventStatus::Consumed;
-    }
-
-    MOCK_METHOD(void, focusLost, ());
-    gui::EventStatus on(const gui::event::FocusLost&) override
-    {
-        logger_.debug("Focus lost");
-        focusLost();
-        return EventStatus::Consumed;
-    }
-
-};
+using ComponentSpy = mocks::ComponentSpy;
 
 /***************************
      POINTERS MGMT TESTS

@@ -11,6 +11,7 @@ std::unique_ptr<Inset> Inset::create(const SizeConstraint& constraint)
 void Inset::set(const SizeConstraint& constraint)
 {
     constraint_ = constraint;
+    onSizeChange();
 }
 
 Inset::Inset(const SizeConstraint& constraint)
@@ -37,20 +38,23 @@ void Inset::onSizeChange()
         {
             auto layoutSize = size;
 
-            size.x *= constraint_.getValue() / 100.0f;
-            size.y *= constraint_.getValue() / 100.0f;
+            if(constraint_.getValue() >= 0)
+            {
+                size.x *= constraint_.getValue() / 100.0f;
+                size.y *= constraint_.getValue() / 100.0f;
 
-            positionOffset.x = (layoutSize.x - size.x) / 2.0f;
-            positionOffset.y = (layoutSize.y - size.y) / 2.0f;
-            
+                positionOffset.x = (layoutSize.x - size.x) / 2.0f;
+                positionOffset.y = (layoutSize.y - size.y) / 2.0f;
+            }
+            else
+            {
+                size = {0.f, 0.f};
+            }
         }
     }
     
     size.x = std::max(0.0f, size.x);
     size.y = std::max(0.0f, size.y);
-
-    positionOffset.x = std::max(0.0f, positionOffset.x);
-    positionOffset.y = std::max(0.0f, positionOffset.y);
     
     for (auto& child : children_)
     {

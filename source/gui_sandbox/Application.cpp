@@ -269,7 +269,7 @@ void Application::onInit()
         verticalLayout->addChild(std::move(horizontalLayout5));  
         verticalLayout->addChild(std::move(horizontalLayout6));  
 
-        verticalLayout->setRowSize(0, gui::layout::SizeConstraint::Fixed(30.f, gui::layout::SizeConstraint::Unit::Pixels));
+        verticalLayout->setRowSize(0, gui::layout::SizeConstraint::Pixels(30.f));
         verticalLayout->setRowSize(1, gui::layout::SizeConstraint::Auto());
 
         window->addChild(std::move(verticalLayout));
@@ -421,7 +421,7 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addColumn(position, gui::layout::SizeConstraint::Fixed(ratio.value(), gui::layout::SizeConstraint::Unit::Percentage))) return;
+                if(not  gridLayoutPtr->addColumn(position, gui::layout::SizeConstraint::Percent(ratio.value()))) return;
             }
             else
             {
@@ -473,7 +473,7 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addRow(position, gui::layout::SizeConstraint::Fixed(ratio.value(), gui::layout::SizeConstraint::Unit::Percentage))) return;
+                if(not  gridLayoutPtr->addRow(position, gui::layout::SizeConstraint::Percent(ratio.value()))) return;
             }
             else
             {

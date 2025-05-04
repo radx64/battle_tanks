@@ -7,11 +7,6 @@ SizeConstraint SizeConstraint::Auto()
     return SizeConstraint(Type::Auto, Unit::Percentage, 0.f);
 }
 
-SizeConstraint SizeConstraint::Fixed(const float value, const Unit unit)
-{
-    return SizeConstraint(Type::Fixed, unit, value);
-}
-
 SizeConstraint SizeConstraint::Percent(const float value)
 {
     return SizeConstraint(Type::Fixed, Unit::Percentage, value);

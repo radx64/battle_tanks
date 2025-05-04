@@ -19,7 +19,6 @@ public:
     };
 
     static SizeConstraint Auto();
-    static SizeConstraint Fixed(const float value, const Unit unit);
     static SizeConstraint Percent(const float value);
     static SizeConstraint Pixels(const float value);
 
