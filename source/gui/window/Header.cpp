@@ -3,7 +3,8 @@
 #include "gui/Alignment.hpp"
 #include "gui/Button.hpp"
 #include "gui/Label.hpp"
-#include "gui/layout/Grid.hpp"
+#include "gui/layout/Horizontal.hpp"
+#include "gui/layout/Inset.hpp"
 #include "gui/TextureLibrary.hpp"
 #include "gui/window/Config.hpp"
 
@@ -29,32 +30,27 @@ Header::Header()
     title_text_handle_->setSize(getSize());
     title_text_handle_->setFontColor(sf::Color::White);
 
-    auto layout = gui::layout::Grid::create(4,3);
-
-    /*
-     // vertical border
-    +--+--------+----+--+
-    |  |        |    |  | // horizontal border
-    +--+--------+----+--+
-    |  | Text   | X  |  |
-    +--+--------+----+--+
-    |  |        |    |  | // horizontal border
-    +--+--------+----+--+ 
-                      \\ vertical border
+        /*
+    +-------------------------------+
+    | Inset                         | 
+    |  +-------------------+-----+  |
+    |  | Text              |  X  |  |
+    |  +-------------------+-----+  |
+    +-------------------------------+
     */
 
-    layout->setColumnSize(0, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.x));
-    layout->setColumnSize(1, gui::layout::SizeConstraint::Auto());
-    layout->setColumnSize(2, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_WIDTH));
-    layout->setColumnSize(3, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.x));
+    auto insetLayout = gui::layout::Inset::create(layout::SizeConstraint::Pixels(config::HEADER_OFFSET));
+    auto horizontalLayout = gui::layout::Horizontal::create(0);
 
-    layout->setRowSize(0, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.y));
-    layout->setRowSize(1, gui::layout::SizeConstraint::Auto());
-    layout->setRowSize(2, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.y));
+    horizontalLayout->addChild(std::move(title_text));
+    horizontalLayout->addChild(std::move(close_button));
 
-    layout->setElementAt(1, 1, std::move(title_text));
-    layout->setElementAt(2, 1, std::move(close_button));
-    addChild(std::move(layout));
+    horizontalLayout->setColumnSize(0, gui::layout::SizeConstraint::Auto());
+    horizontalLayout->setColumnSize(1, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_WIDTH));
+
+    insetLayout->addChild(std::move(horizontalLayout));
+
+    addChild(std::move(insetLayout));
 }
 
 void Header::closeButtonAction(std::function<void()> closeButtonAction)

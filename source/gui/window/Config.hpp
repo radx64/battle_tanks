@@ -11,7 +11,7 @@ namespace gui::window::config
 
     const auto WINDOW_BORDER_OFFSET = sf::Vector2f{4.f, 4.f};
 
-    const auto CLOSE_BUTTON_OFFSET = sf::Vector2f{8.f, 4.f};
+    const auto HEADER_OFFSET = 8.f;
     const auto CLOSE_BUTTON_WIDTH = 32.f;
 
 }  // namespace gui::window::config
