@@ -25,7 +25,7 @@ class HelpWindow : public gui::Window
 public:
     HelpWindow(sf::Vector2f position)
     {
-        setSize(sf::Vector2f(500.0f, 400.0f));
+        setSize(sf::Vector2f(300.0f, 300.0f));
         setPosition(position);
         auto helpText = gui::Label::create(helpTextString.data());
         helpText->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);

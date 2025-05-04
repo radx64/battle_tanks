@@ -26,8 +26,11 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/FramedSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/keyboard/Utils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layout/Base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layout/Grid.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layout/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layout/Vertical.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Layout.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButton.cpp

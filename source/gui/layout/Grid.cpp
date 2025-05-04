@@ -1,24 +1,20 @@
-#include "gui/Layout.hpp"
+#include "gui/layout/Grid.hpp"
 
 #include <fmt/format.h>
 
-namespace gui
+namespace gui::layout
 {
 
-void Layout::onRender(sf::RenderTexture&)
+    std::unique_ptr<Grid> Grid::create(size_t width, size_t height)
 {
+    return std::unique_ptr<Grid>{new Grid{width, height}};
 }
 
-std::unique_ptr<GridLayout> GridLayout::create(size_t width, size_t height)
-{
-    return std::unique_ptr<GridLayout>{new GridLayout{width, height}};
-}
-
-GridLayout::GridLayout(size_t width, size_t height)
+Grid::Grid(size_t width, size_t height)
 : width_{width}
 , height_{height}
-, columnSize_{"GridLayout::columnSize_"}
-, rowSize_{"GridLayout::rowSize_"}
+, columnSize_{"Grid::columnSize_"}
+, rowSize_{"Grid::rowSize_"}
 {
     grid_.resize(width_);
     for (auto& column : grid_)
@@ -30,17 +26,17 @@ GridLayout::GridLayout(size_t width, size_t height)
     rowSize_.setElementCount(height_);
 }
 
-size_t GridLayout::getWidth() const
+size_t Grid::getWidth() const
 {
     return width_;
 }
 
-size_t GridLayout::getHeight() const
+size_t Grid::getHeight() const
 {
     return height_;
 }
 
-void GridLayout::addChild(std::unique_ptr<Component> child)
+void Grid::addChild(std::unique_ptr<Component> child)
 {
     for (size_t y = 0; y < height_; y++)
     {
@@ -56,11 +52,11 @@ void GridLayout::addChild(std::unique_ptr<Component> child)
             return;
         }
     }
-    logger_.error("GridLayout is full");
+    logger_.error("Grid is full");
 }
 
 
-bool GridLayout::addColumn(const size_t index, const SizeConstraint& constraint)
+bool Grid::addColumn(const size_t index, const SizeConstraint& constraint)
 {
     if (index > width_)
     {
@@ -75,7 +71,7 @@ bool GridLayout::addColumn(const size_t index, const SizeConstraint& constraint)
     return true;
 }
 
-bool GridLayout::removeColumn(const size_t index)
+bool Grid::removeColumn(const size_t index)
 {
     if (index >= width_)
     {
@@ -98,7 +94,7 @@ bool GridLayout::removeColumn(const size_t index)
     return true;
 }
 
-bool GridLayout::addRow(const size_t index, const SizeConstraint& constraint)
+bool Grid::addRow(const size_t index, const SizeConstraint& constraint)
 {
     if (index > height_)
     {
@@ -117,7 +113,7 @@ bool GridLayout::addRow(const size_t index, const SizeConstraint& constraint)
     return true;
 }
 
-bool GridLayout::removeRow(const size_t index)
+bool Grid::removeRow(const size_t index)
 {
     if (index >= height_)
     {
@@ -139,7 +135,7 @@ bool GridLayout::removeRow(const size_t index)
     return true;
 }
 
-void GridLayout::recalculateChildrenBounds()
+void Grid::recalculateChildrenBounds()
 {
     auto cellPosition = sf::Vector2f{0.f, 0.f};
 
@@ -160,23 +156,23 @@ void GridLayout::recalculateChildrenBounds()
     }
 }
 
-void GridLayout::onSizeChange()
+void Grid::onSizeChange()
 {
     columnSize_.setTotalSize(getSize().x);
     rowSize_.setTotalSize(getSize().y);
     recalculateChildrenBounds();
 }
 
-void GridLayout::setColumnSize(const size_t index, const SizeConstraint& constraint)
+void Grid::setColumnSize(const size_t index, const SizeConstraint& constraint)
 {
     columnSize_.setElementSize(index, constraint); 
 }
-void GridLayout::setRowSize(const size_t index, const SizeConstraint& constraint)
+void Grid::setRowSize(const size_t index, const SizeConstraint& constraint)
 {
     rowSize_.setElementSize(index, constraint);
 }
 
-void GridLayout::setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element)
+void Grid::setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element)
 {
     if (x >= width_ || y >= height_)
     {
@@ -201,7 +197,7 @@ void GridLayout::setElementAt(const size_t x, const size_t y, std::unique_ptr<Co
     }
     recalculateChildrenBounds();
 }
-Component* GridLayout::getElementAt(const size_t x, const size_t y) const
+Component* Grid::getElementAt(const size_t x, const size_t y) const
 {
     if (x >= width_ || y >= height_)
     {
@@ -211,89 +207,9 @@ Component* GridLayout::getElementAt(const size_t x, const size_t y) const
     return grid_[x][y];
 }
 
-void GridLayout::removeElementAt(const size_t x, const size_t y)
+void Grid::removeElementAt(const size_t x, const size_t y)
 {
     setElementAt(x, y, nullptr);
 }
 
-std::unique_ptr<HorizontalLayout> HorizontalLayout::create(size_t width)
-{
-    return std::unique_ptr<HorizontalLayout>{new HorizontalLayout{width}};
-}
-
-void HorizontalLayout::addChild(std::unique_ptr<Component> child)
-{
-    layoutImpl_->addColumn(layoutImpl_->getWidth(), SizeConstraint::Auto());
-    layoutImpl_->addChild(std::move(child));
-}
-
-bool HorizontalLayout::addColumn(const size_t index, const SizeConstraint& constraint)
-{
-    return layoutImpl_->addColumn(index, constraint);
-}
-
-bool HorizontalLayout::removeColumn(const size_t index)
-{
-    return layoutImpl_->removeColumn(index);
-}
-
-void HorizontalLayout::setColumnSize(const size_t index, const SizeConstraint& constraint)
-{
-    layoutImpl_->setColumnSize(index, constraint);
-}
-
-HorizontalLayout::HorizontalLayout(size_t width)
-: layoutImpl_{nullptr}
-{
-    auto grid = GridLayout::create(width, 1);    
-    layoutImpl_ = grid.get();
-
-    Component::addChild(std::move(grid));
-}
-
-void HorizontalLayout::onSizeChange()
-{
-    layoutImpl_->setSize(getSize());
-}
-
-std::unique_ptr<VerticalLayout> VerticalLayout::create(size_t height)
-{
-    return std::unique_ptr<VerticalLayout>{new VerticalLayout{height}};
-}
-
-void VerticalLayout::addChild(std::unique_ptr<Component> child)
-{
-    layoutImpl_->addRow(layoutImpl_->getHeight(), SizeConstraint::Auto());
-    layoutImpl_->addChild(std::move(child));
-}
-
-bool VerticalLayout::addRow(const size_t index, const SizeConstraint& constraint)
-{
-    return layoutImpl_->addRow(index, constraint);
-}
-
-bool VerticalLayout::removeRow(const size_t index)
-{
-    return layoutImpl_->removeRow(index);
-}
-
-void VerticalLayout::setRowSize(const size_t index, const SizeConstraint& constraint)
-{
-    layoutImpl_->setRowSize(index, constraint);
-}
-
-VerticalLayout::VerticalLayout(size_t height)
-: layoutImpl_{nullptr}
-{
-    auto grid = GridLayout::create(1, height);
-    layoutImpl_ = grid.get();
-
-    Component::addChild(std::move(grid));
-}
-
-void VerticalLayout::onSizeChange()
-{
-    layoutImpl_->setSize(getSize());
-}
-
-}  // namespace gui
+}  // namespace gui::layout

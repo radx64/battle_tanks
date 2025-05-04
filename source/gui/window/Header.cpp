@@ -3,7 +3,7 @@
 #include "gui/Alignment.hpp"
 #include "gui/Button.hpp"
 #include "gui/Label.hpp"
-#include "gui/Layout.hpp"
+#include "gui/layout/Grid.hpp"
 #include "gui/TextureLibrary.hpp"
 #include "gui/window/Config.hpp"
 
@@ -29,7 +29,7 @@ Header::Header()
     title_text_handle_->setSize(getSize());
     title_text_handle_->setFontColor(sf::Color::White);
 
-    auto layout = gui::GridLayout::create(4,3);
+    auto layout = gui::layout::Grid::create(4,3);
 
     /*
      // vertical border

@@ -29,14 +29,12 @@
 #include "gui/Button.hpp"
 #include "gui/Event.hpp"
 #include "gui/Label.hpp"
-#include "gui/Layout.hpp"
 #include "gui/Window.hpp"
 
 #include "Config.hpp"
 
 namespace game
 {
-
 
 constexpr size_t TANKS_COUNT = 5;
 constexpr size_t BARRELS_COUNT = 10;
@@ -251,9 +249,8 @@ void Application::configureGUI()
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){
-        auto helpWindow = std::make_unique<game::HelpWindow>(sf::Vector2f(Config::WINDOW_WIDTH/2, 600.0f));
+        auto helpWindow = std::make_unique<game::HelpWindow>(sf::Vector2f(300.f, 300.f));
         helpWindow->setTitle("Help");
-        helpWindow->setPosition({80.f,80.f});
         windowManager_.addWindow(std::move(helpWindow));
     });
     windowManager_.mainWindow().addChild(std::move(button));
