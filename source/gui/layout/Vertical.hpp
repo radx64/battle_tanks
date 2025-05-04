@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "gui/layout/Base.hpp"
-#include "gui/DimensionConstraintScaler.hpp"  //todo move size constraint to its own file
+#include "gui/layout/SizeConstraint.hpp"
 
 namespace gui::layout { class Grid; }
 

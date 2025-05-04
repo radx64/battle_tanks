@@ -43,14 +43,14 @@ Header::Header()
                       \\ vertical border
     */
 
-    layout->setColumnSize(0, gui::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.x));
-    layout->setColumnSize(1, gui::SizeConstraint::Auto());
-    layout->setColumnSize(2, gui::SizeConstraint::Pixels(config::CLOSE_BUTTON_WIDTH));
-    layout->setColumnSize(3, gui::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.x));
+    layout->setColumnSize(0, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.x));
+    layout->setColumnSize(1, gui::layout::SizeConstraint::Auto());
+    layout->setColumnSize(2, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_WIDTH));
+    layout->setColumnSize(3, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.x));
 
-    layout->setRowSize(0, gui::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.y));
-    layout->setRowSize(1, gui::SizeConstraint::Auto());
-    layout->setRowSize(2, gui::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.y));
+    layout->setRowSize(0, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.y));
+    layout->setRowSize(1, gui::layout::SizeConstraint::Auto());
+    layout->setRowSize(2, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_OFFSET.y));
 
     layout->setElementAt(1, 1, std::move(title_text));
     layout->setElementAt(2, 1, std::move(close_button));

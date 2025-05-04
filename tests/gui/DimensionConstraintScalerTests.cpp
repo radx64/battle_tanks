@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "gui/DimensionConstraintScaler.hpp"
+#include "gui/layout/DimensionConstraintScaler.hpp"
 
-namespace gui
+namespace gui::layout
 {
 
 TEST(DimensionConstraintScalerShould, returnZeroForNoElements)
@@ -259,4 +259,4 @@ TEST(DimensionConstraintScalerShould, scaleElementsWhenResized)
     EXPECT_FLOAT_EQ(40.f, sut.getElementSize(1));
 }
 
-} // namespace gui
+} // namespace gui::layout

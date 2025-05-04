@@ -3,7 +3,8 @@
 #include <cstddef>
 
 #include "gui/layout/Base.hpp"
-#include "gui/DimensionConstraintScaler.hpp"
+#include "gui/layout/SizeConstraint.hpp"
+#include "gui/layout/DimensionConstraintScaler.hpp"
 
 namespace gui::layout
 {

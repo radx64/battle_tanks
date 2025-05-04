@@ -19,6 +19,7 @@
 #include "gui/Label.hpp"
 #include "gui/layout/Grid.hpp"
 #include "gui/layout/Horizontal.hpp"
+#include "gui/layout/Inset.hpp"
 #include "gui/layout/Vertical.hpp"
 #include "gui/ProgressBar.hpp"
 #include "gui/RadioButton.hpp"
@@ -90,8 +91,11 @@ void Application::onInit()
 
     createSimpleWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
+
+        auto insetLayout = gui::layout::Inset::create(gui::layout::SizeConstraint::Percent(75.f));
         auto simpleButton = gui::TextButton::create("THIS IS BUTTON!");
-        window->addChild(std::move(simpleButton));
+        insetLayout->addChild(std::move(simpleButton));
+        window->addChild(std::move(insetLayout));
 
         window->setSize(sf::Vector2f(300.0f, 300.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
@@ -265,8 +269,8 @@ void Application::onInit()
         verticalLayout->addChild(std::move(horizontalLayout5));  
         verticalLayout->addChild(std::move(horizontalLayout6));  
 
-        verticalLayout->setRowSize(0, gui::SizeConstraint::Fixed(30.f, gui::SizeConstraint::Unit::Pixels));
-        verticalLayout->setRowSize(1, gui::SizeConstraint::Auto());
+        verticalLayout->setRowSize(0, gui::layout::SizeConstraint::Fixed(30.f, gui::layout::SizeConstraint::Unit::Pixels));
+        verticalLayout->setRowSize(1, gui::layout::SizeConstraint::Auto());
 
         window->addChild(std::move(verticalLayout));
 
@@ -417,11 +421,11 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addColumn(position, gui::SizeConstraint::Fixed(ratio.value(), gui::SizeConstraint::Unit::Percentage))) return;
+                if(not  gridLayoutPtr->addColumn(position, gui::layout::SizeConstraint::Fixed(ratio.value(), gui::layout::SizeConstraint::Unit::Percentage))) return;
             }
             else
             {
-                if(not gridLayoutPtr->addColumn(position, gui::SizeConstraint::Auto())) return;
+                if(not gridLayoutPtr->addColumn(position, gui::layout::SizeConstraint::Auto())) return;
             }
 
             updateGridStatusLabel();
@@ -469,11 +473,11 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addRow(position, gui::SizeConstraint::Fixed(ratio.value(), gui::SizeConstraint::Unit::Percentage))) return;
+                if(not  gridLayoutPtr->addRow(position, gui::layout::SizeConstraint::Fixed(ratio.value(), gui::layout::SizeConstraint::Unit::Percentage))) return;
             }
             else
             {
-                if(not gridLayoutPtr->addRow(position, gui::SizeConstraint::Auto())) return;
+                if(not gridLayoutPtr->addRow(position, gui::layout::SizeConstraint::Auto())) return;
             }
 
 
