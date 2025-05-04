@@ -7,10 +7,7 @@ namespace gui::layout
 {
 
 /*
-    Inset layout is used to create a layout with a fixed size
-    and an offset from the parent component.
-    It is used to create a layout with a fixed size and an offset
-    from the parent component.
+    Inset layout is used to create a layout with a constrained size as an offset from the parent component.
     The size of the inset is defined by the SizeConstraint class.
     
     It can offset child component size from its parent either by pixels or by percentage.
