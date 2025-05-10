@@ -19,19 +19,23 @@ public:
     Header();
 
     void closeButtonAction(std::function<void()> closeButtonAction);
+    void maximizeRestoreButtonAction(std::function<void()> maximizeRestoreButtonAction);
     void setTitle(const std::string_view& text);
     void enable();
     void disable();
+    void setMaximizeRestoreButtonState(const bool& state);
 
 protected:
     void onRender(sf::RenderTexture& renderWindow) override;
     void onSizeChange() override;
     void onPositionChange() override;
 
-    gui::Label* title_text_handle_;
-    sf::RectangleShape header_shape_;
-    gui::IconButton* close_button_ptr_;
+    gui::Label* titleTextPtr_;
+    sf::RectangleShape headerShape_;
+    gui::IconButton* closeButtonPtr_;
+    gui::IconButton* maximizeRestoreButtonPtr_;
     std::function<void()> closeButtonAction_;
+    std::function<void()> maximizeRestoreButtonAction_;
 };
 
 }  // namespace gui::window

@@ -13,41 +13,53 @@ namespace gui::window
 
 Header::Header()
 {
-    header_shape_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
-    header_shape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
-    header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
+    headerShape_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
+    headerShape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
+    headerShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 
-    auto close_button = gui::IconButton::create(
+    auto closeButton = gui::IconButton::create(
         TextureLibrary::instance().get("window_close"));
-    close_button->onClick([this]()
+    closeButton->onClick([this]()
     {
         if(closeButtonAction_) closeButtonAction_();
     });
-    close_button_ptr_ = close_button.get();
+    closeButtonPtr_ = closeButton.get();
 
-    auto title_text = gui::Label::create("");
-    title_text->setAlignment(gui::Alignment::Left | gui::Alignment::VerticallyCentered);
-    title_text_handle_ = title_text.get();
-    title_text_handle_->setSize(getSize());
-    title_text_handle_->setFontColor(sf::Color::White);
+    auto maximizeRestoreButton = gui::IconButton::create(
+        TextureLibrary::instance().get("window_maximize"));
+
+    maximizeRestoreButton->onClick([this]()
+    {
+        if(maximizeRestoreButtonAction_) maximizeRestoreButtonAction_();
+    });
+
+    maximizeRestoreButtonPtr_ = maximizeRestoreButton.get();
+
+    auto titleText = gui::Label::create("");
+    titleText->setAlignment(gui::Alignment::Left | gui::Alignment::VerticallyCentered);
+    titleTextPtr_ = titleText.get();
+    titleTextPtr_->setSize(getSize());
+    titleTextPtr_->setFontColor(sf::Color::White);
 
         /*
     +-------------------------------+
     | Inset                         | 
-    |  +-------------------+-----+  |
-    |  | Text              |  X  |  |
-    |  +-------------------+-----+  |
+    |  +-------------+-----+-----+  |
+    |  | Text        | [ ] |  X  |  |
+    |  +-------------+-----+-----+  |
     +-------------------------------+
     */
 
     auto insetLayout = gui::layout::Inset::create(layout::SizeConstraint::Pixels(config::HEADER_OFFSET));
     auto horizontalLayout = gui::layout::Horizontal::create(0);
 
-    horizontalLayout->addChild(std::move(title_text));
-    horizontalLayout->addChild(std::move(close_button));
+    horizontalLayout->addChild(std::move(titleText));
+    horizontalLayout->addChild(std::move(maximizeRestoreButton));
+    horizontalLayout->addChild(std::move(closeButton));
 
     horizontalLayout->setColumnSize(0, gui::layout::SizeConstraint::Auto());
-    horizontalLayout->setColumnSize(1, gui::layout::SizeConstraint::Pixels(config::CLOSE_BUTTON_WIDTH));
+    horizontalLayout->setColumnSize(1, gui::layout::SizeConstraint::Pixels(config::HEADER_BUTTON_WIDTH));
+    horizontalLayout->setColumnSize(2, gui::layout::SizeConstraint::Pixels(config::HEADER_BUTTON_WIDTH));
 
     insetLayout->addChild(std::move(horizontalLayout));
 
@@ -59,20 +71,25 @@ void Header::closeButtonAction(std::function<void()> closeButtonAction)
     closeButtonAction_ = closeButtonAction;
 }
 
+void Header::maximizeRestoreButtonAction(std::function<void()> maximizeRestoreButtonAction)
+{
+    maximizeRestoreButtonAction_ = maximizeRestoreButtonAction;
+}
+
 void Header::setTitle(const std::string_view& text)
 {
-    title_text_handle_->setText(text.data());
+    titleTextPtr_->setText(text.data());
 }
 
 void Header::onRender(sf::RenderTexture& renderTexture)
 {
-    renderTexture.draw(header_shape_);
+    renderTexture.draw(headerShape_);
 }
 
 void Header::onSizeChange()
 {
     auto header_size = getSize();
-    header_shape_.setSize(header_size);
+    headerShape_.setSize(header_size);
 
     for (auto& child : children_)
     {
@@ -82,17 +99,31 @@ void Header::onSizeChange()
 
 void Header::onPositionChange()
 {
-    header_shape_.setPosition(getGlobalPosition());
+    headerShape_.setPosition(getGlobalPosition());
 }
 
 void Header::enable()
 {
-    header_shape_.setFillColor(BasicStyleSheetFactory::instance().getWindowHeaderColor());
+    headerShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowHeaderColor());
 }
 
 void Header::disable()
 {
-    header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
+    headerShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
+}
+
+void Header::setMaximizeRestoreButtonState(const bool& state)
+{
+    if (state)
+    {
+        maximizeRestoreButtonPtr_->setIcon(
+            TextureLibrary::instance().get("window_restore"));
+    }
+    else
+    {
+        maximizeRestoreButtonPtr_->setIcon(
+            TextureLibrary::instance().get("window_maximize"));
+    }
 }
 
 }  // namespace gui::window

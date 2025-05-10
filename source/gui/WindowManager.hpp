@@ -45,7 +45,6 @@ protected:
     template<class T>
     EventStatus processEventWithActiveWindow(const T& event);
 
-
     EventStatus forwardFocusChange(const event::FocusChange& focusChange);
 
     std::list<std::unique_ptr<Window>> windows_;

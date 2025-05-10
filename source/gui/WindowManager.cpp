@@ -25,7 +25,8 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
     }
     activeWindowHandle_ = window.get();
     activeWindowHandle_->enable();
-    mainWindow_.defocusWithAllChildren();\
+    mainWindow_.defocusWithAllChildren();
+    window->setManager(this);
     windows_.push_front(std::move(window));
 }
 

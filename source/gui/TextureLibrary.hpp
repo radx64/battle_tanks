@@ -39,7 +39,8 @@ public:
             {"radiobutton_checked",          concat(texturePath, "classic/radiobutton_checked.png")},
             {"slider_track",                 concat(texturePath, "classic/slider_track.png")},
             {"window_close",                 concat(texturePath, "classic/window_close.png")},
-        
+            {"window_restore",               concat(texturePath, "classic/window_restore.png")},
+            {"window_maximize",              concat(texturePath, "classic/window_maximize.png")},        
         };
         return assets;
     }

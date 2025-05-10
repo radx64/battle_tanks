@@ -11,6 +11,7 @@
 #include "gui/window/Header.hpp"
 #include "gui/window/Panel.hpp"
 #include "gui/window/StatusBar.hpp"
+#include "gui/WindowManager.hpp"
 
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
@@ -56,7 +57,15 @@ namespace gui
 Window::Window()
 : isDead_{false}
 , isActive_{false}
+, isMaximized_{false}
 , state_{State::Idle}
+, draggingOffset_{0.f, 0.f}
+, header_{nullptr}
+, windowPanel_{nullptr}
+, statusBar_{nullptr}
+, windowManager_{nullptr}
+, windowSizeToRestore_{0.f, 0.f}
+, windowPositionToRestore_{0.f, 0.f}
 , activeTexture_{TextureLibrary::instance().get("window_active")}
 , inactiveTexture_{TextureLibrary::instance().get("window_inactive")}
 , background_ {buildLayoutConfigForWindowTexture()}
@@ -65,6 +74,10 @@ Window::Window()
     auto header = std::make_unique<window::Header>();
     header_ = header.get();
     header_->closeButtonAction([window = this](){window->close();});
+    header_->maximizeRestoreButtonAction([window = this]()
+    {
+        window->maximizeRestoreAction();
+    });
     header_->setSize({getSize().x, window::config::HEADER_HEIGHT});
     Component::addChild(std::move(header));
 
@@ -220,6 +233,7 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 void Window::onPositionChange()
 {
     background_.setPosition(Component::getGlobalPosition());
+    setMaximized(false);
 }
 
 void Window::onSizeChange()
@@ -233,6 +247,37 @@ void Window::onSizeChange()
     statusBar_->setPosition({0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});
 
     background_.setSize(getSize());
+    setMaximized(false);
+}
+
+void Window::maximizeRestoreAction()
+{
+    if (not isMaximized_)
+    {
+        windowSizeToRestore_ = getSize();
+        windowPositionToRestore_ = getPosition();
+
+        setSize(windowManager_->mainWindow().getSize());
+        setPosition(windowManager_->mainWindow().getPosition());
+        setMaximized(true);
+    }
+    else
+    {
+        setSize(windowSizeToRestore_);
+        setPosition(windowPositionToRestore_);
+        setMaximized(false);
+    }
+}
+
+void Window::setManager(gui::WindowManager* windowManager)
+{
+    windowManager_ = windowManager;
+}
+
+void Window::setMaximized(const bool state)
+{
+    isMaximized_ = state;
+    header_->setMaximizeRestoreButtonState(state);
 }
 
 }  // namespace gui

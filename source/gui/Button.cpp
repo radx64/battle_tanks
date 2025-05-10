@@ -267,7 +267,6 @@ void IconButton::onSizeChange()
 void IconButton::onPositionChange()
 {
     ButtonBase::onPositionChange();
-    //icon_->setPosition(getPosition());
 }
 
 }  // namespace gui
