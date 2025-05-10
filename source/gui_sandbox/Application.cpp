@@ -313,7 +313,8 @@ void Application::onInit()
 
         auto hl4 = gui::layout::Horizontal::create();
         auto edit4 = gui::EditBox::create();
-        auto button4 = gui::TextButton::create("Button4");
+        auto button4 = gui::IconButton::create(
+            gui::TextureLibrary::instance().get("checkbox_checked"));
         hl4->addChild(std::move(edit4));
         hl4->addChild(std::move(button4));
 

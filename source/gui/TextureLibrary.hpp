@@ -38,6 +38,7 @@ public:
             {"radiobutton_focus",            concat(texturePath, "classic/radiobutton_focus.png")},
             {"radiobutton_checked",          concat(texturePath, "classic/radiobutton_checked.png")},
             {"slider_track",                 concat(texturePath, "classic/slider_track.png")},
+            {"window_close",                 concat(texturePath, "classic/window_close.png")},
         
         };
         return assets;

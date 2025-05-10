@@ -17,7 +17,8 @@ Header::Header()
     header_shape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
     header_shape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
 
-    auto close_button = gui::TextButton::create("X");
+    auto close_button = gui::IconButton::create(
+        TextureLibrary::instance().get("window_close"));
     close_button->onClick([this]()
     {
         if(closeButtonAction_) closeButtonAction_();

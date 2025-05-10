@@ -7,9 +7,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/FramedSprite.hpp"
-
 #include "gui/Component.hpp"
+#include "gui/FramedSprite.hpp"
+#include "gui/Image.hpp"
 
 namespace gui { class Label; }
 
@@ -83,11 +83,12 @@ public:
     void onRender(sf::RenderTexture& renderTexture) override;
 
 protected:
-    IconButton(const sf::Texture& icon);
+    IconButton(const sf::Texture& texture);
     void onSizeChange() override;
     void onPositionChange() override;
 
-    sf::Sprite icon_;
+    Image* icon_;
+    Component* layout_;
 };
 
 }  // namespace gui

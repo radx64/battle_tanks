@@ -3,12 +3,10 @@
 #include "gui/Label.hpp"
 #include "gui/TextureLibrary.hpp"
 
+#include "gui/layout/Inset.hpp"
+
 namespace
 {
-sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const sf::Vector2f& objectSize)
-{
-    return {objectSize.x / textureSize.x, objectSize.y / textureSize.y};
-}
 
 gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
 {
@@ -238,40 +236,38 @@ std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon)
     return std::unique_ptr<IconButton>{new IconButton{icon}};
 }
 
-IconButton::IconButton(const sf::Texture& icon)
+IconButton::IconButton(const sf::Texture& texture)
 {
-    setIcon(icon);
+    auto icon  = gui::Image::create(texture);
+    icon_ = icon.get();
+
+    auto layout = gui::layout::Inset::create(gui::layout::SizeConstraint::Pixels(10.f));
+    layout_ = layout.get();
+
+    layout->addChild(std::move(icon));
+    addChild(std::move(layout));
 }
 
 void IconButton::setIcon(const sf::Texture& icon)
 {
-    icon_.setTexture(icon);
-    icon_.setPosition(getGlobalPosition());
-    icon_.setTextureRect(sf::IntRect(0,0,getSize().x, getSize().y));   
+    icon_->setTexture(icon);
 }
 
 void IconButton::onRender(sf::RenderTexture& renderTexture)
 {
     ButtonBase::onRender(renderTexture);
-    renderTexture.draw(icon_);
 }
 
 void IconButton::onSizeChange()
 {
     ButtonBase::onSizeChange();
-
-    sf::Vector2u textureSize = icon_.getTexture()->getSize();
-    sf::Vector2f buttonSize = getSize();
-    sf::Vector2f scale = getScalingFactor(textureSize, buttonSize);
-
-    icon_.setScale(scale);
-    icon_.setTextureRect(sf::IntRect(0,0,buttonSize.x / scale.x, buttonSize.y / scale.y));
+    layout_->setSize(getSize());
 }
 
 void IconButton::onPositionChange()
 {
     ButtonBase::onPositionChange();
-    icon_.setPosition(getGlobalPosition());
+    //icon_->setPosition(getPosition());
 }
 
 }  // namespace gui

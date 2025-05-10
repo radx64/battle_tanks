@@ -7,7 +7,7 @@
 #include "gui/Component.hpp"
 #include "gui/StyleSheet.hpp"
 
-namespace gui { class TextButton; }
+namespace gui { class IconButton; }
 namespace gui { class Label; }
 
 namespace gui::window
@@ -30,7 +30,7 @@ protected:
 
     gui::Label* title_text_handle_;
     sf::RectangleShape header_shape_;
-    gui::TextButton* close_button_ptr_;
+    gui::IconButton* close_button_ptr_;
     std::function<void()> closeButtonAction_;
 };
 
