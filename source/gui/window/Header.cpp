@@ -102,6 +102,19 @@ void Header::onPositionChange()
     headerShape_.setPosition(getGlobalPosition());
 }
 
+EventStatus Header::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    if (isInside(mouseButtonDoublePressedEvent.position))
+    {
+        if (maximizeRestoreButtonAction_)
+        {
+            maximizeRestoreButtonAction_();
+        }
+        return EventStatus::Consumed;
+    }
+    return EventStatus::NotConsumed;
+}
+
 void Header::enable()
 {
     headerShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowHeaderColor());
