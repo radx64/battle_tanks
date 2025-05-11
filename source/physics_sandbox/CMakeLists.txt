@@ -1,5 +1,8 @@
 add_executable(physics_sandbox)
 
+set_target_properties(physics_sandbox PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 target_include_directories(physics_sandbox
 PUBLIC
     ${CMAKE_SOURCE_DIR}/source

@@ -1,5 +1,9 @@
 add_executable(gui_sandbox)
 
+set_target_properties(gui_sandbox PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
 target_include_directories(gui_sandbox
 PRIVATE
     ${CMAKE_SOURCE_DIR}/source
