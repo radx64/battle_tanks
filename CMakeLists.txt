@@ -1,5 +1,5 @@
 set(projectName "battle_tanks")
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.20)
 project (${projectName})
 
 add_compile_definitions("SOURCE_ROOT=${CMAKE_SOURCE_DIR}")
@@ -12,7 +12,42 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(CTest)
 enable_testing()
 
-find_package(SFML COMPONENTS system window graphics REQUIRED)
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET FALSE)
+
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        v1.17.0
+  GIT_SHALLOW ON
+  GIT_PROGRESS TRUE
+  SYSTEM
+)
+
+FetchContent_Declare(
+  sfml
+  GIT_REPOSITORY https://github.com/SFML/SFML.git
+  GIT_TAG        2.6.2
+  GIT_SHALLOW ON
+  GIT_PROGRESS TRUE
+  SYSTEM
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG        11.2.0 
+  GIT_SHALLOW ON
+  GIT_PROGRESS TRUE
+  SYSTEM
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(googletest sfml fmt)
+
+find_package(sfml COMPONENTS system window graphics REQUIRED)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -53,5 +88,4 @@ target_link_libraries (battle_tanks
     sfml-system
     sfml-window
     sfml-graphics
-    #sfml-network
 )

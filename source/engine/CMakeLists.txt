@@ -4,6 +4,7 @@ add_subdirectory(math)
 
 target_link_libraries(engine_lib
 PUBLIC
+    sfml-graphics
     engine_math_lib
     fmt)
 

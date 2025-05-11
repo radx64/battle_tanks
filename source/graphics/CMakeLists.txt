@@ -9,3 +9,8 @@ target_sources(graphics_lib
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.cpp   
 )
+
+target_link_libraries(graphics_lib
+PUBLIC
+    sfml-graphics
+)
