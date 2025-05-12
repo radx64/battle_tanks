@@ -241,7 +241,7 @@ IconButton::IconButton(const sf::Texture& texture)
     auto icon  = gui::Image::create(texture);
     icon_ = icon.get();
 
-    auto layout = gui::layout::Inset::create(gui::layout::SizeConstraint::Pixels(10.f));
+    auto layout = gui::layout::Inset::create(gui::layout::Constraint::Pixels(10.f));
     layout_ = layout.get();
 
     layout->addChild(std::move(icon));

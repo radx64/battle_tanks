@@ -13,8 +13,10 @@ namespace gui::layout
 Grid::Grid(size_t width, size_t height)
 : width_{width}
 , height_{height}
-, columnSize_{"Grid::columnSize_"}
-, rowSize_{"Grid::rowSize_"}
+, horizontalPadding_{0}
+, verticalPadding_{0}
+, columnConstraintLayout_{"Grid::columnConstraintLayout_"}
+, rowConstraintLayout_{"Grid::rowConstraintLayout_"}
 {
     grid_.resize(width_);
     for (auto& column : grid_)
@@ -22,8 +24,8 @@ Grid::Grid(size_t width, size_t height)
         column.resize(height_, nullptr);
     }
 
-    columnSize_.setElementCount(width_);
-    rowSize_.setElementCount(height_);
+    columnConstraintLayout_.setElementCount(width_);
+    rowConstraintLayout_.setElementCount(height_);
 }
 
 size_t Grid::getWidth() const
@@ -34,6 +36,17 @@ size_t Grid::getWidth() const
 size_t Grid::getHeight() const
 {
     return height_;
+}
+
+void Grid::setHorizontalPadding(const size_t padding)
+{
+   horizontalPadding_ = padding; 
+   recalculateChildrenBounds();
+}
+void Grid::setVerticalPadding(const size_t padding)
+{
+    verticalPadding_ = padding;
+    recalculateChildrenBounds();
 }
 
 void Grid::addChild(std::unique_ptr<Component> child)
@@ -56,7 +69,7 @@ void Grid::addChild(std::unique_ptr<Component> child)
 }
 
 
-bool Grid::addColumn(const size_t index, const SizeConstraint& constraint)
+bool Grid::addColumn(const size_t index, const Constraint& constraint)
 {
     if (index > width_)
     {
@@ -66,7 +79,7 @@ bool Grid::addColumn(const size_t index, const SizeConstraint& constraint)
 
     width_++;
     grid_.emplace(std::begin(grid_) + index, height_);
-    columnSize_.addElementAtIndex(index, constraint);
+    columnConstraintLayout_.addElementAtIndex(index, constraint);
     recalculateChildrenBounds();
     return true;
 }
@@ -89,12 +102,12 @@ bool Grid::removeColumn(const size_t index)
         }
     }
     grid_.erase(std::begin(grid_) + index);
-    columnSize_.removeElementAtIndex(index);
+    columnConstraintLayout_.removeElementAtIndex(index);
     recalculateChildrenBounds();
     return true;
 }
 
-bool Grid::addRow(const size_t index, const SizeConstraint& constraint)
+bool Grid::addRow(const size_t index, const Constraint& constraint)
 {
     if (index > height_)
     {
@@ -108,7 +121,7 @@ bool Grid::addRow(const size_t index, const SizeConstraint& constraint)
         column.emplace(std::begin(column) + index, nullptr);
     }
 
-    rowSize_.addElementAtIndex(index, constraint);
+    rowConstraintLayout_.addElementAtIndex(index, constraint);
     recalculateChildrenBounds();
     return true;
 }
@@ -130,46 +143,49 @@ bool Grid::removeRow(const size_t index)
         }
         column.erase(std::begin(column) + index);
     }
-    rowSize_.removeElementAtIndex(index);
+    rowConstraintLayout_.removeElementAtIndex(index);
     recalculateChildrenBounds();
     return true;
 }
 
 void Grid::recalculateChildrenBounds()
 {
-    auto cellPosition = sf::Vector2f{0.f, 0.f};
+    auto cellPosition = sf::Vector2f{(horizontalPadding_/2.f), (verticalPadding_/2.f)};
 
     for (size_t x = 0; x < width_; x++)
     {
         for (size_t y = 0; y < height_; y++)
         {
-            auto cellSize = sf::Vector2f{columnSize_.getElementSize(x), rowSize_.getElementSize(y)};
+            auto cellSize = sf::Vector2f{columnConstraintLayout_.getElementSize(x), rowConstraintLayout_.getElementSize(y)};
             if (grid_[x][y] != nullptr)
             {
                 grid_[x][y]->setPosition(cellPosition);
                 grid_[x][y]->setSize(cellSize);
             }
-            cellPosition.y += cellSize.y;
+            cellPosition.y += cellSize.y + verticalPadding_;
         }
-        cellPosition.y = 0.f;
-        cellPosition.x += columnSize_.getElementSize(x);
+        cellPosition.y = (verticalPadding_/2.f);
+        cellPosition.x += columnConstraintLayout_.getElementSize(x)+ horizontalPadding_;
     }
 }
 
 void Grid::onSizeChange()
 {
-    columnSize_.setTotalSize(getSize().x);
-    rowSize_.setTotalSize(getSize().y);
+    const auto totalHorizontalPadding = horizontalPadding_ * (columnConstraintLayout_.getElementsCount());
+    const auto totalVerticalPadding = verticalPadding_ * (rowConstraintLayout_.getElementsCount());
+
+    columnConstraintLayout_.setTotalSize(getSize().x - totalHorizontalPadding);
+    rowConstraintLayout_.setTotalSize(getSize().y - totalVerticalPadding);
     recalculateChildrenBounds();
 }
 
-void Grid::setColumnSize(const size_t index, const SizeConstraint& constraint)
+void Grid::setColumnSize(const size_t index, const Constraint& constraint)
 {
-    columnSize_.setElementSize(index, constraint); 
+    columnConstraintLayout_.setElementSize(index, constraint); 
 }
-void Grid::setRowSize(const size_t index, const SizeConstraint& constraint)
+void Grid::setRowSize(const size_t index, const Constraint& constraint)
 {
-    rowSize_.setElementSize(index, constraint);
+    rowConstraintLayout_.setElementSize(index, constraint);
 }
 
 void Grid::setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element)

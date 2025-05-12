@@ -1,4 +1,4 @@
-#include "gui/layout/DimensionConstraintScaler.hpp"
+#include "gui/layout/SizeConstraintResolver.hpp"
 
 #include <fmt/format.h>
 
@@ -6,38 +6,38 @@ namespace gui::layout
 {
 
 Element::Element()
-: constraint(SizeConstraint::Auto())
+: constraint(Constraint::Auto())
 , resolvedWidth(0.f)
 {
 
 }
 
-Element::Element(const SizeConstraint& constraint)
+Element::Element(const Constraint& constraint)
 : constraint(constraint)
 , resolvedWidth(0.f)
 {
 
 }
 
-DimensionConstraintScaler::DimensionConstraintScaler(const std::string_view logPrefix)
+SizeConstraintResolver::SizeConstraintResolver(const std::string_view logPrefix)
 : size_{}
-, logger_{std::string(logPrefix) + "/DimensionConstraintScaler"}
+, logger_{std::string(logPrefix) + "/SizeConstraintResolver"}
 {
 }
 
-void DimensionConstraintScaler::setTotalSize(const float size)
+void SizeConstraintResolver::setTotalSize(const float size)
 {
     size_ = size;
     resolveElementsSizes();
 }
 
-void DimensionConstraintScaler::setElementCount(const size_t count)
+void SizeConstraintResolver::setElementCount(const size_t count)
 {
     elements_.resize(count);
     resolveElementsSizes();
 }
 
-void DimensionConstraintScaler::setElementSize(const size_t index, const SizeConstraint& constraint)
+void SizeConstraintResolver::setElementSize(const size_t index, const Constraint& constraint)
 {
     if (index >= elements_.size())
     {
@@ -49,18 +49,18 @@ void DimensionConstraintScaler::setElementSize(const size_t index, const SizeCon
     resolveElementsSizes();
 }
 
-void DimensionConstraintScaler::resetElement(const size_t index)
+void SizeConstraintResolver::resetElement(const size_t index)
 {
     if (index >= elements_.size())
     {
         logger_.error(fmt::format("clearElementSize: Index {} is out of bounds", index));
         return;
     }
-    elements_[index].constraint = SizeConstraint::Auto();
+    elements_[index].constraint = Constraint::Auto();
     resolveElementsSizes();
 }
 
-void DimensionConstraintScaler::addElementAtIndex(const size_t index, const SizeConstraint& constraint)
+void SizeConstraintResolver::addElementAtIndex(const size_t index, const Constraint& constraint)
 {
     if (index > elements_.size())
     {
@@ -71,7 +71,7 @@ void DimensionConstraintScaler::addElementAtIndex(const size_t index, const Size
     resolveElementsSizes();
 }
 
-void DimensionConstraintScaler::removeElementAtIndex(const size_t index)
+void SizeConstraintResolver::removeElementAtIndex(const size_t index)
 {
     if (index >= elements_.size())
     {
@@ -82,7 +82,7 @@ void DimensionConstraintScaler::removeElementAtIndex(const size_t index)
     resolveElementsSizes();
 }
 
-float DimensionConstraintScaler::getElementSize(const size_t index) const
+float SizeConstraintResolver::getElementSize(const size_t index) const
 {
     if (index >= elements_.size())
     {
@@ -93,7 +93,12 @@ float DimensionConstraintScaler::getElementSize(const size_t index) const
     return elements_[index].resolvedWidth;
 }
 
-void DimensionConstraintScaler::resolveElementsSizes()
+size_t SizeConstraintResolver::getElementsCount() const
+{
+    return elements_.size();
+}
+
+void SizeConstraintResolver::resolveElementsSizes()
 {
     float totalFixedWidth = 0.f;
     float totalPercentageWidth = 0.f;
@@ -113,18 +118,18 @@ void DimensionConstraintScaler::resolveElementsSizes()
 
         value = std::max(0.f, element.constraint.getValue()); // clamp negative values
 
-        if (element.constraint.getType() == SizeConstraint::Type::Fixed)
+        if (element.constraint.getType() == Constraint::Type::Fixed)
         {
-            if (element.constraint.getUnit() == SizeConstraint::Unit::Pixels)
+            if (element.constraint.getUnit() == Constraint::Unit::Pixels)
             {
                 totalFixedWidth += element.constraint.getValue();
             }
-            else if (element.constraint.getUnit() == SizeConstraint::Unit::Percentage)
+            else if (element.constraint.getUnit() == Constraint::Unit::Percentage)
             {
                 totalPercentageWidth += element.constraint.getValue();
             }
         } 
-        else if (element.constraint.getType() == SizeConstraint::Type::Auto)
+        else if (element.constraint.getType() == Constraint::Type::Auto)
         {
             autoElementCount++;
         }
@@ -154,13 +159,13 @@ void DimensionConstraintScaler::resolveElementsSizes()
     // First pass: calculate fixed and percentage widths
     for (auto& element : elements_)
     {
-        if (element.constraint.getType() == SizeConstraint::Type::Fixed)
+        if (element.constraint.getType() == Constraint::Type::Fixed)
         {
-            if (element.constraint.getUnit() == SizeConstraint::Unit::Pixels)
+            if (element.constraint.getUnit() == Constraint::Unit::Pixels)
             {
                 element.resolvedWidth = element.constraint.getValue();
             }
-            else if (element.constraint.getUnit() == SizeConstraint::Unit::Percentage)
+            else if (element.constraint.getUnit() == Constraint::Unit::Percentage)
             {
                 float normalizedValue = element.constraint.getValue() * percentageNormalizationFactor;
                 element.resolvedWidth = remainingWidth * (normalizedValue / 100.f);
@@ -174,7 +179,7 @@ void DimensionConstraintScaler::resolveElementsSizes()
     // Second pass: calculate auto widths
     for (auto& element : elements_)
     {
-        if (element.constraint.getType() == SizeConstraint::Type::Auto)
+        if (element.constraint.getType() == Constraint::Type::Auto)
         {
             element.resolvedWidth = remainingWidth / autoElementCount;
         }

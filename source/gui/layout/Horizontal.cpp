@@ -12,11 +12,11 @@ std::unique_ptr<Horizontal> Horizontal::create(size_t width)
 
 void Horizontal::addChild(std::unique_ptr<Component> child)
 {
-    layoutImpl_->addColumn(layoutImpl_->getWidth(), SizeConstraint::Auto());
+    layoutImpl_->addColumn(layoutImpl_->getWidth(), Constraint::Auto());
     layoutImpl_->addChild(std::move(child));
 }
 
-bool Horizontal::addColumn(const size_t index, const SizeConstraint& constraint)
+bool Horizontal::addColumn(const size_t index, const Constraint& constraint)
 {
     return layoutImpl_->addColumn(index, constraint);
 }
@@ -26,9 +26,14 @@ bool Horizontal::removeColumn(const size_t index)
     return layoutImpl_->removeColumn(index);
 }
 
-void Horizontal::setColumnSize(const size_t index, const SizeConstraint& constraint)
+void Horizontal::setColumnSize(const size_t index, const Constraint& constraint)
 {
     layoutImpl_->setColumnSize(index, constraint);
+}
+
+void Horizontal::setPadding(const size_t padding)
+{
+    layoutImpl_->setHorizontalPadding(padding);
 }
 
 Horizontal::Horizontal(size_t width)

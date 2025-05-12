@@ -17,7 +17,7 @@ auto makeSpy()
 
 TEST(InsetShould, offsetChildComponentFromItsParentByPixels)
 {
-    auto sut = Inset::create(SizeConstraint::Pixels(10));
+    auto sut = Inset::create(Constraint::Pixels(10));
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -29,7 +29,7 @@ TEST(InsetShould, offsetChildComponentFromItsParentByPixels)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(90.0f, 90.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(5.0f, 5.0f));
 
-    sut->set(SizeConstraint::Pixels(20));
+    sut->set(Constraint::Pixels(20));
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(80.0f, 80.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(10.0f, 10.0f));
@@ -37,7 +37,7 @@ TEST(InsetShould, offsetChildComponentFromItsParentByPixels)
 
 TEST(InsetShould, offsetChildComponentFromItsParentByPercentage)
 {
-    auto sut = Inset::create(SizeConstraint::Percent(10));
+    auto sut = Inset::create(Constraint::Percent(10));
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -49,7 +49,7 @@ TEST(InsetShould, offsetChildComponentFromItsParentByPercentage)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(10.0f, 10.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(45.0f, 45.0f));
 
-    sut->set(SizeConstraint::Percent(20));
+    sut->set(Constraint::Percent(20));
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(20.0f, 20.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(40.0f, 40.0f));
@@ -57,7 +57,7 @@ TEST(InsetShould, offsetChildComponentFromItsParentByPercentage)
 
 TEST(InsetShould, doNotoffsetChildComponentFromItsParentWhenAuto)
 {
-    auto sut = Inset::create(SizeConstraint::Auto());
+    auto sut = Inset::create(Constraint::Auto());
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -69,7 +69,7 @@ TEST(InsetShould, doNotoffsetChildComponentFromItsParentWhenAuto)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
 
-    sut->set(SizeConstraint::Auto());
+    sut->set(Constraint::Auto());
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
@@ -77,7 +77,7 @@ TEST(InsetShould, doNotoffsetChildComponentFromItsParentWhenAuto)
 
 TEST(InsetShould, setChildComponentSizeToParentWhenInsetIsZeroPixels)
 {
-    auto sut = Inset::create(SizeConstraint::Pixels(0));
+    auto sut = Inset::create(Constraint::Pixels(0));
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -89,7 +89,7 @@ TEST(InsetShould, setChildComponentSizeToParentWhenInsetIsZeroPixels)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
 
-    sut->set(SizeConstraint::Pixels(0));
+    sut->set(Constraint::Pixels(0));
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
@@ -97,7 +97,7 @@ TEST(InsetShould, setChildComponentSizeToParentWhenInsetIsZeroPixels)
 
 TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsZeroPercent)
 {
-    auto sut = Inset::create(SizeConstraint::Percent(0));
+    auto sut = Inset::create(Constraint::Percent(0));
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -107,7 +107,7 @@ TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsZeroPercent)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
 
-    sut->set(SizeConstraint::Percent(0));
+    sut->set(Constraint::Percent(0));
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f)); 
@@ -115,7 +115,7 @@ TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsZeroPercent)
 
 TEST(InsetShould, setChildComponentSizeProperlyWhenInsetIsNegativeInPixels)
 {
-    auto sut = Inset::create(SizeConstraint::Pixels(-10));
+    auto sut = Inset::create(Constraint::Pixels(-10));
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -127,7 +127,7 @@ TEST(InsetShould, setChildComponentSizeProperlyWhenInsetIsNegativeInPixels)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(110.0f, 110.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(-5.0f, -5.0f));
 
-    sut->set(SizeConstraint::Pixels(-20));
+    sut->set(Constraint::Pixels(-20));
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(120.0f, 120.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(-10.0f, -10.0f));
@@ -135,7 +135,7 @@ TEST(InsetShould, setChildComponentSizeProperlyWhenInsetIsNegativeInPixels)
 
 TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsNegativeInPercent)
 {
-    auto sut = Inset::create(SizeConstraint::Percent(-10));
+    auto sut = Inset::create(Constraint::Percent(-10));
     auto child = makeSpy();
 
     auto child_ptr = child.get();
@@ -147,7 +147,7 @@ TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsNegativeInPercent)
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
 
-    sut->set(SizeConstraint::Percent(-20));
+    sut->set(Constraint::Percent(-20));
 
     EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));

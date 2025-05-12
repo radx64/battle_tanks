@@ -12,11 +12,11 @@ std::unique_ptr<Vertical> Vertical::create(size_t height)
 
 void Vertical::addChild(std::unique_ptr<Component> child)
 {
-    layoutImpl_->addRow(layoutImpl_->getHeight(), SizeConstraint::Auto());
+    layoutImpl_->addRow(layoutImpl_->getHeight(), Constraint::Auto());
     layoutImpl_->addChild(std::move(child));
 }
 
-bool Vertical::addRow(const size_t index, const SizeConstraint& constraint)
+bool Vertical::addRow(const size_t index, const Constraint& constraint)
 {
     return layoutImpl_->addRow(index, constraint);
 }
@@ -26,9 +26,14 @@ bool Vertical::removeRow(const size_t index)
     return layoutImpl_->removeRow(index);
 }
 
-void Vertical::setRowSize(const size_t index, const SizeConstraint& constraint)
+void Vertical::setRowSize(const size_t index, const Constraint& constraint)
 {
     layoutImpl_->setRowSize(index, constraint);
+}
+
+void Vertical::setPadding(const size_t padding)
+{
+    layoutImpl_->setVerticalPadding(padding);
 }
 
 Vertical::Vertical(size_t height)

@@ -3,18 +3,18 @@
 namespace gui::layout
 {
 
-std::unique_ptr<Inset> Inset::create(const SizeConstraint& constraint)
+std::unique_ptr<Inset> Inset::create(const Constraint& constraint)
 {
     return std::unique_ptr<Inset>{new Inset{constraint}};
 }
 
-void Inset::set(const SizeConstraint& constraint)
+void Inset::set(const Constraint& constraint)
 {
     constraint_ = constraint;
     onSizeChange();
 }
 
-Inset::Inset(const SizeConstraint& constraint)
+Inset::Inset(const Constraint& constraint)
 : constraint_(constraint)
 {
 }
@@ -24,9 +24,9 @@ void Inset::onSizeChange()
     auto size = getSize();
     sf::Vector2f positionOffset{0.0f, 0.0f};
 
-    if (constraint_.getType() == SizeConstraint::Type::Fixed)
+    if (constraint_.getType() == Constraint::Type::Fixed)
     {
-        if (constraint_.getUnit() == SizeConstraint::Unit::Pixels)
+        if (constraint_.getUnit() == Constraint::Unit::Pixels)
         {
             size.x -= constraint_.getValue();
             size.y -= constraint_.getValue();
@@ -34,7 +34,7 @@ void Inset::onSizeChange()
             positionOffset.x = constraint_.getValue() / 2.0f;
             positionOffset.y = constraint_.getValue() / 2.0f;
         }
-        else if (constraint_.getUnit() == SizeConstraint::Unit::Percentage)
+        else if (constraint_.getUnit() == Constraint::Unit::Percentage)
         {
             auto layoutSize = size;
 

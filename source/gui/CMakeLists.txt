@@ -12,29 +12,29 @@ PUBLIC
 
 target_sources(gui_lib
 PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Alignment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Button.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Component.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Checkbox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Clipboard.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Component.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventReceiver.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontHeightCache.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FramedSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Image.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/keyboard/Utils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Label.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Base.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layout/DimensionConstraintScaler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layout/Constraint.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Grid.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Horizontal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Inset.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layout/SizeConstraintResolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Vertical.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layout/SizeConstraint.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Label.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButton.cpp

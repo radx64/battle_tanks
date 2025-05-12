@@ -50,16 +50,16 @@ Header::Header()
     +-------------------------------+
     */
 
-    auto insetLayout = gui::layout::Inset::create(layout::SizeConstraint::Pixels(config::HEADER_OFFSET));
+    auto insetLayout = gui::layout::Inset::create(layout::Constraint::Pixels(config::HEADER_OFFSET));
     auto horizontalLayout = gui::layout::Horizontal::create(0);
 
     horizontalLayout->addChild(std::move(titleText));
     horizontalLayout->addChild(std::move(maximizeRestoreButton));
     horizontalLayout->addChild(std::move(closeButton));
 
-    horizontalLayout->setColumnSize(0, gui::layout::SizeConstraint::Auto());
-    horizontalLayout->setColumnSize(1, gui::layout::SizeConstraint::Pixels(config::HEADER_BUTTON_WIDTH));
-    horizontalLayout->setColumnSize(2, gui::layout::SizeConstraint::Pixels(config::HEADER_BUTTON_WIDTH));
+    horizontalLayout->setColumnSize(0, gui::layout::Constraint::Auto());
+    horizontalLayout->setColumnSize(1, gui::layout::Constraint::Pixels(config::HEADER_BUTTON_WIDTH));
+    horizontalLayout->setColumnSize(2, gui::layout::Constraint::Pixels(config::HEADER_BUTTON_WIDTH));
 
     insetLayout->addChild(std::move(horizontalLayout));
 

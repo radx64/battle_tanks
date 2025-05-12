@@ -1,126 +1,126 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "gui/layout/DimensionConstraintScaler.hpp"
+#include "gui/layout/SizeConstraintResolver.hpp"
 
 namespace gui::layout
 {
 
-TEST(DimensionConstraintScalerShould, returnZeroForNoElements)
+TEST(SizeConstraintResolverShould, returnZeroForNoElements)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(0);
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
 }
 
-TEST(DimensionConstraintScalerShould, returnWholeSizeForOneElementUnconstrainedElement)
+TEST(SizeConstraintResolverShould, returnWholeSizeForOneElementUnconstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(1);
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 100.f);
 }
 
-TEST(DimensionConstraintScalerShould, returnZeroForOneZeroPixelsConstrainedElement)
+TEST(SizeConstraintResolverShould, returnZeroForOneZeroPixelsConstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(1);
-    sut.setElementSize(0, SizeConstraint::Pixels(0.f));
+    sut.setElementSize(0, Constraint::Pixels(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
 }
 
-TEST(DimensionConstraintScalerShould, returnZeroForOneZeroPercentConstrainedElement)
+TEST(SizeConstraintResolverShould, returnZeroForOneZeroPercentConstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(1);
-    sut.setElementSize(0, SizeConstraint::Percent(0.f));
+    sut.setElementSize(0, Constraint::Percent(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
 }
 
 
-TEST(DimensionConstraintScalerShould, calculateSizesForOneZeroPixelsConstrainedElementAndOneUnconstrainedElement)
+TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPixelsConstrainedElementAndOneUnconstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(2);
-    sut.setElementSize(0, SizeConstraint::Pixels(0.f));
+    sut.setElementSize(0, Constraint::Pixels(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 100.f);
 }
 
-TEST(DimensionConstraintScalerShould, calculateSizesForOneZeroPercentConstrainedElementAndOneUnconstrainedElement)
+TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPercentConstrainedElementAndOneUnconstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(2);
-    sut.setElementSize(0, SizeConstraint::Percent(0.f));
+    sut.setElementSize(0, Constraint::Percent(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 100.f);
 }
 
-TEST(DimensionConstraintScalerShould, calculateSizesForOneZeroPixelsConstrainedElementOneUnconstrainedElementAndOneZeroPercentConstrainedElement)
+TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPixelsConstrainedElementOneUnconstrainedElementAndOneZeroPercentConstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Pixels(0.f));
-    sut.setElementSize(2, SizeConstraint::Percent(0.f));
+    sut.setElementSize(0, Constraint::Pixels(0.f));
+    sut.setElementSize(2, Constraint::Percent(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 100.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 0.f);
 }
 
-TEST(DimensionConstraintScalerShould, calculateSizesForOneZeroPercentConstrainedElementAndOneUnconstrainedElementAndOneZeroPixelsConstrainedElementAndOneUnconstrainedElement)
+TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPercentConstrainedElementAndOneUnconstrainedElementAndOneZeroPixelsConstrainedElementAndOneUnconstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(4);
-    sut.setElementSize(0, SizeConstraint::Percent(0.f));
-    sut.setElementSize(2, SizeConstraint::Pixels(0.f));
+    sut.setElementSize(0, Constraint::Percent(0.f));
+    sut.setElementSize(2, Constraint::Pixels(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 50.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(3), 50.f);
 }
 
-TEST(DimensionConstraintScalerShould, calculateSizesForAllConstrainedElementsOfMixedTypes)
+TEST(SizeConstraintResolverShould, calculateSizesForAllConstrainedElementsOfMixedTypes)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Pixels(20.f));
-    sut.setElementSize(1, SizeConstraint::Percent(50.f));
-    sut.setElementSize(2, SizeConstraint::Auto());
+    sut.setElementSize(0, Constraint::Pixels(20.f));
+    sut.setElementSize(1, Constraint::Percent(50.f));
+    sut.setElementSize(2, Constraint::Auto());
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 40.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 40.f);
 }
 
-TEST(DimensionConstraintScalerShould, calculateSizesForAllConstrainedAutoElementAndTwoPercentConstrainedElements)
+TEST(SizeConstraintResolverShould, calculateSizesForAllConstrainedAutoElementAndTwoPercentConstrainedElements)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Auto());
-    sut.setElementSize(1, SizeConstraint::Percent(25.f));
-    sut.setElementSize(2, SizeConstraint::Percent(25.f));
+    sut.setElementSize(0, Constraint::Auto());
+    sut.setElementSize(1, Constraint::Percent(25.f));
+    sut.setElementSize(2, Constraint::Percent(25.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 50.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 25.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 25.f);
 }
 
 
-TEST(DimensionConstraintScalerShould, calculateSizesForAllConstrainedElementsAndOneUnconstrainedElement)
+TEST(SizeConstraintResolverShould, calculateSizesForAllConstrainedElementsAndOneUnconstrainedElement)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(4);
-    sut.setElementSize(0, SizeConstraint::Pixels(20.f));
-    sut.setElementSize(1, SizeConstraint::Pixels(30.f));
-    sut.setElementSize(2, SizeConstraint::Percent(50.f));
+    sut.setElementSize(0, Constraint::Pixels(20.f));
+    sut.setElementSize(1, Constraint::Pixels(30.f));
+    sut.setElementSize(2, Constraint::Percent(50.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 30.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 25.f);
@@ -128,14 +128,14 @@ TEST(DimensionConstraintScalerShould, calculateSizesForAllConstrainedElementsAnd
 }
 
 
-TEST(DimensionConstraintScalerShould, clearPreviouslySetElementSize)
+TEST(SizeConstraintResolverShould, clearPreviouslySetElementSize)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Pixels(20.f));
-    sut.setElementSize(1, SizeConstraint::Pixels(30.f));
-    sut.setElementSize(2, SizeConstraint::Pixels(20.f));
+    sut.setElementSize(0, Constraint::Pixels(20.f));
+    sut.setElementSize(1, Constraint::Pixels(30.f));
+    sut.setElementSize(2, Constraint::Pixels(20.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 30.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 20.f);
@@ -147,33 +147,33 @@ TEST(DimensionConstraintScalerShould, clearPreviouslySetElementSize)
 }
 
 
-TEST(DimensionConstraintScalerShould, addNewElementAtIndex)
+TEST(SizeConstraintResolverShould, addNewElementAtIndex)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Pixels(10.f));
-    sut.setElementSize(1, SizeConstraint::Pixels(20.f));
-    sut.setElementSize(2, SizeConstraint::Pixels(30.f));
+    sut.setElementSize(0, Constraint::Pixels(10.f));
+    sut.setElementSize(1, Constraint::Pixels(20.f));
+    sut.setElementSize(2, Constraint::Pixels(30.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 10.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
 
-    sut.addElementAtIndex(1, SizeConstraint::Auto());
+    sut.addElementAtIndex(1, Constraint::Auto());
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 10.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 40.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(3), 30.f);
 }
 
-TEST(DimensionConstraintScalerShould, removeElementAtIndex)
+TEST(SizeConstraintResolverShould, removeElementAtIndex)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Pixels(10.f));
-    sut.setElementSize(1, SizeConstraint::Pixels(20.f));
-    sut.setElementSize(2, SizeConstraint::Pixels(30.f));
+    sut.setElementSize(0, Constraint::Pixels(10.f));
+    sut.setElementSize(1, Constraint::Pixels(20.f));
+    sut.setElementSize(2, Constraint::Pixels(30.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 10.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
@@ -184,14 +184,14 @@ TEST(DimensionConstraintScalerShould, removeElementAtIndex)
 }
 
 
-TEST(DimensionConstraintScalerShould, handleInvalidIndex)
+TEST(SizeConstraintResolverShould, handleInvalidIndex)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Pixels(10.f));
-    sut.setElementSize(1, SizeConstraint::Pixels(20.f));
-    sut.setElementSize(2, SizeConstraint::Pixels(30.f));
+    sut.setElementSize(0, Constraint::Pixels(10.f));
+    sut.setElementSize(1, Constraint::Pixels(20.f));
+    sut.setElementSize(2, Constraint::Pixels(30.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 10.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
@@ -201,7 +201,7 @@ TEST(DimensionConstraintScalerShould, handleInvalidIndex)
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
 
-    sut.addElementAtIndex(99, SizeConstraint::Auto());
+    sut.addElementAtIndex(99, Constraint::Auto());
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 10.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
@@ -211,7 +211,7 @@ TEST(DimensionConstraintScalerShould, handleInvalidIndex)
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
 
-    sut.setElementSize(99, SizeConstraint::Pixels(50.f));
+    sut.setElementSize(99, Constraint::Pixels(50.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 10.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 20.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(2), 30.f);
@@ -219,14 +219,14 @@ TEST(DimensionConstraintScalerShould, handleInvalidIndex)
     EXPECT_FLOAT_EQ(sut.getElementSize(99), 0.f);
 }
 
-TEST(DimensionConstraintScalerShould, notExceedSizeWhenCalculatingDimensionsForEachObjectWhenUsingPercentConstraints)
+TEST(SizeConstraintResolverShould, notExceedSizeWhenCalculatingDimensionsForEachObjectWhenUsingPercentConstraints)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(3);
-    sut.setElementSize(0, SizeConstraint::Percent(40.f));
-    sut.setElementSize(1, SizeConstraint::Percent(40.f));
-    sut.setElementSize(2, SizeConstraint::Percent(50.f));
+    sut.setElementSize(0, Constraint::Percent(40.f));
+    sut.setElementSize(1, Constraint::Percent(40.f));
+    sut.setElementSize(2, Constraint::Percent(50.f));
 
     auto sum  = sut.getElementSize(0) + sut.getElementSize(1) + sut.getElementSize(2);
     EXPECT_FLOAT_EQ(100.f, sum);
@@ -237,19 +237,19 @@ TEST(DimensionConstraintScalerShould, notExceedSizeWhenCalculatingDimensionsForE
     EXPECT_FLOAT_EQ(100.f, sum);
 
     sut.setElementCount(1);
-    sut.setElementSize(0, SizeConstraint::Percent(200.f));
+    sut.setElementSize(0, Constraint::Percent(200.f));
 
     sum  = sut.getElementSize(0);
     EXPECT_FLOAT_EQ(100.f, sum);
 }
 
-TEST(DimensionConstraintScalerShould, scaleElementsWhenResized)
+TEST(SizeConstraintResolverShould, scaleElementsWhenResized)
 {
-    DimensionConstraintScaler sut{"sut"};
+    SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
     sut.setElementCount(2);
-    sut.setElementSize(0, SizeConstraint::Auto());
-    sut.setElementSize(1, SizeConstraint::Pixels(40.f));
+    sut.setElementSize(0, Constraint::Auto());
+    sut.setElementSize(1, Constraint::Pixels(40.f));
 
     EXPECT_FLOAT_EQ(60.f, sut.getElementSize(0));
     EXPECT_FLOAT_EQ(40.f, sut.getElementSize(1));
@@ -257,6 +257,18 @@ TEST(DimensionConstraintScalerShould, scaleElementsWhenResized)
     sut.setTotalSize(200.f);
     EXPECT_FLOAT_EQ(160.f, sut.getElementSize(0));
     EXPECT_FLOAT_EQ(40.f, sut.getElementSize(1));
+}
+
+TEST(SizeConstraintResolverShould, returnElementCount)
+{
+    SizeConstraintResolver sut{"sut"};
+    sut.setTotalSize(100.f);
+    sut.setElementCount(3);
+    EXPECT_EQ(3, sut.getElementsCount());
+    sut.setElementCount(5);
+    EXPECT_EQ(5, sut.getElementsCount());
+    sut.setElementCount(0);
+    EXPECT_EQ(0, sut.getElementsCount());
 }
 
 } // namespace gui::layout

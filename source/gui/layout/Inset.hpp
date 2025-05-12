@@ -1,14 +1,14 @@
 #pragma once
 
 #include "gui/layout/Base.hpp"
-#include "gui/layout/SizeConstraint.hpp"
+#include "gui/layout/Constraint.hpp"
 
 namespace gui::layout
 {
 
 /*
     Inset layout is used to create a layout with a constrained size as an offset from the parent component.
-    The size of the inset is defined by the SizeConstraint class.
+    The size of the inset is defined by the Constraint class.
     
     It can offset child component size from its parent either by pixels or by percentage.
     In case of pixels, the inset will be the same size as the parent component minus the offset.
@@ -18,15 +18,15 @@ namespace gui::layout
 class Inset : public Base
 {
 public:
-    static std::unique_ptr<Inset> create(const SizeConstraint& constraint);
+    static std::unique_ptr<Inset> create(const Constraint& constraint);
 
-    void set(const SizeConstraint& constraint);
+    void set(const Constraint& constraint);
 
 protected:
-    Inset(const SizeConstraint& constraint);
+    Inset(const Constraint& constraint);
     void onSizeChange() override;
 
-    SizeConstraint constraint_;
+    Constraint constraint_;
 };
 
 }  // namespace gui::layout

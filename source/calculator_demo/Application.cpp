@@ -6,7 +6,7 @@
 #include "gui/Button.hpp"
 #include "gui/FontLibrary.hpp"
 #include "gui/TextureLibrary.hpp"
-#include "gui/layout/SizeConstraint.hpp"
+#include "gui/layout/Constraint.hpp"
 
 #include "gui/layout/Vertical.hpp"
 #include "gui/layout/Horizontal.hpp"
@@ -30,9 +30,10 @@ void Application::onInit()
     auto editBox = gui::EditBox::create();
     editBox->setAlignment(gui::Alignment::Right);
     verticalLayout->addChild(std::move(editBox));
-    verticalLayout->setRowSize(0, gui::layout::SizeConstraint::Pixels(40));
+    verticalLayout->setRowSize(0, gui::layout::Constraint::Pixels(40));
 
     auto horizontalLayout = gui::layout::Horizontal::create();
+    horizontalLayout->setPadding(10);
 
     /* TOP BUTTONS */
     auto emptyLabel = gui::Label::create("");
@@ -45,14 +46,16 @@ void Application::onInit()
     horizontalLayout->addChild(std::move(CEButton));
     horizontalLayout->addChild(std::move(CButton));
 
-    auto inset = gui::layout::Inset::create(gui::layout::SizeConstraint::Pixels(20.f));
+    auto inset = gui::layout::Inset::create(gui::layout::Constraint::Pixels(20.f));
     inset->addChild(std::move(horizontalLayout));
     verticalLayout->addChild(std::move(inset));
-    verticalLayout->setRowSize(1, gui::layout::SizeConstraint::Pixels(60));
+    verticalLayout->setRowSize(1, gui::layout::Constraint::Pixels(60));
 
     /* 2D KEYBOARD */
 
     auto gridLayout = gui::layout::Grid::create(5, 4);
+    gridLayout->setHorizontalPadding(15);
+    gridLayout->setVerticalPadding(15);
 
     auto button7 = gui::TextButton::create("7");
     auto button8 = gui::TextButton::create("8");

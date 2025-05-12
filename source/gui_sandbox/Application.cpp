@@ -92,7 +92,7 @@ void Application::onInit()
     createSimpleWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
 
-        auto insetLayout = gui::layout::Inset::create(gui::layout::SizeConstraint::Percent(75.f));
+        auto insetLayout = gui::layout::Inset::create(gui::layout::Constraint::Percent(75.f));
         auto simpleButton = gui::TextButton::create("THIS IS BUTTON!");
         insetLayout->addChild(std::move(simpleButton));
         window->addChild(std::move(insetLayout));
@@ -269,8 +269,8 @@ void Application::onInit()
         verticalLayout->addChild(std::move(horizontalLayout5));  
         verticalLayout->addChild(std::move(horizontalLayout6));  
 
-        verticalLayout->setRowSize(0, gui::layout::SizeConstraint::Pixels(30.f));
-        verticalLayout->setRowSize(1, gui::layout::SizeConstraint::Auto());
+        verticalLayout->setRowSize(0, gui::layout::Constraint::Pixels(30.f));
+        verticalLayout->setRowSize(1, gui::layout::Constraint::Auto());
 
         window->addChild(std::move(verticalLayout));
 
@@ -422,11 +422,11 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addColumn(position, gui::layout::SizeConstraint::Percent(ratio.value()))) return;
+                if(not  gridLayoutPtr->addColumn(position, gui::layout::Constraint::Percent(ratio.value()))) return;
             }
             else
             {
-                if(not gridLayoutPtr->addColumn(position, gui::layout::SizeConstraint::Auto())) return;
+                if(not gridLayoutPtr->addColumn(position, gui::layout::Constraint::Auto())) return;
             }
 
             updateGridStatusLabel();
@@ -474,11 +474,11 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addRow(position, gui::layout::SizeConstraint::Percent(ratio.value()))) return;
+                if(not  gridLayoutPtr->addRow(position, gui::layout::Constraint::Percent(ratio.value()))) return;
             }
             else
             {
-                if(not gridLayoutPtr->addRow(position, gui::layout::SizeConstraint::Auto())) return;
+                if(not gridLayoutPtr->addRow(position, gui::layout::Constraint::Auto())) return;
             }
 
 

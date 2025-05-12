@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "engine/Logger.hpp"
-#include "gui/layout/SizeConstraint.hpp"
+#include "gui/layout/Constraint.hpp"
 
 namespace gui::layout
 {
@@ -16,29 +16,29 @@ namespace gui::layout
         3. Auto size
  */
 
-
 class Element
 {
 public:
     Element();
-    Element(const SizeConstraint& constraint);
+    Element(const Constraint& constraint);
 
-    SizeConstraint constraint;
+    Constraint constraint;
     float resolvedWidth;
 };
 
-class DimensionConstraintScaler
+class SizeConstraintResolver
 {
 public:
-    DimensionConstraintScaler(const std::string_view logPrefix);
+    SizeConstraintResolver(const std::string_view logPrefix);
 
     void setTotalSize(const float size);
     void setElementCount(const size_t count);
-    void setElementSize(const size_t index, const SizeConstraint& constraint);
+    void setElementSize(const size_t index, const Constraint& constraint);
     void resetElement(const size_t index);
-    void addElementAtIndex(const size_t index, const SizeConstraint& constraint);
+    void addElementAtIndex(const size_t index, const Constraint& constraint);
     void removeElementAtIndex(const size_t index);
     float getElementSize(const size_t index) const;
+    size_t getElementsCount() const;
 
 protected:
     void resolveElementsSizes();
