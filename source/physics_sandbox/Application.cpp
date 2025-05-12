@@ -2,13 +2,15 @@
 
 #include "Circle.hpp"
 
+#include "Config.hpp"
+
 #include "engine/RigidBodyDebugRenderer.hpp"
 
 namespace sandbox
 {
 
 Application::Application()
-: engine::Application{"Physics sandbox", "Physics sandbox"}
+: engine::Application{"Physics sandbox", "Physics sandbox", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , mouseController_{scene_}
 {}
 
@@ -86,8 +88,6 @@ void Application::onUpdate(float timeStep)
     }
 
     collisionSolver_.evaluateCollisions();
-
-    (void) timeStep;
 }
 
 void Application::onRender()

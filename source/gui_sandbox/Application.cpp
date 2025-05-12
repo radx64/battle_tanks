@@ -33,7 +33,7 @@ using namespace std::literals;
 namespace gui_sandbox
 {
 Application::Application()
-: engine::Application{"GUI sandbox", "Main application"}
+: engine::Application{"GUI sandbox", "Main application", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , mouseController_{&windowManager_, window_, window_.getDefaultView()}
 , keyboardController_{&windowManager_}
@@ -46,7 +46,7 @@ Application::Application()
 
 void Application::onInit()
 {
-    gui::FontLibrary::initialize();
+    gui::FontLibrary::init();
     gui::TextureLibrary::init();
 
     window_.setFramerateLimit(60);

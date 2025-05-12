@@ -69,7 +69,15 @@
         "bitset": "cpp",
         "charconv": "cpp",
         "text_encoding": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "cfenv": "cpp",
+        "codecvt": "cpp",
+        "complex": "cpp",
+        "csignal": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "expected": "cpp",
+        "typeindex": "cpp"
     },
     "editor.tokenColorCustomizations": {
         "textMateRules": [

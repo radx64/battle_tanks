@@ -18,7 +18,7 @@ namespace engine
 class Application
 {
 public:
-    Application(const std::string_view windowName, const std::string_view logPrefix);
+    Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize);
     virtual ~Application();
     
     void init();

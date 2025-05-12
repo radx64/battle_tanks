@@ -18,7 +18,7 @@ void FontLibrary::initFont(const std::string& name, const std::string& path)
     if(not hasLoaded) throw std::string("Couldn't load font file...");
 }
 
-void FontLibrary::initialize()
+void FontLibrary::init()
 {
     initDefaultFont();
     initFont("armata",      TOSTRING(SOURCE_ROOT)"/fonts/armata.ttf");

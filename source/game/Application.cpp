@@ -43,7 +43,7 @@ constexpr size_t CRATES_COUNT = 10;
 constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
-: engine::Application("Battle tanks", "Battle tanks")
+: engine::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
 , cameraInitialPosition_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
 , cameraInitialSize_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
 , camera_{cameraInitialPosition_, cameraInitialSize_}
@@ -62,7 +62,7 @@ Application::Application()
 void Application::onInit()
 {
     context_.setCamera(&camera_);
-    gui::FontLibrary::initialize();
+    gui::FontLibrary::init();
     graphics::TextureLibrary::init();
 
     tilemap_ = std::make_unique<graphics::Tilemap>();

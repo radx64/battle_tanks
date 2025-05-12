@@ -10,6 +10,7 @@
 
 namespace gui_sandbox
 {
+// TODO move to derive from gui::Application instead of engine::Application
 class Application : public engine::Application
 {
 public:

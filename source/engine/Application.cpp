@@ -13,8 +13,8 @@ constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
 namespace engine
 {
 
-Application::Application(const std::string_view windowName, const std::string_view logPrefix)
-: window_(sf::VideoMode(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 32), windowName.data(),
+Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
+: window_(sf::VideoMode(windowSize.x, windowSize.y, 32), windowName.data(),
     sf::Style::Default, sf::ContextSettings(0, 0, ANTI_ALIASING_LEVEL))
 , mouseHandler_{&timerService_}
 , realTimeStep_{}

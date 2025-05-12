@@ -12,7 +12,7 @@ class FontLibrary
 {
 public:
     FontLibrary() = delete;
-    static void initialize();
+    static void init();
     static sf::Font& get(const std::string& name);
     static void destroy();
 

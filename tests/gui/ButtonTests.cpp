@@ -13,7 +13,7 @@ class ButtonShould : public ::testing::Test
 protected:
     void SetUp()
     {
-        gui::FontLibrary::initialize();
+        gui::FontLibrary::init();
     }
 
     void TearDown()
