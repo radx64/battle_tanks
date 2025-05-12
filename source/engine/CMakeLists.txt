@@ -1,11 +1,8 @@
 add_library(engine_lib STATIC)
 
-add_subdirectory(math)
-
 target_link_libraries(engine_lib
 PUBLIC
     sfml-graphics
-    engine_math_lib
     fmt)
 
 target_include_directories(engine_lib
@@ -22,6 +19,7 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/math/Math.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardHandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/MouseHandler.cpp

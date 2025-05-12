@@ -1,4 +1,3 @@
 add_subdirectory(engine)
 add_subdirectory(gui)
-add_subdirectory(math)
 add_subdirectory(mocks)

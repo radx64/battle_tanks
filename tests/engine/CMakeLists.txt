@@ -1,7 +1,8 @@
 add_executable(battle_tanks_testing_engine
     ${CMAKE_SOURCE_DIR}/tests/main.cpp
-    ConcatTests.cpp
     ClockTests.cpp
+    ConcatTests.cpp
+    MathTests.cpp
     TimerServiceTests.cpp
     TimerTests.cpp
 )
@@ -23,7 +24,7 @@ PRIVATE
 
 if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
     include(CodeCoverage)
-    setup_target_for_coverage(battle_tanks_testing_engine_coverage battle_tanks_testing_engine coverage_engine)
+    setup_target_for_coverage(battle_tanks_testing_engine_coverage battle_tanks_testing_engine coverage_engine source/engine)
 endif() #CMAKE_BUILD_TYPE STREQUAL "Coverage"
 
 add_test(NAME battle_tanks_testing_engine
