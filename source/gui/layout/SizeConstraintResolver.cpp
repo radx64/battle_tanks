@@ -31,7 +31,7 @@ void SizeConstraintResolver::setTotalSize(const float size)
     resolveElementsSizes();
 }
 
-void SizeConstraintResolver::setElementCount(const size_t count)
+void SizeConstraintResolver::setElementsCount(const size_t count)
 {
     elements_.resize(count);
     resolveElementsSizes();

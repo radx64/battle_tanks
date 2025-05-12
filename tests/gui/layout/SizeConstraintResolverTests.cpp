@@ -10,7 +10,7 @@ TEST(SizeConstraintResolverShould, returnZeroForNoElements)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(0);
+    sut.setElementsCount(0);
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
 }
 
@@ -18,7 +18,7 @@ TEST(SizeConstraintResolverShould, returnWholeSizeForOneElementUnconstrainedElem
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(1);
+    sut.setElementsCount(1);
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 100.f);
 }
 
@@ -26,7 +26,7 @@ TEST(SizeConstraintResolverShould, returnZeroForOneZeroPixelsConstrainedElement)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(1);
+    sut.setElementsCount(1);
     sut.setElementSize(0, Constraint::Pixels(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
 }
@@ -35,7 +35,7 @@ TEST(SizeConstraintResolverShould, returnZeroForOneZeroPercentConstrainedElement
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(1);
+    sut.setElementsCount(1);
     sut.setElementSize(0, Constraint::Percent(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
 }
@@ -45,7 +45,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPixelsConstrainedElem
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(2);
+    sut.setElementsCount(2);
     sut.setElementSize(0, Constraint::Pixels(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 100.f);
@@ -55,7 +55,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPercentConstrainedEle
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(2);
+    sut.setElementsCount(2);
     sut.setElementSize(0, Constraint::Percent(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
     EXPECT_FLOAT_EQ(sut.getElementSize(1), 100.f);
@@ -65,7 +65,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPixelsConstrainedElem
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Pixels(0.f));
     sut.setElementSize(2, Constraint::Percent(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
@@ -77,7 +77,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForOneZeroPercentConstrainedEle
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(4);
+    sut.setElementsCount(4);
     sut.setElementSize(0, Constraint::Percent(0.f));
     sut.setElementSize(2, Constraint::Pixels(0.f));
     EXPECT_FLOAT_EQ(sut.getElementSize(0), 0.f);
@@ -90,7 +90,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForAllConstrainedElementsOfMixe
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Pixels(20.f));
     sut.setElementSize(1, Constraint::Percent(50.f));
     sut.setElementSize(2, Constraint::Auto());
@@ -103,7 +103,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForAllConstrainedAutoElementAnd
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Auto());
     sut.setElementSize(1, Constraint::Percent(25.f));
     sut.setElementSize(2, Constraint::Percent(25.f));
@@ -117,7 +117,7 @@ TEST(SizeConstraintResolverShould, calculateSizesForAllConstrainedElementsAndOne
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(4);
+    sut.setElementsCount(4);
     sut.setElementSize(0, Constraint::Pixels(20.f));
     sut.setElementSize(1, Constraint::Pixels(30.f));
     sut.setElementSize(2, Constraint::Percent(50.f));
@@ -132,7 +132,7 @@ TEST(SizeConstraintResolverShould, clearPreviouslySetElementSize)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Pixels(20.f));
     sut.setElementSize(1, Constraint::Pixels(30.f));
     sut.setElementSize(2, Constraint::Pixels(20.f));
@@ -151,7 +151,7 @@ TEST(SizeConstraintResolverShould, addNewElementAtIndex)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Pixels(10.f));
     sut.setElementSize(1, Constraint::Pixels(20.f));
     sut.setElementSize(2, Constraint::Pixels(30.f));
@@ -170,7 +170,7 @@ TEST(SizeConstraintResolverShould, removeElementAtIndex)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Pixels(10.f));
     sut.setElementSize(1, Constraint::Pixels(20.f));
     sut.setElementSize(2, Constraint::Pixels(30.f));
@@ -188,7 +188,7 @@ TEST(SizeConstraintResolverShould, handleInvalidIndex)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Pixels(10.f));
     sut.setElementSize(1, Constraint::Pixels(20.f));
     sut.setElementSize(2, Constraint::Pixels(30.f));
@@ -223,7 +223,7 @@ TEST(SizeConstraintResolverShould, notExceedSizeWhenCalculatingDimensionsForEach
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     sut.setElementSize(0, Constraint::Percent(40.f));
     sut.setElementSize(1, Constraint::Percent(40.f));
     sut.setElementSize(2, Constraint::Percent(50.f));
@@ -236,7 +236,7 @@ TEST(SizeConstraintResolverShould, notExceedSizeWhenCalculatingDimensionsForEach
     sum  = sut.getElementSize(0) + sut.getElementSize(1) + sut.getElementSize(2);
     EXPECT_FLOAT_EQ(100.f, sum);
 
-    sut.setElementCount(1);
+    sut.setElementsCount(1);
     sut.setElementSize(0, Constraint::Percent(200.f));
 
     sum  = sut.getElementSize(0);
@@ -247,7 +247,7 @@ TEST(SizeConstraintResolverShould, scaleElementsWhenResized)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(2);
+    sut.setElementsCount(2);
     sut.setElementSize(0, Constraint::Auto());
     sut.setElementSize(1, Constraint::Pixels(40.f));
 
@@ -263,11 +263,11 @@ TEST(SizeConstraintResolverShould, returnElementCount)
 {
     SizeConstraintResolver sut{"sut"};
     sut.setTotalSize(100.f);
-    sut.setElementCount(3);
+    sut.setElementsCount(3);
     EXPECT_EQ(3, sut.getElementsCount());
-    sut.setElementCount(5);
+    sut.setElementsCount(5);
     EXPECT_EQ(5, sut.getElementsCount());
-    sut.setElementCount(0);
+    sut.setElementsCount(0);
     EXPECT_EQ(0, sut.getElementsCount());
 }
 

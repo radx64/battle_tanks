@@ -24,8 +24,8 @@ Grid::Grid(size_t width, size_t height)
         column.resize(height_, nullptr);
     }
 
-    columnConstraintLayout_.setElementCount(width_);
-    rowConstraintLayout_.setElementCount(height_);
+    columnConstraintLayout_.setElementsCount(width_);
+    rowConstraintLayout_.setElementsCount(height_);
 }
 
 size_t Grid::getWidth() const

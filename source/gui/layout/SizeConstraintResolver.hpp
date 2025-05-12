@@ -32,7 +32,7 @@ public:
     SizeConstraintResolver(const std::string_view logPrefix);
 
     void setTotalSize(const float size);
-    void setElementCount(const size_t count);
+    void setElementsCount(const size_t count);
     void setElementSize(const size_t index, const Constraint& constraint);
     void resetElement(const size_t index);
     void addElementAtIndex(const size_t index, const Constraint& constraint);
