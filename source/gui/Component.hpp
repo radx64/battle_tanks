@@ -25,6 +25,7 @@ public:
                std::source_location::current());
     virtual ~Component();
 
+    uint32_t getId() const;
     virtual void onRender(sf::RenderTexture& renderTexture) = 0;
 
     void render(sf::RenderTexture& renderTexture);
@@ -33,7 +34,7 @@ public:
     void setSize(const sf::Vector2f& size);
 
     void setVisibility(bool isVisible);
-    bool isVisible();
+    bool isVisible() const;
 
     const sf::Vector2f getPosition() const;
     void setPosition(const sf::Vector2f& position);
@@ -46,6 +47,8 @@ public:
     const sf::Vector2f getGlobalPosition() const;
     virtual void addChild(std::unique_ptr<Component> child);
     virtual void removeChild(const Component* child);
+    Component* getParent() const;
+    const std::vector<std::unique_ptr<Component>>& getChildren() const;
 
     void focus();
     void defocus();

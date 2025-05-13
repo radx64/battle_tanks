@@ -32,6 +32,21 @@ float Constraint::getValue() const
     return value;
 }
 
+void Constraint::setType(const Type type)
+{
+    this->type = type;
+}
+
+void Constraint::setUnit(const Unit unit)
+{
+    this->unit = unit;
+}
+
+void Constraint::setValue(const float value)
+{
+    this->value = value;
+}
+
 Constraint::Constraint(const Type type, const Unit unit, const float value)
 : type(type)
 , unit(unit)

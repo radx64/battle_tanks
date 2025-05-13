@@ -271,4 +271,24 @@ TEST(SizeConstraintResolverShould, returnElementCount)
     EXPECT_EQ(0, sut.getElementsCount());
 }
 
+TEST(SizeConstraintResolverShould, clampValueToZeroIfNegative)
+{
+    SizeConstraintResolver sut{"sut"};
+    sut.setTotalSize(100.f);
+    sut.setElementsCount(1);
+    sut.setElementSize(0, Constraint::Pixels(-10.f));
+    EXPECT_FLOAT_EQ(0.f, sut.getElementSize(0));
+}
+
+TEST(SizeConstraintResolverShould, precentsDoesNotWorkWhenWholeSizeIsUsedByFixedValues)
+{
+    SizeConstraintResolver sut{"sut"};
+    sut.setTotalSize(100.f);
+    sut.setElementsCount(2);
+    sut.setElementSize(0, Constraint::Pixels(200.f));
+    sut.setElementSize(1, Constraint::Percent(50.f));
+    EXPECT_FLOAT_EQ(200.f, sut.getElementSize(0));
+    EXPECT_FLOAT_EQ(0.f, sut.getElementSize(1));
+}
+
 } // namespace gui::layout

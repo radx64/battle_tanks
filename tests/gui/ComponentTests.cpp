@@ -7,6 +7,8 @@
 
 #include "tests/mocks/ComponentSpy.hpp"
 
+#include "gui/debug/ComponentTree.hpp"
+
 namespace gui
 {
 
@@ -302,6 +304,8 @@ TEST_F(ComponentsHierarchyShould, properlyHandleForwardFocusChangedEvent)
         sut_->receive(gui::event::FocusChange{.type=gui::event::FocusChange::Type::Next});
         verifyAndClearAllMocks();
     }
+
+    debug::ComponentTree::print(sut_.get());
 }
 
 TEST_F(ComponentsHierarchyShould, properlyHandleBackwardFocusChangedEvent)

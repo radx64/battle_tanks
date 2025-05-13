@@ -61,6 +61,11 @@ Component::~Component()
     logger_.debug("Destroying");
 }
 
+uint32_t Component::getId() const
+{
+    return id_;
+}
+
 void Component::render(sf::RenderTexture& renderTexture)
 {
     if (!isVisible_) return;
@@ -391,7 +396,7 @@ void Component::setVisibility(bool isVisible)
     isVisible_ = isVisible;
 }
 
-bool Component::isVisible()
+bool Component::isVisible() const
 {
     return isVisible_;
 }
@@ -451,6 +456,16 @@ void Component::removeChild(const Component* child)
     {
         logger_.warning(fmt::format("Trying to remove child {} that is not present", fmt::ptr(child)));
     }
+}
+
+Component* Component::getParent() const
+{
+    return parent_;
+}
+
+const std::vector<std::unique_ptr<Component>>& Component::getChildren() const
+{
+    return children_;
 }
 
 void Component::selectFocusedChild(Component* focusedChild)

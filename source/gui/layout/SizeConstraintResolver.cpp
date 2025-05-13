@@ -106,17 +106,15 @@ void SizeConstraintResolver::resolveElementsSizes()
     size_t autoElementCount = 0;
 
     size_t index = 0;
-    for (const auto& element : elements_)
+    for (auto& element : elements_)
     {
         float value = element.constraint.getValue();
 
         if (value < 0.f)
         {
-            logger_.warning(fmt::format("resolveElementsSizes: Constraint value for element at position {} is negative: {}, clamping to 0.f", index, value));
-            value = 0.f;
-        }
-
-        value = std::max(0.f, element.constraint.getValue()); // clamp negative values
+            logger_.warning(fmt::format("resolveElementsSizes: Negative value {} for element at index {} clamped to 0", value, index));
+            element.constraint.setValue(0.f); // clamp negative values
+        }  
 
         if (element.constraint.getType() == Constraint::Type::Fixed)
         {
@@ -149,6 +147,8 @@ void SizeConstraintResolver::resolveElementsSizes()
     float percentageNormalizationFactor = 1.f;
 
     // Normalize percent widths if they exceed 100%, I'm not doing that for pixels as I am treating them as fixed
+    // If user foces 200px on a 100px container, I will not normalize it
+    
     if (totalPercentageWidth > 100.0f) {
          logger_.warning("resolveElementsSizes: Total percentage exceeds 100%, normalizing");
          percentageNormalizationFactor = 100.0f / totalPercentageWidth;

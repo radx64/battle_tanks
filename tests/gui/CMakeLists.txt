@@ -2,8 +2,10 @@ add_executable(battle_tanks_testing_gui
     ${CMAKE_SOURCE_DIR}/tests/main.cpp
     ButtonTests.cpp
     ComponentTests.cpp
+    layout/ConstraintTests.cpp
     layout/SizeConstraintResolverTests.cpp
     layout/InsetTests.cpp
+    layout/VerticalTests.cpp
 )
 target_include_directories(battle_tanks_testing_gui
 PRIVATE

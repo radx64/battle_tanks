@@ -26,6 +26,10 @@ public:
     Unit getUnit() const;
     float getValue() const;
 
+    void setType(const Type type);
+    void setUnit(const Unit unit);
+    void setValue(const float value);
+
 protected:
     Constraint(const Type type, const Unit unit, const float value);
 
