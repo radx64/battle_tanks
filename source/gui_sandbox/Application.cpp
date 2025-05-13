@@ -5,6 +5,8 @@
 
 #include "Config.hpp"
 
+#include "calculator_demo/Calculator.hpp"
+
 #include "engine/Context.hpp"
 #include "engine/Logger.hpp"
 #include "engine/Timer.hpp"
@@ -610,6 +612,21 @@ void Application::onInit()
     });
 
     windowManager_.mainWindow().addChild(std::move(createSliderWindowButton));
+
+    auto createCalculatorWindowButton = gui::TextButton::create("Calculator");
+    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createCalculatorWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createCalculatorWindowButton->onClick([this](){
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(500.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setTitle("calc.exe");
+
+        window->addChild(calculator::createCalculator({300.f, 300.f}));
+        windowManager_.addWindow(std::move(window));
+    });
+
+    windowManager_.mainWindow().addChild(std::move(createCalculatorWindowButton));
 
     auto leftLabel = gui::Label::create("Left aligned label");
     leftLabel->setPosition({100.f, 20.f});
