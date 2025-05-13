@@ -1,8 +1,8 @@
 #pragma once
 
-#include "engine/Application.hpp"
 #include "engine/Timer.hpp"
 
+#include "gui/Application.hpp"
 #include "gui/WindowManager.hpp"
 #include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
@@ -10,8 +10,7 @@
 
 namespace gui_sandbox
 {
-// TODO move to derive from gui::Application instead of engine::Application
-class Application : public engine::Application
+class Application : public gui::Application
 {
 public:
     Application();
@@ -24,11 +23,6 @@ protected:
     void onRender() override; 
 
     void generateBackground();
-
-    gui::WindowManager windowManager_;
-    gui::MouseController mouseController_;
-    gui::KeyboardController keyboardController_;
-    gui::TextEnteredController textEnteredController_;
 
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;

@@ -43,15 +43,13 @@ constexpr size_t CRATES_COUNT = 10;
 constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
-: engine::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
+: gui::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
 , cameraInitialPosition_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
 , cameraInitialSize_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
 , camera_{cameraInitialPosition_, cameraInitialSize_}
 , cameraController_{&camera_}
 , cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
-, windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , waypointMouseController_{&windowManager_, waypoints_, window_, cameraView_}
-, guiMouseController_{&windowManager_, window_, window_.getDefaultView()}
 , drawAverage_{NUMBER_OF_MEASUREMENTS}
 , physicsAverage_{NUMBER_OF_MEASUREMENTS}
 , navAverage_{NUMBER_OF_MEASUREMENTS}
@@ -62,12 +60,9 @@ Application::Application()
 void Application::onInit()
 {
     context_.setCamera(&camera_);
-    gui::FontLibrary::init();
     graphics::TextureLibrary::init();
 
     tilemap_ = std::make_unique<graphics::Tilemap>();
-
-    mouseHandler_.subscribe(&guiMouseController_);
     mouseHandler_.subscribe(&waypointMouseController_);
 
     window_.setFramerateLimit(60);
@@ -91,9 +86,7 @@ void Application::onInit()
 void Application::onClose()
 {
     logger_.info("Goodbye!");
-    gui::FontLibrary::destroy();
 }
-
 
 void Application::onEvent(const sf::Event& event)
 {
@@ -172,7 +165,8 @@ void Application::onRender()
     }
 
     window_.setView(window_.getDefaultView());
-    windowManager_.render(window_);
+
+    gui::Application::onRender();
 
     clock_.restart();
 

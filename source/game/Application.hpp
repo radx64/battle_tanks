@@ -1,24 +1,21 @@
 #pragma once
+
 #include <memory>
 
-#include "engine/Application.hpp"
 #include "engine/Camera.hpp"
 #include "engine/CameraController.hpp"
-
 #include "engine/FpsCounter.hpp"
-
+#include "engine/math/Math.hpp"
 #include "engine/Renderer.hpp"
 #include "engine/RigidBody.hpp"
-
-#include "engine/math/Math.hpp"
-
 #include "game/entity/tank/Tank.hpp"
 #include "game/entity/TracksRenderer.hpp"
-#include "game/WaypointMouseController.hpp"
 #include "game/Navigator.hpp"
+#include "game/WaypointMouseController.hpp"
 
 #include "graphics/Tilemap.hpp"
 
+#include "gui/Application.hpp"
 #include "gui/Label.hpp"
 #include "gui/Window.hpp"
 #include "gui/WindowManager.hpp"
@@ -27,7 +24,7 @@
 namespace game 
 {
 
-class Application : public engine::Application
+class Application : public gui::Application
 {
 public:
     Application();
@@ -62,9 +59,7 @@ protected:
     gui::Label* measurementsTextHandle_;
     gui::Label* measurementsAverageTextHandle_;
 
-    gui::WindowManager windowManager_;
     game::WaypointMouseController waypointMouseController_;
-    gui::MouseController guiMouseController_;
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;

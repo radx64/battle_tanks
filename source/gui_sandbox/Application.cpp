@@ -33,11 +33,7 @@ using namespace std::literals;
 namespace gui_sandbox
 {
 Application::Application()
-: engine::Application{"GUI sandbox", "Main application", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
-, windowManager_{sf::Vector2f{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
-, mouseController_{&windowManager_, window_, window_.getDefaultView()}
-, keyboardController_{&windowManager_}
-, textEnteredController_{&windowManager_}
+: gui::Application{"GUI sandbox", "Main application", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , timer_{5s, [this](){logger_.info("5 seconds heartbeat ❤️ \n");}}
 {
     auto& timerService = engine::Context::getTimerService();
@@ -46,17 +42,9 @@ Application::Application()
 
 void Application::onInit()
 {
-    gui::FontLibrary::init();
-    gui::TextureLibrary::init();
-
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
-
     generateBackground();
-
-    mouseHandler_.subscribe(&mouseController_);
-    keyboardHandler_.subscribe(&keyboardController_);
-    keyboardHandler_.subscribe(&textEnteredController_);
 
     auto quitButton = gui::TextButton::create("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
@@ -740,7 +728,7 @@ void Application::onRender()
 {
     window_.clear(sf::Color(20, 110, 158));
     window_.draw(backgroundSprite_);
-    windowManager_.render(window_);
+    gui::Application::onRender();
 }
 
 }  // namespace gui_sandbox
