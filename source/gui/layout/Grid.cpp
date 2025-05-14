@@ -41,11 +41,13 @@ size_t Grid::getHeight() const
 void Grid::setHorizontalPadding(const size_t padding)
 {
    horizontalPadding_ = padding; 
+   onSizeChange();
    recalculateChildrenBounds();
 }
 void Grid::setVerticalPadding(const size_t padding)
 {
     verticalPadding_ = padding;
+    onSizeChange();
     recalculateChildrenBounds();
 }
 

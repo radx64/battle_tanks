@@ -5,7 +5,9 @@ add_executable(battle_tanks_testing_gui
     layout/ConstraintTests.cpp
     layout/SizeConstraintResolverTests.cpp
     layout/InsetTests.cpp
+    layout/HorizontalTests.cpp
     layout/VerticalTests.cpp
+    layout/GridTests.cpp
 )
 target_include_directories(battle_tanks_testing_gui
 PRIVATE

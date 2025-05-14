@@ -10,6 +10,8 @@ std::unique_ptr<Vertical> Vertical::create(size_t height)
     return std::unique_ptr<Vertical>{new Vertical{height}};
 }
 
+// TODO addChild and addRow have conflicting interface
+// Both are adding row to the layout
 void Vertical::addChild(std::unique_ptr<Component> child)
 {
     layoutImpl_->addRow(layoutImpl_->getHeight(), Constraint::Auto());

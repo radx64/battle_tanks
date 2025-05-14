@@ -9,6 +9,8 @@ std::unique_ptr<Horizontal> Horizontal::create(size_t width)
 {
     return std::unique_ptr<Horizontal>{new Horizontal{width}};
 }
+// TODO addChild and addColumn have conflicting interface
+// Both are adding row to the layout
 
 void Horizontal::addChild(std::unique_ptr<Component> child)
 {
