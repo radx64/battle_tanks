@@ -41,6 +41,7 @@ TEST_F(ButtonShould, DISABLED_callOnClickWhenClickedInside)
     sut->onClick([&receiver](){receiver.action();});
     EXPECT_CALL(receiver, action());
     sut->receive(gui::event::MouseButtonPressed{.button = gui::event::MouseButton::Left, .position = {1.f, 1.f}});
+    sut->receive(gui::event::MouseButtonReleased{.button = gui::event::MouseButton::Left, .position = {1.f, 1.f}});
 }
 
 TEST_F(ButtonShould, DISABLED_dontCallOnClickWhenClickedOutside)
@@ -52,6 +53,7 @@ TEST_F(ButtonShould, DISABLED_dontCallOnClickWhenClickedOutside)
     sut->onClick([&receiver](){receiver.action();});
     EXPECT_CALL(receiver, action()).Times(0);
     sut->receive(gui::event::MouseButtonPressed{.button = gui::event::MouseButton::Left, .position = {20.f, 20.f}});
+    sut->receive(gui::event::MouseButtonReleased{.button = gui::event::MouseButton::Left, .position = {20.f, 20.f}});
 }
 
 }  // namespace gui

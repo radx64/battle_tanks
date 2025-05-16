@@ -11,6 +11,7 @@ Design
 - [Dependencies](#dependencies)
 - [Drawing](#drawing)
 - [Event processing](#event-processing)
+- [Layout management](#layout-management)
 
 
 ## Component
@@ -81,3 +82,11 @@ Consider moving it to separate texture and redraw those only when needed to boos
 
 There is a hierarchy how mouse events are beeing processed.
 If user clicks on given component it iterates over all its children to check if any of them captures the event. If captured, event is not processed further. If any child has not captured the event, event is processed with component itself.
+
+# Layout management
+
+GUI framework currently supports few layout options:
+  - Inset - create a barrier (configured in pixels or percents) around parent object so children size is reduced and centered by a size of this barrier
+  - Horizontal - lays objects in horizontal line taking into consideration of each size constraint configured for given column
+  - Vertical - same as Horizontal but vertically (rows)
+  - Grid - similar to twos above but in 2D. Child objects can be placed on 2D grid. Also padding between columns and between rows can be configured.
