@@ -16,17 +16,18 @@ namespace gui
     - render steps marks (implement after focus frame rendering is done)
 */
 
-template <typename SliderSpec>
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
 class SliderBase : public Component
 {
 public:
-    void onRender(sf::RenderTexture& renderTexture) override;
     void onValueChange(std::function<void(float)> onValueChangeCallback);
 
     void setRange(const float min, const float max);
     void setValue(const float value);
     float getValue() const;
     void setStep(const float step);
+    void increase();
+    void decrease();
 
 protected:
     enum class State
@@ -36,6 +37,7 @@ protected:
         Hover   // TODo add disabled in the future
     };
 
+    void onRender(sf::RenderTexture& renderTexture) override;
     SliderBase();
 
     void onSizeChange() override;
@@ -53,7 +55,7 @@ protected:
     EventStatus on(const event::FocusGained&) override;
 
     void processMovement(sf::Vector2f& mousePosition);
-    void updateTextureGeneral();
+    void updateTexture();
 
     gui::FramedSprite track_;
     gui::FramedSprite thumb_;
@@ -72,25 +74,88 @@ protected:
     State state_;
 };
 
-class HorizontalSlider : public SliderBase<HorizontalSlider>
+
+class HorizontalMousePolicy
+{
+public:
+    static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+    const sf::Vector2f& trackSize, const float min, const float max, const float step);
+};
+
+class VerticalMousePolicy
+{
+public:
+    static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+    const sf::Vector2f& trackSize, const float min, const float max, const float step);
+};
+
+class HorizontalThinPolicy
+{
+public:
+    static sf::Vector2f getTrackSize(const sf::Vector2f& silderSize);
+    static sf::Vector2f getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize);
+    static std::string getTrackTextureName();
+
+    static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+};
+
+class VerticalThinPolicy
+{
+public:
+    static sf::Vector2f getTrackSize(const sf::Vector2f& silderSize);
+    static sf::Vector2f getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize);
+    static std::string getTrackTextureName();
+
+    static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+};
+
+class HorizontalThickPolicy
+{
+public:
+    static sf::Vector2f getTrackSize(const sf::Vector2f& silderSize);
+    static sf::Vector2f getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize);
+    static std::string getTrackTextureName();
+
+    static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+};
+
+class VerticalThickPolicy
+{
+public:
+    static sf::Vector2f getTrackSize(const sf::Vector2f& silderSize);
+    static sf::Vector2f getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize);
+    static std::string getTrackTextureName();
+
+    static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+};
+
+class HorizontalSlider : public SliderBase<HorizontalSlider, HorizontalMousePolicy, HorizontalThinPolicy>
 {
 public:
     static std::unique_ptr<HorizontalSlider> create();
-
-    float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
-    sf::Vector2f getTrackSize();
     void updateTextureSpecific();
-
 };
 
-class VerticalSlider : public SliderBase<VerticalSlider>
+class VerticalSlider : public SliderBase<VerticalSlider, VerticalMousePolicy, VerticalThinPolicy>
 {
 public:
     static std::unique_ptr<VerticalSlider> create();
-
-    float translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const;
-    sf::Vector2f getTrackSize();
     void updateTextureSpecific();
 };
+
+class HorizontalThickSlider : public SliderBase<HorizontalThickSlider, HorizontalMousePolicy, HorizontalThickPolicy>
+{
+public:
+    static std::unique_ptr<HorizontalThickSlider> create();
+    void updateTextureSpecific();
+};
+
+class VerticalThickSlider : public SliderBase<VerticalThickSlider, VerticalMousePolicy, VerticalThickPolicy>
+{
+public:
+    static std::unique_ptr<VerticalThickSlider> create();
+    void updateTextureSpecific();
+};
+
 
 }  // namespace gui

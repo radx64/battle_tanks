@@ -115,7 +115,7 @@ EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEv
 EventStatus ButtonBase::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
-    
+
     auto& key = keyboardKeyReleasedEvent.key;
 
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
@@ -155,6 +155,15 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
 
 EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
+    // I need to rethink event consuming as this creates some implicit dependencies
+    // eg if button is has consumed mouse release event, no one else can see it
+    // this is problematic when mouse is release from control out of bounds of that control
+    // and landed by accident on button. If button consumes it, control will not process mouse release.
+    
+    // Maybe I should just consume only if I explicitly want to block other controls from fetching given event?
+    
+    if (state_ != State::Pressed) return EventStatus::NotConsumed;
+
     auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
 

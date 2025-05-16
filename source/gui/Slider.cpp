@@ -7,7 +7,7 @@
 namespace gui
 {
 
-constexpr float TRACK_THICKNESS = 10.f;
+constexpr float THIN_TRACK_THICKNESS = 10.f;
 constexpr float THUMB_THICKNESS = 20.f;
 constexpr float BOUNDS_THICKNESS = 10.f;
 
@@ -61,8 +61,135 @@ gui::FramedSprite::LayoutConfig buildLayoutConfigForThumbTexture()
     return layout;
 }
 
-template <typename SliderSpec>
-SliderBase<SliderSpec>::SliderBase()
+float HorizontalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+    const sf::Vector2f& trackSize, const float min, const float max, const float step)
+{
+    auto trackPositionOffset = sf::Vector2f{BOUNDS_THICKNESS, sliderSize.y / 2.f - THIN_TRACK_THICKNESS / 2.f};
+    auto thumbXPositionOffset = mousePosition.x - sliderPosition.x - trackPositionOffset.x;
+
+    // Calculate screen step size
+    float stepSize = trackSize.x  / (max - min) * step;
+
+    // Calculate the nearest step by rounding instead of truncating
+    float stepAlignedThumbXPosition = std::round(thumbXPositionOffset / stepSize) * stepSize;
+    // Normalize to 0.f to 1.f range
+    float normalizedThumbXPosition = stepAlignedThumbXPosition / trackSize.x;
+    // Map to set range
+    float rangeMappedThumbXPosition = (max - min) * normalizedThumbXPosition + min;
+
+    return std::clamp(rangeMappedThumbXPosition, min, max);
+}
+
+float VerticalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+    const sf::Vector2f& trackSize, const float min, const float max, const float step)
+{
+    auto trackPositionOffset = sf::Vector2f{sliderSize.x / 2.f - THIN_TRACK_THICKNESS / 2.f, BOUNDS_THICKNESS};
+    auto thumbYPositionOffset =  sliderPosition.y + trackSize.y - mousePosition.y + trackPositionOffset.y;
+
+    float stepSize = trackSize.y  / (max - min) * step;
+
+    // Calculate the nearest step by rounding instead of truncating
+    float stepAlignedThumbYPosition = std::round(thumbYPositionOffset / stepSize) * stepSize;
+
+    // Normalize to 0.f to 1.f range
+    float normalizedThumbYPosition = stepAlignedThumbYPosition / trackSize.y;
+
+    // Map to set range
+    float rangeMappedThumbYPosition = (max - min) * normalizedThumbYPosition + min;
+
+    return std::clamp(rangeMappedThumbYPosition, min, max);
+}
+
+sf::Vector2f HorizontalThinPolicy::getTrackSize(const sf::Vector2f& silderSize)
+{
+    return sf::Vector2f{silderSize.x - BOUNDS_THICKNESS * 2.f, THIN_TRACK_THICKNESS};
+}
+
+sf::Vector2f HorizontalThinPolicy::getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize)
+{
+    auto trackPositionOffset = sf::Vector2f{BOUNDS_THICKNESS, sliderSize.y / 2.f - THIN_TRACK_THICKNESS / 2.f};
+    return sliderPosition + trackPositionOffset;
+}
+
+std::string HorizontalThinPolicy::getTrackTextureName()
+{
+    return std::string{"slider_track"};
+}
+
+sf::Vector2f HorizontalThinPolicy::getThumbSize(const sf::Vector2f&)
+{
+    return sf::Vector2f{THUMB_THICKNESS, THUMB_THICKNESS};
+}
+
+
+sf::Vector2f VerticalThinPolicy::getTrackSize(const sf::Vector2f& silderSize)
+{
+    return sf::Vector2f{THIN_TRACK_THICKNESS, silderSize.y - BOUNDS_THICKNESS * 2.f};
+}
+
+sf::Vector2f VerticalThinPolicy::getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize)
+{
+    auto trackPositionOffset = sf::Vector2f{sliderSize.x / 2.f - THIN_TRACK_THICKNESS / 2.f, BOUNDS_THICKNESS};
+    return sliderPosition + trackPositionOffset;
+}
+
+std::string VerticalThinPolicy::getTrackTextureName()
+{
+    return std::string{"slider_track"};
+}
+
+sf::Vector2f VerticalThinPolicy::getThumbSize(const sf::Vector2f&)
+{
+    return sf::Vector2f{THUMB_THICKNESS, THUMB_THICKNESS};
+}
+
+sf::Vector2f HorizontalThickPolicy::getTrackSize(const sf::Vector2f& silderSize)
+{
+    return sf::Vector2f{silderSize.x, silderSize.y};
+}
+
+std::string HorizontalThickPolicy::getTrackTextureName()
+{
+    return std::string{"slider_track_thick"};
+}
+
+sf::Vector2f HorizontalThickPolicy::getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize)
+{
+    (void) sliderSize;
+    return sliderPosition;
+}
+
+sf::Vector2f HorizontalThickPolicy::getThumbSize(const sf::Vector2f& sliderSize)
+{
+    return sf::Vector2f{THUMB_THICKNESS, sliderSize.y};
+}
+
+
+
+sf::Vector2f VerticalThickPolicy::getTrackSize(const sf::Vector2f& silderSize)
+{
+    return sf::Vector2f{silderSize.x, silderSize.y};
+}
+
+std::string VerticalThickPolicy::getTrackTextureName()
+{
+    return std::string{"slider_track_thick"};
+}
+
+sf::Vector2f VerticalThickPolicy::getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize)
+{
+    (void) sliderSize;
+    return sliderPosition;
+}   
+
+sf::Vector2f VerticalThickPolicy::getThumbSize(const sf::Vector2f& sliderSize)
+{
+    return sf::Vector2f{sliderSize.x, THUMB_THICKNESS};
+}
+
+
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::SliderBase()
 : track_ {buildLayoutConfigForTrackTexture()}
 , thumb_ {buildLayoutConfigForThumbTexture()}
 , hoverTexture_{TextureLibrary::instance().get("button_hover")}
@@ -78,77 +205,89 @@ SliderBase<SliderSpec>::SliderBase()
 {
     enableFocus();
 
-    track_.setTexture(TextureLibrary::instance().get("slider_track"));
-    track_.setSize(sf::Vector2f{TRACK_THICKNESS, TRACK_THICKNESS});
+    track_.setTexture(TextureLibrary::instance().get(RenderingPolicy::getTrackTextureName()));
 
     thumb_.setTexture(normalTexture_);
-    thumb_.setSize(sf::Vector2f{THUMB_THICKNESS, THUMB_THICKNESS});
-    thumb_.setOrigin(THUMB_THICKNESS / 2.f, THUMB_THICKNESS / 2.f);
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::onRender(sf::RenderTexture& renderTexture)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(track_);
     renderTexture.draw(thumb_);
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::onValueChange(std::function<void(float)> onValueChangeCallback)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::onValueChange(std::function<void(float)> onValueChangeCallback)
 {
     onValueChange_ = onValueChangeCallback;
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::setRange(const float min, const float max)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::setRange(const float min, const float max)
 {
     min_ = min;
     max_ = max;
-    value_ = std::clamp(value_, min_, max_);
-    updateTextureGeneral();
+    setValue(getValue());
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::setValue(const float value)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::setValue(const float value)
 {
     value_ = std::clamp(value, min_, max_);
-    updateTextureGeneral();
+    updateTexture();
     if (onValueChange_) onValueChange_(value_);
 }
 
-template <typename SliderSpec>
-float SliderBase<SliderSpec>::getValue() const
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+float SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::getValue() const
 {
     return value_;
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::setStep(const float step)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::setStep(const float step)
 {
     step_ = step;
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::onSizeChange()
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::increase()
 {
-    track_.setSize(static_cast<SliderSpec*>(this)->getTrackSize());
-    updateTextureGeneral();
+    setValue(getValue() + step_);
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::onPositionChange()
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::decrease()
 {
-    updateTextureGeneral();
+    setValue(getValue() - step_);
 }
 
-template <typename SliderSpec>
-float SliderBase<SliderSpec>::normalizeValue()
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::onSizeChange()
+{
+    track_.setSize(RenderingPolicy::getTrackSize(getSize()));
+
+    auto thumbSize = RenderingPolicy::getThumbSize(getSize());
+    thumb_.setSize(thumbSize);
+    thumb_.setOrigin(thumbSize / 2.f);
+    updateTexture();
+}
+
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::onPositionChange()
+{
+    updateTexture();
+}
+
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+float SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::normalizeValue()
 {
     return (value_ - min_) / (max_ - min_);
 }
 
-template <typename SliderSpec>
-EventStatus SliderBase<SliderSpec>::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -169,15 +308,15 @@ EventStatus SliderBase<SliderSpec>::on(const event::KeyboardKeyReleased& keyboar
 
     value_ = std::clamp(value_, min_, max_);
 
-    updateTextureGeneral();
+    updateTexture();
 
     if (onValueChange_) onValueChange_(value_);
 
     return EventStatus::Consumed;
 }
 
-template <typename SliderSpec>
-EventStatus SliderBase<SliderSpec>::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftPressed = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
@@ -191,8 +330,8 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseButtonPressed& mouseBut
     return EventStatus::NotConsumed;
 }
 
-template <typename SliderSpec>
-EventStatus SliderBase<SliderSpec>::on(const event::MouseMoved& mouseMovedEvent)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseMoved& mouseMovedEvent)
 {
     auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
@@ -207,13 +346,13 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseMoved& mouseMovedEvent)
         if (isMouseInside and state_ != State::Hover)
         {
             state_ = State::Hover;
-            updateTextureGeneral();
+            updateTexture();
             return EventStatus::Consumed;
         }
         else if (not isMouseInside and state_ == State::Hover)
         {
             state_ = State::Idle;
-            updateTextureGeneral();
+            updateTexture();
             return EventStatus::Consumed;
         }
     }
@@ -221,8 +360,8 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseMoved& mouseMovedEvent)
     return EventStatus::NotConsumed;
 }
 
-template <typename SliderSpec>
-EventStatus SliderBase<SliderSpec>::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
@@ -236,17 +375,19 @@ EventStatus SliderBase<SliderSpec>::on(const event::MouseButtonReleased& mouseBu
     return EventStatus::NotConsumed;
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::processMovement(sf::Vector2f& mousePosition)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::processMovement(sf::Vector2f& mousePosition)
 {
-    value_ = static_cast<SliderSpec*>(this)->translateMousePositionToThumbValue(mousePosition);
+    value_ = MouseHandlingPolicy::translatePositionToThumbValue(mousePosition, getGlobalPosition(), getSize(),
+        track_.getSize(), min_, max_, step_);
+
     focus();
-    updateTextureGeneral();
+    updateTexture();
     if (onValueChange_) onValueChange_(value_);
 }
 
-template <typename SliderSpec>
-void SliderBase<SliderSpec>::updateTextureGeneral()
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::updateTexture()
 {
     switch(state_)
     {
@@ -275,51 +416,28 @@ void SliderBase<SliderSpec>::updateTextureGeneral()
             break;
     }
 
+
+    track_.setPosition(RenderingPolicy::getTrackPosition(getGlobalPosition(), getSize()));
+
     static_cast<SliderSpec*>(this)->updateTextureSpecific();
 }
 
-template <typename SliderSpec>
-EventStatus SliderBase<SliderSpec>::on(const event::FocusLost&)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(const event::FocusLost&)
 {
-    updateTextureGeneral();
+    updateTexture();
     return EventStatus::Consumed;
 }
 
-template <typename SliderSpec>
-EventStatus SliderBase<SliderSpec>::on(const event::FocusGained&)
+template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingPolicy>
+EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(const event::FocusGained&)
 {
-    updateTextureGeneral();
+    updateTexture();
     return EventStatus::Consumed;
-}
-
-float HorizontalSlider::translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const
-{
-    auto trackPositionOffset = sf::Vector2f{BOUNDS_THICKNESS, getSize().y / 2.f - TRACK_THICKNESS / 2.f};
-    auto trackSize = track_.getSize();
-    auto thumbXPositionOffset = mousePosition.x - getGlobalPosition().x - trackPositionOffset.x;
-
-    // Calculate screen step size
-    float stepSize = trackSize.x  / (max_ - min_) * step_;
-
-    // Calculate the nearest step by rounding instead of truncating
-    float stepAlignedThumbXPosition = std::round(thumbXPositionOffset / stepSize) * stepSize;
-    // Normalize to 0.f to 1.f range
-    float normalizedThumbXPosition = stepAlignedThumbXPosition / trackSize.x;
-    // Map to set range
-    float rangeMappedThumbXPosition = (max_ - min_) * normalizedThumbXPosition + min_;   
-
-    return std::clamp(rangeMappedThumbXPosition, min_, max_);
-}
-
-sf::Vector2f HorizontalSlider::getTrackSize()
-{
-    return sf::Vector2f{getSize().x - BOUNDS_THICKNESS * 2.f, TRACK_THICKNESS};
 }
 
 void HorizontalSlider::updateTextureSpecific()
 {
-    auto trackPositionOffset = sf::Vector2f{BOUNDS_THICKNESS, getSize().y / 2.f - TRACK_THICKNESS / 2.f};
-    track_.setPosition(getGlobalPosition() + trackPositionOffset);
     auto trackSize = track_.getSize();
 
     auto thumbXPositionOffset = normalizeValue() * (trackSize.x) + BOUNDS_THICKNESS;
@@ -329,35 +447,8 @@ void HorizontalSlider::updateTextureSpecific()
     thumb_.setPosition(getGlobalPosition() + thumbPositionOffset);
 }
 
-float VerticalSlider::translateMousePositionToThumbValue(const sf::Vector2f& mousePosition) const
-{
-    auto trackPositionOffset = sf::Vector2f{getSize().x / 2.f - TRACK_THICKNESS / 2.f, BOUNDS_THICKNESS};
-    auto trackSize = track_.getSize();
-    auto thumbYPositionOffset =  getGlobalPosition().y + trackSize.y - mousePosition.y + trackPositionOffset.y;
-
-    float stepSize = trackSize.y  / (max_ - min_) * step_;
-
-    // Calculate the nearest step by rounding instead of truncating
-    float stepAlignedThumbYPosition = std::round(thumbYPositionOffset / stepSize) * stepSize;
-
-    // Normalize to 0.f to 1.f range
-    float normalizedThumbYPosition = stepAlignedThumbYPosition / trackSize.y;
-
-    // Map to set range
-    float rangeMappedThumbYPosition = (max_ - min_) * normalizedThumbYPosition + min_;
-
-    return std::clamp(rangeMappedThumbYPosition, min_, max_);
-}
-
-sf::Vector2f VerticalSlider::getTrackSize()
-{
-    return sf::Vector2f{TRACK_THICKNESS, getSize().y - BOUNDS_THICKNESS * 2.f};
-}
-
 void VerticalSlider::updateTextureSpecific()
 {
-    auto trackPositionOffset = sf::Vector2f{getSize().x / 2.f - TRACK_THICKNESS / 2.f, BOUNDS_THICKNESS};
-    track_.setPosition(getGlobalPosition() + trackPositionOffset);
     auto trackSize = track_.getSize();
 
     auto thumbXPositionOffset = getSize().x / 2.f;
@@ -377,7 +468,41 @@ std::unique_ptr<VerticalSlider> VerticalSlider::create()
     return std::unique_ptr<VerticalSlider>{new VerticalSlider{}};
 }
 
-template class SliderBase<VerticalSlider>;
-template class SliderBase<HorizontalSlider>;
+std::unique_ptr<HorizontalThickSlider> HorizontalThickSlider::create()
+{
+    return std::unique_ptr<HorizontalThickSlider>{new HorizontalThickSlider{}};
+}
+
+std::unique_ptr<VerticalThickSlider> VerticalThickSlider::create()
+{
+    return std::unique_ptr<VerticalThickSlider>{new VerticalThickSlider{}};
+}
+
+void HorizontalThickSlider::updateTextureSpecific()
+{
+    auto trackSize = track_.getSize();
+
+    auto thumbXPositionOffset = normalizeValue() * (trackSize.x);
+    auto thumbYPositionOffset = getSize().y / 2.f;
+    
+    auto thumbPositionOffset = sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
+    thumb_.setPosition(getGlobalPosition() + thumbPositionOffset);
+}
+
+void VerticalThickSlider::updateTextureSpecific()
+{
+    auto trackSize = track_.getSize();
+
+    auto thumbXPositionOffset = getSize().x / 2.f;
+    auto thumbYPositionOffset = (1.f - normalizeValue()) * (trackSize.y) + BOUNDS_THICKNESS;
+    
+    auto thumbPositionOffset = sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
+    thumb_.setPosition(getGlobalPosition() + thumbPositionOffset);
+}
+
+template class SliderBase<HorizontalSlider, HorizontalMousePolicy, HorizontalThinPolicy>;
+template class SliderBase<VerticalSlider, VerticalMousePolicy, VerticalThinPolicy>;
+template class SliderBase<HorizontalThickSlider, HorizontalMousePolicy, HorizontalThickPolicy>;
+template class SliderBase<VerticalThickSlider, VerticalMousePolicy, VerticalThickPolicy>;
 
 }  // namespace gui
