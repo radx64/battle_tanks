@@ -33,7 +33,7 @@ sf::Vector2f HorizontalThinRenderingPolicy::getThumbPosition(const sf::Vector2f&
     const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue)
 {
     UNUSED(thumbSize);
-    auto thumbXPositionOffset = normalizedValue * trackSize.x + BOUNDS_THICKNESS;
+    auto thumbXPositionOffset = normalizedValue * (trackSize.x - thumbSize.x) + thumbSize.x;
     auto thumbYPositionOffset = sliderSize.y / 2.f;
 
     return sliderPosition + sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
