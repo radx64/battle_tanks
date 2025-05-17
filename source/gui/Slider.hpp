@@ -78,15 +78,15 @@ protected:
 class HorizontalMousePolicy
 {
 public:
-    static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const float min, const float max, const float step, const sf::Vector2f& thumbSize, const sf::Vector2f& trackPosition);
+    static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& trackPosition,
+    const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float min, const float max, const float step);
 };
 
 class VerticalMousePolicy
 {
 public:
-    static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const float min, const float max, const float step, const sf::Vector2f& thumbSize, const sf::Vector2f& trackPosition);
+    static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& trackPosition,
+    const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float min, const float max, const float step);
 };
 
 class HorizontalThinPolicy
@@ -97,6 +97,8 @@ public:
     static std::string getTrackTextureName();
 
     static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+    static sf::Vector2f getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+        const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue);
 };
 
 class VerticalThinPolicy
@@ -107,6 +109,8 @@ public:
     static std::string getTrackTextureName();
 
     static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+    static sf::Vector2f getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+        const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue);
 };
 
 class HorizontalThickPolicy
@@ -117,6 +121,8 @@ public:
     static std::string getTrackTextureName();
 
     static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+    static sf::Vector2f getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+        const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue);
 };
 
 class VerticalThickPolicy
@@ -127,34 +133,32 @@ public:
     static std::string getTrackTextureName();
 
     static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize);
+    static sf::Vector2f getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
+        const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue);
 };
 
 class HorizontalSlider : public SliderBase<HorizontalSlider, HorizontalMousePolicy, HorizontalThinPolicy>
 {
 public:
     static std::unique_ptr<HorizontalSlider> create();
-    void updateTextureSpecific();
 };
 
 class VerticalSlider : public SliderBase<VerticalSlider, VerticalMousePolicy, VerticalThinPolicy>
 {
 public:
     static std::unique_ptr<VerticalSlider> create();
-    void updateTextureSpecific();
 };
 
 class HorizontalThickSlider : public SliderBase<HorizontalThickSlider, HorizontalMousePolicy, HorizontalThickPolicy>
 {
 public:
     static std::unique_ptr<HorizontalThickSlider> create();
-    void updateTextureSpecific();
 };
 
 class VerticalThickSlider : public SliderBase<VerticalThickSlider, VerticalMousePolicy, VerticalThickPolicy>
 {
 public:
     static std::unique_ptr<VerticalThickSlider> create();
-    void updateTextureSpecific();
 };
 
 

@@ -27,7 +27,7 @@ protected:
         auto layout = gui::layout::Vertical::create();
         layout->setPadding(0.f);
 
-        auto slider = gui::VerticalSlider::create();
+        auto slider = gui::VerticalThickSlider::create();
         auto upButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_up"));
         auto downButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_down"));
 
