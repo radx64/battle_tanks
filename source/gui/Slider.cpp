@@ -62,18 +62,23 @@ gui::FramedSprite::LayoutConfig buildLayoutConfigForThumbTexture()
 }
 
 float HorizontalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const float min, const float max, const float step)
+    const sf::Vector2f& trackSize, const float min, const float max, const float step, const sf::Vector2f& thumbSize, const sf::Vector2f& trackPosition)
 {
-    auto trackPositionOffset = sf::Vector2f{BOUNDS_THICKNESS, sliderSize.y / 2.f - THIN_TRACK_THICKNESS / 2.f};
-    auto thumbXPositionOffset = mousePosition.x - sliderPosition.x - trackPositionOffset.x;
+    (void) sliderSize;
+    (void) sliderPosition;
+    (void) trackPosition;
+
+    auto availableTruckRun = trackSize.x - thumbSize.x;
+
+    auto thumbXPositionOffset = mousePosition.x  - trackPosition.x - thumbSize.x / 2.f;
 
     // Calculate screen step size
-    float stepSize = trackSize.x  / (max - min) * step;
+    float stepSize = availableTruckRun  / (max - min) * step;
 
     // Calculate the nearest step by rounding instead of truncating
     float stepAlignedThumbXPosition = std::round(thumbXPositionOffset / stepSize) * stepSize;
     // Normalize to 0.f to 1.f range
-    float normalizedThumbXPosition = stepAlignedThumbXPosition / trackSize.x;
+    float normalizedThumbXPosition = stepAlignedThumbXPosition / (availableTruckRun);
     // Map to set range
     float rangeMappedThumbXPosition = (max - min) * normalizedThumbXPosition + min;
 
@@ -81,8 +86,10 @@ float HorizontalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& m
 }
 
 float VerticalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const float min, const float max, const float step)
+    const sf::Vector2f& trackSize, const float min, const float max, const float step,  const sf::Vector2f& thumbSize, const sf::Vector2f& trackPosition)
 {
+    (void) thumbSize;
+    (void) trackPosition;
     auto trackPositionOffset = sf::Vector2f{sliderSize.x / 2.f - THIN_TRACK_THICKNESS / 2.f, BOUNDS_THICKNESS};
     auto thumbYPositionOffset =  sliderPosition.y + trackSize.y - mousePosition.y + trackPositionOffset.y;
 
@@ -163,8 +170,6 @@ sf::Vector2f HorizontalThickPolicy::getThumbSize(const sf::Vector2f& sliderSize)
 {
     return sf::Vector2f{THUMB_THICKNESS, sliderSize.y};
 }
-
-
 
 sf::Vector2f VerticalThickPolicy::getTrackSize(const sf::Vector2f& silderSize)
 {
@@ -379,7 +384,7 @@ template <typename SliderSpec, typename MouseHandlingPolicy, typename RenderingP
 void SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::processMovement(sf::Vector2f& mousePosition)
 {
     value_ = MouseHandlingPolicy::translatePositionToThumbValue(mousePosition, getGlobalPosition(), getSize(),
-        track_.getSize(), min_, max_, step_);
+        track_.getSize(), min_, max_, step_, thumb_.getSize(), track_.getPosition());
 
     focus();
     updateTexture();
@@ -439,8 +444,10 @@ EventStatus SliderBase<SliderSpec, MouseHandlingPolicy, RenderingPolicy>::on(con
 void HorizontalSlider::updateTextureSpecific()
 {
     auto trackSize = track_.getSize();
+    //auto thumbSize = thumb_.getSize();
 
-    auto thumbXPositionOffset = normalizeValue() * (trackSize.x) + BOUNDS_THICKNESS;
+    auto thumbXPositionOffset = normalizeValue() * (trackSize.x);
+
     auto thumbYPositionOffset = getSize().y / 2.f;
     
     auto thumbPositionOffset = sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
@@ -481,8 +488,10 @@ std::unique_ptr<VerticalThickSlider> VerticalThickSlider::create()
 void HorizontalThickSlider::updateTextureSpecific()
 {
     auto trackSize = track_.getSize();
+    auto thumbSize = thumb_.getSize();
 
-    auto thumbXPositionOffset = normalizeValue() * (trackSize.x);
+    auto thumbXPositionOffset = normalizeValue() * (trackSize.x - thumbSize.x) + thumbSize.x / 2.f;
+
     auto thumbYPositionOffset = getSize().y / 2.f;
     
     auto thumbPositionOffset = sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};

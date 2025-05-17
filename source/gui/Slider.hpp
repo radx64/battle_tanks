@@ -79,14 +79,14 @@ class HorizontalMousePolicy
 {
 public:
     static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const float min, const float max, const float step);
+    const sf::Vector2f& trackSize, const float min, const float max, const float step, const sf::Vector2f& thumbSize, const sf::Vector2f& trackPosition);
 };
 
 class VerticalMousePolicy
 {
 public:
     static float translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const float min, const float max, const float step);
+    const sf::Vector2f& trackSize, const float min, const float max, const float step, const sf::Vector2f& thumbSize, const sf::Vector2f& trackPosition);
 };
 
 class HorizontalThinPolicy
