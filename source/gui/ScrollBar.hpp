@@ -5,7 +5,7 @@
 #include "gui/Component.hpp"
 
 #include "gui/Button.hpp"
-#include "gui/Slider.hpp"
+#include "gui/slider/VerticalThick.hpp"
 #include "gui/TextureLibrary.hpp"
 
 #include "gui/layout/Vertical.hpp"
@@ -27,7 +27,7 @@ protected:
         auto layout = gui::layout::Vertical::create();
         layout->setPadding(0.f);
 
-        auto slider = gui::VerticalThickSlider::create();
+        auto slider = gui::slider::VerticalThick::create();
         auto upButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_up"));
         auto downButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_down"));
 

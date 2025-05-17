@@ -27,12 +27,15 @@
 #include "gui/RadioButton.hpp"
 #include "gui/RadioButtonGroup.hpp"
 #include "gui/ScrollBar.hpp"
-#include "gui/Slider.hpp"
+#include "gui/slider/Horizontal.hpp"
+#include "gui/slider/Vertical.hpp"
+#include "gui/slider/HorizontalThick.hpp"
+#include "gui/slider/VerticalThick.hpp"
+
 #include "gui/TextureLibrary.hpp"
 #include "gui/Window.hpp"
 
 using namespace std::literals;
-
 namespace gui_sandbox
 {
 Application::Application()
@@ -555,7 +558,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(hProgressBar));
 
-        auto hSlider = gui::HorizontalSlider::create();
+        auto hSlider = gui::slider::Horizontal::create();
         hSlider->onValueChange([hProgressBarPtr](float value)
         {
             hProgressBarPtr->setValue(value);
@@ -568,7 +571,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(hProgressBar2));
 
-        auto hSlider2 = gui::HorizontalSlider::create();
+        auto hSlider2 = gui::slider::Horizontal::create();
         hSlider2->setRange(25.f, 75.f);
         hSlider2->setStep(0.25f);
         hSlider2->onValueChange([hProgressBarPtr2](float value)
@@ -583,7 +586,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(vProgressBar));
 
-        auto vSlider = gui::VerticalSlider::create();
+        auto vSlider = gui::slider::Vertical::create();
         vSlider->onValueChange([vProgressBarPtr](float value)
         {
             vProgressBarPtr->setValue(value);
@@ -597,7 +600,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(vProgressBar2));
 
-        auto vSlider2 = gui::VerticalSlider::create();
+        auto vSlider2 = gui::slider::Vertical::create();
         vSlider2->setRange(25.f, 75.f);
         vSlider2->setStep(0.25f);
         vSlider2->onValueChange([vProgressBarPtr2](float value)
@@ -613,7 +616,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(hProgressBar3));
 
-        auto hSlider3 = gui::HorizontalThickSlider::create();
+        auto hSlider3 = gui::slider::HorizontalThick::create();
         hSlider3->onValueChange([hProgressBar3Ptr](float value)
         {
             hProgressBar3Ptr->setValue(value);
@@ -626,7 +629,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(vProgressBar3));
 
-        auto vSlider3 = gui::VerticalThickSlider::create();
+        auto vSlider3 = gui::slider::VerticalThick::create();
         vSlider3->onValueChange([vProgressBar3Ptr](float value)
         {
             vProgressBar3Ptr->setValue(value);
@@ -648,7 +651,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Scroll scroll scroll you boat...");
 
-        auto layout = gui::layout::Inset::create(gui::layout::Constraint::Percent(50.f));
+        auto layout = gui::layout::Inset::create(gui::layout::Constraint::Percent(20.f));
 
         auto verticalScrollBar = gui::VerticalScrollBar::create();
         layout->addChild(std::move(verticalScrollBar));
