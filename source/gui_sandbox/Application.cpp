@@ -658,15 +658,26 @@ void Application::onInit()
         layout->setColumnSize(1, gui::layout::Constraint::Pixels(40.f));
         layout->setRowSize(1, gui::layout::Constraint::Pixels(40.f));
 
+        auto text = gui::Label::create("Text sample!");
+
         auto verticalScrollBar = gui::VerticalScrollBar::create();
         verticalScrollBar->setThumbRatio(0.05f);
+        verticalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
+            text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * scroll_ptr->getSize().y});
+            logger_.info(fmt::format("VScrolled to {:.2f}", value));});
         layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
         auto horizontalScrollBar = gui::HorizontalScrollBar::create();
         horizontalScrollBar->setThumbRatio(0.2f);
+        horizontalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
+            text_ptr->setPosition(sf::Vector2f{value * scroll_ptr->getSize().x, text_ptr->getPosition().y});
+            logger_.info(fmt::format("HScrolled to {:.2f}", value));});
         layout->setElementAt(0, 1, std::move(horizontalScrollBar));
 
         window->addChild(std::move(layout));
+
+        window->addChild(std::move(text));
+
         windowManager_.addWindow(std::move(window));
     });
 

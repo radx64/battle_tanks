@@ -13,7 +13,30 @@
 
 namespace gui
 {
-class VerticalScrollBar : public gui::Component
+
+class ScrollBarBase : public gui::Component
+{
+public:
+    void onValueChange(std::function<void(float)> onChangeCallback)
+    {
+        onChangeCallback_ = onChangeCallback;
+    }
+
+protected:
+    ScrollBarBase()
+    : layout_ptr_{nullptr}
+    { }
+    
+    void notifyChange(const float value)
+    {
+        if (onChangeCallback_) onChangeCallback_(value);
+    }
+
+    Component* layout_ptr_;
+    std::function<void(float)> onChangeCallback_;
+};
+
+class VerticalScrollBar : public ScrollBarBase
 {
 public:
     static std::unique_ptr<gui::VerticalScrollBar> create() 
@@ -28,7 +51,6 @@ public:
 
 protected:
     VerticalScrollBar()
-    : layout_ptr_{nullptr}
     {
         auto layout = gui::layout::Vertical::create();
         layout->setPadding(0.f);
@@ -40,6 +62,7 @@ protected:
         slider->setRange(0.f, 1.f);
         slider->setStep(0.1f);
         slider->setValue(1.f);
+        slider->onValueChange([this](const float value) {notifyChange(value);});
 
         upButton->onClick([sliderPtr = slider.get()]{sliderPtr->increase();});
         downButton->onClick([sliderPtr = slider.get()]{sliderPtr->decrease();});
@@ -72,11 +95,10 @@ protected:
         (void)renderTexture;
     }
 
-    Component* layout_ptr_;
     gui::slider::VerticalThick* slider_ptr_;
 };
 
-class HorizontalScrollBar : public gui::Component
+class HorizontalScrollBar : public ScrollBarBase
 {
 public:
     static std::unique_ptr<gui::HorizontalScrollBar> create() 
@@ -91,7 +113,6 @@ public:
 
 protected:
     HorizontalScrollBar()
-    : layout_ptr_{nullptr}
     {
         auto layout = gui::layout::Horizontal::create();
         layout->setPadding(0.f); 
@@ -103,6 +124,7 @@ protected:
         slider->setRange(0.f, 1.f);
         slider->setStep(0.1f);
         slider->setValue(1.f);
+        slider->onValueChange([this](const float value) {notifyChange(value);});
 
         leftButton->onClick([sliderPtr = slider.get()]{sliderPtr->decrease();});
         rightButton->onClick([sliderPtr = slider.get()]{sliderPtr->increase();});
@@ -136,7 +158,6 @@ protected:
         (void)renderTexture;
     }
 
-    Component* layout_ptr_;
     gui::slider::HorizontalThick* slider_ptr_;
 
     float ratio_;
