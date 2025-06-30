@@ -663,16 +663,16 @@ void Application::onInit()
 
         auto verticalScrollBar = gui::scrollbar::Vertical::create();
         verticalScrollBar->setThumbRatio(0.05f);
-        verticalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
-            text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * scroll_ptr->getSize().y});
-            logger_.info(fmt::format("VScrolled to {:.2f}", value));});
+        verticalScrollBar->onValueChange([text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
+            text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * (scroll_ptr->getSize().y -  text_ptr->getTextBounds().height)});
+        });
         layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
         auto horizontalScrollBar = gui::scrollbar::Horizontal::create();
         horizontalScrollBar->setThumbRatio(0.2f);
-        horizontalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
-            text_ptr->setPosition(sf::Vector2f{value * scroll_ptr->getSize().x, text_ptr->getPosition().y});
-            logger_.info(fmt::format("HScrolled to {:.2f}", value));});
+        horizontalScrollBar->onValueChange([text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
+            text_ptr->setPosition(sf::Vector2f{value * (scroll_ptr->getSize().x - text_ptr->getTextBounds().width), text_ptr->getPosition().y});
+        });
         layout->setElementAt(0, 1, std::move(horizontalScrollBar));
 
         window->addChild(std::move(layout));

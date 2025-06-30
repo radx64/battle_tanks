@@ -19,6 +19,7 @@ public:
     void setText(const std::string_view& text);
     void setAlignment(const gui::Alignment& alignment);
     void setFontColor(const sf::Color& color);
+    sf::FloatRect getTextBounds() const;
 
 protected:
     Label(const std::string_view& text);

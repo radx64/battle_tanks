@@ -31,6 +31,11 @@ void Label::setFontColor(const sf::Color& color)
     text_.setFillColor(color);
 }
 
+sf::FloatRect Label::getTextBounds() const
+{
+    return text_.getTextBounds();
+}
+
 void Label::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(text_);
