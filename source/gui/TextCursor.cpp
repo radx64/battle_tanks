@@ -9,7 +9,7 @@
 #include "gui/StyleSheet.hpp"
 
 constexpr float CURSOR_WIDTH = 4.f;
-constexpr float CURSOR_EXTRA_HEIGHT = 5.f;
+constexpr float CURSOR_EXTRA_HEIGHT = 10.f;
 
 using namespace std::literals;
 

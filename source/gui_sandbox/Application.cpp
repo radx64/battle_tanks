@@ -26,7 +26,8 @@
 #include "gui/ProgressBar.hpp"
 #include "gui/RadioButton.hpp"
 #include "gui/RadioButtonGroup.hpp"
-#include "gui/ScrollBar.hpp"
+#include "gui/scrollbar/Horizontal.hpp"
+#include "gui/scrollbar/Vertical.hpp"
 #include "gui/slider/Horizontal.hpp"
 #include "gui/slider/Vertical.hpp"
 #include "gui/slider/HorizontalThick.hpp"
@@ -660,14 +661,14 @@ void Application::onInit()
 
         auto text = gui::Label::create("Text sample!");
 
-        auto verticalScrollBar = gui::VerticalScrollBar::create();
+        auto verticalScrollBar = gui::scrollbar::Vertical::create();
         verticalScrollBar->setThumbRatio(0.05f);
         verticalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
             text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * scroll_ptr->getSize().y});
             logger_.info(fmt::format("VScrolled to {:.2f}", value));});
         layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
-        auto horizontalScrollBar = gui::HorizontalScrollBar::create();
+        auto horizontalScrollBar = gui::scrollbar::Horizontal::create();
         horizontalScrollBar->setThumbRatio(0.2f);
         horizontalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
             text_ptr->setPosition(sf::Vector2f{value * scroll_ptr->getSize().x, text_ptr->getPosition().y});
@@ -675,9 +676,7 @@ void Application::onInit()
         layout->setElementAt(0, 1, std::move(horizontalScrollBar));
 
         window->addChild(std::move(layout));
-
         window->addChild(std::move(text));
-
         windowManager_.addWindow(std::move(window));
     });
 

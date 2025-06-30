@@ -51,6 +51,9 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButton.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButtonGroup.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Vertical.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Selection.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
