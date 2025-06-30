@@ -32,7 +32,7 @@ std::string VerticalThinRenderingPolicy::getTrackTextureName()
     return std::string{"slider_track"};
 }
 
-sf::Vector2f VerticalThinRenderingPolicy::getThumbSize(const sf::Vector2f&)
+sf::Vector2f VerticalThinRenderingPolicy::getThumbSize(const sf::Vector2f&, const float)
 {
     return sf::Vector2f{THUMB_THICKNESS, THUMB_THICKNESS};
 }

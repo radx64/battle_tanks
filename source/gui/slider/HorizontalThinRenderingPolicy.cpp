@@ -24,7 +24,7 @@ std::string HorizontalThinRenderingPolicy::getTrackTextureName()
     return std::string{"slider_track"};
 }
 
-sf::Vector2f HorizontalThinRenderingPolicy::getThumbSize(const sf::Vector2f&)
+sf::Vector2f HorizontalThinRenderingPolicy::getThumbSize(const sf::Vector2f&, const float)
 {
     return sf::Vector2f{THUMB_THICKNESS, THUMB_THICKNESS};
 }
@@ -32,7 +32,6 @@ sf::Vector2f HorizontalThinRenderingPolicy::getThumbSize(const sf::Vector2f&)
 sf::Vector2f HorizontalThinRenderingPolicy::getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
     const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue)
 {
-    UNUSED(thumbSize);
     auto thumbXPositionOffset = normalizedValue * (trackSize.x - thumbSize.x) + thumbSize.x;
     auto thumbYPositionOffset = sliderSize.y / 2.f;
 

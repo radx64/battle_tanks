@@ -21,9 +21,14 @@ public:
         return std::unique_ptr<VerticalScrollBar>(new VerticalScrollBar{});
     }
 
+    void setThumbRatio(const float ratio)
+    {
+        slider_ptr_->setThumbRatio(std::min(ratio, 1.0f));
+    }
+
 protected:
     VerticalScrollBar()
-    : layout_ptr{nullptr}
+    : layout_ptr_{nullptr}
     {
         auto layout = gui::layout::Vertical::create();
         layout->setPadding(0.f);
@@ -39,6 +44,8 @@ protected:
         upButton->onClick([sliderPtr = slider.get()]{sliderPtr->increase();});
         downButton->onClick([sliderPtr = slider.get()]{sliderPtr->decrease();});
 
+        slider_ptr_ = slider.get();
+
         layout->addChild(std::move(upButton));
         layout->addChild(std::move(slider));
         layout->addChild(std::move(downButton));
@@ -46,14 +53,14 @@ protected:
         layout->setRowSize(0, layout::Constraint::Pixels(32.f));
         layout->setRowSize(2, layout::Constraint::Pixels(32.f));   
 
-        layout_ptr  = layout.get();
+        layout_ptr_  = layout.get();
 
         addChild(std::move(layout));
     }
 
     void onSizeChange() override
     {
-        layout_ptr->setSize(getSize());
+        layout_ptr_->setSize(getSize());
     }
     void onPositionChange() override
     {
@@ -65,7 +72,8 @@ protected:
         (void)renderTexture;
     }
 
-    Component* layout_ptr;
+    Component* layout_ptr_;
+    gui::slider::VerticalThick* slider_ptr_;
 };
 
 class HorizontalScrollBar : public gui::Component
@@ -76,9 +84,14 @@ public:
         return std::unique_ptr<HorizontalScrollBar>(new HorizontalScrollBar{});
     }
 
+    void setThumbRatio(const float ratio)
+    {
+        slider_ptr_->setThumbRatio(std::min(ratio, 1.0f));
+    }
+
 protected:
     HorizontalScrollBar()
-    : layout_ptr{nullptr}
+    : layout_ptr_{nullptr}
     {
         auto layout = gui::layout::Horizontal::create();
         layout->setPadding(0.f); 
@@ -94,6 +107,8 @@ protected:
         leftButton->onClick([sliderPtr = slider.get()]{sliderPtr->decrease();});
         rightButton->onClick([sliderPtr = slider.get()]{sliderPtr->increase();});
 
+        slider_ptr_ = slider.get();
+
         layout->addChild(std::move(leftButton));
         layout->addChild(std::move(slider));
         layout->addChild(std::move(rightButton));
@@ -101,15 +116,16 @@ protected:
         layout->setColumnSize(0, layout::Constraint::Pixels(32.f));
         layout->setColumnSize(2, layout::Constraint::Pixels(32.f));   
 
-        layout_ptr  = layout.get();
+        layout_ptr_ = layout.get();
 
         addChild(std::move(layout));
     }
 
     void onSizeChange() override
     {
-        layout_ptr->setSize(getSize());
+        layout_ptr_->setSize(getSize());
     }
+
     void onPositionChange() override
     {
 
@@ -120,7 +136,10 @@ protected:
         (void)renderTexture;
     }
 
-    Component* layout_ptr;
+    Component* layout_ptr_;
+    gui::slider::HorizontalThick* slider_ptr_;
+
+    float ratio_;
 };
 
 }

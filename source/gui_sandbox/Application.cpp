@@ -659,9 +659,11 @@ void Application::onInit()
         layout->setRowSize(1, gui::layout::Constraint::Pixels(40.f));
 
         auto verticalScrollBar = gui::VerticalScrollBar::create();
+        verticalScrollBar->setThumbRatio(0.05f);
         layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
         auto horizontalScrollBar = gui::HorizontalScrollBar::create();
+        horizontalScrollBar->setThumbRatio(0.2f);
         layout->setElementAt(0, 1, std::move(horizontalScrollBar));
 
         window->addChild(std::move(layout));

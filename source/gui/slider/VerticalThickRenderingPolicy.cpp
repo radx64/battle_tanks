@@ -22,16 +22,23 @@ sf::Vector2f VerticalThickRenderingPolicy::getTrackPosition(const sf::Vector2f& 
     return sliderPosition;
 }   
 
-sf::Vector2f VerticalThickRenderingPolicy::getThumbSize(const sf::Vector2f& sliderSize)
+sf::Vector2f VerticalThickRenderingPolicy::getThumbSize(const sf::Vector2f& sliderSize, const float ratio)
 {
-    return sf::Vector2f{sliderSize.x, THUMB_THICKNESS};
+    return sf::Vector2f{sliderSize.x, sliderSize.y * ratio};
 }
 
 sf::Vector2f VerticalThickRenderingPolicy::getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
     const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue)
 {
     auto thumbXPositionOffset = sliderSize.x / 2.f;
-    auto thumbYPositionOffset = (1.f - normalizedValue) * (trackSize.y - thumbSize.y) + thumbSize.y / 2.f;
+
+    auto thumbYPositionOffset =  thumbSize.y / 2.f;
+
+    if ((trackSize.y - thumbSize.y) > 0.f)
+    {
+        thumbYPositionOffset = (1.f - normalizedValue) * (trackSize.y - thumbSize.y) + thumbSize.y / 2.f;
+    }
+
 
     return sliderPosition + sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
 }

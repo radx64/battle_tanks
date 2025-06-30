@@ -30,12 +30,14 @@ public:
     void increase();
     void decrease();
 
+    void setThumbRatio(const float ratio);
+
 protected:
     enum class State
     {
         Idle,
         Dragging,
-        Hover   // TODo add disabled in the future
+        Hover   // TODO add disabled in the future
     };
 
     void onRender(sf::RenderTexture& renderTexture) override;
@@ -70,6 +72,7 @@ protected:
     float step_;
     float min_;
     float max_;
+    float thumbRatio_;
     
     std::function<void(float)> onValueChange_;
     State state_;
@@ -77,8 +80,8 @@ protected:
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 Base<MouseHandlingPolicy, RenderingPolicy>::Base()
-: track_ {buildLayoutConfigForTrackTexture()}
-, thumb_ {buildLayoutConfigForThumbTexture()}
+: track_{buildLayoutConfigForTrackTexture()}
+, thumb_{buildLayoutConfigForThumbTexture()}
 , hoverTexture_{TextureLibrary::instance().get("button_hover")}
 , focusTexture_{TextureLibrary::instance().get("button_focus")}
 , normalTexture_{TextureLibrary::instance().get("button_normal")}
@@ -87,6 +90,7 @@ Base<MouseHandlingPolicy, RenderingPolicy>::Base()
 , step_{0.01f}
 , min_{0.0f}
 , max_{1.0f}
+, thumbRatio_{0.2f}
 , onValueChange_{nullptr}
 , state_{State::Idle}
 {
@@ -155,7 +159,7 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::onSizeChange()
 {
     track_.setSize(RenderingPolicy::getTrackSize(getSize()));
 
-    auto thumbSize = RenderingPolicy::getThumbSize(getSize());
+    auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
     thumb_.setSize(thumbSize);
     thumb_.setOrigin(thumbSize / 2.f);
     updateTexture();
@@ -318,6 +322,13 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::FocusGai
 {
     updateTexture();
     return EventStatus::Consumed;
+}
+
+template <typename MouseHandlingPolicy, typename RenderingPolicy>
+void  Base<MouseHandlingPolicy, RenderingPolicy>::setThumbRatio(const float ratio)
+{
+    thumbRatio_ = ratio;
+    setValue(getValue());
 }
 
 }  // namespace gui::slider
