@@ -21,6 +21,8 @@ public:
             {"framedSpriteTest",             concat(texturePath, "framedSpriteTestTex.png")},
             {"arrow_up",                     concat(texturePath, "classic/arrow_up.png")},
             {"arrow_down",                   concat(texturePath, "classic/arrow_down.png")},
+            {"arrow_left",                   concat(texturePath, "classic/arrow_left.png")},
+            {"arrow_right",                  concat(texturePath, "classic/arrow_right.png")},
             {"button_normal",                concat(texturePath, "classic/button.png")},
             {"button_focus",                 concat(texturePath, "classic/button_focus.png")},
             {"button_hover",                 concat(texturePath, "classic/button_hover.png")},

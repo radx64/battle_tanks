@@ -5,6 +5,7 @@
 #include "gui/Component.hpp"
 
 #include "gui/Button.hpp"
+#include "gui/slider/HorizontalThick.hpp"
 #include "gui/slider/VerticalThick.hpp"
 #include "gui/TextureLibrary.hpp"
 
@@ -42,6 +43,9 @@ protected:
         layout->addChild(std::move(slider));
         layout->addChild(std::move(downButton));
 
+        layout->setRowSize(0, layout::Constraint::Pixels(32.f));
+        layout->setRowSize(2, layout::Constraint::Pixels(32.f));   
+
         layout_ptr  = layout.get();
 
         addChild(std::move(layout));
@@ -64,7 +68,59 @@ protected:
     Component* layout_ptr;
 };
 
+class HorizontalScrollBar : public gui::Component
+{
+public:
+    static std::unique_ptr<gui::HorizontalScrollBar> create() 
+    {
+        return std::unique_ptr<HorizontalScrollBar>(new HorizontalScrollBar{});
+    }
 
+protected:
+    HorizontalScrollBar()
+    : layout_ptr{nullptr}
+    {
+        auto layout = gui::layout::Horizontal::create();
+        layout->setPadding(0.f); 
 
+        auto slider = gui::slider::HorizontalThick::create();
+        auto leftButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_left"));
+        auto rightButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_right"));
+
+        slider->setRange(0.f, 1.f);
+        slider->setStep(0.1f);
+        slider->setValue(1.f);
+
+        leftButton->onClick([sliderPtr = slider.get()]{sliderPtr->decrease();});
+        rightButton->onClick([sliderPtr = slider.get()]{sliderPtr->increase();});
+
+        layout->addChild(std::move(leftButton));
+        layout->addChild(std::move(slider));
+        layout->addChild(std::move(rightButton));
+
+        layout->setColumnSize(0, layout::Constraint::Pixels(32.f));
+        layout->setColumnSize(2, layout::Constraint::Pixels(32.f));   
+
+        layout_ptr  = layout.get();
+
+        addChild(std::move(layout));
+    }
+
+    void onSizeChange() override
+    {
+        layout_ptr->setSize(getSize());
+    }
+    void onPositionChange() override
+    {
+
+    }
+
+    void onRender(sf::RenderTexture& renderTexture) override
+    {
+        (void)renderTexture;
+    }
+
+    Component* layout_ptr;
+};
 
 }

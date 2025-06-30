@@ -651,11 +651,18 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Scroll scroll scroll you boat...");
 
-        auto layout = gui::layout::Inset::create(gui::layout::Constraint::Percent(20.f));
+        auto layout = gui::layout::Grid::create(2, 2);
+
+        layout->setHorizontalPadding(10);
+        layout->setVerticalPadding(10);
+        layout->setColumnSize(1, gui::layout::Constraint::Pixels(40.f));
+        layout->setRowSize(1, gui::layout::Constraint::Pixels(40.f));
 
         auto verticalScrollBar = gui::VerticalScrollBar::create();
-        layout->addChild(std::move(verticalScrollBar));
+        layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
+        auto horizontalScrollBar = gui::HorizontalScrollBar::create();
+        layout->setElementAt(0, 1, std::move(horizontalScrollBar));
 
         window->addChild(std::move(layout));
         windowManager_.addWindow(std::move(window));
