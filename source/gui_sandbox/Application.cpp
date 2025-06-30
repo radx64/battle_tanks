@@ -26,12 +26,17 @@
 #include "gui/ProgressBar.hpp"
 #include "gui/RadioButton.hpp"
 #include "gui/RadioButtonGroup.hpp"
-#include "gui/Slider.hpp"
+#include "gui/scrollbar/Horizontal.hpp"
+#include "gui/scrollbar/Vertical.hpp"
+#include "gui/slider/Horizontal.hpp"
+#include "gui/slider/Vertical.hpp"
+#include "gui/slider/HorizontalThick.hpp"
+#include "gui/slider/VerticalThick.hpp"
+
 #include "gui/TextureLibrary.hpp"
 #include "gui/Window.hpp"
 
 using namespace std::literals;
-
 namespace gui_sandbox
 {
 Application::Application()
@@ -547,14 +552,14 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Slidinnn.....");
 
-        auto gridLayout = gui::layout::Grid::create(2,4);
+        auto gridLayout = gui::layout::Grid::create(2,6);
         auto hProgressBar = gui::ProgressBar::create();
         hProgressBar->setRange(0.f, 1.f);
         gui::ProgressBar* hProgressBarPtr = hProgressBar.get();
 
         gridLayout->addChild(std::move(hProgressBar));
 
-        auto hSlider = gui::HorizontalSlider::create();
+        auto hSlider = gui::slider::Horizontal::create();
         hSlider->onValueChange([hProgressBarPtr](float value)
         {
             hProgressBarPtr->setValue(value);
@@ -567,7 +572,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(hProgressBar2));
 
-        auto hSlider2 = gui::HorizontalSlider::create();
+        auto hSlider2 = gui::slider::Horizontal::create();
         hSlider2->setRange(25.f, 75.f);
         hSlider2->setStep(0.25f);
         hSlider2->onValueChange([hProgressBarPtr2](float value)
@@ -582,7 +587,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(vProgressBar));
 
-        auto vSlider = gui::VerticalSlider::create();
+        auto vSlider = gui::slider::Vertical::create();
         vSlider->onValueChange([vProgressBarPtr](float value)
         {
             vProgressBarPtr->setValue(value);
@@ -596,7 +601,7 @@ void Application::onInit()
 
         gridLayout->addChild(std::move(vProgressBar2));
 
-        auto vSlider2 = gui::VerticalSlider::create();
+        auto vSlider2 = gui::slider::Vertical::create();
         vSlider2->setRange(25.f, 75.f);
         vSlider2->setStep(0.25f);
         vSlider2->onValueChange([vProgressBarPtr2](float value)
@@ -606,15 +611,79 @@ void Application::onInit()
         gridLayout->addChild(std::move(vSlider2));
 
 
+        auto hProgressBar3 = gui::ProgressBar::create();
+        hProgressBar3->setRange(0.f, 1.f);
+        gui::ProgressBar* hProgressBar3Ptr = hProgressBar3.get();
+
+        gridLayout->addChild(std::move(hProgressBar3));
+
+        auto hSlider3 = gui::slider::HorizontalThick::create();
+        hSlider3->onValueChange([hProgressBar3Ptr](float value)
+        {
+            hProgressBar3Ptr->setValue(value);
+        });
+        gridLayout->addChild(std::move(hSlider3));
+
+        auto vProgressBar3 = gui::ProgressBar::create();
+        vProgressBar3->setRange(0.f, 1.f);
+        gui::ProgressBar* vProgressBar3Ptr = vProgressBar3.get();
+
+        gridLayout->addChild(std::move(vProgressBar3));
+
+        auto vSlider3 = gui::slider::VerticalThick::create();
+        vSlider3->onValueChange([vProgressBar3Ptr](float value)
+        {
+            vProgressBar3Ptr->setValue(value);
+        });
+        gridLayout->addChild(std::move(vSlider3));
+
         window->addChild(std::move(gridLayout));
         windowManager_.addWindow(std::move(window));
-
     });
 
     windowManager_.mainWindow().addChild(std::move(createSliderWindowButton));
 
+    auto createScrollBarWindowButton = gui::TextButton::create("Scrollbars");
+    createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createScrollBarWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createScrollBarWindowButton->onClick([this](){
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(500.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setTitle("Scroll scroll scroll you boat...");
+
+        auto layout = gui::layout::Grid::create(2, 2);
+
+        layout->setHorizontalPadding(10);
+        layout->setVerticalPadding(10);
+        layout->setColumnSize(1, gui::layout::Constraint::Pixels(40.f));
+        layout->setRowSize(1, gui::layout::Constraint::Pixels(40.f));
+
+        auto text = gui::Label::create("Text sample!");
+
+        auto verticalScrollBar = gui::scrollbar::Vertical::create();
+        verticalScrollBar->setThumbRatio(0.05f);
+        verticalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
+            text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * scroll_ptr->getSize().y});
+            logger_.info(fmt::format("VScrolled to {:.2f}", value));});
+        layout->setElementAt(1, 0, std::move(verticalScrollBar));
+
+        auto horizontalScrollBar = gui::scrollbar::Horizontal::create();
+        horizontalScrollBar->setThumbRatio(0.2f);
+        horizontalScrollBar->onValueChange([this, text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
+            text_ptr->setPosition(sf::Vector2f{value * scroll_ptr->getSize().x, text_ptr->getPosition().y});
+            logger_.info(fmt::format("HScrolled to {:.2f}", value));});
+        layout->setElementAt(0, 1, std::move(horizontalScrollBar));
+
+        window->addChild(std::move(layout));
+        window->addChild(std::move(text));
+        windowManager_.addWindow(std::move(window));
+    });
+
+    windowManager_.mainWindow().addChild(std::move(createScrollBarWindowButton));
+
     auto createCalculatorWindowButton = gui::TextButton::create("Calculator");
-    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
     createCalculatorWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createCalculatorWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();

@@ -36,12 +36,25 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Inset.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/SizeConstraintResolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Vertical.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/HorizontalMousePolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/HorizontalThick.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/HorizontalThickRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/HorizontalThinRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/LayoutBuilder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/Vertical.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalMousePolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalThick.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalThickRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalThinRenderingPolicy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButton.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButtonGroup.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Vertical.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Selection.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Slider.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextCursor.cpp

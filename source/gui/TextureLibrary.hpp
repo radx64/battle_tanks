@@ -19,6 +19,10 @@ public:
         static const std::map<std::string, std::string> assets
         {
             {"framedSpriteTest",             concat(texturePath, "framedSpriteTestTex.png")},
+            {"arrow_up",                     concat(texturePath, "classic/arrow_up.png")},
+            {"arrow_down",                   concat(texturePath, "classic/arrow_down.png")},
+            {"arrow_left",                   concat(texturePath, "classic/arrow_left.png")},
+            {"arrow_right",                  concat(texturePath, "classic/arrow_right.png")},
             {"button_normal",                concat(texturePath, "classic/button.png")},
             {"button_focus",                 concat(texturePath, "classic/button_focus.png")},
             {"button_hover",                 concat(texturePath, "classic/button_hover.png")},
@@ -38,6 +42,7 @@ public:
             {"radiobutton_focus",            concat(texturePath, "classic/radiobutton_focus.png")},
             {"radiobutton_checked",          concat(texturePath, "classic/radiobutton_checked.png")},
             {"slider_track",                 concat(texturePath, "classic/slider_track.png")},
+            {"slider_track_thick",           concat(texturePath, "classic/slider_track_thick.png")},
             {"window_close",                 concat(texturePath, "classic/window_close.png")},
             {"window_restore",               concat(texturePath, "classic/window_restore.png")},
             {"window_maximize",              concat(texturePath, "classic/window_maximize.png")},        
