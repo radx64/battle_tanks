@@ -20,6 +20,8 @@ struct PairHash
 };
 }
 
+namespace gui {
+
 float getFontHeight(const sf::Font& font, unsigned int characterSize)
 {
     using HashFunc = PairHash<const sf::Font*, unsigned int>;
@@ -46,3 +48,27 @@ float getFontHeight(const sf::Font& font, unsigned int characterSize)
 
     return height;
 }
+
+float getFontLineSpacing(const sf::Font& font, unsigned int characterSize)
+{
+    using HashFunc = PairHash<const sf::Font*, unsigned int>;
+    static std::unordered_map<std::pair<const sf::Font*, unsigned int>, float, HashFunc> cache{};
+
+    const auto key = std::make_pair(&font, characterSize);
+    const auto it = cache.find(key);
+    if (it != cache.end())
+    {
+        return it->second;
+    }
+
+    engine::Logger logger{"FontHeightCache"};
+    logger.debug(fmt::format("Calculating line spacing for font: {}, size: {}", fmt::ptr(&font), characterSize));
+    float lineSpacing = font.getLineSpacing(characterSize);
+    logger.debug(fmt::format("Calculated line spacing: {}", lineSpacing));
+
+    cache[key] = lineSpacing;
+
+    return lineSpacing;
+}
+
+}  // namespace gui

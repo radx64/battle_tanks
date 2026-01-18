@@ -37,6 +37,11 @@ protected:
     void animateCursor();
     void startBlinkAnimation();
     void stopBlinkAnimation();
+    
+    // Helper methods for multiline text support
+    size_t getLineFromIndex(const std::string& text, size_t index) const;
+    size_t getColumnFromIndex(const std::string& text, size_t index) const;
+    float getLineHeight() const;
 
     uint32_t characterSize_;
     const sf::Font* font_;

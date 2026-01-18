@@ -16,6 +16,7 @@
 #include "gui/Checkbox.hpp"
 #include "gui/Debug.hpp"
 #include "gui/EditBox.hpp"
+#include "gui/MultiLineEditBox.hpp"
 #include "gui/FontLibrary.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/Label.hpp"
@@ -170,8 +171,43 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createEditboxWindowButton));
 
+    auto createMultiLineEditboxWindowButton = gui::TextButton::create("MultiLine EditBox Window");
+    createMultiLineEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
+    createMultiLineEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createMultiLineEditboxWindowButton->onClick([this](){
+
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(400.0f, 400.0f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 200.f, 200.0f));
+        window->setTitle("MultiLine EditBox Test");
+
+        auto verticalLayout = gui::layout::Vertical::create();
+        auto label = gui::Label::create("Multiline text input:\n(Enter for newline, arrows move cursor)");
+        label->setAlignment(gui::Alignment::HorizontallyCentered);
+        auto multilineEditBox = gui::MultiLineEditBox::create();
+        multilineEditBox->setAlignment(gui::Alignment::Left);
+        multilineEditBox->setText("Type here...\nYou can use Enter for new lines");
+        auto button = gui::TextButton::create("Show Text");
+        
+        button->onClick([multilineEditBoxPtr = multilineEditBox.get(), buttonPtr = button.get()]{
+            buttonPtr->setText("Text: " + multilineEditBoxPtr->getText());
+        });
+
+        verticalLayout->addChild(std::move(label));
+        verticalLayout->addChild(std::move(multilineEditBox));
+        verticalLayout->addChild(std::move(button));
+
+        window->addChild(std::move(verticalLayout));
+
+        windowManager_.addWindow(std::move(window));
+
+    });
+
+    windowManager_.mainWindow().addChild(std::move(createMultiLineEditboxWindowButton));
+
     auto createLayoutWindowButton = gui::TextButton::create("Simple Layout Window");
-    createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
+    createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
+
     createLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createLayoutWindowButton->onClick([this](){
 
@@ -279,7 +315,7 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(createLayoutWindowButton));
 
     auto createFocusTestWindowButton = gui::TextButton::create("Focus Test Window");
-    createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
+    createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
     createFocusTestWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createFocusTestWindowButton->onClick([this](){
 
@@ -331,7 +367,7 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(createFocusTestWindowButton));
 
     auto createGridLayoutWindowButton = gui::TextButton::create("Grid Layout Window");
-    createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
+    createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
     createGridLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createGridLayoutWindowButton->onClick([this](){
 
@@ -544,7 +580,7 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(createGridLayoutWindowButton));
 
     auto createSliderWindowButton = gui::TextButton::create("Slider Window");
-    createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
+    createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
     createSliderWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createSliderWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
@@ -644,7 +680,7 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(createSliderWindowButton));
 
     auto createScrollBarWindowButton = gui::TextButton::create("Scrollbars");
-    createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
     createScrollBarWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createScrollBarWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
@@ -683,7 +719,7 @@ void Application::onInit()
     windowManager_.mainWindow().addChild(std::move(createScrollBarWindowButton));
 
     auto createCalculatorWindowButton = gui::TextButton::create("Calculator");
-    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
+    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 600.f));
     createCalculatorWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createCalculatorWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();

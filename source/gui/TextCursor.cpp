@@ -5,6 +5,7 @@
 #include "engine/Context.hpp"
 #include "engine/TimerService.hpp"
 
+#include "gui/FontHeightCache.hpp"
 #include "gui/Text.hpp"
 #include "gui/StyleSheet.hpp"
 
@@ -42,7 +43,9 @@ void TextCursor::animateCursor()
 void TextCursor::setCharacterSize(uint32_t characterSize)
 {
     characterSize_ = characterSize;
-    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, static_cast<float>(characterSize) + CURSOR_EXTRA_HEIGHT});
+    assert(font_ != nullptr && "Font* needs to be set before setting character size");
+    float actualFontHeight = getFontHeight(*font_, characterSize);
+    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, actualFontHeight});
 }
 
 void TextCursor::setFont(const sf::Font* font)
@@ -62,13 +65,76 @@ void TextCursor::update()
 
     if (cursorIndex_ > textLength_) cursorIndex_ = textLength_;
 
-    for (uint32_t index = 0; index < cursorIndex_; ++index)
+    // Handle multiline text by finding the line and column
+    size_t lineNumber = getLineFromIndex(fieldText, cursorIndex_);
+    size_t columnInLine = getColumnFromIndex(fieldText, cursorIndex_);
+    
+    // Calculate X position: sum of glyph widths on the current line up to cursor column
+    size_t lineStartIdx = 0;
+    for (size_t i = 0; i < lineNumber; ++i)
     {
-        cursorPosition.x += getGlyphOffset(fieldText, index);
+        // Find the start of the next line (skip past the newline)
+        size_t newlinePos = fieldText.find('\n', lineStartIdx);
+        if (newlinePos != std::string::npos)
+        {
+            lineStartIdx = newlinePos + 1;
+        }
+        else
+        {
+            lineStartIdx = fieldText.length();
+            break;
+        }
     }
+    
+    // Sum glyph widths on this line up to cursor column
+    for (size_t i = 0; i < columnInLine; ++i)
+    {
+        if (lineStartIdx + i < fieldText.length())
+        {
+            cursorPosition.x += getGlyphOffset(fieldText, lineStartIdx + i);
+        }
+    }
+
+    // Set Y position based on line number
+    float lineHeight = getLineHeight();
+    cursorPosition.y = lineNumber * lineHeight;
 
     cursorImage_.setPosition(cursorPosition);
     text_.updateTexture();
+}
+
+size_t TextCursor::getLineFromIndex(const std::string& text, size_t index) const
+{
+    size_t lineNumber = 0;
+    for (size_t i = 0; i < index && i < text.length(); ++i)
+    {
+        if (text[i] == '\n')
+        {
+            lineNumber++;
+        }
+    }
+    return lineNumber;
+}
+
+size_t TextCursor::getColumnFromIndex(const std::string& text, size_t index) const
+{
+    // Find the start of the current line
+    size_t lineStartIdx = 0;
+    for (size_t i = 0; i < index && i < text.length(); ++i)
+    {
+        if (text[i] == '\n')
+        {
+            lineStartIdx = i + 1;
+        }
+    }
+    // Column is the distance from line start to cursor
+    return index - lineStartIdx;
+}
+
+float TextCursor::getLineHeight() const
+{
+    // Use SFML's line spacing which includes the gap between lines
+    return getFontLineSpacing(*font_, characterSize_);
 }
 
 sf::Vector2f TextCursor::getPosition()
