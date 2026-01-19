@@ -37,7 +37,14 @@ protected:
     sf::Vector2f selectionStartPosition_;
     sf::Vector2f selectionEndPosition_;
 
-    sf::RectangleShape selection_;
+    std::vector<sf::RectangleShape> selectionRectangles_;
+
+private:
+    size_t getLineFromIndex(const std::string& text, size_t index) const;
+    size_t getColumnFromIndex(const std::string& text, size_t index) const;
+    size_t getLineStartIndex(const std::string& text, size_t lineNumber) const;
+    size_t getLineEndIndex(const std::string& text, size_t lineNumber) const;
+    float getLineXWidth(const std::string& text, size_t lineStartIdx, size_t lineEndIdx) const;
 };
 
 }  // namespace gui
