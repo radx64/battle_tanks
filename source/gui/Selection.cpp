@@ -101,7 +101,7 @@ void Selection::update()
         sf::RectangleShape rect;
         rect.setFillColor(sf::Color(100, 100, 230, 127));
         rect.setPosition(startPos);
-        rect.setSize(sf::Vector2f(endPos.x - startPos.x, text_.getTextSingleLineHeight() + CURSOR_EXTRA_HEIGHT));
+        rect.setSize(sf::Vector2f(endPos.x - startPos.x, lineHeight));
         selectionRectangles_.push_back(rect);
     }
     else
@@ -126,7 +126,7 @@ void Selection::update()
             sf::RectangleShape rect;
             rect.setFillColor(sf::Color(100, 100, 230, 127));
             rect.setPosition(startPos);
-            rect.setSize(sf::Vector2f(widthToEndOfLine, text_.getTextSingleLineHeight() + CURSOR_EXTRA_HEIGHT));
+            rect.setSize(sf::Vector2f(widthToEndOfLine, lineHeight));
             selectionRectangles_.push_back(rect);
         }
         
@@ -142,7 +142,7 @@ void Selection::update()
             sf::RectangleShape rect;
             rect.setFillColor(sf::Color(100, 100, 230, 127));
             rect.setPosition(firstLineBeginX, lineYPos);
-            rect.setSize(sf::Vector2f(lineWidth, text_.getTextSingleLineHeight() + CURSOR_EXTRA_HEIGHT));
+            rect.setSize(sf::Vector2f(lineWidth, lineHeight));
             selectionRectangles_.push_back(rect);
         }
         
@@ -155,7 +155,7 @@ void Selection::update()
             sf::RectangleShape rect;
             rect.setFillColor(sf::Color(100, 100, 230, 127));
             rect.setPosition(firstLineBeginX, lineYPos);
-            rect.setSize(sf::Vector2f(selectedWidth, text_.getTextSingleLineHeight() + CURSOR_EXTRA_HEIGHT));
+            rect.setSize(sf::Vector2f(selectedWidth, lineHeight));
             selectionRectangles_.push_back(rect);
         }
     }
