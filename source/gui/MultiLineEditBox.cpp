@@ -381,6 +381,7 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonPressed& mouseButtonPre
         if (not selection_.isEmpty())
         {
             selection_.clear();
+            text_.updateTexture();
         }
         selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
     }
@@ -510,6 +511,7 @@ void MultiLineEditBox::updateCursorAndSelection(const bool atSelectionEndOnCance
             textCursor_.setIndex(selection_.startsAt());
         }
         selection_.clear();
+        text_.updateTexture();
     }
 }
 

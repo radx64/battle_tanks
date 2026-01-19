@@ -185,6 +185,7 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
         if (not selection_.isEmpty())
         {
             selection_.clear();
+            text_.updateTexture();
         }
         selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
     }
@@ -302,6 +303,7 @@ void EditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
             textCursor_.setIndex(selection_.startsAt());
         }
         selection_.clear();
+        text_.updateTexture();
     }
 }
 
