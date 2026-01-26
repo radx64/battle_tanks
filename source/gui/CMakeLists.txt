@@ -14,6 +14,7 @@ target_sources(gui_lib
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Alignment.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BaseEditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Button.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Checkbox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Clipboard.cpp

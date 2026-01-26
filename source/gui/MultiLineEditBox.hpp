@@ -5,61 +5,31 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Alignment.hpp"
-#include "gui/Component.hpp"
-#include "gui/FramedSprite.hpp"
-#include "gui/Selection.hpp"
-#include "gui/Text.hpp"
-#include "gui/TextCursor.hpp"
+#include "gui/BaseEditBox.hpp"
 
 namespace gui
 {
 
-class MultiLineEditBox : public Component
+class MultiLineEditBox : public BaseEditBox
 {
 public:
     static std::unique_ptr<MultiLineEditBox> create();
 
     ~MultiLineEditBox() = default;
 
-    std::string getText();
-    void setText(const std::string_view text);
-    void setAlignment(const gui::Alignment& alignment);
-
 protected:
     MultiLineEditBox();
-    void onRender(sf::RenderTexture& renderTexture) override;
-    void onSizeChange() override;
-    void onPositionChange() override;
+
+    void updateTextVisbleArea() override;
+    void onTextChanged() override;
 
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
-    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
     EventStatus on(const event::TextEntered& textEntered) override;
 
-    EventStatus on(const event::FocusLost&) override;
-    EventStatus on(const event::FocusGained&) override;
-
-    void updateTextVisbleArea();
+private:
     void updateCursorPosition();
-
-    void enterEdit();
-    void cut();
-    void copy();
-    void paste();
-    void startSelection();
-    void updateCursorAndSelection(const bool atSelectionEndOnCancel);
-
-    // Line management
-    struct LineInfo
-    {
-        size_t startIndex;  // Index in the full text string
-        size_t length;      // Length of this line (excluding newline)
-    };
 
     void rebuildLineIndices();
     void insertNewLine();
@@ -73,17 +43,13 @@ protected:
     size_t getIndexFromLineColumn(size_t line, size_t column) const;
     size_t getIndexFromScreenPosition(const sf::Vector2f& screenPos);
 
-    gui::FramedSprite background_;
-    const sf::Texture& focusTexture_;
-    const sf::Texture& normalTexture_;
-    gui::Text text_;
-    gui::TextCursor textCursor_;
-    gui::Selection selection_;
-    uint32_t maxLength_;
-    bool anyShiftHeldDown_;
-    bool mouseLeftButtonPressed_;
-    gui::Alignment alignment_;
-    
+    // Line management
+    struct LineInfo
+    {
+        size_t startIndex;  // Index in the full text string
+        size_t length;      // Length of this line (excluding newline)
+    };
+
     std::vector<LineInfo> lineIndices_;
     uint32_t maxLines_;
 };

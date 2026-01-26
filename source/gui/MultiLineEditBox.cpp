@@ -13,38 +13,6 @@ namespace
 const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
 constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 2048;
 constexpr uint32_t DEFAULT_MAX_LINES = 10;
-
-gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const gui::FramedSprite::LayoutConfig::UVs& uvs)
-{
-    gui::FramedSprite::LayoutConfig layoutConfig{
-        .cornerSizes = 
-        {
-            .topLeft        = {cornerSizes.x, cornerSizes.y},
-            .bottomRight    = {cornerSizes.x, cornerSizes.y}
-        },
-        .uvs = uvs
-    };
-
-    return layoutConfig;
-} 
-
-gui::FramedSprite::LayoutConfig::UVs buildUVsForMultiLineEditBoxTexture()
-{
-    return gui::FramedSprite::LayoutConfig::UVs
-    {
-        .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
-        .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
-        .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
-        .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
-    };
-}
-
-gui::FramedSprite::LayoutConfig buildLayoutConfigForMultiLineEditBoxTexture()
-{
-    static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForMultiLineEditBoxTexture());
-    return layout;
-}
-
 }  // namespace
 
 namespace gui
@@ -56,79 +24,11 @@ std::unique_ptr<MultiLineEditBox> MultiLineEditBox::create()
 }
 
 MultiLineEditBox::MultiLineEditBox()
-: background_{buildLayoutConfigForMultiLineEditBoxTexture()}
-, focusTexture_{TextureLibrary::instance().get("editbox_active")}
-, normalTexture_{TextureLibrary::instance().get("editbox_inactive")}
-, textCursor_{text_}
-, selection_{text_}
-, maxLength_{DEFAULT_TEXT_MAX_LENGTH}
-, anyShiftHeldDown_{false}
-, mouseLeftButtonPressed_{false}
-, alignment_{gui::Alignment::Left}
+: BaseEditBox()
 , maxLines_{DEFAULT_MAX_LINES}
 {
-    enableFocus();
-
-    text_.addModifier(&selection_);
-    text_.addModifier(&textCursor_);
-
-    auto style = BasicStyleSheetFactory::instance();
-    text_.setFont(style.getFont());
-    text_.setCharacterSize(style.getFontSize());
-    text_.setFillColor(style.getFontColor());
-    text_.setOutlineColor(style.getOutlineColor());
-    text_.setGlobalPosition(Component::getGlobalPosition());
-
-    textCursor_.setFont(text_.getFont());
-    textCursor_.setCharacterSize(text_.getCharacterSize());
-    textCursor_.disable();
-
-    background_.setTexture(normalTexture_);
-    
+    maxLength_ = DEFAULT_TEXT_MAX_LENGTH;
     rebuildLineIndices();
-}
-
-std::string MultiLineEditBox::getText()
-{
-    return text_.getText();
-}
-
-void MultiLineEditBox::setText(const std::string_view text)
-{
-    text_.setText(text);
-    rebuildLineIndices();
-    updateTextVisbleArea();
-}
-
-void MultiLineEditBox::setAlignment(const gui::Alignment& alignment)
-{
-    alignment_ = alignment;
-    updateTextVisbleArea();
-}
-
-void MultiLineEditBox::onRender(sf::RenderTexture& renderTexture)
-{
-    renderTexture.draw(background_);
-    renderTexture.draw(text_);
-}
-
-void MultiLineEditBox::onSizeChange()
-{
-    text_.setSize(Component::getSize() - EXTRA_END_OFFSET * 2.f);
-    text_.setGlobalPosition(Component::getGlobalPosition() + EXTRA_END_OFFSET);
-    background_.setSize(Component::getSize());
-    updateTextVisbleArea();
-    textCursor_.update();
-    selection_.update();
-}
-
-void MultiLineEditBox::onPositionChange()
-{
-    text_.setGlobalPosition(Component::getGlobalPosition() + EXTRA_END_OFFSET);
-    background_.setPosition(getGlobalPosition());
-    updateTextVisbleArea();
-    textCursor_.update();
-    selection_.update();
 }
 
 void MultiLineEditBox::updateTextVisbleArea()
@@ -136,6 +36,11 @@ void MultiLineEditBox::updateTextVisbleArea()
     // For multiline text, we typically use top-left alignment
     // with vertical scrolling capability (simplified for now)
     text_.setOffset(sf::Vector2f{0.f, 0.f});
+}
+
+void MultiLineEditBox::onTextChanged()
+{
+    rebuildLineIndices();
 }
 
 void MultiLineEditBox::rebuildLineIndices()
@@ -389,37 +294,6 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonPressed& mouseButtonPre
     return EventStatus::NotConsumed;
 }
 
-EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
-{
-    if (not isInside(mouseButtonDoublePressedEvent.position))
-    {
-        return EventStatus::NotConsumed;
-    }
-
-    if (not isFocused())
-    {
-        focus();
-        enterEdit();
-    }
-
-    textCursor_.moveLeft(true);
-    selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-    textCursor_.moveRight(true);
-    selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
-
-    return EventStatus::Consumed;
-}
-
-EventStatus MultiLineEditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
-{
-    if (mouseButtonReleasedEvent.button == gui::event::MouseButton::Left)
-    {
-        mouseLeftButtonPressed_ = false;
-    }
-
-    return EventStatus::NotConsumed;
-}
-
 EventStatus MultiLineEditBox::on(const event::MouseMoved& mouseMovedEvent)
 {
     if(mouseLeftButtonPressed_)
@@ -434,87 +308,6 @@ EventStatus MultiLineEditBox::on(const event::MouseMoved& mouseMovedEvent)
     return EventStatus::NotConsumed;
 }
 
-void MultiLineEditBox::cut()
-{
-    if (not selection_.isEmpty())
-    {
-        copy();
-        auto textToUpdate = text_.getText();
-        textToUpdate.replace(selection_.startsAt(), selection_.length(), "", 0);
-        textCursor_.setIndex(selection_.startsAt());
-        selection_.clear();
-        text_.setText(textToUpdate);
-        rebuildLineIndices();
-        updateTextVisbleArea();
-    }
-}
-
-void MultiLineEditBox::copy()
-{
-    if (not selection_.isEmpty())
-    {
-        auto textToSave = text_.getText().substr(selection_.startsAt(), selection_.length());
-        Clipboard::save(textToSave);
-    }
-}
-
-void MultiLineEditBox::paste()
-{
-    auto textToPaste = Clipboard::retreive();
-    auto textToUpdate = text_.getText();
-    
-    if (textToUpdate.length() + textToPaste.size() > maxLength_)
-    {
-        return;  // Would exceed max length
-    }
-    
-    if (not selection_.isEmpty())
-    {
-        textToUpdate.replace(selection_.startsAt(), selection_.length(), textToPaste.c_str(), textToPaste.size());
-        selection_.clear();
-        text_.setText(textToUpdate);
-    }
-    else
-    {
-        textToUpdate.insert(textCursor_.getIndex(), textToPaste.c_str(), textToPaste.size());
-        text_.setText(textToUpdate);
-    }
-    
-    rebuildLineIndices();
-    textCursor_.setIndex(textCursor_.getIndex() + textToPaste.size());
-    updateTextVisbleArea();
-}
-
-void MultiLineEditBox::startSelection()
-{
-    if (selection_.isEmpty())
-    {
-        selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-    }
-}
-
-void MultiLineEditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
-{
-    if (anyShiftHeldDown_)
-    {
-        selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
-    }
-
-    if (not anyShiftHeldDown_ and not selection_.isEmpty())
-    {
-        if (atSelectionEndOnCancel)
-        {
-            textCursor_.setIndex(selection_.endsAt());
-        }
-        else
-        {
-            textCursor_.setIndex(selection_.startsAt());
-        }
-        selection_.clear();
-        text_.updateTexture();
-    }
-}
-
 EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
     auto result = EventStatus::NotConsumed;
@@ -524,41 +317,6 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
 
     switch (keyboardKeyPressed.key)
     {
-        case sf::Keyboard::LShift :
-        case sf::Keyboard::RShift :
-        {
-            anyShiftHeldDown_ = true;
-            startSelection();
-            return EventStatus::Consumed;
-        }
-
-        case sf::Keyboard::Backspace :
-        {
-            if (not selection_.isEmpty())
-            {
-                newText.erase(selection_.startsAt(), selection_.length());
-                textCursor_.setIndex(selection_.startsAt());
-                selection_.clear();
-                anyShiftHeldDown_ = false;
-                result = EventStatus::Consumed;
-            }
-            else if (newText.empty() || textCursor_.getIndex() == 0)
-            {
-                return EventStatus::NotConsumed;
-            }
-            else
-            {
-                textCursor_.moveLeft(false);
-                size_t idx = textCursor_.getIndex();
-                newText.erase(idx, 1);
-                result = EventStatus::Consumed;
-            }
-
-            text_.setText(newText);
-            rebuildLineIndices();
-            break;
-        }
-
         case sf::Keyboard::Delete :
         {
             if (not selection_.isEmpty())
@@ -584,24 +342,6 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
         {
             insertNewLine();
             return EventStatus::Consumed;
-        }
-
-        case sf::Keyboard::Left :
-        {
-            textCursor_.moveLeft(keyboardKeyPressed.modifiers.control);
-            constexpr bool AT_START_OF_SELECTION_ON_CANCEL = false;
-            updateCursorAndSelection(AT_START_OF_SELECTION_ON_CANCEL);
-            result = EventStatus::Consumed;
-            break;
-        }
-
-        case sf::Keyboard::Right :
-        {
-            textCursor_.moveRight(keyboardKeyPressed.modifiers.control);
-            constexpr bool AT_END_OF_SELECTION_ON_CANCEL = true;
-            updateCursorAndSelection(AT_END_OF_SELECTION_ON_CANCEL);
-            result = EventStatus::Consumed;
-            break;
         }
 
         case sf::Keyboard::Up :
@@ -640,77 +380,22 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             break;
         }
 
-        case sf::Keyboard::C :
+        default:
         {
-            if (keyboardKeyPressed.modifiers.control)
+            // Delegate to base class for common keys
+            result = BaseEditBox::on(keyboardKeyPressed);
+            
+            // Handle Backspace special case - need to rebuild line indices
+            if (keyboardKeyPressed.key == sf::Keyboard::Backspace && result == EventStatus::Consumed)
             {
-                copy();
-                result = EventStatus::Consumed;
+                rebuildLineIndices();
             }
-            break;
+            return result;
         }
-
-        case sf::Keyboard::V :
-        {
-            if (keyboardKeyPressed.modifiers.control)
-            {
-                paste();
-                result = EventStatus::Consumed;
-            }
-            break;
-        }
-
-        case sf::Keyboard::X :
-        {
-            if (keyboardKeyPressed.modifiers.control)
-            {
-                cut();
-                result = EventStatus::Consumed;
-            }
-            break;
-        }
-
-        case sf::Keyboard::A :
-        {
-            if (keyboardKeyPressed.modifiers.control)
-            {
-                selection_.clear();
-                textCursor_.setIndex(0);
-                textCursor_.update();
-                selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
-
-                textCursor_.setIndex(text_.getText().length());
-                textCursor_.update();
-                selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
-                result = EventStatus::Consumed;
-            }
-            break;
-        }
-
-        default: break;
     }
 
     updateTextVisbleArea();
     return result;
-}
-
-EventStatus MultiLineEditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
-{
-    if (not isFocused()) return EventStatus::NotConsumed;
-
-    switch (keyboardKeyReleased.key)
-    {
-        case sf::Keyboard::LShift :
-        case sf::Keyboard::RShift :
-        {
-            anyShiftHeldDown_ = false;
-            break;
-        }
-        default :
-            break;
-    }
-
-    return EventStatus::NotConsumed;
 }
 
 EventStatus MultiLineEditBox::on(const event::TextEntered& textEntered)
@@ -744,27 +429,6 @@ EventStatus MultiLineEditBox::on(const event::TextEntered& textEntered)
     }
 
     return EventStatus::NotConsumed;
-}
-
-void MultiLineEditBox::enterEdit()
-{
-    background_.setTexture(focusTexture_);
-    textCursor_.enable();
-}
-
-EventStatus MultiLineEditBox::on(const gui::event::FocusLost&)
-{
-    background_.setTexture(normalTexture_);
-    textCursor_.disable();
-    selection_.clear();
-    text_.updateTexture();
-    return EventStatus::Consumed;
-}
-
-EventStatus MultiLineEditBox::on(const gui::event::FocusGained&)
-{
-    enterEdit();
-    return EventStatus::Consumed;
 }
 
 }  // namespace gui
