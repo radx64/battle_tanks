@@ -30,6 +30,7 @@
 
 # Build directory
 build/*
+build_windows/*
 
 ### CMake ###
 CMakeLists.txt.user
