@@ -2,8 +2,6 @@ set(projectName "battle_tanks")
 cmake_minimum_required (VERSION 3.20)
 project (${projectName})
 
-add_compile_definitions("SOURCE_ROOT=${CMAKE_SOURCE_DIR}")
-
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -88,4 +86,10 @@ target_link_libraries (battle_tanks
     sfml-system
     sfml-window
     sfml-graphics
+)
+
+# Copy fonts to build directory
+add_custom_command(TARGET battle_tanks POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/fonts $<TARGET_FILE_DIR:battle_tanks>/fonts
 )

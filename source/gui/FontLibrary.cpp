@@ -1,8 +1,5 @@
 #include "gui/FontLibrary.hpp"
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-
 namespace gui
 {
 
@@ -21,10 +18,10 @@ void FontLibrary::initFont(const std::string& name, const std::string& path)
 void FontLibrary::init()
 {
     initDefaultFont();
-    initFont("armata",      TOSTRING(SOURCE_ROOT)"/fonts/armata.ttf");
-    initFont("glassTTY",    TOSTRING(SOURCE_ROOT)"/fonts/Glass_TTY_VT220.ttf");
-    initFont("vt323",       TOSTRING(SOURCE_ROOT)"/fonts/vt323-latin-400-normal.ttf");
-    initFont("ibmVGA",       TOSTRING(SOURCE_ROOT)"/fonts/Px437_IBM_VGA_8x16.ttf");
+    initFont("armata",      "fonts/armata.ttf");
+    initFont("glassTTY",    "fonts/Glass_TTY_VT220.ttf");
+    initFont("vt323",       "fonts/vt323-latin-400-normal.ttf");
+    initFont("ibmVGA",       "fonts/Px437_IBM_VGA_8x16.ttf");
 }
 
 sf::Font& FontLibrary::get(const std::string& name)

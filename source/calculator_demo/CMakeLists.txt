@@ -20,3 +20,9 @@ PUBLIC
     sfml-system
     sfml-window
     sfml-graphics)
+
+# Copy fonts to build directory
+add_custom_command(TARGET calculator POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/fonts $<TARGET_FILE_DIR:calculator>/fonts
+)
