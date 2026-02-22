@@ -26,5 +26,5 @@ PRIVATE
 # Copy fonts to build directory
 add_custom_command(TARGET gui_sandbox POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/fonts $<TARGET_FILE_DIR:gui_sandbox>/fonts
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:gui_sandbox>/resources
 )

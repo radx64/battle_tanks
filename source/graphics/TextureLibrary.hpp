@@ -5,7 +5,7 @@
 
 namespace
 {
-    constexpr char texturePath[] {"../sprites/game/"};
+    constexpr char texturePath[] {"./resources/sprites/game/"};
 }
 
 namespace graphics

@@ -5,7 +5,7 @@
 
 namespace
 {
-    constexpr char texturePath[] {"../sprites/ui/"};
+    constexpr char texturePath[] {"./resources/sprites/ui/"};
 }
 
 namespace gui

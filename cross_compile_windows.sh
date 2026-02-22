@@ -38,8 +38,8 @@ set(SFML_STATIC_LIBRARIES TRUE)
 set(BUILD_SHARED_LIBS FALSE)
 
 # Static linking for MinGW
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -Os")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc -Os")
 set(CMAKE_EXE_LINKER_FLAGS "-static")
 EOF
 
@@ -51,10 +51,13 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
 echo "Configuring CMake with MinGW toolchain..."
-cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../"$TOOLCHAIN_FILE" -DBUILD_TESTS=OFF -DSFML_BUILD_AUDIO=FALSE ..
+cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../"$TOOLCHAIN_FILE" -DBUILD_TESTS=OFF -DSFML_BUILD_AUDIO=FALSE -DSFML_BUILD_NETWORK=FALSE -DCMAKE_BUILD_TYPE=Release ..
 
 echo "Building project..."
 ninja
+
+echo "Stripping executables..."
+x86_64-w64-mingw32-strip *.exe
 
 echo "Cross-compilation completed successfully!"
 echo "Executables are in $BUILD_DIR/"

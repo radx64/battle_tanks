@@ -1,5 +1,11 @@
 #include "gui/FontLibrary.hpp"
 
+#include "engine/Concat.hpp"
+namespace
+{
+    constexpr char fontPath[] {"./resources/fonts/"};
+}
+
 namespace gui
 {
 
@@ -17,11 +23,12 @@ void FontLibrary::initFont(const std::string& name, const std::string& path)
 
 void FontLibrary::init()
 {
+    using engine::concat;
     initDefaultFont();
-    initFont("armata",      "fonts/armata.ttf");
-    initFont("glassTTY",    "fonts/Glass_TTY_VT220.ttf");
-    initFont("vt323",       "fonts/vt323-latin-400-normal.ttf");
-    initFont("ibmVGA",       "fonts/Px437_IBM_VGA_8x16.ttf");
+    initFont("armata",      concat(fontPath, "armata.ttf"));
+    initFont("glassTTY",    concat(fontPath, "Glass_TTY_VT220.ttf"));
+    initFont("vt323",       concat(fontPath, "vt323-latin-400-normal.ttf"));
+    initFont("ibmVGA",      concat(fontPath, "Px437_IBM_VGA_8x16.ttf"));
 }
 
 sf::Font& FontLibrary::get(const std::string& name)

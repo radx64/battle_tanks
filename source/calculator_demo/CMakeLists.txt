@@ -24,5 +24,5 @@ PUBLIC
 # Copy fonts to build directory
 add_custom_command(TARGET calculator POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/fonts $<TARGET_FILE_DIR:calculator>/fonts
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:calculator>/resources
 )

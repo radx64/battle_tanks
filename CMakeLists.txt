@@ -91,5 +91,5 @@ target_link_libraries (battle_tanks
 # Copy fonts to build directory
 add_custom_command(TARGET battle_tanks POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/fonts $<TARGET_FILE_DIR:battle_tanks>/fonts
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:battle_tanks>/resources
 )
