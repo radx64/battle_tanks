@@ -77,7 +77,7 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-add_executable(battle_tanks main.cpp)
+add_executable(battle_tanks main.cpp version.rc)
 target_link_libraries (battle_tanks
     engine_lib
     game_lib
