@@ -50,11 +50,11 @@ Application::Application()
 , cameraController_{&camera_}
 , cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
 , waypointMouseController_{&windowManager_, waypoints_, window_, cameraView_}
-, drawAverage_{NUMBER_OF_MEASUREMENTS}
-, physicsAverage_{NUMBER_OF_MEASUREMENTS}
-, navAverage_{NUMBER_OF_MEASUREMENTS}
 , fpsAverage_{NUMBER_OF_MEASUREMENTS}
-, guiAverage_{NUMBER_OF_MEASUREMENTS}
+, drawProfiler_{clock_, "DRAW"}
+, physicsProfiler_{clock_, "PHYSICS"}
+, navProfiler_{clock_, "NAV"}
+, guiProfiler_{clock_, "GUI"}
 {}
 
 void Application::onInit()
@@ -124,22 +124,24 @@ void Application::onEvent(const sf::Event& event)
 void Application::onUpdate(float timeStep)
 {
     clock_.restart();
+    navProfiler_.startFrame();
     for(auto& navigator : navigators_)
     {
         navigator->navigate();
     }
-    navTime_ = clock_.getElapsedTime();
+    navProfiler_.endFrame();
 
-    clock_.restart();
     camera_.update(timeStep);
     cameraView_.setCenter(camera_.getPosition());
     cameraView_.setSize(camera_.getSize());
+    
+    physicsProfiler_.startFrame();
     for (auto& object : scene_.objects())
     {
         object->update(scene_, constantTimeStep_);
     }
     collisionSolver_.evaluateCollisions();
-    physicsTime_ = clock_.getElapsedTime();
+    physicsProfiler_.endFrame();
 }
 
 void Application::onRender()
@@ -151,13 +153,14 @@ void Application::onRender()
     // otherwise values are wrong
     fpsCounter_.startMeasurement();
 
+    drawProfiler_.startFrame();
     window_.setView(cameraView_);
     tilemap_->draw(window_);
     graphics::drawtools::drawWaypoints(window_, waypoints_);
     tracksRenderer_.draw(window_);
     renderGameObjects();
     particleSystem_.draw(window_);
-    drawTime_ = clock_.getElapsedTime().asMilliseconds();
+    drawProfiler_.endFrame();
 
     if (rigidBodyDebug_)
     {
@@ -166,7 +169,9 @@ void Application::onRender()
 
     window_.setView(window_.getDefaultView());
 
+    guiProfiler_.startFrame();
     gui::Application::onRender();
+    guiProfiler_.endFrame();
 
     clock_.restart();
 
@@ -315,17 +320,17 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
 void Application::generateProfiling()
 {
     // TODO: Create some proper profiler class not that
-    measurementsTextHandle_->setText("DRAW: " + std::to_string(drawTime_)
-            + "ms\nPHYSICS: " + std::to_string(physicsTime_.asMicroseconds())
-            + "us\nNAV: " + std::to_string(navTime_.asMicroseconds())
-            + "us\nGUI: " + std::to_string(guiTime_.asMilliseconds())
+    measurementsTextHandle_->setText("DRAW: " + std::to_string(drawProfiler_.getLastFrame())
+            + "ms\nPHYSICS: " + std::to_string(physicsProfiler_.getLastFrame())
+            + "ms\nNAV: " + std::to_string(navProfiler_.getLastFrame())
+            + "ms\nGUI: " + std::to_string(guiProfiler_.getLastFrame())
             + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
             + "\nObjects count: " + std::to_string(scene_.objects().size()));
 
-    measurementsAverageTextHandle_->setText("AVG: " + std::to_string(drawAverage_.calculate(drawTime_))
-        + "ms\nAVG: " + std::to_string(physicsAverage_.calculate(physicsTime_.asMicroseconds()))
-        + "us\nAVG: " + std::to_string(navAverage_.calculate(navTime_.asMicroseconds()))
-        + "us\nAVG: " + std::to_string(guiAverage_.calculate(guiTime_.asMilliseconds()))
+    measurementsAverageTextHandle_->setText("AVG: " + std::to_string(drawProfiler_.getLastAverage())
+        + "ms\nAVG: " + std::to_string(physicsProfiler_.getLastAverage())
+        + "ms\nAVG: " + std::to_string(navProfiler_.getLastAverage())
+        + "ms\nAVG: " + std::to_string(guiProfiler_.getLastAverage())
         + "ms\nAVG: " + std::to_string(fpsAverage_.calculate(fpsCounter_.getFps())));
 }
 

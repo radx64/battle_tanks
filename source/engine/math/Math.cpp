@@ -79,7 +79,12 @@ Average::Average(const size_t window_size)
     measurements_.resize(windowSize_);
 }
 
-int Average::calculate(int new_value)
+const std::vector<int32_t>& Average::measurements() const
+{
+  return measurements_;
+}
+
+int Average::calculate(int32_t new_value)
 {
     measurements_[currentIndex_] = new_value;
     currentIndex_++;

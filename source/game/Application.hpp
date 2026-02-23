@@ -6,8 +6,10 @@
 #include "engine/CameraController.hpp"
 #include "engine/FpsCounter.hpp"
 #include "engine/math/Math.hpp"
+#include "engine/Profiler.hpp"
 #include "engine/Renderer.hpp"
 #include "engine/RigidBody.hpp"
+
 #include "game/entity/tank/Tank.hpp"
 #include "game/entity/TracksRenderer.hpp"
 #include "game/Navigator.hpp"
@@ -65,17 +67,12 @@ protected:
     std::vector<std::unique_ptr<Navigator>> navigators_;
 
     entity::TracksRenderer tracksRenderer_;
-
-    sf::Int32 drawTime_{0};
-    sf::Time physicsTime_{};
-    sf::Time navTime_{};
-    sf::Time guiTime_{};
-
-    engine::math::Average drawAverage_;
-    engine::math::Average physicsAverage_;
-    engine::math::Average navAverage_;
     engine::math::Average fpsAverage_;
-    engine::math::Average guiAverage_;
+
+    engine::Profiler drawProfiler_;
+    engine::Profiler physicsProfiler_;
+    engine::Profiler navProfiler_;
+    engine::Profiler guiProfiler_;
 };
 
 }  // namespace game

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <numeric>
 #include <vector>
 
@@ -22,11 +23,13 @@ class Average
 {
 public:
     Average (const size_t windowSize);
-    int calculate(int newValue);
+    int32_t calculate(int32_t newValue);
+
+    const std::vector<int32_t>& measurements() const;
 
 protected:
     size_t windowSize_{};
-    std::vector<int> measurements_{};
+    std::vector<int32_t> measurements_{};
     size_t currentIndex_{};
 };
 
