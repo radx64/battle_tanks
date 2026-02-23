@@ -9,11 +9,18 @@
 #include "engine/input/MouseHandler.hpp"
 #include "engine/Logger.hpp"
 #include "engine/ParticleSystem.hpp"
+#include "engine/ProfilingStorage.hpp"
 #include "engine/Scene.hpp"
 #include "engine/TimerService.hpp"
 
 namespace engine
 {
+
+#define PROFILE_SCOPE(profiler, block) \
+    profiler.startFrame(); \
+    block \
+    profiler.endFrame(); \
+    profiling_.store(profiler.getResult()); \
 
 class Application
 {
@@ -29,6 +36,7 @@ protected:
     void processEvents();
     void update();
     void render();
+    void renderProfilingInfo();
 
     // TODO those methods potentially should not use dynamic dispatching
     // consider adding some CRTP pattern to call methods from derived class
@@ -42,6 +50,8 @@ protected:
 
     sf::RenderWindow window_;
     sf::Clock clock_;
+    sf::Font font_;
+    sf::Text profilingText_;
 
     engine::ParticleSystem particleSystem_;
     engine::TimerService timerService_;
@@ -55,6 +65,11 @@ protected:
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
     engine::Logger logger_;
+    engine::ProfilingStorage profiling_;
+
+    engine::Profiler eventsProfiler_;
+    engine::Profiler updateProfiler_;
+    engine::Profiler renderProfiler_;
 };
 
 }  // namespace engine

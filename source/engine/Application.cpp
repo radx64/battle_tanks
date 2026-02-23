@@ -16,10 +16,14 @@ namespace engine
 Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
 : window_(sf::VideoMode(windowSize.x, windowSize.y, 32), windowName.data(),
     sf::Style::Default, sf::ContextSettings(0, 0, ANTI_ALIASING_LEVEL))
+, profilingText_{"", font_, 16}
 , mouseHandler_{&timerService_}
 , realTimeStep_{}
 , collisionSolver_{scene_}
 , logger_{logPrefix}
+, eventsProfiler_{"engine::Application::process_events", "ms"}
+, updateProfiler_{"engine::Application::update", "ms"}
+, renderProfiler_{"engine::Application::render", "ms"}
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});
@@ -27,6 +31,10 @@ Application::Application(const std::string_view windowName, const std::string_vi
     context_.setScene(&scene_);
     context_.setParticleSystem(&particleSystem_);
     context_.setTimerService(&timerService_);
+
+    font_.loadFromFile("./resources/fonts/armata.ttf");
+    profilingText_.setPosition({10.f, 10.f});
+    profilingText_.setFillColor(sf::Color::Black);
 }
 
 Application::~Application()
@@ -59,9 +67,16 @@ int Application::run()
     {
         while (isRunning_)
         {
+            profiling_.reset();
             realTimeStep_ = std::chrono::milliseconds(clock_.restart().asMilliseconds());
-            processEvents();
-            update();
+            PROFILE_SCOPE(eventsProfiler_,
+                processEvents();
+            );
+
+            PROFILE_SCOPE(updateProfiler_,
+                update();
+            );
+ 
             render();
         }
     }
@@ -141,9 +156,28 @@ void Application::update()
 
 void Application::render()
 {
-    window_.clear(sf::Color(0, 0, 0));
-    onRender();
+    {
+        PROFILE_SCOPE(renderProfiler_,
+            window_.clear(sf::Color(0, 0, 0));
+            onRender();   
+        ); 
+    }
+    renderProfilingInfo();
     window_.display();
+}
+
+void Application::renderProfilingInfo()
+{    
+    std::string text;
+    for (const auto& result : profiling_.get())
+    {
+        if (result.average < 0) logger_.error("PANIC");
+        assert(! (result.average < 0));
+        text += fmt::format("{}({}|{}){}\n", result.name, result.average, result.lastFrame, result.unit);
+    }
+    
+    profilingText_.setString(text);
+    window_.draw(profilingText_);
 }
 
 }  // namespace engine

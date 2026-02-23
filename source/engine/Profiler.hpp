@@ -1,33 +1,38 @@
 #pragma once
 
 #include <cassert>
-
-#include <SFML/System.hpp>
+#include <chrono>
 
 #include "engine/math/Math.hpp"
 
 namespace engine
 {
 
+struct ProfileResult
+{
+    const char* name;
+    const char* unit;
+    int32_t lastFrame;
+    int32_t average;
+};
+
 class Profiler
 {
 public:
-    Profiler(sf::Clock& clock, std::string_view name);
+    Profiler(const char* name, const char* unit);
 
     void startFrame();
     void endFrame();
-    int32_t getLastFrame() const;
-    int32_t getLastAverage() const;
+    const ProfileResult& getResult() const;
 
 protected:
-    std::string name_;
-    sf::Time frameStartTime_{};
-    sf::Time frameEndTime_{};
+    const char* name_;
+    const char* unit_;
+    std::chrono::steady_clock::time_point startTime_{};
+    std::chrono::steady_clock::time_point endTime_{};
 
-    sf::Clock& clock_;
     math::Average average_;
-    int32_t lastFrame_{};
-    int32_t lastAverage_{};
+    ProfileResult result_;
 };
 
 }  // engine

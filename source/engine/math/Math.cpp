@@ -88,8 +88,7 @@ int Average::calculate(int32_t new_value)
 {
     measurements_[currentIndex_] = new_value;
     currentIndex_++;
-    if (currentIndex_ >= windowSize_) currentIndex_=0;
-
+    if (currentIndex_ >= windowSize_) currentIndex_ = 0;
     return std::accumulate(measurements_.begin(), measurements_.end(), 0) / windowSize_;
 }
 

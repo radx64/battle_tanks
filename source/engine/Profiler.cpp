@@ -1,36 +1,36 @@
 #include "engine/Profiler.hpp"
 
+#include <chrono>
+
 namespace engine
 {
-Profiler::Profiler(sf::Clock& clock, std::string_view name)
+Profiler::Profiler(const char* name, const char* unit)
 : name_{name}
-, clock_{clock}
-, average_{50}
+, unit_{unit}
+, average_{20}
+, result_{}
 {  
-    
+    result_.name = name_;
+    result_.unit = unit_;
 }
 void Profiler::startFrame()
 {
-    frameStartTime_ = clock_.getElapsedTime();
+    startTime_ = std::chrono::steady_clock::now();
 }
 void Profiler::endFrame()
 {
-    frameEndTime_ = clock_.getElapsedTime();
-    assert(frameEndTime_  > frameStartTime_);
+    endTime_ = std::chrono::steady_clock::now();
+    assert(endTime_  >= startTime_);
+    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(endTime_ - startTime_).count();
+    assert(diff >= 0);
 
-    auto diff = frameEndTime_ - frameStartTime_;
-    lastFrame_ = diff.asMilliseconds();
-    lastAverage_ = average_.calculate(lastFrame_);
+    result_.lastFrame = diff;
+    result_.average = average_.calculate(diff);
 }
 
-int32_t Profiler::getLastFrame() const
+const ProfileResult& Profiler::getResult() const
 {
-    return lastFrame_;
+    return result_;
 }
-
-int32_t Profiler::getLastAverage() const
-{
-    return lastAverage_;
-}    
     
-}
+}  // namespace engine

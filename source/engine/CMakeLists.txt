@@ -30,6 +30,7 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Particle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Profiler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ProfilingStorage.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.cpp

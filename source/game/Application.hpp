@@ -58,9 +58,6 @@ protected:
     bool rigidBodyDebug_{false};
     bool tankDebugMode_{false};
     
-    gui::Label* measurementsTextHandle_;
-    gui::Label* measurementsAverageTextHandle_;
-
     game::WaypointMouseController waypointMouseController_;
 
     std::vector<sf::Vector2i> waypoints_;

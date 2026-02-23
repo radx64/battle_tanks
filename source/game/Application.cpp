@@ -9,6 +9,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <fmt/format.h>
+
 #include "engine/Logger.hpp"
 #include "engine/math/Math.hpp"
 #include "engine/RigidBodyDebugRenderer.hpp"
@@ -28,7 +30,6 @@
 
 #include "gui/Button.hpp"
 #include "gui/Event.hpp"
-#include "gui/Label.hpp"
 #include "gui/Window.hpp"
 
 #include "Config.hpp"
@@ -51,10 +52,10 @@ Application::Application()
 , cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
 , waypointMouseController_{&windowManager_, waypoints_, window_, cameraView_}
 , fpsAverage_{NUMBER_OF_MEASUREMENTS}
-, drawProfiler_{clock_, "DRAW"}
-, physicsProfiler_{clock_, "PHYSICS"}
-, navProfiler_{clock_, "NAV"}
-, guiProfiler_{clock_, "GUI"}
+, drawProfiler_{"game::Application::DRAW", "ms"}
+, physicsProfiler_{"game::Application::PHYSICS", "ms"}
+, navProfiler_{"game::Application::NAV", "ms"}
+, guiProfiler_{"game::Application::GUI", "ms"}
 {}
 
 void Application::onInit()
@@ -124,24 +125,25 @@ void Application::onEvent(const sf::Event& event)
 void Application::onUpdate(float timeStep)
 {
     clock_.restart();
-    navProfiler_.startFrame();
-    for(auto& navigator : navigators_)
-    {
-        navigator->navigate();
-    }
-    navProfiler_.endFrame();
+    PROFILE_SCOPE(navProfiler_,
+        for(auto& navigator : navigators_)
+        {
+            navigator->navigate();
+        }
+    );
 
     camera_.update(timeStep);
     cameraView_.setCenter(camera_.getPosition());
     cameraView_.setSize(camera_.getSize());
     
-    physicsProfiler_.startFrame();
-    for (auto& object : scene_.objects())
-    {
-        object->update(scene_, constantTimeStep_);
-    }
-    collisionSolver_.evaluateCollisions();
-    physicsProfiler_.endFrame();
+    PROFILE_SCOPE(physicsProfiler_,
+        for (auto& object : scene_.objects())
+        {
+            object->update(scene_, constantTimeStep_);
+        }
+        collisionSolver_.evaluateCollisions();
+    );
+
 }
 
 void Application::onRender()
@@ -153,14 +155,14 @@ void Application::onRender()
     // otherwise values are wrong
     fpsCounter_.startMeasurement();
 
-    drawProfiler_.startFrame();
-    window_.setView(cameraView_);
-    tilemap_->draw(window_);
-    graphics::drawtools::drawWaypoints(window_, waypoints_);
-    tracksRenderer_.draw(window_);
-    renderGameObjects();
-    particleSystem_.draw(window_);
-    drawProfiler_.endFrame();
+    PROFILE_SCOPE(drawProfiler_,
+        window_.setView(cameraView_);
+        tilemap_->draw(window_);
+        graphics::drawtools::drawWaypoints(window_, waypoints_);
+        tracksRenderer_.draw(window_);
+        renderGameObjects();
+        particleSystem_.draw(window_);
+    );
 
     if (rigidBodyDebug_)
     {
@@ -169,9 +171,9 @@ void Application::onRender()
 
     window_.setView(window_.getDefaultView());
 
-    guiProfiler_.startFrame();
-    gui::Application::onRender();
-    guiProfiler_.endFrame();
+    PROFILE_SCOPE(guiProfiler_,
+        gui::Application::onRender();
+    );
 
     clock_.restart();
 
@@ -229,20 +231,6 @@ void Application::configureGUI()
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     windowManager_.mainWindow().addChild(std::move(quitButton));
-
-    auto measurementsText = gui::Label::create("");
-    measurementsText->setPosition(sf::Vector2f(20.f, 20.f));
-    measurementsText->setSize(sf::Vector2f(200.f, 200.f));
-    measurementsTextHandle_ = measurementsText.get();
-
-    windowManager_.mainWindow().addChild(std::move(measurementsText));
-
-    auto measurementsAverageText = gui::Label::create("");
-    measurementsAverageText->setPosition(sf::Vector2f(200.f, 20.f));
-    measurementsAverageText->setSize(sf::Vector2f(200.f, 200.f));
-    measurementsAverageTextHandle_ = measurementsAverageText.get();
-
-    windowManager_.mainWindow().addChild(std::move(measurementsAverageText));
 
     auto button = gui::TextButton::create("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
@@ -319,19 +307,17 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
 
 void Application::generateProfiling()
 {
-    // TODO: Create some proper profiler class not that
-    measurementsTextHandle_->setText("DRAW: " + std::to_string(drawProfiler_.getLastFrame())
-            + "ms\nPHYSICS: " + std::to_string(physicsProfiler_.getLastFrame())
-            + "ms\nNAV: " + std::to_string(navProfiler_.getLastFrame())
-            + "ms\nGUI: " + std::to_string(guiProfiler_.getLastFrame())
-            + "ms\nFPS: "+ std::to_string(fpsCounter_.getFps())
-            + "\nObjects count: " + std::to_string(scene_.objects().size()));
+    //TODO: move fps counting to engine application part
+    std::string text;
 
-    measurementsAverageTextHandle_->setText("AVG: " + std::to_string(drawProfiler_.getLastAverage())
-        + "ms\nAVG: " + std::to_string(physicsProfiler_.getLastAverage())
-        + "ms\nAVG: " + std::to_string(navProfiler_.getLastAverage())
-        + "ms\nAVG: " + std::to_string(guiProfiler_.getLastAverage())
-        + "ms\nAVG: " + std::to_string(fpsAverage_.calculate(fpsCounter_.getFps())));
+
+    engine::ProfileResult result {
+        .name = "FPS",
+        .unit = "",
+        .lastFrame = static_cast<int>(fpsCounter_.getFps()),
+        .average = fpsAverage_.calculate(fpsCounter_.getFps())
+    };
+    profiling_.store(result);
 }
 
 }  // namespace game
