@@ -19,17 +19,20 @@ sf::Vector2f rotatePoint(sf::Vector2f pointToRotate, float angle, sf::Vector2f p
 sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t);
 float lerp(const float a, const float b, float t);
 
+template <typename T>
 class Average
 {
 public:
     Average (const size_t windowSize);
-    int32_t calculate(int32_t newValue);
+    T calculate(T newValue);
 
-    const std::vector<int32_t>& measurements() const;
+    using result_type = T;
+
+    const std::vector<T>& measurements() const;
 
 protected:
     size_t windowSize_{};
-    std::vector<int32_t> measurements_{};
+    std::vector<T> measurements_{};
     size_t currentIndex_{};
 };
 

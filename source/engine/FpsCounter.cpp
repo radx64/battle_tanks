@@ -21,12 +21,12 @@ void FpsCounter::endMeasurement()
     }
     else
     {
-        float calculatedFps = 1000.f/static_cast<float>(measurement);
-        fps_ = smoothing_ * calculatedFps + (1.0 - smoothing_) * fps_;
+        float calculatedFps = 1000.f / static_cast<float>(measurement);
+        fps_ = static_cast<uint32_t>(smoothing_ * calculatedFps + (1.0 - smoothing_) * fps_);
     }
 }
 
-float FpsCounter::getFps()
+uint32_t FpsCounter::getFps()
 {
     return fps_;
 }

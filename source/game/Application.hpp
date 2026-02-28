@@ -64,7 +64,7 @@ protected:
     std::vector<std::unique_ptr<Navigator>> navigators_;
 
     entity::TracksRenderer tracksRenderer_;
-    engine::math::Average fpsAverage_;
+    engine::math::Average<float> fpsAverage_;
 
     engine::Profiler drawProfiler_;
     engine::Profiler physicsProfiler_;

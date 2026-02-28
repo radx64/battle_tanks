@@ -2,10 +2,8 @@
 
 #include <fmt/format.h>
 
-#include "engine/Logger.hpp"
-
 #include "Config.hpp"
-
+#include "engine/Logger.hpp"
 #include "LoggerSink.hpp"
 
 constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
@@ -32,9 +30,12 @@ Application::Application(const std::string_view windowName, const std::string_vi
     context_.setParticleSystem(&particleSystem_);
     context_.setTimerService(&timerService_);
 
-    font_.loadFromFile("./resources/fonts/armata.ttf");
+    font_.loadFromFile("./resources/fonts/Px437_IBM_VGA_8x16.ttf");
     profilingText_.setPosition({10.f, 10.f});
     profilingText_.setFillColor(sf::Color::Black);
+    profilingText_.setOutlineColor(sf::Color::White);
+    profilingText_.setOutlineThickness(2.f);
+    profilingText_.setCharacterSize(16);
 }
 
 Application::~Application()
@@ -171,9 +172,7 @@ void Application::renderProfilingInfo()
     std::string text;
     for (const auto& result : profiling_.get())
     {
-        if (result.average < 0) logger_.error("PANIC");
-        assert(! (result.average < 0));
-        text += fmt::format("{}({}|{}){}\n", result.name, result.average, result.lastFrame, result.unit);
+        text += fmt::format("{}({:.3f}|{:.3f}){}\n", result.name, result.average, result.lastFrame, result.unit);
     }
     
     profilingText_.setString(text);

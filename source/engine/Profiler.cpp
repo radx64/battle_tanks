@@ -1,10 +1,11 @@
 #include "engine/Profiler.hpp"
 
 #include <chrono>
+#include <cassert>
 
 namespace engine
 {
-Profiler::Profiler(const char* name, const char* unit)
+Profiler::Profiler(std::string_view name, std::string_view unit)
 : name_{name}
 , unit_{unit}
 , average_{20}
@@ -21,11 +22,12 @@ void Profiler::endFrame()
 {
     endTime_ = std::chrono::steady_clock::now();
     assert(endTime_  >= startTime_);
-    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(endTime_ - startTime_).count();
+    auto diff = std::chrono::duration_cast<std::chrono::microseconds>(endTime_ - startTime_).count();
     assert(diff >= 0);
 
-    result_.lastFrame = diff;
-    result_.average = average_.calculate(diff);
+    auto diff_ms = diff / 1000.f;
+    result_.lastFrame = diff_ms;
+    result_.average = average_.calculate(diff_ms);
 }
 
 const ProfileResult& Profiler::getResult() const

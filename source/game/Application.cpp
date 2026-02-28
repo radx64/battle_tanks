@@ -314,8 +314,8 @@ void Application::generateProfiling()
     engine::ProfileResult result {
         .name = "FPS",
         .unit = "",
-        .lastFrame = static_cast<int>(fpsCounter_.getFps()),
-        .average = fpsAverage_.calculate(fpsCounter_.getFps())
+        .lastFrame = static_cast<float>(fpsCounter_.getFps()),
+        .average = (fpsAverage_.calculate(fpsCounter_.getFps()))
     };
     profiling_.store(result);
 }

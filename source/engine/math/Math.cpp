@@ -69,7 +69,8 @@ float lerp(const float a, const float b, float t)
   return a + (b - a) * t; 
 }
 
-Average::Average(const size_t window_size)
+template <typename T>
+Average<T>::Average(const size_t window_size)
   : windowSize_{window_size}
 {
     if(windowSize_ < 2) 
@@ -78,18 +79,21 @@ Average::Average(const size_t window_size)
     }
     measurements_.resize(windowSize_);
 }
-
-const std::vector<int32_t>& Average::measurements() const
+template <typename T>
+const std::vector<T>& Average<T>::measurements() const
 {
   return measurements_;
 }
-
-int Average::calculate(int32_t new_value)
+template <typename T>
+T Average<T>::calculate(T new_value)
 {
     measurements_[currentIndex_] = new_value;
     currentIndex_++;
     if (currentIndex_ >= windowSize_) currentIndex_ = 0;
-    return std::accumulate(measurements_.begin(), measurements_.end(), 0) / windowSize_;
+    return std::accumulate(measurements_.begin(), measurements_.end(), 0) / static_cast<T>(measurements_.size());
 }
+
+template class Average<uint32_t>;
+template class Average<float>;
 
 }  // namespace engine::math

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cassert>
 #include <chrono>
+#include <string_view>
 
 #include "engine/math/Math.hpp"
 
@@ -10,28 +10,28 @@ namespace engine
 
 struct ProfileResult
 {
-    const char* name;
-    const char* unit;
-    int32_t lastFrame;
-    int32_t average;
+    std::string_view name;
+    std::string_view unit;
+    float lastFrame;
+    float average;
 };
 
 class Profiler
 {
 public:
-    Profiler(const char* name, const char* unit);
+    Profiler(std::string_view name, std::string_view unit);
 
     void startFrame();
     void endFrame();
     const ProfileResult& getResult() const;
 
 protected:
-    const char* name_;
-    const char* unit_;
+    std::string_view name_;
+    std::string_view unit_;
     std::chrono::steady_clock::time_point startTime_{};
     std::chrono::steady_clock::time_point endTime_{};
 
-    math::Average average_;
+    math::Average<float> average_;
     ProfileResult result_;
 };
 

@@ -9,6 +9,8 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] Variable time step in physics calulcations
 - [ ] Ray casting for collisions with objects (for further sensors implementation)
 
+- [ ] Implement own assert to print the stack trace before crashing (wrapper around assert macro)
+
 ### Visuals
 - [x] Fluid camera support with zoom capabilites
 

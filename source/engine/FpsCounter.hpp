@@ -13,13 +13,12 @@ public:
     FpsCounter();
     void startMeasurement();
     void endMeasurement();
-    float getFps();
+    uint32_t getFps();
 
 protected:
     sf::Clock clock_;
-    float fps_;
+    uint32_t fps_;
     float smoothing_;
 };
 
 }  // namespace engine
-
