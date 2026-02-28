@@ -1,0 +1,10 @@
+function main()
+    print('Hello, do you want to play a game?')
+    print("Tank program starts")
+    -- beep()
+    set_turret_heading(tank, 90.0)
+    sleep(5)
+    set_tank_heading(tank, 180)
+    sleep(2)
+    fire()
+end
