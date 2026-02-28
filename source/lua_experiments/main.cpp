@@ -46,11 +46,36 @@ struct TankSimulator
     }
 
 };
-struct ScriptInstance 
+
+struct ScriptContext 
 {
-    double wakeTime = 1e30;        // for sleep
-    bool waiting = false;        // has coroutine finished or waiting for turret, body movement finished
+    TankSimulator* tank = nullptr;  // Context will now own a tank
+    double wakeTime = 1e30;         // for sleep
+    bool waiting = false;           // has coroutine finished or waiting for turret, body movement finished
 };
+
+// LUA helpers and magic tricks
+static const char* SCRIPT_PTR_KEY = "SCRIPT_CONTEXT_PTR";
+
+// Store ScriptContext in hidden LUA_REGISTRYINDEX
+void set_script_context(lua_State* L, ScriptContext* script)
+{
+    lua_pushlightuserdata(L, (void*)SCRIPT_PTR_KEY);
+    lua_pushlightuserdata(L, script);
+    lua_settable(L, LUA_REGISTRYINDEX);
+}
+
+ScriptContext* get_script_context(lua_State* L)
+{
+    lua_pushlightuserdata(L, (void*)SCRIPT_PTR_KEY);
+    lua_gettable(L, LUA_REGISTRYINDEX);
+
+    auto* script = static_cast<ScriptContext*>(lua_touserdata(L, -1));
+
+    lua_pop(L, 1);
+    return script;
+}
+//
 
 double currentTime() 
 {
@@ -66,7 +91,7 @@ int lua_sleep(sol::this_state ts, double seconds)
 {
     sol::state_view lua(ts);
     
-    ScriptInstance* script = lua["__script_instance"];
+    ScriptContext* script = get_script_context(lua.lua_state());
     script->wakeTime = currentTime() + seconds;
 
     return lua_yield(lua, 0);
@@ -74,12 +99,14 @@ int lua_sleep(sol::this_state ts, double seconds)
 
 // C++ turret rotation binding
 // Need to set turret target in tank simluator
-int lua_set_turret_heading(sol::this_state ts, TankSimulator* tank, double angle)
+int lua_set_turret_heading(sol::this_state ts, double angle)
 {
     std::cout << "Called set turret heading" << std::endl;
     sol::state_view lua(ts);
     
-    ScriptInstance* script = lua["__script_instance"];
+    ScriptContext* script = get_script_context(lua.lua_state());
+
+    TankSimulator* tank = script->tank;
 
     tank->targetTurretHeading = angle;
     tank->isTurretRotating = true;
@@ -90,12 +117,14 @@ int lua_set_turret_heading(sol::this_state ts, TankSimulator* tank, double angle
 
 // C++ turret rotation binding
 // Need to set tank body heading target in tank simluator
-int lua_set_tank_heading(sol::this_state ts, TankSimulator* tank, double angle)
+int lua_set_tank_heading(sol::this_state ts, double angle)
 {
     std::cout << "Called set tank heading" << std::endl;
     sol::state_view lua(ts);
     
-    ScriptInstance* script = lua["__script_instance"];
+    ScriptContext* script = get_script_context(lua.lua_state());
+
+    TankSimulator* tank = script->tank;
 
     tank->targetBodyHeading = angle;
     tank->isBodyRotating = true;
@@ -120,21 +149,21 @@ int main(int argc, char* argv[])
     lua.open_libraries(sol::lib::base, sol::lib::coroutine);
 
     TankSimulator tank;
-    ScriptInstance scriptInstance;
+    ScriptContext ctx;
+    ctx.tank = &tank;
 
     lua.set_function("sleep", lua_sleep);
     lua.set_function("set_turret_heading", lua_set_turret_heading);
     lua.set_function("set_tank_heading", lua_set_tank_heading);
     lua.set_function("fire", lua_fire);
-    
-    lua["tank"] = &tank;
-    lua["__script_instance"] = &scriptInstance;
 
     lua.script_file("scripts/program.lua");
 
     // Create coroutine
     sol::protected_function mainFunc = lua["main"];
     sol::coroutine co(mainFunc);
+
+    set_script_context(co.lua_state(), &ctx);
 
     // Start coroutine
     auto result = co();
@@ -146,7 +175,7 @@ int main(int argc, char* argv[])
     // -------- GAME LOOP --------
     double last = currentTime();
 
-    while (co.status() != sol::call_status::ok || scriptInstance.waiting) 
+    while (co.status() != sol::call_status::ok || ctx.waiting) 
     {
         double now = currentTime();
         double dt = now - last;
@@ -154,18 +183,21 @@ int main(int argc, char* argv[])
 
         tank.update(dt);
 
-        bool readyFromSleep =  scriptInstance.wakeTime < 1e29 && now >= scriptInstance.wakeTime;
-        bool readyFromTurret = scriptInstance.waiting && !tank.isTurretRotating;
-        bool readyFromBody = scriptInstance.waiting && !tank.isBodyRotating;
+        bool readyFromSleep =  ctx.wakeTime < 1e29 && now >= ctx.wakeTime;
+        bool readyFromTurret = ctx.waiting && !tank.isTurretRotating;
+        bool readyFromBody = ctx.waiting && !tank.isBodyRotating;
 
         if (co.status() == sol::call_status::yielded &&
             (readyFromSleep || readyFromTurret || readyFromBody))  // this will require some kind of waiting conditions implementation
         {
-            scriptInstance.waiting = false;
-            scriptInstance.wakeTime = 1e30;
+            ctx.waiting = false;
+            ctx.wakeTime = 1e30;
 
             co(); // resume coruotine
             std::cout << "Coroutine status: " << (int)co.status() << std::endl;
+
+            // TODO: coroutine yelds and normal returns mixes are not working properly right now, 
+            // if i call fire() in lua it will end up immidately
  
         }
 
