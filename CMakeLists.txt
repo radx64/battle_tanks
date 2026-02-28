@@ -94,6 +94,16 @@ if(NOT TARGET lua)
     # optional: make sure the library is position‑independent (useful if
     # anything is built as a shared object later)
     set_target_properties(lua PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+    # building the Lua sources leads to a handful of harmless overflow
+    # warnings when cross‑compiling with MinGW.  Because we globally add
+    # `-Werror` at the top level those warnings become errors, so explicitly
+    # turn the error behaviour off for this target instead of trying to
+    # enumerate each warning name.  Nobody cares about warnings inside the
+    # Lua interpreter itself.
+    if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(lua PRIVATE -Wno-error)
+    endif()
 endif()
 
 # We don't automatically link the lua library into sol2 itself because
