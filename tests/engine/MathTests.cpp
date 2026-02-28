@@ -177,37 +177,37 @@ TEST(RotatePoint, shouldMovePointAroundPivotWithNegativeAngle)
 
 TEST(Average, shouldCalculateWindowAverageForFewValues)
 {
-    engine::math::Average average(4);
+    engine::math::Average<uint32_t> average(4);
     int result{};
     for (const auto value : std::array<int, 4>{2,4,6,8})
     {
         result = average.calculate(value);
     }
 
-    int expected_result = 5;
+    uint32_t expected_result = 5;
 
     EXPECT_EQ(expected_result, result);
 }
 
 TEST(Average, shouldCalculateWindowAverageForMoreValuesThanWindow)
 {
-    engine::math::Average average(4);
+    engine::math::Average<uint32_t> average(4);
     int result{};
     for (const auto value : std::array<int, 6>{2,4,6,8,10,12})
     {
         result = average.calculate(value);
     }
 
-    int expected_result = 9;
-
+    uint32_t expected_result = 9;
     EXPECT_EQ(expected_result, result);
 }
 
 TEST(Average, shouldThrowIfAverageWindowIsLessThen2)
 {
-    ASSERT_THROW(engine::math::Average(0), std::invalid_argument);
-    ASSERT_THROW(engine::math::Average(1), std::invalid_argument);
-    ASSERT_NO_THROW(engine::math::Average(2));
+    using Average = engine::math::Average<uint32_t>;
+    ASSERT_THROW(Average(0), std::invalid_argument);
+    ASSERT_THROW(Average(1), std::invalid_argument);
+    ASSERT_NO_THROW(Average(2));
 }
 
 }  // namespace engine::math
