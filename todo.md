@@ -53,8 +53,11 @@ Bunch of random ideas to randomly pick up and implement
 - [ ] Distance sensors
 
 ## Lua API
+- [x] Try some lua binding library and create some basic example bindings
+- [ ] Explore LUA coroutines for scripting tank behaviour (yelding when turret moves, or sleeping for some time etc...)
 - [ ] Some movement basic API (rotate, driving) with lua bindings
 - [ ] Scanner/radar to find other tanks and pickups
+  
 
 ## Others
 - [ ] Address in code TODOs and FIXMEs :) meh

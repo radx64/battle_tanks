@@ -43,7 +43,65 @@ FetchContent_Declare(
   OVERRIDE_FIND_PACKAGE
 )
 
-FetchContent_MakeAvailable(googletest sfml fmt)
+FetchContent_Declare(
+  lua
+  GIT_REPOSITORY https://github.com/lua/lua
+  # sol2 at the pinned version currently supports up to Lua 5.4; 5.5
+  # changes the API and introduces new enums that break the header-only
+  # compatibility checks.  Use the last 5.4 release.
+  GIT_TAG        v5.4.6
+  GIT_SHALLOW ON
+  GIT_PROGRESS TRUE
+  SYSTEM
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_Declare(
+  sol2
+  GIT_REPOSITORY https://github.com/ThePhD/sol2
+  GIT_TAG        v3.3.0
+  GIT_SHALLOW ON
+  GIT_PROGRESS TRUE
+  SYSTEM
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(googletest sfml fmt lua sol2)
+
+# Lua does not provide CMake build scripts, so after fetching we have to
+# build a static library ourselves and expose a target that other parts of
+# the project (and sol2) can depend on.  This happens before any other
+# subdirectories are added so that the `lua` target is available everywhere.
+
+FetchContent_GetProperties(lua)
+if(NOT lua_POPULATED)
+    FetchContent_Populate(lua)
+endif()
+
+if(NOT TARGET lua)
+    # gather the C sources shipped in the repository; there are no headers
+    # under a separate src/ directory, everything lives at the top level.
+    file(GLOB LUA_C_SOURCES
+        "${lua_SOURCE_DIR}/*.c"
+    )
+
+    add_library(lua STATIC ${LUA_C_SOURCES})
+    target_include_directories(lua PUBLIC ${lua_SOURCE_DIR})
+    # make an alias with the conventional namespace so that consumers can
+    # write `lua::lua` (the same form used by find_package())
+    add_library(lua::lua ALIAS lua)
+
+    # optional: make sure the library is position‑independent (useful if
+    # anything is built as a shared object later)
+    set_target_properties(lua PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
+# We don't automatically link the lua library into sol2 itself because
+# sol2's CMake export logic will complain (it tries to export the sol2
+# interface target without also exporting lua).  Instead individual
+# executables and libraries in this project should link both `sol2` and
+# `lua::lua` as needed (see source/lua_experiments/CMakeLists.txt for an
+# example).
 
 find_package(sfml COMPONENTS system window graphics REQUIRED)
 
