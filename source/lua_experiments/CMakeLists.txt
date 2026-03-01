@@ -5,7 +5,8 @@ set_target_properties(lua_main PROPERTIES
 
 target_sources(lua_main 
 PUBLIC
-    main.cpp)
+    main.cpp
+    TankSimulator.cpp)
     
 target_link_libraries(lua_main
     sol2
