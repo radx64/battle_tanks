@@ -16,7 +16,7 @@ LoggerSink& LoggerSink::instance()
 
 void LoggerSink::processLogs()
 {
-    while (!stop_) 
+    while (!stop_ || !logQueue_.empty())
     {
         {
             std::unique_lock<std::mutex> lock(logQueueMutex_);
@@ -32,7 +32,10 @@ void LoggerSink::processLogs()
                 lock.lock();
             }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (!stop_)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
     }
 }
 
@@ -52,6 +55,12 @@ void LoggerSink::log(const fmt::v12::color& color,
     const std::string& prefix,
     const std::string& text)
 {
+    // Don't accept new logs during shutdown
+    if (stop_)
+    {
+        return;
+    }
+
     auto date = std::chrono::system_clock::now();
 
     Log logEvent{

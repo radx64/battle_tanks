@@ -25,6 +25,8 @@
 #include "game/entity/tree/TreeFactory.hpp"
 #include "game/HelpWindow.hpp"
 
+#include "lua/ScriptContext.hpp"
+
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
 
@@ -56,6 +58,7 @@ Application::Application()
 , physicsProfiler_{"game::Application::PHYSICS", "ms"}
 , navProfiler_{"game::Application::NAV", "ms"}
 , guiProfiler_{"game::Application::GUI", "ms"}
+, luaProfiler_{"game::lua", "ms"}
 {}
 
 void Application::onInit()
@@ -130,6 +133,10 @@ void Application::onUpdate(float timeStep)
         {
             navigator->navigate();
         }
+    );
+
+    PROFILE_SCOPE(luaProfiler_,
+        scriptsScheduler_.update(timeStep);
     );
 
     camera_.update(timeStep);
@@ -241,6 +248,15 @@ void Application::configureGUI()
         windowManager_.addWindow(std::move(helpWindow));
     });
     windowManager_.mainWindow().addChild(std::move(button));
+
+    auto reloadLuaButton = gui::TextButton::create("Reload Lua script");
+    reloadLuaButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
+    reloadLuaButton->setSize(sf::Vector2f(150.f, 30.f));
+    reloadLuaButton->onClick([this](){
+        luaTankHandle_->getScript()->reload();
+    });
+    windowManager_.mainWindow().addChild(std::move(reloadLuaButton));
+
 }
 
 void Application::spawnSomeTanks()
@@ -258,6 +274,15 @@ void Application::spawnSomeTanks()
         scene_.spawnObject(std::move(tank));
         navigators_.push_back(std::move(navigator));
     }
+
+    auto luaControlledTank =  entity::TankFactory::create(
+        entity::TankFactory::TankType::Black, Config::WINDOW_WIDTH / 2.f, Config::WINDOW_HEIGHT/2.f, 180.f, &tracksRenderer_);
+
+    luaControlledTank->setupLuaScript();
+    scriptsScheduler_.add(luaControlledTank->getScript());
+    luaTankHandle_ = luaControlledTank.get();
+    scene_.spawnObject(std::move(luaControlledTank));
+
 }
 
 void Application::spawnSomeBarrelsAndCratesAndTress()

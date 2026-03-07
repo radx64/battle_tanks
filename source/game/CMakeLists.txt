@@ -7,7 +7,9 @@ PUBLIC
 
 target_link_libraries(game_lib
 PUBLIC 
-    engine_lib)
+    engine_lib
+    sol2
+    lua::lua)
 
 target_sources(game_lib
 PRIVATE
@@ -30,7 +32,10 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tree/TreeRenderer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/WaypointMouseController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua/ScriptContext.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua/ScriptsScheduler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua/WaitCondition.cpp    
     ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/particle/Explosion.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/WaypointMouseController.cpp
 )

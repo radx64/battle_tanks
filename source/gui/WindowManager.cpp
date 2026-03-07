@@ -40,8 +40,8 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
         (*window)->render(renderTexture_);
     }
     renderTexture_.display();
-    sf::Sprite texture(renderTexture_.getTexture());
-    renderWindow.draw(texture);
+    textureSprite_.setTexture(renderTexture_.getTexture());
+    renderWindow.draw(textureSprite_);
 }
 
 MainWindow& WindowManager::mainWindow()

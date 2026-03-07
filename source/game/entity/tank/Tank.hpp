@@ -4,8 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "game/entity/tank/Cannon.hpp"
 #include "engine/GameObject.hpp"
+#include "game/entity/tank/Cannon.hpp"
+#include "game/lua/ScriptContext.hpp"
 
 namespace game::entity {class TracksRenderer;}
 namespace game::entity 
@@ -22,7 +23,8 @@ public:
 
     void onUpdate(engine::Scene& scene, float timeStep) override;
     void setThrottle(float throttle);
-    void setDirection(float direction);
+    void setHeading(float direction);
+    void setTurretHeading(float direction);
     static void setDebug(bool is_enabled); 
 
     float current_direction_{};
@@ -32,12 +34,16 @@ public:
     std::unique_ptr<Cannon> cannon_;
     static bool DEBUG_;
 
+    void setupLuaScript();
+    lua::ScriptContext* getScript();
+
 protected:
     sf::Vector2f tank_middle_point_;
     float set_direction_{};
     float set_throttle_{};
     float lifetime_{};
     TracksRenderer* tracksRenderer_;
+    std::unique_ptr<lua::ScriptContext> script_;
 };
 
 }  // namespace game::entity

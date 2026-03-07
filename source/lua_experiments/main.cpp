@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
     sol::state lua;
     lua.open_libraries(sol::lib::base, sol::lib::coroutine);
 
-    experimental::ScriptScheduler scheduler;
+    experimental::ScriptsScheduler scheduler;
     experimental::TankSimulator tank;
     experimental::ScriptContext ctx;
     ctx.tank = &tank;

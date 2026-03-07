@@ -51,6 +51,7 @@ protected:
     Window* activeWindowHandle_;
     MainWindow mainWindow_;
     sf::RenderTexture renderTexture_;
+    sf::Sprite textureSprite_;
 };
 
 }  // namespace gui

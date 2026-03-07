@@ -35,7 +35,7 @@ void Navigator::navigate()
     {
         float direction = atan2((float)currentWaypoint.y - tankY, (float)currentWaypoint.x - tankX);
         tank_.setThrottle(std::min(1.0, distance*0.01));
-        tank_.setDirection(direction * 180.0 / M_PI);        
+        tank_.setHeading(direction * 180.0 / M_PI);        
     }
     else
     {

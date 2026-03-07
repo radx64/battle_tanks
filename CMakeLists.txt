@@ -156,8 +156,10 @@ target_link_libraries (battle_tanks
     sfml-graphics
 )
 
-# Copy fonts to build directory
+# Copy fonts and scripts to build directory
 add_custom_command(TARGET battle_tanks POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:battle_tanks>/resources
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/source/game/scripts $<TARGET_FILE_DIR:battle_tanks>/scripts
 )

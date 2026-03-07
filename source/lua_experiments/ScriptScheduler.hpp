@@ -7,7 +7,7 @@
 
 namespace experimental
 {
-class ScriptScheduler
+class ScriptsScheduler
 {
 public:
     void update(float dt)

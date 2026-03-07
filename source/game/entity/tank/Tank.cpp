@@ -52,9 +52,14 @@ void Tank::setThrottle(float throttle)
 {
     set_throttle_ = throttle;
 }
-void Tank::setDirection(float direction)
+void Tank::setHeading(float direction)
 {
     set_direction_ = direction;
+    cannon_->setRotation(direction);
+}
+
+void Tank::setTurretHeading(float direction)
+{
     cannon_->setRotation(direction);
 }
 
@@ -107,6 +112,20 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     // Cannon has some reload timer so trying to fire every update
     // is fine 🤣
     cannon_->fire();
+}
+
+void Tank::setupLuaScript()
+{
+    script_ = std::make_unique<lua::ScriptContext>(this);
+}
+
+lua::ScriptContext* Tank::getScript()
+{
+    if (!script_)
+    {
+        throw std::runtime_error("Tank does not have script attached");
+    }
+    return script_.get();
 }
 
 }  // namespace game::entity

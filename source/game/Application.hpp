@@ -23,6 +23,8 @@
 #include "gui/WindowManager.hpp"
 #include "gui/MouseController.hpp"
 
+#include "lua/ScriptsScheduler.hpp"
+
 namespace game 
 {
 
@@ -62,6 +64,7 @@ protected:
 
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
+    lua::ScriptsScheduler scriptsScheduler_;
 
     entity::TracksRenderer tracksRenderer_;
     engine::math::Average<float> fpsAverage_;
@@ -70,6 +73,9 @@ protected:
     engine::Profiler physicsProfiler_;
     engine::Profiler navProfiler_;
     engine::Profiler guiProfiler_;
+    engine::Profiler luaProfiler_;
+
+    entity::Tank* luaTankHandle_;
 };
 
 }  // namespace game
