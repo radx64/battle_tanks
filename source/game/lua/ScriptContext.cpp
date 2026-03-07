@@ -50,19 +50,7 @@ ScriptContext::ScriptContext(entity::Tank* tank)
 : logger_{"ScriptContext"}
 , tank_{tank}
 {
-    lua_state_.open_libraries(sol::lib::base, sol::lib::coroutine);
-    // bind functions
-    
-    lua_state_.set_function("sleep", game::lua::bindings::lua_sleep);
-    lua_state_.set_function("set_turret_heading", game::lua::bindings::lua_set_turrent_heading);
-    lua_state_.set_function("set_tank_heading",  game::lua::bindings::lua_set_tank_heading);
-    lua_state_.set_function("print", game::lua::bindings::lua_print);
-    // lua_state_.set_function("fire", lua_fire);
-
     reload();
-
-    // Store context handle inside lua state
-    storeScriptContext(coroutine_.lua_state(), this);
 }
 
 void ScriptContext::reload()
