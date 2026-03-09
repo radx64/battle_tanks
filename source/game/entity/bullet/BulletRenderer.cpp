@@ -4,8 +4,6 @@
 namespace game::entity
 {
 
-constexpr float BULLET_SPRITE_ROTATION_OFFSET = 90.f;
-
 BulletRenderer::BulletRenderer(Bullet* bullet, sf::Texture& bulletBody)
 : bullet_(bullet)
 {
@@ -19,7 +17,7 @@ void BulletRenderer::draw(sf::RenderWindow& renderWindow)
 {
     auto bulletRigidBody = bullet_->getRigidBody();
 
-    bulletSprite_.setRotation(bulletRigidBody.rotation_ + BULLET_SPRITE_ROTATION_OFFSET);
+    bulletSprite_.setRotation(bulletRigidBody.rotation_);
     bulletSprite_.setColor(sf::Color(10, 10, 10, 127));
     bulletSprite_.setPosition(bulletRigidBody.x_ + 4, bulletRigidBody.y_+ 4);
     renderWindow.draw(bulletSprite_);

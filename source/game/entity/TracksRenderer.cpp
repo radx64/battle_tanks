@@ -3,8 +3,8 @@
 namespace game::entity
 {
 
-constexpr auto TRACK_WIDTH = 6;
-constexpr auto TRACK_HEIGHT = 2;
+constexpr auto TRACK_WIDTH = 2;
+constexpr auto TRACK_HEIGHT = 6;
 constexpr auto TRACK_IMPRINT_OPACITY = 50;
 constexpr auto PARTICLE_LAYER_OPACITY = 90;
 
@@ -14,13 +14,12 @@ TracksRenderer::TracksRenderer()
     target_.create(1920, 1080);
 }
 
-
 void TracksRenderer::addTrackImprint(const int x, const int y, const float angle)
 {
     sf::RectangleShape rectangle(sf::Vector2f(TRACK_HEIGHT, TRACK_WIDTH));
     rectangle.setPosition(sf::Vector2f(x, y));
     rectangle.setFillColor(sf::Color(0, 0, 0, TRACK_IMPRINT_OPACITY));
-    rectangle.setRotation(angle);  
+    rectangle.setRotation(angle);
     target_.draw(rectangle);
     target_.display();
 }

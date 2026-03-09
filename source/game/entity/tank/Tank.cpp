@@ -55,7 +55,6 @@ void Tank::setThrottle(float throttle)
 void Tank::setHeading(float direction)
 {
     set_direction_ = direction;
-    cannon_->setRotation(direction);
 }
 
 void Tank::setTurretHeading(float direction)
@@ -87,8 +86,8 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
 
     //TODO add some inertia calculation while accelerating
-    drivetrain_force_.x = cos(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
-    drivetrain_force_.y = sin(current_direction_ * M_PI/180.0) * (current_throttle_ * TANK_ACCELERATION);
+    drivetrain_force_.x = sin(engine::math::degreeToRadians(current_direction_)) * (current_throttle_ * TANK_ACCELERATION);
+    drivetrain_force_.y = -cos(engine::math::degreeToRadians(current_direction_)) * (current_throttle_ * TANK_ACCELERATION);
 
     braking_force_.x = -tank_rigid_body.velocity_.x * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
     braking_force_.y = -tank_rigid_body.velocity_.y * TANK_BRAKE_FORCE *(1.0 - current_throttle_);
@@ -99,9 +98,9 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
 
     if ((std::fabs(tank_rigid_body.velocity_.x) > 0.01) or (std::fabs(tank_rigid_body.velocity_.y) > 0.01))
     {
-        sf::Vector2f left_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_-15.0),
+        sf::Vector2f left_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_-15.0, tank_rigid_body.y_),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
-        sf::Vector2f right_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_+15.0),
+        sf::Vector2f right_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_+15.0, tank_rigid_body.y_),
             current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
 
         tracksRenderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);

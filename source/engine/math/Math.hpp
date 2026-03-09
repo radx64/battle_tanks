@@ -15,6 +15,7 @@ float crossProduct(float x1, float y1, float x2, float y2);
 float normalizeVector(sf::Vector2f& vector);
 float signedFmod(float a, float n);
 float degreeToRadians(float degree);
+float radiansToDegree(float radians);
 sf::Vector2f rotatePoint(sf::Vector2f pointToRotate, float angle, sf::Vector2f pivot);
 sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t);
 float lerp(const float a, const float b, float t);

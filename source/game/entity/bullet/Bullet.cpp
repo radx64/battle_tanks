@@ -32,8 +32,11 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
 
     float angle_rad = engine::math::degreeToRadians(angle);
 
-    float vx = speed * std::cos(angle_rad);
-    float vy = speed * std::sin(angle_rad);
+    // This is game convention coordinate system Y+ downwards 0deg up
+    // so this need to reverse math convention (where right (X+) is 0 deg)
+    // that why vx and vy are not cos and sin of rad but other way around
+    float vx = speed * std::sin(angle_rad);
+    float vy = speed * -std::cos(angle_rad);
 
     rigidBody_->applyForce(sf::Vector2f{vx, vy});
 }

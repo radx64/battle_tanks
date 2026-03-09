@@ -37,7 +37,7 @@ void Cannon::draw(sf::RenderWindow& renderWindow)
 {
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 3, y_+ 3);
-    sprite_.setRotation(current_rotation_ + CANNON_SPRITE_ROTATION_OFFSET);
+    sprite_.setRotation(current_rotation_);
     renderWindow.draw(sprite_);
 
     sprite_.setColor(sf::Color(255, 255, 255, 255));
@@ -64,7 +64,7 @@ void Cannon::fire()
 {
     if (cooldown_ > CANNON_COOLDOWN)
     {
-        sf::Vector2f bullet_spawn_offset = engine::math::rotatePoint(sf::Vector2f{CANNON_LENGTH, 0.f}, current_rotation_, sf::Vector2f{0.f, 0.f});
+        sf::Vector2f bullet_spawn_offset = engine::math::rotatePoint(sf::Vector2f{0.f, -CANNON_LENGTH}, current_rotation_, sf::Vector2f{0.f, 0.f});
 
         auto bullet_x = x_ + bullet_spawn_offset.x;
         auto bullet_y = y_ + bullet_spawn_offset.y;

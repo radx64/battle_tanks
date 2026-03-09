@@ -22,7 +22,7 @@ void TankRenderer::draw(sf::RenderWindow& renderWindow)
     auto tankRigidBody = tank_->getRigidBody();
     tankSprite_.setColor(sf::Color(10, 10, 10, 127));
     tankSprite_.setPosition(tankRigidBody.x_ + 8, tankRigidBody.y_+ 8);
-    tankSprite_.setRotation(tank_->current_direction_ - 90.f);
+    tankSprite_.setRotation(tank_->current_direction_);
     renderWindow.draw(tankSprite_);
 
     tankSprite_.setColor(sf::Color(255, 255, 255, 255));

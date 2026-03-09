@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstddef>
 #include <stdexcept>
+#include <numbers>
 
 namespace engine::math
 {
@@ -36,11 +37,17 @@ float signedFmod(float a, float n)
 
 float degreeToRadians(float degree)
 {
-  return degree * M_PI / 180.0f;
+  return degree * std::numbers::pi_v<float> / 180.0f;
+}
+
+float radiansToDegree(float radians)
+{
+  return radians * 180.0f / std::numbers::pi_v<float>;
 }
 
 sf::Vector2f rotatePoint(sf::Vector2f point_to_rotate, float angle, sf::Vector2f pivot)
 {
+  //Rotate point uses game coordinate system so some sin and cos are swapped around so that 0deg is -Y
   float radians = degreeToRadians(angle);
   float s = std::sin(radians);
   float c = std::cos(radians);

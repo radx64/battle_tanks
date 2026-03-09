@@ -137,6 +137,27 @@ TEST(DegreeToRadians, shouldConvertNegativeDegree)
     EXPECT_FLOAT_EQ(expected_result, calculated_result);   
 }
 
+TEST(RadiansToDegree, shouldConvertZeroRadian)
+{
+    float expected_result = 0.0;
+    float calculated_result = engine::math::radiansToDegree(0.0);
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);   
+}
+
+TEST(RadiansToDegree, shouldConvertPositiveRadian)
+{
+    float expected_result = 120.0;
+    float calculated_result = engine::math::radiansToDegree(2.0943951023931953);
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);   
+}
+
+TEST(RadiansToDegree, shouldConvertNegativeRadian)
+{
+    float expected_result = -30.0;
+    float calculated_result = engine::math::radiansToDegree(-0.52359877559829882);
+    EXPECT_FLOAT_EQ(expected_result, calculated_result);   
+}
+
 TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
 {
     sf::Vector2f point{1.0f, 1.0f};
@@ -151,28 +172,28 @@ TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
 
 TEST(RotatePoint, shouldMovePointAroundPivotWithPositiveAngle)
 {
-    sf::Vector2f point{1.0f, 1.0f};
+    sf::Vector2f point{1.0f, 0.0f};
     float angle{90.0};
     sf::Vector2f pivot{0.0f, 0.0f};
 
-    sf::Vector2f expected_result{-1.0f, 1.0f};
+    sf::Vector2f expected_result{0.0f, 1.0f};
     auto result = engine::math::rotatePoint(point, angle, pivot);
 
-    EXPECT_FLOAT_EQ(expected_result.x, result.x);
-    EXPECT_FLOAT_EQ(expected_result.y, result.y);
+    EXPECT_NEAR(expected_result.x, result.x, 1e-6f);
+    EXPECT_NEAR(expected_result.y, result.y, 1e-6f);
 }
 
 TEST(RotatePoint, shouldMovePointAroundPivotWithNegativeAngle)
 {
-    sf::Vector2f point{1.0f, 1.0f};
+    sf::Vector2f point{0.0f, 1.0f};
     float angle{-90.0};
     sf::Vector2f pivot{0.0f, 0.0f};
 
-    sf::Vector2f expected_result{1.0f, -1.0f};
+    sf::Vector2f expected_result{1.0f, 0.0f};
     auto result = engine::math::rotatePoint(point, angle, pivot);
 
-    EXPECT_FLOAT_EQ(expected_result.x, result.x);
-    EXPECT_FLOAT_EQ(expected_result.y, result.y);
+    EXPECT_NEAR(expected_result.x, result.x, 1e-6f);
+    EXPECT_NEAR(expected_result.y, result.y, 1e-6f);
 }
 
 TEST(Average, shouldCalculateWindowAverageForFewValues)

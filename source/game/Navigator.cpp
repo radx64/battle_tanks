@@ -33,9 +33,12 @@ void Navigator::navigate()
 
     if (distance > WAYPOINT_VISITED_DISTANCE)
     {
-        float direction = atan2((float)currentWaypoint.y - tankY, (float)currentWaypoint.x - tankX);
+        // This is game coordinates system where 0deg is Y- and 90deg is X+ so atan needs to be reversed
+        float direction = atan2((float)currentWaypoint.x - tankX, -((float)currentWaypoint.y - tankY));
+        float degree = engine::math::radiansToDegree(direction);
         tank_.setThrottle(std::min(1.0, distance*0.01));
-        tank_.setHeading(direction * 180.0 / M_PI);        
+        tank_.setHeading(degree);
+        tank_.setTurretHeading(degree);    
     }
     else
     {
