@@ -17,11 +17,8 @@ Text::Text()
 : offset_{0.f, 0.f}
 , sprite_(texture_.getTexture())
 {
-    // Allocate texture size once per text object to avoid costly resizing operations.
-    // Consider adjusting the size dynamically only if absolutely necessary.
-    // Or make some texture manager that will handle this and share one texture between multiple text objects.
-    // TODO: decide on default size and behaviour later
-    texture_.create(1024,1024);
+    // Start with a small default size; will grow dynamically as text changes.
+    texture_.create(256, 256);
 }
 
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -115,8 +112,19 @@ void Text::setOutlineThickness(float thickness)
 
 void Text::updateTexture()
 {
-    //TODO: Consider doing something more sophisticated later
-    assert (text_.getLocalBounds().width <= texture_.getSize().x && "Text width exceeded renderable texure width");
+    // Dynamically resize texture based on actual text bounds with 20% padding
+    auto textBounds = text_.getLocalBounds();
+    auto requiredWidth = static_cast<unsigned int>(textBounds.width + textBounds.left + 32);
+    auto requiredHeight = static_cast<unsigned int>(textBounds.height + textBounds.top + 32);
+
+    auto currentSize = texture_.getSize();
+    if (requiredWidth > currentSize.x || requiredHeight > currentSize.y)
+    {
+        // Allocate with 20% overhead to reduce frequent reallocations
+        auto newWidth = static_cast<unsigned int>(requiredWidth * 1.2f);
+        auto newHeight = static_cast<unsigned int>(requiredHeight * 1.2f);
+        texture_.create(newWidth, newHeight);
+    }
 
     texture_.clear(sf::Color::Transparent);
 
