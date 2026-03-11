@@ -100,5 +100,6 @@
                 }
             }
         ]
-    }
+    },
+    "cmake.useCMakePresets": "always",
 }

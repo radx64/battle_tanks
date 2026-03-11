@@ -7,21 +7,26 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(CTest)
-enable_testing()
-
 include(FetchContent)
 
 set(FETCHCONTENT_QUIET FALSE)
 
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        v1.17.0
-  GIT_SHALLOW ON
-  GIT_PROGRESS TRUE
-  SYSTEM
-)
+# Fetch googletest only when building tests
+option(BUILD_TESTS "Build tests" OFF)
+
+if(BUILD_TESTS)
+  include(CTest)
+  enable_testing()
+  
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.17.0
+    GIT_SHALLOW ON
+    GIT_PROGRESS TRUE
+    SYSTEM
+  )
+endif()
 
 FetchContent_Declare(
   sfml
@@ -66,7 +71,11 @@ FetchContent_Declare(
   OVERRIDE_FIND_PACKAGE
 )
 
-FetchContent_MakeAvailable(googletest sfml fmt lua sol2)
+if(BUILD_TESTS)
+  FetchContent_MakeAvailable(googletest sfml fmt lua sol2)
+else()
+  FetchContent_MakeAvailable(sfml fmt lua sol2)
+endif()
 
 # Lua does not provide CMake build scripts, so after fetching we have to
 # build a static library ourselves and expose a target that other parts of
@@ -135,8 +144,6 @@ set(CMAKE_CXX_FLAGS "${warnings} ${other_flags}"
    CACHE STRING "Flags used by the compiler during all build types." FORCE)
 set(CMAKE_C_FLAGS   "${warnings} ${other_flags}"
    CACHE STRING "Flags used by the compiler during all build types." FORCE)
-
-option(BUILD_TESTS "Build tests" OFF)
 
 add_subdirectory(source)
 
