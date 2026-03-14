@@ -2,6 +2,7 @@
 
 #include <iterator>
 
+#include "gui/ContextMenu.hpp"
 #include "gui/Window.hpp"
 
 namespace gui
@@ -30,6 +31,43 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
     windows_.push_front(std::move(window));
 }
 
+void WindowManager::addOverlay(std::unique_ptr<Component> overlay)
+{
+    if (!overlay)
+    {
+        return;
+    }
+
+    // If this overlay is a ContextMenu, ensure it can remove itself from the overlay list.
+    // TODO: I don't like this solution so I need to think about something more generic.
+    // dynamic_casts are bad, most of the time XD
+    if (auto* menu = dynamic_cast<ContextMenu*>(overlay.get()))
+    {
+        menu->setCloseCallback([this](ContextMenu* menuPtr) {
+            removeOverlay(menuPtr);
+        });
+    }
+
+    // When an overlay is active we want to treat the UI as modal; prevent hover/interaction
+    // with underlying windows while the overlay is visible.
+    mainWindow_.forceMouseLeave();
+    mainWindow_.defocusWithAllChildren();
+    for (auto& window : windows_)
+    {
+        window->forceMouseLeave();
+        window->defocusWithAllChildren();
+    }
+
+    overlays_.push_back(std::move(overlay));
+}
+
+void WindowManager::removeOverlay(Component* overlay)
+{
+    overlays_.remove_if([overlay](const std::unique_ptr<Component>& ptr) {
+        return ptr.get() == overlay;
+    });
+}
+
 void WindowManager::render(sf::RenderWindow& renderWindow)
 {
     renderTexture_.clear(sf::Color{0,0,0,0});
@@ -39,6 +77,12 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     {
         (*window)->render(renderTexture_);
     }
+
+    for (auto& overlay : overlays_)
+    {
+        overlay->render(renderTexture_);
+    }
+
     renderTexture_.display();
     textureSprite_.setTexture(renderTexture_.getTexture());
     renderWindow.draw(textureSprite_);
@@ -52,12 +96,6 @@ MainWindow& WindowManager::mainWindow()
 template<class T>
 EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
 {
-    // If not left mouse button
-    // FIXME: This can't stay for too long as probably I wan't to send other events
-    if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left)
-    {
-        return gui::EventStatus::NotConsumed;
-    }
 
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
@@ -132,16 +170,42 @@ EventStatus WindowManager::processEventWithActiveWindow(const T& event)
 
 EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
+    // If there are overlays present, treat the UI as modal.
+    // Always deliver mouse button events to the topmost overlay so it can
+    // react to clicks inside or outside its bounds (e.g. close on outside click).
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(mouseButtonPressedEvent);
+        return EventStatus::Consumed;
+    }
+
     return processMouseButton(mouseButtonPressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(mouseButtonDoublePressedEvent);
+        return EventStatus::Consumed;
+    }
+
     return processMouseButton(mouseButtonDoublePressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
 {
+    // If overlays are present, treat them as modal UI and prevent underlying windows
+    // from reacting to mouse movement (e.g. hover states).
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(mouseMovedEvent);
+        return EventStatus::Consumed;
+    }
+
     auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
     gui::EventStatus status {EventStatus::NotConsumed};
@@ -199,28 +263,63 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
 
 EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(mouseButtonReleasedEvent);
+        return EventStatus::Consumed;
+    }
+
     return processEventWithActiveWindow(mouseButtonReleasedEvent);
 }
 
 EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 {
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(keyboardKeyPressedEvent);
+        return EventStatus::Consumed;
+    }
+
     return processEventWithActiveWindow(keyboardKeyPressedEvent);
 }
 
 EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(keyboardKeyReleasedEvent);
+        return EventStatus::Consumed;
+    }
+
     return processEventWithActiveWindow(keyboardKeyReleasedEvent);
 }
 
 EventStatus WindowManager::receive(const event::TextEntered& textEntered)
 {
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        topOverlay->receive(textEntered);
+        return EventStatus::Consumed;
+    }
+
     return processEventWithActiveWindow(textEntered);
 }
 
 EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusChange)
 {
+    // If there is a modal overlay active, it should be the only recipient of focus traversal.
+    if (not overlays_.empty())
+    {
+        auto* topOverlay = overlays_.back().get();
+        return topOverlay->receive(focusChange);
+    }
+
     EventStatus result{EventStatus::NotConsumed};
-    
+
     // Forward event to active window
     if (activeWindowHandle_ and activeWindowHandle_->isActive() and not activeWindowHandle_->isDead())
     {
@@ -228,8 +327,8 @@ EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusCha
     }
     else
     {
-        // Focus change is a bit different than other events. 
-        // I don't wan to forward to main window if there is an active displayed one.
+        // Focus change is a bit different than other events.
+        // I don't want to forward to main window if there is an active displayed one.
         result = mainWindow_.receive(focusChange);
     }
     return result;

@@ -166,15 +166,34 @@ EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleased
 
     auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
+    if (isLeftReleased)
+    {
+       return  processLeftMouseClick(mousePosition);               
+    }
+    return EventStatus::NotConsumed;
+}
 
-    if (isLeftReleased and isInside(mousePosition))
+EventStatus ButtonBase::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    if (not isVisible_) return EventStatus::NotConsumed;
+    
+    bool isLeftDoubleClicked = mouseButtonDoublePressedEvent.button == gui::event::MouseButton::Left;
+    if (not isLeftDoubleClicked) return EventStatus::NotConsumed;
+
+    auto mousePosition = sf::Vector2f{mouseButtonDoublePressedEvent.position.x, mouseButtonDoublePressedEvent.position.y};
+    return processLeftMouseClick(mousePosition);
+}
+
+EventStatus ButtonBase::processLeftMouseClick(sf::Vector2f mousePosition)
+{
+    if (isInside(mousePosition))
     {
         focus();
 
         state_ = State::Hover;
         updateTexture();
 
-        if (onClick_) onClick_();  
+        if (onClick_) onClick_();
         return EventStatus::Consumed;
     }
     return EventStatus::NotConsumed;

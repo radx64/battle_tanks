@@ -23,6 +23,9 @@ public:
     virtual ~WindowManager();
 
     void addWindow(std::unique_ptr<Window> window);
+    void addOverlay(std::unique_ptr<Component> overlay);
+    void removeOverlay(Component* overlay);
+
     void render(sf::RenderWindow& renderWindow);
 
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
@@ -50,6 +53,10 @@ protected:
     std::list<std::unique_ptr<Window>> windows_;
     Window* activeWindowHandle_;
     MainWindow mainWindow_;
+
+    // Components drawn on top of all windows (e.g. context menus)
+    std::list<std::unique_ptr<Component>> overlays_;
+
     sf::RenderTexture renderTexture_;
     sf::Sprite textureSprite_;
 };

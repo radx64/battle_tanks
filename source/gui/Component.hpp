@@ -62,6 +62,10 @@ public:
     void disableChildrenEvents();
     void enableChildrenEvents();
 
+    // Force hover exit on this component and all descendants.
+    // Useful for modal overlays to prevent underlying controls from staying highlighted.
+    void forceMouseLeave();
+
     /* Mouse events */
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override final;

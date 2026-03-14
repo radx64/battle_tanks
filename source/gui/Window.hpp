@@ -29,17 +29,30 @@ namespace gui
 class MainWindow : public Component
 {
 public:
+    using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
+
+    void setContextMenuHandler(ContextMenuHandler handler);
+
     void onRender(sf::RenderTexture&) override
     {
     }
+
+protected:
+    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+
+private:
+    ContextMenuHandler contextMenuHandler_;
 };
 
 class Window : public Component
 {
 public:
+    using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
+
     Window();
 
     void setTitle(const std::string_view& text);
+    void setContextMenuHandler(ContextMenuHandler handler);
     void close();
     bool isDead() const;
 
@@ -88,6 +101,7 @@ protected:
     gui::window::StatusBar* statusBar_;
 
     gui::WindowManager* windowManager_;
+    ContextMenuHandler contextMenuHandler_;
     sf::Vector2f windowSizeToRestore_;
     sf::Vector2f windowPositionToRestore_;
 

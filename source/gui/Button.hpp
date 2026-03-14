@@ -38,7 +38,8 @@ protected:
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
     EventStatus on(const event::MouseLeft& mouseLeftEvent) override;
-    
+    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
+
     EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
     EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
     
@@ -47,6 +48,8 @@ protected:
 
     void onSizeChange() override;
     void onPositionChange() override;
+
+    EventStatus processLeftMouseClick(sf::Vector2f mousePosition);
 
     gui::FramedSprite background_;
 

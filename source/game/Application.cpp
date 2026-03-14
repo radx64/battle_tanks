@@ -33,6 +33,7 @@
 #include "gui/Button.hpp"
 #include "gui/Event.hpp"
 #include "gui/Window.hpp"
+#include "gui/ContextMenu.hpp"
 
 #include "Config.hpp"
 
@@ -257,7 +258,51 @@ void Application::configureGUI()
     });
     windowManager_.mainWindow().addChild(std::move(reloadLuaButton));
 
+    auto menuButton = gui::TextButton::create("Menu");
+    menuButton->setPosition(sf::Vector2f(20.f, 250.f));
+    menuButton->setSize(sf::Vector2f(150.f, 30.f));
+    auto* menuButtonPtr = menuButton.get();
+    menuButton->onClick([this, menuButtonPtr]() {
+        const auto menuPosition = menuButtonPtr->getGlobalPosition() + sf::Vector2f{0.f, 32.f};
+        auto menu = gui::ContextMenu::create(
+            {
+                {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); }},
+                {"Options...", {},
+                    {
+                        {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; entity::Tank::setDebug(tankDebugMode_); }},
+                        {"Close", {}},
+                        {"Very deep menu...", {},
+                            {
+                                {"This is deep"},
+                                {"And can be even deeper...", {},
+                                    {
+                                        {"Ok this is enough", [this]() { logger_.info("Glad you make it!"); }}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+        menu->open(menuPosition);
+        windowManager_.addOverlay(std::move(menu));
+    });
+    
+    windowManager_.mainWindow().addChild(std::move(menuButton));
+
+    windowManager_.mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
+        auto menu = gui::ContextMenu::create(
+            {
+                {"Reload Lua", [this]() { luaTankHandle_->getScript()->reload(); }},
+                {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; }},
+            }
+        );
+        menu->open(pos);
+        windowManager_.addOverlay(std::move(menu));
+    });
 }
+
 
 void Application::spawnSomeTanks()
 {

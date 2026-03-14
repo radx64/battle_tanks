@@ -11,7 +11,7 @@ KeyboardController::KeyboardController(gui::WindowManager* windowManager)
 
 void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 {
-    const auto status = windowManager_->receive(gui::event::KeyboardKeyPressed{
+    windowManager_->receive(gui::event::KeyboardKeyPressed{
         .key = keyEvent.code,
         .modifiers = {
             .alt = keyEvent.alt,
@@ -20,7 +20,7 @@ void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
             .system = keyEvent.system,
         }});
 
-    if (status == gui::EventStatus::NotConsumed and keyEvent.code == gui::event::Key::Tab)
+    if (keyEvent.code == gui::event::Key::Tab)
     {
         if (keyEvent.shift)
         {

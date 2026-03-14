@@ -104,6 +104,11 @@ void Window::setTitle(const std::string_view& text)
     header_->setTitle(text);
 }
 
+void Window::setContextMenuHandler(ContextMenuHandler handler)
+{
+    contextMenuHandler_ = std::move(handler);
+}
+
 bool Window::isInsideHeader(const sf::Vector2f& point)
 {
     return header_->isInside(point);
@@ -172,6 +177,22 @@ EventStatus Window::on(const event::MouseButtonDoublePressed&)
 EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+
+    if (mouseButtonPressedEvent.button == gui::event::MouseButton::Right)
+    {
+        if (contextMenuHandler_ and isInside(mousePosition))
+        {
+            contextMenuHandler_(mousePosition);
+            return gui::EventStatus::Consumed;
+        }
+
+        return gui::EventStatus::NotConsumed;
+    }
+
+    if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left)
+    {
+        return gui::EventStatus::NotConsumed;
+    }
 
     // If mouse clicked on top bar and was not yet dragging window
     if (isInsideHeader(mousePosition) and isInState(State::Idle))
@@ -278,6 +299,26 @@ void Window::setMaximized(const bool state)
 {
     isMaximized_ = state;
     header_->setMaximizeRestoreButtonState(state);
+}
+
+void MainWindow::setContextMenuHandler(ContextMenuHandler handler)
+{
+    contextMenuHandler_ = std::move(handler);
+}
+
+EventStatus MainWindow::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+{
+    if (mouseButtonPressedEvent.button == gui::event::MouseButton::Right)
+    {
+        if (contextMenuHandler_)
+        {
+            const auto pos = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+            contextMenuHandler_(pos);
+            return gui::EventStatus::Consumed;
+        }
+    }
+
+    return gui::EventStatus::NotConsumed;
 }
 
 }  // namespace gui

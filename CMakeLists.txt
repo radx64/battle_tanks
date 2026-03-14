@@ -64,7 +64,8 @@ FetchContent_Declare(
 FetchContent_Declare(
   sol2
   GIT_REPOSITORY https://github.com/ThePhD/sol2
-  GIT_TAG        v3.3.0
+  # Update to newer sol2 to fix compilation with recent compilers
+  GIT_TAG        v3.5.0
   GIT_SHALLOW ON
   GIT_PROGRESS TRUE
   SYSTEM

@@ -601,4 +601,16 @@ void Component::enableChildrenEvents()
     childrenEventsProcessingEnabled_ = true;
 }
 
+void Component::forceMouseLeave()
+{
+    if (wasMouseInside_)
+    {
+        receive(event::MouseLeft{});
+    }
+    for (auto& child : children_)
+    {
+        child->forceMouseLeave();
+    }
+}
+
 }  // namespace gui
