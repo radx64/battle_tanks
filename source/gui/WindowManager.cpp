@@ -63,8 +63,10 @@ void WindowManager::addOverlay(std::unique_ptr<Component> overlay)
 
 void WindowManager::removeOverlay(Component* overlay)
 {
-    overlays_.remove_if([overlay](const std::unique_ptr<Component>& ptr) {
-        return ptr.get() == overlay;
+    taskQueue_.push([this, overlay](){
+        overlays_.remove_if([overlay](const std::unique_ptr<Component>& ptr) {
+            return ptr.get() == overlay;
+        });
     });
 }
 
@@ -88,6 +90,11 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderWindow.draw(textureSprite_);
 }
 
+void WindowManager::update()
+{
+    taskQueue_.executeAll();
+}
+
 MainWindow& WindowManager::mainWindow()
 {
     return mainWindow_;
@@ -96,7 +103,6 @@ MainWindow& WindowManager::mainWindow()
 template<class T>
 EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
 {
-
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
     // Find which window should be active and forward click events only there
@@ -261,6 +267,7 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
     return status;
 }
 
+// TODO: These receive methods are almost same, make one template (as in gui component)
 EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     if (not overlays_.empty())

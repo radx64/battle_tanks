@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/TaskQueue.hpp"
+
 #include "gui/EventReceiver.hpp"
 #include "gui/Window.hpp"
 
@@ -27,6 +29,7 @@ public:
     void removeOverlay(Component* overlay);
 
     void render(sf::RenderWindow& renderWindow);
+    void update();
 
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
@@ -59,6 +62,8 @@ protected:
 
     sf::RenderTexture renderTexture_;
     sf::Sprite textureSprite_;
+
+    engine::TaskQueue taskQueue_;
 };
 
 }  // namespace gui

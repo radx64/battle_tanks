@@ -75,8 +75,9 @@ std::unique_ptr<ContextMenu> ContextMenu::create(const std::vector<Item>& items)
 }
 
 ContextMenu::ContextMenu(const std::vector<Item>& items, ContextMenu* parent)
-: items_(items)
-, parentMenu_(parent)
+: items_{items}
+, parentMenu_{parent}
+, openSubmenu_{}
 , background_{buildLayoutConfigForMenuTexture()}
 {
     // TODO: now I'm using buttons as menu items so menu background might not be visible at all
@@ -137,18 +138,18 @@ void ContextMenu::close()
 
 void ContextMenu::onSubmenuClosed(ContextMenu* submenu)
 {
-    if (openSubmenu_ == submenu)
+    if (openSubmenu_.ptr == submenu)
     {
-        openSubmenu_ = nullptr;
+        openSubmenu_.ptr = nullptr;
     }
 }
 
 void ContextMenu::closeSubmenu()
 {
-    if (openSubmenu_)
+    if (openSubmenu_.ptr)
     {
-        openSubmenu_->close();
-        openSubmenu_ = nullptr;
+        openSubmenu_.ptr->close();
+        openSubmenu_.ptr = nullptr;
     }
 }
 
@@ -176,6 +177,7 @@ void ContextMenu::buildMenu()
     vertical->setSize(getSize());
     vertical->setPadding(0);
 
+    // TODO: consider using std::views::enumerate (C++23?) for index based for each looping
     for (size_t i = 0; i < items_.size(); ++i)
     {
         vertical->setRowSize(i, gui::layout::Constraint::Pixels(kItemHeight));
@@ -183,7 +185,7 @@ void ContextMenu::buildMenu()
         auto item = items_[i];
         auto button = gui::TextButton::create(item.text);
 
-        button->onClick([this, item, buttonPtr = button.get()]() mutable {
+        button->onClick([this, i, item, buttonPtr = button.get()]() mutable {
             // If item has submenu, open it
             if (!item.subItems.empty())
             {
@@ -192,10 +194,11 @@ void ContextMenu::buildMenu()
                 closeSubmenu();
 
                 auto submenu = ContextMenu::create(item.subItems);
-                openSubmenu_ = submenu.get();
-                openSubmenu_->parentMenu_ = this;
+                openSubmenu_.index = i;
+                openSubmenu_.ptr = submenu.get();
+                openSubmenu_.ptr->parentMenu_ = this;
                 addChild(std::move(submenu));
-                openSubmenu_->open(submenuPosition);
+                openSubmenu_.ptr->open(submenuPosition);
                 return;
             }
 
@@ -206,6 +209,26 @@ void ContextMenu::buildMenu()
 
             // Close the entire context menu hierarchy (not just this submenu)
             getRootMenu()->close();
+        });
+
+        button->onMouseEnter([this,i, item, buttonPtr = button.get()]() mutable {
+            if (!item.subItems.empty())
+            {
+                if (openSubmenu_.ptr &&  openSubmenu_.index == i) return;   // Do not respawn the same submenu if already spawned
+
+                // TODO: Refactor this code and one from onClick, 
+                // there is a lot of duplication and it is not good that submenu opens both on click and hover,
+                // click need to have that imlementation as is use space and enter to trigger onClick action.
+                const auto itemGlobalPosition = buttonPtr->getGlobalPosition();
+                const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x, itemGlobalPosition.y};
+                closeSubmenu();
+                auto submenu = ContextMenu::create(item.subItems);
+                openSubmenu_.index = i;
+                openSubmenu_.ptr = submenu.get();
+                openSubmenu_.ptr->parentMenu_ = this;
+                addChild(std::move(submenu));
+                openSubmenu_.ptr->open(submenuPosition);    
+            }            
         });
 
         vertical->addChild(std::move(button));
@@ -223,9 +246,9 @@ void ContextMenu::onRender(sf::RenderTexture& renderTexture)
 ContextMenu* ContextMenu::getDeepestOpenMenu()
 {
     ContextMenu* current = this;
-    while (current->openSubmenu_)
+    while (current->openSubmenu_.ptr)
     {
-        current = current->openSubmenu_;
+        current = current->openSubmenu_.ptr;
     }
     return current;
 }
@@ -244,25 +267,36 @@ EventStatus ContextMenu::on(const event::MouseButtonPressed& mouseButtonPressedE
 {
     const auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
+    bool isMouseInsideHierarchy = false;
+
     auto* activeMenu = getDeepestOpenMenu();
 
-    if (!activeMenu->isInside(mousePosition))
+    while(activeMenu)
     {
-        //TODO: add check if click happens in menu hierarchy so you can still call the parent's actions instead of closing menu
+        if (activeMenu->isInside(mousePosition))
+        {
+            isMouseInsideHierarchy = true;
+            break;
+        }
+        activeMenu = activeMenu->parentMenu_;
+    }
+
+    if (!isMouseInsideHierarchy)
+    {
         getRootMenu()->close();
     }
 
-    return EventStatus::Consumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus ContextMenu::on(const event::MouseButtonReleased&)
 {
-    return EventStatus::Consumed;
+    return EventStatus::NotConsumed;
 }
 
 EventStatus ContextMenu::on(const event::MouseMoved&)
 {
-    return EventStatus::Consumed;
+    return EventStatus::NotConsumed;
 }
 
 void ContextMenu::onPositionChange()

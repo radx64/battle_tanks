@@ -128,6 +128,7 @@ void Application::onEvent(const sf::Event& event)
 
 void Application::onUpdate(float timeStep)
 {
+    gui::Application::onUpdate(timeStep);
     clock_.restart();
     PROFILE_SCOPE(navProfiler_,
         for(auto& navigator : navigators_)
@@ -266,26 +267,22 @@ void Application::configureGUI()
         const auto menuPosition = menuButtonPtr->getGlobalPosition() + sf::Vector2f{0.f, 32.f};
         auto menu = gui::ContextMenu::create(
             {
-                {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); }},
-                {"Options...", {},
+                {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); camera_.resetZoom();}},
+                {"Options >", {},
                     {
                         {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; entity::Tank::setDebug(tankDebugMode_); }},
+                        {"Time  >", {}, {
+                            {"1x (normal)", [this](){constantTimeStep_ = 1.0f/30.f;}},
+                            {"5x slower",   [this](){constantTimeStep_ = 1.0f/150.f;}},
+                            {"10x slower",  [this](){constantTimeStep_ = 1.0f/300.f;}},
+                        }},
                         {"Close", {}},
-                        {"Very deep menu...", {},
-                            {
-                                {"This is deep"},
-                                {"And can be even deeper...", {},
-                                    {
-                                        {"Ok this is enough", [this]() { logger_.info("Glad you make it!"); }}
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
         );
         menu->open(menuPosition);
+        //TODO maybe open should get windowManager_ as a context to noe make it manually
         windowManager_.addOverlay(std::move(menu));
     });
     
@@ -302,7 +299,6 @@ void Application::configureGUI()
         windowManager_.addOverlay(std::move(menu));
     });
 }
-
 
 void Application::spawnSomeTanks()
 {

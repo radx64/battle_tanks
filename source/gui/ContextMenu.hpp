@@ -31,6 +31,14 @@ public:
         std::vector<Item> subItems;
     };
 
+    // TODO: refactor Item and SubmenuEntity later, they might be used when implementing
+    // other menu types like dropdowns, toolbars, etc.
+    struct SubmenuEntity
+    {
+        size_t index;
+        ContextMenu* ptr;
+    };
+
     static std::unique_ptr<ContextMenu> create(const std::vector<Item>& items);
     ~ContextMenu() override;
     
@@ -60,7 +68,7 @@ protected:
     std::vector<Item> items_;
     Component* layout_ = nullptr;
     ContextMenu* parentMenu_;
-    ContextMenu* openSubmenu_ = nullptr;
+    SubmenuEntity openSubmenu_;
 
     std::function<void(ContextMenu*)> closeCallback_;
 

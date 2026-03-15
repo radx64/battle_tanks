@@ -4,6 +4,13 @@ set_target_properties(gui_sandbox PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
+option(SANITIZE "Build with sanitizers" OFF)
+
+if (SANITIZE)
+    target_compile_options(gui_sandbox PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+    target_link_options(gui_sandbox PRIVATE -fsanitize=address)
+endif()
+
 target_include_directories(gui_sandbox
 PRIVATE
     ${CMAKE_SOURCE_DIR}/source

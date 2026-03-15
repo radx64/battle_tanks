@@ -121,16 +121,26 @@ protected:
     EventStatus processFocusForwardEvent(const event::FocusChange& focusChange);
     EventStatus processFocusBackwardEvent(const event::FocusChange& focusChange);
 
+    void applyPendingOperations();
+
     sf::Vector2f localPosition_;   // offset from parent position
     sf::FloatRect bounds_;         // bounds box in global space position
     Component* parent_;
     bool childrenEventsProcessingEnabled_;
     std::vector<std::unique_ptr<Component>> children_;
+
+    // TODO: engine::TaskQueue can be considered to handle pending add/remove children 
+    // operations instead of vector of pending operations and applyPendingOperations method 
+    std::vector<std::unique_ptr<Component>> pendingChildrenToAdd_;
+    std::vector<const Component*> pendingChildrenToRemove_;
+
     Component* focusedChild_;
     bool isVisible_;
     bool wasMouseInside_;
+    
     bool isFocused_;
     bool isFocusable_; // can component get focus, if not it should still forward events to children
+    bool isProcessingEvents_; // when processing events, addChild, removeChild will be posponed to not break current childred iterators. 
     uint32_t id_;
     engine::Logger logger_;
 };

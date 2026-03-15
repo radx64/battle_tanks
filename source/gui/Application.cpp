@@ -30,4 +30,10 @@ void Application::onRender()
     windowManager_.render(window_);
 }
 
+void Application::onUpdate(float timeStep)
+{
+    (void) timeStep;
+    windowManager_.update();
+}
+
 }  // namespace gui

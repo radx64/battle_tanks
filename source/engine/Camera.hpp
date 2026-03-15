@@ -10,6 +10,7 @@ class Camera
 public:
     Camera(const sf::Vector2f& position, const sf::Vector2f& size);
     void setPosition(const float x, const float y);
+    void resetZoom();
     void moveX(const float xVelocity);
     void moveY(const float yVelocity);
     void move(const float xVelocity, const float yVelocity);

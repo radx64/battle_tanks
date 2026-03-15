@@ -21,6 +21,7 @@ class ButtonBase : public Component
 public:
     void onRender(sf::RenderTexture& renderTexture) override;
     void onClick(std::function<void()> onClickCallback);
+    void onMouseEnter(std::function<void()> onMouseEnterCallback);
     
 protected:
     ButtonBase();
@@ -61,6 +62,7 @@ protected:
     State state_;
 
     std::function<void()> onClick_;
+    std::function<void()> onMouseEnter_;
 };
 
 class TextButton : public ButtonBase

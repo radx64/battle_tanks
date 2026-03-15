@@ -26,6 +26,12 @@ void Camera::setPosition(const float x, const float y)
     alignBoundaries();
 }
 
+void Camera::resetZoom()
+{
+    zoomLevel_ = MIN_ZOOM_LEVEL + 0.5f;
+    zoomOut();
+}
+
 void Camera::alignBoundaries()
 {
     auto halfOfTargetSize = targetSize_/2.0f;

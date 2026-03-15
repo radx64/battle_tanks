@@ -81,10 +81,17 @@ void ButtonBase::onClick(std::function<void()> onClickCallback)
     onClick_ = onClickCallback;
 }
 
+void ButtonBase::onMouseEnter(std::function<void()> onMouseEnterCallback)
+{
+    onMouseEnter_ = onMouseEnterCallback;
+}
+
 EventStatus ButtonBase::on(const event::MouseEntered&)
 {
     state_ = State::Hover;
     updateTexture();
+
+    if (onMouseEnter_) onMouseEnter_();
 
     return EventStatus::Consumed;
 }

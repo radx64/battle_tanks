@@ -50,6 +50,7 @@ Component::Component(const std::source_location location)
 , wasMouseInside_{false}
 , isFocused_{false}
 , isFocusable_{false}
+, isProcessingEvents_{false}
 , id_{InstanceIdGenerator::getId()}
 , logger_{debug::getFunctionNameOnly(location)+ " id:" + std::to_string(id_)}
 {
@@ -80,6 +81,7 @@ void Component::render(sf::RenderTexture& renderTexture)
 template <typename T>
 EventStatus Component::processEvent(const T& event)
 {
+    isProcessingEvents_ = true;
     auto eventStatus = EventStatus::NotConsumed;
 
     // Its important to send update events in reverse order
@@ -91,10 +93,17 @@ EventStatus Component::processEvent(const T& event)
         for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
         {
             eventStatus = (*child)->receive(event);
-            if (eventStatus == EventStatus::Consumed) return eventStatus;
+            if (eventStatus == EventStatus::Consumed) 
+            {
+                //TODO: do some RAII for these pending operations cause I hate doing this flags manually
+                isProcessingEvents_ = false;
+                applyPendingOperations();
+                return eventStatus;
+            }
         }
     }
-
+    isProcessingEvents_ = false;
+    applyPendingOperations();
     return this->on(event);
 }
 
@@ -314,6 +323,21 @@ EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focus
     return result;
 }
 
+void Component::applyPendingOperations()
+{
+    for (auto* child : pendingChildrenToRemove_)
+    {
+        removeChild(child);
+    }
+    pendingChildrenToRemove_.clear();
+
+    for (auto&& child : pendingChildrenToAdd_)
+    {
+        addChild(std::move(child));
+    }
+    pendingChildrenToAdd_.clear();
+}
+
 EventStatus Component::receive(const event::FocusChange& focusChange)
 {
     if (not childrenEventsProcessingEnabled_)
@@ -438,13 +462,27 @@ void Component::addChild(std::unique_ptr<Component> child)
         throw std::runtime_error("Trying to add child object that was already added");
         return;
     }
+
     child->parent_ = this;
     child->updateGlobalPosition();
+
+    if (isProcessingEvents_)
+    {
+        pendingChildrenToAdd_.emplace_back(std::move(child));
+        return;
+    }
+
     children_.emplace_back(std::move(child));
 }
 
 void Component::removeChild(const Component* child)
 {
+    if (isProcessingEvents_)
+    {
+        pendingChildrenToRemove_.push_back(child);
+        return;
+    }
+
     auto found = std::find_if(children_.begin(), children_.end(),
         [child](const auto& c) { return c.get() == child; });
 

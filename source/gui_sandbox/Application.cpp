@@ -14,9 +14,9 @@
 
 #include "gui/Button.hpp"
 #include "gui/Checkbox.hpp"
+#include "gui/ContextMenu.hpp"
 #include "gui/Debug.hpp"
 #include "gui/EditBox.hpp"
-#include "gui/MultiLineEditBox.hpp"
 #include "gui/FontLibrary.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/Label.hpp"
@@ -24,14 +24,15 @@
 #include "gui/layout/Horizontal.hpp"
 #include "gui/layout/Inset.hpp"
 #include "gui/layout/Vertical.hpp"
+#include "gui/MultiLineEditBox.hpp"
 #include "gui/ProgressBar.hpp"
 #include "gui/RadioButton.hpp"
 #include "gui/RadioButtonGroup.hpp"
 #include "gui/scrollbar/Horizontal.hpp"
 #include "gui/scrollbar/Vertical.hpp"
 #include "gui/slider/Horizontal.hpp"
-#include "gui/slider/Vertical.hpp"
 #include "gui/slider/HorizontalThick.hpp"
+#include "gui/slider/Vertical.hpp"
 #include "gui/slider/VerticalThick.hpp"
 
 #include "gui/TextureLibrary.hpp"
@@ -733,6 +734,34 @@ void Application::onInit()
 
     windowManager_.mainWindow().addChild(std::move(createCalculatorWindowButton));
 
+    auto contextMenuTestButton = gui::TextButton::create("Context menu >");
+    contextMenuTestButton->setPosition(sf::Vector2f(50.f, 200.f));
+    contextMenuTestButton->setSize(sf::Vector2f(250.f, 30.f));
+    contextMenuTestButton->onClick([this, contextMenuTestButtonPtr = contextMenuTestButton.get()](){
+        auto menu = gui::ContextMenu::create({
+            {"Test >", {}, {
+                {"Submenu 1 >", {}, {
+                    {"Sub sub menu 1"},
+                    {"Sub sub menu 2 >", {} , {
+                        {"Wow this is deep", [this](){logger_.info("Good job. This is deep!");}, {}}
+                    }}
+                }},
+                {"Submenu 2"},
+                {"Submenu 3 >", {}, {
+                    {"Sub sub menu 4", [this](){logger_.info("Not bad. This is sub menu 4!");}, {}},
+                    {"Sub sub menu 5 >", {}, {
+                        {"This is also deep", [this](){logger_.info("Good job. This is deep as heck!");}, {}}
+                    }}
+                }}
+            }}
+        });
+        menu->open(contextMenuTestButtonPtr->getGlobalPosition() + sf::Vector2f(200.f, 30.f));
+        windowManager_.addOverlay(std::move(menu));
+    });
+
+    windowManager_.mainWindow().addChild(std::move(contextMenuTestButton));
+
+
     auto leftLabel = gui::Label::create("Left aligned label");
     leftLabel->setPosition({100.f, 20.f});
     leftLabel->setSize({400.f, 40.f});
@@ -803,7 +832,9 @@ void Application::onEvent(const sf::Event& event)
 
 void Application::onUpdate(float timeStep)
 {
-    (void) timeStep;
+    // TODO: I hate that user neet do implement this manually,
+    // maybe we can move some of the logic from main loop to Application class and make this automatic?
+    gui::Application::onUpdate(timeStep);
 }
 
 void Application::generateBackground()

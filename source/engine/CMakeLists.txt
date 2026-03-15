@@ -36,5 +36,6 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Scene.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Timer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/TimerService.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/TimerService.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TaskQueue.cpp
 )

@@ -17,6 +17,7 @@ public:
 
 protected:
     void onRender() override; 
+    void onUpdate(float timeStep) override;
 
     gui::WindowManager windowManager_;
     gui::MouseController mouseController_;
