@@ -10,6 +10,8 @@
 #include "gui/Component.hpp"
 #include "gui/FramedSprite.hpp"
 
+namespace gui {class TextButton;}
+
 namespace gui
 {
 
@@ -35,7 +37,7 @@ public:
     // other menu types like dropdowns, toolbars, etc.
     struct SubmenuEntity
     {
-        size_t index;
+        ptrdiff_t index;
         ContextMenu* ptr;
     };
 
@@ -64,6 +66,8 @@ protected:
 
     ContextMenu* getDeepestOpenMenu();
     ContextMenu* getRootMenu();
+
+    void updateSubmenu(gui::TextButton* buttonPtr, const Item& item, ptrdiff_t index);
 
     std::vector<Item> items_;
     Component* layout_ = nullptr;

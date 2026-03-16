@@ -1,5 +1,8 @@
 #include "gui/ContextMenu.hpp"
 
+#include <algorithm>
+#include <ranges>
+
 #include "gui/Button.hpp"
 #include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
@@ -7,18 +10,18 @@
 #include "gui/layout/Constraint.hpp"
 #include "gui/layout/Vertical.hpp"
 
-#include <algorithm>
 
 namespace gui
 {
 
 namespace
 {
-    constexpr float kItemHeight = 26.f;
-    constexpr float kMinWidth = 120.f;
-    constexpr float kHorizontalPadding = 12.f;
-    constexpr float kSubmenuArrowPadding = 16.f;  // TODO: implement rendering of arrows to submenus
-
+    constexpr float MENU_ENTRY_HEIGHT = 26.f;
+    constexpr float MENU_ENTRY_MIN_WIDTH = 120.f;
+    constexpr float HORIZONTAL_PADDING = 12.f;
+    
+    // TODO: implement rendering of arrows to submenus
+    
     gui::FramedSprite::LayoutConfig::UVs buildUVsForMenu()
     {
         return gui::FramedSprite::LayoutConfig::UVs
@@ -56,8 +59,8 @@ namespace
             maxTextWidth = std::max(maxTextWidth, measure.getTextBounds().width);
         }
 
-        const float needed = maxTextWidth + kHorizontalPadding * 2.f + kSubmenuArrowPadding;
-        return std::max(needed, kMinWidth);
+        const float needed = maxTextWidth + HORIZONTAL_PADDING * 2.f;
+        return std::max(needed, MENU_ENTRY_MIN_WIDTH);
     }
 
     sf::Vector2f globalToLocal(const Component* component, const sf::Vector2f& globalPosition)
@@ -168,7 +171,7 @@ void ContextMenu::buildMenu()
     }
 
     const float width = calculateMenuWidth(items_);
-    const float height = static_cast<float>(items_.size()) * kItemHeight;
+    const float height = static_cast<float>(items_.size()) * MENU_ENTRY_HEIGHT;
 
     setSize({width, height});
 
@@ -177,28 +180,15 @@ void ContextMenu::buildMenu()
     vertical->setSize(getSize());
     vertical->setPadding(0);
 
-    // TODO: consider using std::views::enumerate (C++23?) for index based for each looping
-    for (size_t i = 0; i < items_.size(); ++i)
+    for (auto [index, item] : std::views::enumerate(items_))
     {
-        vertical->setRowSize(i, gui::layout::Constraint::Pixels(kItemHeight));
+        vertical->setRowSize(index, gui::layout::Constraint::Pixels(MENU_ENTRY_HEIGHT));
 
-        auto item = items_[i];
-        auto button = gui::TextButton::create(item.text);
-
-        button->onClick([this, i, item, buttonPtr = button.get()]() mutable {
-            // If item has submenu, open it
-            if (!item.subItems.empty())
+        auto menuEntry = gui::TextButton::create(item.text);
+        menuEntry->onClick([this, index, item, menuEntryPtr = menuEntry.get()]() mutable {
+            if (not item.subItems.empty())
             {
-                const auto itemGlobalPosition = buttonPtr->getGlobalPosition();
-                const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x, itemGlobalPosition.y};
-                closeSubmenu();
-
-                auto submenu = ContextMenu::create(item.subItems);
-                openSubmenu_.index = i;
-                openSubmenu_.ptr = submenu.get();
-                openSubmenu_.ptr->parentMenu_ = this;
-                addChild(std::move(submenu));
-                openSubmenu_.ptr->open(submenuPosition);
+                updateSubmenu(menuEntryPtr, item, index);
                 return;
             }
 
@@ -211,31 +201,32 @@ void ContextMenu::buildMenu()
             getRootMenu()->close();
         });
 
-        button->onMouseEnter([this,i, item, buttonPtr = button.get()]() mutable {
-            if (!item.subItems.empty())
+        menuEntry->onMouseEnter([this,index, item, menuEntryPtr = menuEntry.get()]() mutable {
+            if (not item.subItems.empty())
             {
-                if (openSubmenu_.ptr &&  openSubmenu_.index == i) return;   // Do not respawn the same submenu if already spawned
-
-                // TODO: Refactor this code and one from onClick, 
-                // there is a lot of duplication and it is not good that submenu opens both on click and hover,
-                // click need to have that imlementation as is use space and enter to trigger onClick action.
-                const auto itemGlobalPosition = buttonPtr->getGlobalPosition();
-                const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x, itemGlobalPosition.y};
-                closeSubmenu();
-                auto submenu = ContextMenu::create(item.subItems);
-                openSubmenu_.index = i;
-                openSubmenu_.ptr = submenu.get();
-                openSubmenu_.ptr->parentMenu_ = this;
-                addChild(std::move(submenu));
-                openSubmenu_.ptr->open(submenuPosition);    
+                updateSubmenu(menuEntryPtr, item, index);  
             }            
         });
 
-        vertical->addChild(std::move(button));
+        vertical->addChild(std::move(menuEntry));
     }
 
     layout_ = vertical.get();
     Component::addChild(std::move(vertical));
+}
+
+void ContextMenu::updateSubmenu(gui::TextButton* buttonPtr, const Item& item, ptrdiff_t index)
+{
+    if (openSubmenu_.ptr &&  openSubmenu_.index == index) return;   // Do not respawn the same submenu if already spawned
+    const auto itemGlobalPosition = buttonPtr->getGlobalPosition();
+    const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x, itemGlobalPosition.y};
+    closeSubmenu();
+    auto submenu = ContextMenu::create(item.subItems);
+    openSubmenu_.index = index;
+    openSubmenu_.ptr = submenu.get();
+    openSubmenu_.ptr->parentMenu_ = this;
+    addChild(std::move(submenu));
+    openSubmenu_.ptr->open(submenuPosition);        
 }
 
 void ContextMenu::onRender(sf::RenderTexture& renderTexture)
