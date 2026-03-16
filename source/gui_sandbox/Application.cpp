@@ -831,7 +831,7 @@ void Application::onEvent(const sf::Event& event)
 
 void Application::onUpdate(float timeStep)
 {
-    // TODO: I hate that user neet do implement this manually,
+    // TODO: I hate that user need do implement this manually,
     // maybe we can move some of the logic from main loop to Application class and make this automatic?
     gui::Application::onUpdate(timeStep);
 }

@@ -20,7 +20,6 @@ Selection::Selection(gui::Text& text)
 , selectionStartPosition_{}
 , selectionEndPosition_{}
 {
-    //TODO move this color selection to stylesheet
 }
 
 bool Selection::isEmpty() const
@@ -99,6 +98,7 @@ void Selection::update()
                               selectionEndPosition_ : selectionStartPosition_;
         
         sf::RectangleShape rect;
+        //TODO move this color selection to stylesheet
         rect.setFillColor(sf::Color(100, 100, 230, 127));
         rect.setPosition(startPos);
         rect.setSize(sf::Vector2f(endPos.x - startPos.x, lineHeight));
@@ -124,6 +124,7 @@ void Selection::update()
             float widthToEndOfLine = getLineXWidth(fieldText, actualStartIdx, lineEndIdx);
             
             sf::RectangleShape rect;
+            //TODO move this color selection to stylesheet
             rect.setFillColor(sf::Color(100, 100, 230, 127));
             rect.setPosition(startPos);
             rect.setSize(sf::Vector2f(widthToEndOfLine, lineHeight));

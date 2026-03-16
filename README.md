@@ -1,6 +1,15 @@
 # battle_tanks
 LUA programmable tanks fight
 
+This is a project that its sole purpose is to try some concepts of game development in C++. The main idea is to create a simple 2D top-down tank game where players can program their tanks using Lua scripting. 
+
+Main parts of the project are:
+- simple physics simulation
+- gui system
+- lua scripting system
+- simple game loop to tie everything together
+- sfml for rendering and input handling
+
 ### Sprites credits
 Sprites source: https://kenney.nl/assets/top-down-tanks-redux
 

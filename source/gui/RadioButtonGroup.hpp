@@ -7,11 +7,6 @@ namespace gui { class RadioButton; }  // namespace gui
 
 namespace gui
 {
-
-// TODO: Consider whether using a shared_ptr for the radio button group is appropriate.
-// This might be one of the rare cases where shared_ptr is genuinely useful,
-// as the group needs to be shared among multiple radio buttons.
-
 class RadioButtonGroup : public std::enable_shared_from_this<RadioButtonGroup>
 {
 public:

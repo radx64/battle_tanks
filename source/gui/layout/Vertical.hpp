@@ -10,7 +10,7 @@ namespace gui::layout { class Grid; }
 namespace gui::layout
 {
 
-// TODO: Vertical and Horizontal layouts are now braking child / parent relationship
+// TODO: Vertical and Horizontal layouts are now breaking child / parent relationship
 // as there is a Grid in between. Think later if this is a good idea or not.
 // It reuses grid logic but might render unexpected reults if one is traversing
 // parent / child tree.

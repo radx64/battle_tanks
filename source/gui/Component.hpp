@@ -11,8 +11,7 @@
 namespace gui
 {
 
-// TODO: Notes
-// Notes to document later in some better way
+// TODO: Notes to document later in some better way
 // Component is basic object type for gui assembly
 // Root element need to be handled by user
 // Children elements are freed by parent during destruction
