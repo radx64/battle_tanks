@@ -1,14 +1,14 @@
-#include "engine/TaskQueue.hpp"
+#include "engine/TasksQueue.hpp"
 
 namespace engine
 {
 
-void TaskQueue::push(const std::function<void()>& task)
+void TasksQueue::push(const std::function<void()>& task)
 {
     tasks.push(task);
 }
 
-void TaskQueue::executeAll()
+void TasksQueue::executeAll()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     while (!tasks.empty())

@@ -9,7 +9,7 @@ namespace engine
 
 // TODO: add UT for this class.
 
-class TaskQueue
+class TasksQueue
 {
 public:
     void push(const std::function<void()>& task);

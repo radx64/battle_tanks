@@ -129,7 +129,7 @@ protected:
     bool childrenEventsProcessingEnabled_;
     std::vector<std::unique_ptr<Component>> children_;
 
-    // TODO: engine::TaskQueue can be considered to handle pending add/remove children 
+    // TODO: engine::TasksQueue can be considered to handle pending add/remove children 
     // operations instead of vector of pending operations and applyPendingOperations method 
     std::vector<std::unique_ptr<Component>> pendingChildrenToAdd_;
     std::vector<const Component*> pendingChildrenToRemove_;

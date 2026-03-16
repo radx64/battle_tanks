@@ -46,14 +46,14 @@ public:
     
     void open(const sf::Vector2f& globalPosition);
     void close();
-
+    
     void setCloseCallback(std::function<void(ContextMenu*)> callback);
-
+    
 protected:
     explicit ContextMenu(const std::vector<Item>& items, ContextMenu* parent = nullptr);
-
+    
     void onRender(sf::RenderTexture& renderTexture) override;
-
+    
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
@@ -63,7 +63,7 @@ protected:
     void buildMenu();
     void closeSubmenu();
     void onSubmenuClosed(ContextMenu* submenu);
-
+    
     ContextMenu* getDeepestOpenMenu();
     ContextMenu* getRootMenu();
 

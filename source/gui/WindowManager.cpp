@@ -18,7 +18,7 @@ WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
 
 WindowManager::~WindowManager() = default;
 
-void WindowManager::addWindow(std::unique_ptr<Window> window)
+void WindowManager::openWindow(std::unique_ptr<Window> window)
 {
     if (activeWindowHandle_)
     {
@@ -31,21 +31,26 @@ void WindowManager::addWindow(std::unique_ptr<Window> window)
     windows_.push_front(std::move(window));
 }
 
+void WindowManager::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition)
+{
+    if (!menu)
+    {
+        return;
+    }
+
+    menu->setCloseCallback([this](ContextMenu* menuPtr) {
+        removeOverlay(menuPtr);
+    });
+
+    menu->open(globalPosition);
+    addOverlay(std::move(menu));
+}
+
 void WindowManager::addOverlay(std::unique_ptr<Component> overlay)
 {
     if (!overlay)
     {
         return;
-    }
-
-    // If this overlay is a ContextMenu, ensure it can remove itself from the overlay list.
-    // TODO: I don't like this solution so I need to think about something more generic.
-    // dynamic_casts are bad, most of the time XD
-    if (auto* menu = dynamic_cast<ContextMenu*>(overlay.get()))
-    {
-        menu->setCloseCallback([this](ContextMenu* menuPtr) {
-            removeOverlay(menuPtr);
-        });
     }
 
     // When an overlay is active we want to treat the UI as modal; prevent hover/interaction
@@ -63,7 +68,7 @@ void WindowManager::addOverlay(std::unique_ptr<Component> overlay)
 
 void WindowManager::removeOverlay(Component* overlay)
 {
-    taskQueue_.push([this, overlay](){
+    tasksQueue_.push([this, overlay](){
         overlays_.remove_if([overlay](const std::unique_ptr<Component>& ptr) {
             return ptr.get() == overlay;
         });
@@ -92,7 +97,7 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
 
 void WindowManager::update()
 {
-    taskQueue_.executeAll();
+    tasksQueue_.executeAll();
 }
 
 MainWindow& WindowManager::mainWindow()

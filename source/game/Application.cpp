@@ -247,7 +247,7 @@ void Application::configureGUI()
     button->onClick([this](){
         auto helpWindow = std::make_unique<game::HelpWindow>(sf::Vector2f(300.f, 300.f));
         helpWindow->setTitle("Help");
-        windowManager_.addWindow(std::move(helpWindow));
+        windowManager_.openWindow(std::move(helpWindow));
     });
     windowManager_.mainWindow().addChild(std::move(button));
 
@@ -281,9 +281,8 @@ void Application::configureGUI()
                 }
             }
         );
-        menu->open(menuPosition);
-        //TODO maybe open should get windowManager_ as a context to noe make it manually
-        windowManager_.addOverlay(std::move(menu));
+
+        windowManager_.openContextMenu(std::move(menu), menuPosition);
     });
     
     windowManager_.mainWindow().addChild(std::move(menuButton));
@@ -292,11 +291,12 @@ void Application::configureGUI()
         auto menu = gui::ContextMenu::create(
             {
                 {"Reload Lua", [this]() { luaTankHandle_->getScript()->reload(); }},
-                {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; }},
+                {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; entity::Tank::setDebug(tankDebugMode_); }},
+                {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); camera_.resetZoom();}},
             }
         );
         menu->open(pos);
-        windowManager_.addOverlay(std::move(menu));
+        windowManager_.openContextMenu(std::move(menu), pos);
     });
 }
 

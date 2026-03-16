@@ -5,10 +5,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "engine/TaskQueue.hpp"
+#include "engine/TasksQueue.hpp"
 
 #include "gui/EventReceiver.hpp"
 #include "gui/Window.hpp"
+#include "gui/ContextMenu.hpp"
 
 namespace gui { class Window; }
 namespace gui { class MainWindow; }
@@ -24,9 +25,8 @@ public:
     WindowManager(const sf::Vector2f& mainWindowSize);
     virtual ~WindowManager();
 
-    void addWindow(std::unique_ptr<Window> window);
-    void addOverlay(std::unique_ptr<Component> overlay);
-    void removeOverlay(Component* overlay);
+    void openWindow(std::unique_ptr<Window> window);
+    void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
 
     void render(sf::RenderWindow& renderWindow);
     void update();
@@ -53,6 +53,9 @@ protected:
 
     EventStatus forwardFocusChange(const event::FocusChange& focusChange);
 
+    void addOverlay(std::unique_ptr<Component> overlay);
+    void removeOverlay(Component* overlay);
+
     std::list<std::unique_ptr<Window>> windows_;
     Window* activeWindowHandle_;
     MainWindow mainWindow_;
@@ -63,7 +66,7 @@ protected:
     sf::RenderTexture renderTexture_;
     sf::Sprite textureSprite_;
 
-    engine::TaskQueue taskQueue_;
+    engine::TasksQueue tasksQueue_;
 };
 
 }  // namespace gui

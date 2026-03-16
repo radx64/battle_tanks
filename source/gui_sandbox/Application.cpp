@@ -77,7 +77,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Nothing here!");
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createEmptyWindowButton));
@@ -98,7 +98,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("So simple!");
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createSimpleWindowButton));
@@ -134,7 +134,7 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
 
     });
 
@@ -166,7 +166,7 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
 
     });
 
@@ -200,7 +200,7 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
 
     });
 
@@ -310,7 +310,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Oh my gosh");
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createLayoutWindowButton));
@@ -362,7 +362,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I need to focus");
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createFocusTestWindowButton));
@@ -574,7 +574,7 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("The Grid, a digital frontier...");
 
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
 
     });
 
@@ -675,7 +675,7 @@ void Application::onInit()
         gridLayout->addChild(std::move(vSlider3));
 
         window->addChild(std::move(gridLayout));
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createSliderWindowButton));
@@ -714,7 +714,7 @@ void Application::onInit()
 
         window->addChild(std::move(layout));
         window->addChild(std::move(text));
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createScrollBarWindowButton));
@@ -729,7 +729,7 @@ void Application::onInit()
         window->setTitle("calc.exe");
 
         window->addChild(calculator::createCalculator({300.f, 300.f}));
-        windowManager_.addWindow(std::move(window));
+        windowManager_.openWindow(std::move(window));
     });
 
     windowManager_.mainWindow().addChild(std::move(createCalculatorWindowButton));
@@ -755,8 +755,7 @@ void Application::onInit()
                 }}
             }}
         });
-        menu->open(contextMenuTestButtonPtr->getGlobalPosition() + sf::Vector2f(200.f, 30.f));
-        windowManager_.addOverlay(std::move(menu));
+        windowManager_.openContextMenu(std::move(menu), contextMenuTestButtonPtr->getGlobalPosition() + sf::Vector2f(200.f, 30.f));
     });
 
     windowManager_.mainWindow().addChild(std::move(contextMenuTestButton));
