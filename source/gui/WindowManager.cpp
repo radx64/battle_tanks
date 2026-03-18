@@ -73,6 +73,18 @@ void WindowManager::removeOverlay(Component* overlay)
             return ptr.get() == overlay;
         });
     });
+
+    // TODO: add overlay should store last mouse position
+    // so when overlay is closed, mouse move event can be sent to windows under it to update their hover states
+    // mainWindow_.receive(event::MouseMoved{event::MousePosition{25, 255}}); // Force mouse leave events to underlying windows
+    // mainWindow_.receive(event::MouseEntered{});
+    // Above is a hack as hell
+    // I need to rethink how events are distributed
+    // And probably do something simmilar to QT
+    // Where there is a central place which handles hover, focus, clicks events to target
+    // end then event bubbling propagates events to parents if not consumed
+    // Hit testing for components need to be done in that central place, not in each component, so I can easily update hover states of windows under overlay when it is closed
+    // Overlays could be handled as special windows, so extra handling would not be needed, and they would be part of normal event distribution system, instead of being special cased in each receive method in window manager
 }
 
 void WindowManager::render(sf::RenderWindow& renderWindow)
