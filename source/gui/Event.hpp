@@ -86,6 +86,8 @@ namespace gui::event
     };
 
     /* Focus events */
+    // TODO: This will be deprecated
+    // Due to change in design, focus will be handled by component itself and not by external events.
     struct FocusChange
     {
         enum class Type
