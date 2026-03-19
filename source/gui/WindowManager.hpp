@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/TasksQueue.hpp"
+#include "engine/Logger.hpp"
 
 #include "gui/EventReceiver.hpp"
 #include "gui/Window.hpp"
@@ -65,8 +66,14 @@ protected:
 
     sf::RenderTexture renderTexture_;
     sf::Sprite textureSprite_;
-
+    
     engine::TasksQueue tasksQueue_;
+    
+    Component* getNextFocusableComponent(Component* root, Component* current);
+    Component* getPreviousFocusableComponent(Component* root, Component* current);
+    
+    Component* focusedComponent_;
+    engine::Logger logger_;
 };
 
 }  // namespace gui

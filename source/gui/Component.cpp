@@ -651,4 +651,69 @@ void Component::forceMouseLeave()
     }
 }
 
+void Component::new_focus()
+{
+    isFocused_ = true;
+    receive(gui::event::FocusGained{});
+}
+
+void Component::new_defocus()
+{
+    isFocused_ = false;
+    receive(gui::event::FocusLost{});
+}
+
+ Component* Component::getNextChild(Component* child)
+ {
+    auto it = std::find_if(std::begin(children_), std::end(children_),
+        [child](const auto& c) { return c.get() == child; });
+
+    if (it != std::end(children_) and std::next(it) != std::end(children_))
+    {
+        return std::next(it)->get();
+    }
+
+    return nullptr;
+ }
+
+Component* Component::getNextSibling()
+{
+    if (parent_ == nullptr)
+    {
+        return nullptr;
+    }
+
+    return parent_->getNextChild(this);
+}
+
+Component* Component::getPreviousChild(Component* child)
+{
+    auto it = std::find_if(std::begin(children_), std::end(children_),
+        [child](const auto& c) { return c.get() == child; });
+
+    if (it != std::end(children_) and it != std::begin(children_))
+    {
+        return std::prev(it)->get();
+    }
+
+    return nullptr;
+}
+
+Component* Component::getPreviousSibling()
+{
+    if (parent_ == nullptr)
+    {
+        return nullptr;
+    }
+
+    return parent_->getPreviousChild(this);
+}
+
+bool Component::hasChildren() const
+{
+    return !children_.empty();
+}
+
+
+
 }  // namespace gui

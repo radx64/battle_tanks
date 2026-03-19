@@ -142,6 +142,16 @@ protected:
     bool isProcessingEvents_; // when processing events, addChild, removeChild will be posponed to not break current childred iterators. 
     uint32_t id_;
     engine::Logger logger_;
+
+public:
+    void new_focus();
+    void new_defocus();
+    bool hasChildren() const;
+    Component* getNextChild(Component* child);
+    Component* getNextSibling();
+
+    Component* getPreviousChild(Component* child);
+    Component* getPreviousSibling();
 };
 
 }  // namespace gui

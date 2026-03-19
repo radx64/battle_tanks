@@ -5,12 +5,16 @@
 #include "gui/ContextMenu.hpp"
 #include "gui/Window.hpp"
 
+#include "gui/Debug.hpp"
+
 namespace gui
 {
 
 WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
 : activeWindowHandle_{nullptr}
 , mainWindow_{}
+, focusedComponent_{nullptr}
+, logger_{"WindowManager"}
 {
     mainWindow_.setSize(mainWindowSize);
     renderTexture_.create(mainWindowSize.x, mainWindowSize.y);
@@ -28,6 +32,10 @@ void WindowManager::openWindow(std::unique_ptr<Window> window)
     activeWindowHandle_->enable();
     mainWindow_.defocusWithAllChildren();
     window->setManager(this);
+    
+    if (focusedComponent_) focusedComponent_->defocus();
+    focusedComponent_ = window.get();
+    focusedComponent_->focus();
     windows_.push_front(std::move(window));
 }
 
@@ -90,6 +98,12 @@ void WindowManager::removeOverlay(Component* overlay)
 void WindowManager::render(sf::RenderWindow& renderWindow)
 {
     renderTexture_.clear(sf::Color{0,0,0,0});
+
+    if (focusedComponent_)
+    {
+        debug::drawBox(renderTexture_, focusedComponent_->getGlobalPosition(), focusedComponent_->getSize(), sf::Color::Red, 10.f);
+    }
+
     mainWindow_.render(renderTexture_);
 
     for (auto window = windows_.rbegin(); window != windows_.rend(); ++window  )
@@ -105,6 +119,8 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderTexture_.display();
     textureSprite_.setTexture(renderTexture_.getTexture());
     renderWindow.draw(textureSprite_);
+
+
 }
 
 void WindowManager::update()
@@ -311,6 +327,43 @@ EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyP
 
 EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
+    // FIXME: Temporary hack for new focus system,
+    if (keyboardKeyReleasedEvent.key == sf::Keyboard::F4)
+    {
+        if (focusedComponent_ == nullptr)
+        {
+            // FIXME: of course windows also need to be checked :D
+            focusedComponent_ = mainWindow_.getChildren().front().get();
+            logger_.error("Focused component is null, setting it to " + std::to_string(focusedComponent_->getId()));
+        }
+        else
+        {
+            focusedComponent_->defocus();
+            focusedComponent_ = getNextFocusableComponent(&mainWindow_, focusedComponent_);
+            focusedComponent_->focus();
+        }
+        return EventStatus::Consumed;
+
+    }
+
+    if (keyboardKeyReleasedEvent.key == sf::Keyboard::F3)
+    {
+        if (focusedComponent_ == nullptr)
+        {
+            focusedComponent_ = mainWindow_.getChildren().back().get();
+            logger_.error("Focused component is null, setting it to " + std::to_string(focusedComponent_->getId()));
+        }
+        else
+        {
+            focusedComponent_->defocus();
+            focusedComponent_ = getPreviousFocusableComponent(&mainWindow_,focusedComponent_);
+            focusedComponent_->focus();
+        }
+        return EventStatus::Consumed;
+
+    }
+
+
     if (not overlays_.empty())
     {
         auto* topOverlay = overlays_.back().get();
@@ -369,6 +422,78 @@ EventStatus WindowManager::receive(const event::FocusChange& focusChange)
     }
 
     return result;
+}
+
+Component* getNext(Component* node)
+{
+    if (!node)
+        return nullptr;
+
+    // Go down
+    if (node->hasChildren())
+        return node->getChildren().front().get();
+
+    // Go sideways or up
+    while (node)
+    {
+        if (auto sibling = node->getNextSibling())
+            return sibling;
+
+        node = node->getParent();
+    }
+
+    return nullptr;
+}
+
+Component* WindowManager::getNextFocusableComponent(Component* root, Component* current)
+{
+    Component* next = getNext(current);
+
+    while (next)
+    {
+        if (next->isFocusable())
+            return next;
+
+        next = getNext(next);
+    }
+
+    return root;
+}
+
+Component* getPrevious(Component* node)
+{
+    if (!node)
+        return nullptr;
+
+    // Go down
+    if (node->hasChildren())
+        return node->getChildren().back().get();
+
+    // Go sideways or up
+    while (node)
+    {
+        if (auto sibling = node->getPreviousSibling())
+            return sibling;
+
+        node = node->getParent();
+    }
+
+    return nullptr;
+}
+
+Component* WindowManager::getPreviousFocusableComponent(Component* root, Component* current)
+{
+    Component* next = getPrevious(current);
+
+    while (next)
+    {
+        if (next->isFocusable())
+            return next;
+
+        next = getPrevious(next);
+    }
+
+    return root;
 }
 
 }  // namespace gui
