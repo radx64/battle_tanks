@@ -39,6 +39,7 @@ protected:
     Component* getNextFocusableComponent(Component* root, Component* current);
     Component* getPreviousFocusableComponent(Component* root, Component* current);
     void setFocus(Component* component);
+    EventStatus updateHover(const gui::event::MousePosition position);
 
     WindowManager windowManager_;
     Component* hovered_ = nullptr; //fixme move these nullptr to constructor 
