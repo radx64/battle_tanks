@@ -1,13 +1,10 @@
 #include "game/WaypointMouseController.hpp"
 
-#include "gui/WindowManager.hpp"
-
 namespace game
 {
 
-WaypointMouseController::WaypointMouseController(gui::WindowManager* windowManager, std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view)
-: windowManager_(windowManager)
-, waypoints_(waypoints)
+WaypointMouseController::WaypointMouseController(std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view)
+: waypoints_(waypoints)
 , window_(window)
 , view_(view)
 {}

@@ -13,7 +13,6 @@ namespace gui
 WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
 : activeWindow_{nullptr}
 , mainWindow_{}
-, focusedComponent_{nullptr}
 , logger_{"WindowManager"}
 {
     mainWindow_.setSize(mainWindowSize);
@@ -37,10 +36,6 @@ void WindowManager::openWindow(std::unique_ptr<Window> window)
     activeWindow_->enable();
     mainWindow_.defocusWithAllChildren();
     window->setManager(this);
-    
-    if (focusedComponent_) focusedComponent_->defocus();
-    focusedComponent_ = window.get();
-    focusedComponent_->focus();
     windows_.push_front(std::move(window));
 }
 
@@ -107,11 +102,6 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
 {
     renderTexture_.clear(sf::Color{0,0,0,0});
 
-    if (focusedComponent_)
-    {
-        debug::drawBox(renderTexture_, focusedComponent_->getGlobalPosition(), focusedComponent_->getSize(), sf::Color::Red, 10.f);
-    }
-
     mainWindow_.render(renderTexture_);
 
     for (auto window = windows_.rbegin(); window != windows_.rend(); ++window  )
@@ -129,10 +119,10 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderWindow.draw(textureSprite_);
 }
 
-void WindowManager::update()
-{
-    tasksQueue_.executeAll();
-}
+// void WindowManager::update()
+// {
+//     tasksQueue_.executeAll();
+// }
 
 MainWindow& WindowManager::mainWindow()
 {
@@ -168,7 +158,7 @@ void WindowManager::setActiveWindow(Window* window)
     auto windowIterator = std::find_if(windows_.begin(), windows_.end(), [window](const std::unique_ptr<Window>& w) {
         return w.get() == window;
     });
-    
+
     windows_.splice(windows_.begin(), windows_, windowIterator);
 }
 
@@ -240,25 +230,6 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
     return mainWindow_.receive(mouseButtonPressedEvent);
 }
 
-template<class T>
-EventStatus WindowManager::processEventWithActiveWindow(const T& event)
-{
-    EventStatus result{EventStatus::NotConsumed};
-
-    //Forward event to active window
-    if (activeWindow_ and activeWindow_->isActive() and not activeWindow_->isDead())
-    {
-        result = activeWindow_->receive(event);
-    }
-
-    if (result ==  EventStatus::NotConsumed)
-    {
-        return mainWindow_.receive(event);
-    }
-
-    return result;
-}
-
 EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     // If there are overlays present, treat the UI as modal.
@@ -297,59 +268,7 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
         return EventStatus::Consumed;
     }
 
-    //auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
-
-    gui::EventStatus status {EventStatus::NotConsumed};
-
-    bool hasAnyWindowReceivedMouseEnterEvent{false};
-
-    for (auto window = windows_.begin(); window != windows_.end(); ++window)
-    {
-        if (hasAnyWindowReceivedMouseEnterEvent)
-        {
-            // if ((*window)->wasMouseInside())
-            // {
-            //     (*window)->receive(event::MouseLeft{});
-            // }
-            continue;
-        }
-
-        // FIXME refactor this loop body to reduce number of if statements
-        //bool isMouseInside = (*window)->isInside(mousePosition);
-        //bool wasMouseInside = (*window)->wasMouseInside();
-
-        // Mouse still in active window
-        // if (wasMouseInside and isMouseInside)
-        // {
-        //     hasAnyWindowReceivedMouseEnterEvent = true;
-        // }
-
-        // if (not wasMouseInside and isMouseInside and not hasAnyWindowReceivedMouseEnterEvent)
-        // {
-        //     hasAnyWindowReceivedMouseEnterEvent = true;
-        //     (*window)->receive(event::MouseEntered{});
-        // }
-
-        // if (wasMouseInside and not isMouseInside)
-        // {
-        //     (*window)->receive(event::MouseLeft{});
-        // }
-
-        auto currentWindowStatus = (*window)->receive(mouseMovedEvent);
-
-        if (currentWindowStatus == gui::EventStatus::Consumed)
-        {
-            status = currentWindowStatus;
-            break; // Stop processing rest of the windows if current one consumed mouse event
-        }
-    }
-
-    if (status == EventStatus::NotConsumed)
-    {
-        status = mainWindow_.receive(mouseMovedEvent);
-    }
-
-    return status;
+    return EventStatus::NotConsumed;
 }
 
 // TODO: These receive methods are almost same, make one template (as in gui component)
@@ -362,7 +281,7 @@ EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButton
         return EventStatus::Consumed;
     }
 
-    return processEventWithActiveWindow(mouseButtonReleasedEvent);
+    return EventStatus::NotConsumed;
 }
 
 EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
@@ -374,48 +293,11 @@ EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyP
         return EventStatus::Consumed;
     }
 
-    return processEventWithActiveWindow(keyboardKeyPressedEvent);
+    return EventStatus::NotConsumed;
 }
 
 EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
-    // FIXME: Temporary hack for new focus system,
-    if (keyboardKeyReleasedEvent.key == sf::Keyboard::F4)
-    {
-        if (focusedComponent_ == nullptr)
-        {
-            // FIXME: of course windows also need to be checked :D
-            focusedComponent_ = mainWindow_.getChildren().front().get();
-            logger_.error("Focused component is null, setting it to " + std::to_string(focusedComponent_->getId()));
-        }
-        else
-        {
-            focusedComponent_->defocus();
-            focusedComponent_ = getNextFocusableComponent(&mainWindow_, focusedComponent_);
-            focusedComponent_->focus();
-        }
-        return EventStatus::Consumed;
-
-    }
-
-    if (keyboardKeyReleasedEvent.key == sf::Keyboard::F3)
-    {
-        if (focusedComponent_ == nullptr)
-        {
-            focusedComponent_ = mainWindow_.getChildren().back().get();
-            logger_.error("Focused component is null, setting it to " + std::to_string(focusedComponent_->getId()));
-        }
-        else
-        {
-            focusedComponent_->defocus();
-            focusedComponent_ = getPreviousFocusableComponent(&mainWindow_,focusedComponent_);
-            focusedComponent_->focus();
-        }
-        return EventStatus::Consumed;
-
-    }
-
-
     if (not overlays_.empty())
     {
         auto* topOverlay = overlays_.back().get();
@@ -423,7 +305,7 @@ EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKey
         return EventStatus::Consumed;
     }
 
-    return processEventWithActiveWindow(keyboardKeyReleasedEvent);
+    return EventStatus::NotConsumed;
 }
 
 EventStatus WindowManager::receive(const event::TextEntered& textEntered)
@@ -435,79 +317,7 @@ EventStatus WindowManager::receive(const event::TextEntered& textEntered)
         return EventStatus::Consumed;
     }
 
-    return processEventWithActiveWindow(textEntered);
-}
-
-Component* getNext(Component* node)
-{
-    if (!node)
-        return nullptr;
-
-    // Go down
-    if (node->hasChildren())
-        return node->getChildren().front().get();
-
-    // Go sideways or up
-    while (node)
-    {
-        if (auto sibling = node->getNextSibling())
-            return sibling;
-
-        node = node->getParent();
-    }
-
-    return nullptr;
-}
-
-Component* WindowManager::getNextFocusableComponent(Component* root, Component* current)
-{
-    Component* next = getNext(current);
-
-    while (next)
-    {
-        if (next->isFocusable())
-            return next;
-
-        next = getNext(next);
-    }
-
-    return root;
-}
-
-Component* getPrevious(Component* node)
-{
-    if (!node)
-        return nullptr;
-
-    // Go down
-    if (node->hasChildren())
-        return node->getChildren().back().get();
-
-    // Go sideways or up
-    while (node)
-    {
-        if (auto sibling = node->getPreviousSibling())
-            return sibling;
-
-        node = node->getParent();
-    }
-
-    return nullptr;
-}
-
-Component* WindowManager::getPreviousFocusableComponent(Component* root, Component* current)
-{
-    Component* next = getPrevious(current);
-
-    while (next)
-    {
-        if (next->isFocusable())
-            return next;
-
-        next = getPrevious(next);
-    }
-
-    return root;
+    return EventStatus::NotConsumed;
 }
 
 }  // namespace gui

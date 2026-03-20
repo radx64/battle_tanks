@@ -53,7 +53,7 @@ Application::Application()
 , camera_{cameraInitialPosition_, cameraInitialSize_}
 , cameraController_{&camera_}
 , cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
-, waypointMouseController_{&windowManager_, waypoints_, window_, cameraView_}
+, waypointMouseController_{waypoints_, window_, cameraView_}
 , fpsAverage_{NUMBER_OF_MEASUREMENTS}
 , drawProfiler_{"game::Application::DRAW", "ms"}
 , physicsProfiler_{"game::Application::PHYSICS", "ms"}
@@ -239,7 +239,7 @@ void Application::configureGUI()
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
-    windowManager_.mainWindow().addChild(std::move(quitButton));
+    guiController_.mainWindow().addChild(std::move(quitButton));
 
     auto button = gui::TextButton::create("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
@@ -247,9 +247,9 @@ void Application::configureGUI()
     button->onClick([this](){
         auto helpWindow = std::make_unique<game::HelpWindow>(sf::Vector2f(300.f, 300.f));
         helpWindow->setTitle("Help");
-        windowManager_.openWindow(std::move(helpWindow));
+        guiController_.openWindow(std::move(helpWindow));
     });
-    windowManager_.mainWindow().addChild(std::move(button));
+    guiController_.mainWindow().addChild(std::move(button));
 
     auto reloadLuaButton = gui::TextButton::create("Reload Lua script");
     reloadLuaButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
@@ -257,7 +257,7 @@ void Application::configureGUI()
     reloadLuaButton->onClick([this](){
         luaTankHandle_->getScript()->reload();
     });
-    windowManager_.mainWindow().addChild(std::move(reloadLuaButton));
+    guiController_.mainWindow().addChild(std::move(reloadLuaButton));
 
     auto menuButton = gui::TextButton::create("Menu");
     menuButton->setPosition(sf::Vector2f(20.f, 250.f));
@@ -282,12 +282,12 @@ void Application::configureGUI()
             }
         );
 
-        windowManager_.openContextMenu(std::move(menu), menuPosition);
+        guiController_.openContextMenu(std::move(menu), menuPosition);
     });
     
-    windowManager_.mainWindow().addChild(std::move(menuButton));
+    guiController_.mainWindow().addChild(std::move(menuButton));
 
-    windowManager_.mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
+    guiController_.mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
         auto menu = gui::ContextMenu::create(
             {
                 {"Reload Lua", [this]() { luaTankHandle_->getScript()->reload(); }},
@@ -296,7 +296,7 @@ void Application::configureGUI()
             }
         );
         menu->open(pos);
-        windowManager_.openContextMenu(std::move(menu), pos);
+        guiController_.openContextMenu(std::move(menu), pos);
     });
 }
 

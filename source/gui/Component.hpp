@@ -17,6 +17,7 @@ namespace gui
 // Children elements are freed by parent during destruction
 // You need to render only parent to enable rendering of children
 
+// TODO: I hate this Component name, rename it to Widget later.
 class Component : public EventReceiver
 {
 public:
@@ -110,7 +111,7 @@ protected:
     void updateGlobalPosition();
     size_t getChildrenCount() const;
 
-    void applyPendingOperations();
+    void applyPendingOperations(); // TODO: probably is no longer needed as events are handled in different manner. Will check later when I will fix context menus.
 
     sf::Vector2f localPosition_;   // offset from parent position
     sf::FloatRect bounds_;         // bounds box in global space position

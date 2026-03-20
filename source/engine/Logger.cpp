@@ -11,6 +11,11 @@ Logger::Logger(const std::string_view prefix)
 {
 }
 
+void Logger::vip(const std::string_view log) const
+{
+    LoggerSink::instance().log(fmt::color::rebecca_purple, "vip", prefix_, std::string(log));
+}
+
 void Logger::error(const std::string_view log) const
 {
     LoggerSink::instance().log(fmt::color::crimson, "error", prefix_, std::string(log));

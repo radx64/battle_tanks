@@ -28,6 +28,7 @@ EMPTY_RECEIVE_METHOD(EventReceiver, event::KeyboardKeyPressed);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::KeyboardKeyReleased);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::TextEntered);
 
+EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusChange);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusLost);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusGained);
 
