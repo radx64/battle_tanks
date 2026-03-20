@@ -90,10 +90,8 @@ void GuiController::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf:
     windowManager_.openContextMenu(std::move(menu), globalPosition);
 }
 
-
 EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    
     Window* clickedWindow = windowManager_.getTopWindowAtPosition(mouseButtonPressedEvent.position);
     Window* oldWindow = windowManager_.getActiveWindow();
     if (clickedWindow and clickedWindow != oldWindow)
@@ -115,6 +113,8 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
     setFocus(pressed_);
     pressed_->receive(mouseButtonPressedEvent);
 
+    updateHover(mouseButtonPressedEvent.position);
+
     return EventStatus::NotConsumed;
 }
 
@@ -126,6 +126,8 @@ EventStatus GuiController::receive(const event::MouseButtonReleased& mouseButton
         pressed_ = nullptr;
     }
 
+    updateHover(mouseButtonReleasedEvent.position);
+
     //TODO generate click and doubleclick events later from here instead checking things in compoenent / buttons
 
     return EventStatus::NotConsumed;
@@ -133,31 +135,7 @@ EventStatus GuiController::receive(const event::MouseButtonReleased& mouseButton
 
 EventStatus GuiController::receive(const event::MouseMoved& mouseMovedEvent)
 {
-    auto* newHovered = hitTest(mouseMovedEvent.position);
-
-    if (newHovered)
-    {
-        newHovered->receive(mouseMovedEvent);
-    }
-
-    if (newHovered == hovered_)
-    {
-        return EventStatus::Consumed;
-    }
-
-    if (hovered_)
-    {
-        hovered_->receive(event::MouseLeft{});
-    }
-
-    hovered_ = newHovered;
-
-    if (hovered_)
-    {
-        hovered_->receive(event::MouseEntered{});
-    }
-
-    return EventStatus::Consumed;
+    return updateHover(mouseMovedEvent.position);
 }
 
 EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
@@ -167,7 +145,6 @@ EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
     {
         activeRoot = &windowManager_.mainWindow();
     }
-
 
     if (focusChangeEvent.type == event::FocusChange::Type::Next)
     {
@@ -258,6 +235,34 @@ void GuiController::setFocus(Component* component)
     if (focused_) focused_->defocus();
     focused_ = component;
     if (focused_) focused_->focus();
+}
+
+EventStatus GuiController::updateHover(const gui::event::MousePosition position)
+{
+    auto* newHovered = hitTest(position);
+
+    if (newHovered)
+    {
+        newHovered->receive(event::MouseMoved{position});
+    }
+
+    if (newHovered == hovered_)
+    {
+        return EventStatus::Consumed;
+    }
+
+    if (hovered_)
+    {
+        hovered_->receive(event::MouseLeft{});
+    }
+
+    hovered_ = newHovered;
+
+    if (hovered_)
+    {
+        hovered_->receive(event::MouseEntered{});
+    }
+    return EventStatus::NotConsumed;
 }
 
 }  // namespace gui
