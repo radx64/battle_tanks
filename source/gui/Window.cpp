@@ -185,6 +185,10 @@ EventStatus Window::on(const event::MouseButtonDoublePressed&)
 
 EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
+    // TODO: check all isInside checks if are needed after changes
+    // so now GUI controller makes hitbox testing
+    // so when event comes to window or iths descendants it should be already checked that event is inside of them
+    
     logger_.debug("Mouse button pressed event received by window, id: " + std::to_string(getId()));
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
@@ -220,7 +224,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         return gui::EventStatus::Consumed;
     }
 
-    return gui::EventStatus::NotConsumed;
+    return gui::EventStatus::Consumed;
 }
 
 EventStatus Window::on(const event::MouseButtonReleased&)
