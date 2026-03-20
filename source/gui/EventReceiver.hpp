@@ -27,7 +27,6 @@ public:
     virtual EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased);
     virtual EventStatus receive(const event::TextEntered& textEntered);
 
-    virtual EventStatus receive(const event::FocusChange& focusChange);
     virtual EventStatus receive(const event::FocusLost& FocusLost);
     virtual EventStatus receive(const event::FocusGained& focusGained);
 };

@@ -143,7 +143,7 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
 
-    if (isLeftClicked and wasMouseInside() and isInside(mousePosition))
+    if (isLeftClicked and isInside(mousePosition))
     {
         // wasMouseInside() call is added
         // due to nondeterministic behaviour of mouseLeft 

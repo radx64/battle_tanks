@@ -25,6 +25,7 @@ public:
     virtual ~Component();
 
     uint32_t getId() const;
+    const std::string_view getDebugName() const;
     virtual void onRender(sf::RenderTexture& renderTexture) = 0;
 
     void render(sf::RenderTexture& renderTexture);
@@ -40,8 +41,6 @@ public:
 
     bool isInside(sf::Vector2f point) const;
     bool isInside(const event::MousePosition& position) const;
-
-    bool wasMouseInside() const;
 
     const sf::Vector2f getGlobalPosition() const;
     virtual void addChild(std::unique_ptr<Component> child);
@@ -61,10 +60,6 @@ public:
     void disableChildrenEvents();
     void enableChildrenEvents();
 
-    // Force hover exit on this component and all descendants.
-    // Useful for modal overlays to prevent underlying controls from staying highlighted.
-    void forceMouseLeave();
-
     /* Mouse events */
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override final;
@@ -79,7 +74,6 @@ public:
     EventStatus receive(const event::TextEntered& textEntered) override final;
 
     /* Focus events */
-    EventStatus receive(const event::FocusChange& focusChange) override final;
     EventStatus receive(const event::FocusLost& focusLost) override final;
     EventStatus receive(const event::FocusGained& focusGained) override final;
 protected:
@@ -104,7 +98,6 @@ protected:
     virtual EventStatus on(const event::KeyboardKeyReleased& KeyboardKeyReleased);
     virtual EventStatus on(const event::TextEntered& textEntered);
 
-    virtual EventStatus on(const event::FocusChange& focusChange);
     virtual EventStatus on(const event::FocusLost& focusLost);
     virtual EventStatus on(const event::FocusGained& focusGained);
 
@@ -116,9 +109,6 @@ protected:
 
     void updateGlobalPosition();
     size_t getChildrenCount() const;
-
-    EventStatus processFocusForwardEvent(const event::FocusChange& focusChange);
-    EventStatus processFocusBackwardEvent(const event::FocusChange& focusChange);
 
     void applyPendingOperations();
 
@@ -135,12 +125,12 @@ protected:
 
     Component* focusedChild_;
     bool isVisible_;
-    bool wasMouseInside_;
     
     bool isFocused_;
     bool isFocusable_; // can component get focus, if not it should still forward events to children
     bool isProcessingEvents_; // when processing events, addChild, removeChild will be posponed to not break current childred iterators. 
     uint32_t id_;
+    std::string debugName_;
     engine::Logger logger_;
 
 public:

@@ -8,9 +8,10 @@ namespace gui
 Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
 : engine::Application{windowName, logPrefix, windowSize}
 , windowManager_{windowSize}
-, mouseController_{&windowManager_, window_, window_.getDefaultView()}
-, keyboardController_{&windowManager_}
-, textEnteredController_{&windowManager_}
+, guiController_{windowManager_}
+, mouseController_{&guiController_, window_, window_.getDefaultView()}
+, keyboardController_{&guiController_}
+, textEnteredController_{&guiController_}
 {
     gui::FontLibrary::init();
     gui::TextureLibrary::init();

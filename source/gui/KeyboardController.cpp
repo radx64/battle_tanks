@@ -1,17 +1,17 @@
 #include "gui/KeyboardController.hpp"
 
 #include "gui/Debug.hpp"
-#include "gui/WindowManager.hpp"
+#include "gui/EventReceiver.hpp"
 
 namespace gui
 {
-KeyboardController::KeyboardController(gui::WindowManager* windowManager)
-: windowManager_(windowManager)
+KeyboardController::KeyboardController(gui::EventReceiver* receiver)
+: receiver_(receiver)
 {}
 
 void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
 {
-    windowManager_->receive(gui::event::KeyboardKeyPressed{
+    receiver_->receive(gui::event::KeyboardKeyPressed{
         .key = keyEvent.code,
         .modifiers = {
             .alt = keyEvent.alt,
@@ -24,13 +24,14 @@ void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
     {
         if (keyEvent.shift)
         {
-            windowManager_->receive(gui::event::FocusChange{
-                .type = gui::event::FocusChange::Type::Previous});
+            // FIXME this should be now handled by GuiController
+            // receiver_->receive(gui::event::FocusChange{
+            //     .type = gui::event::FocusChange::Type::Previous});
         }
         else
         {
-            windowManager_->receive(gui::event::FocusChange{
-                .type = gui::event::FocusChange::Type::Next});
+            // receiver_->receive(gui::event::FocusChange{
+            //     .type = gui::event::FocusChange::Type::Next});
         }
     }
 }
@@ -42,7 +43,7 @@ void KeyboardController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
         gui::debug::toggle();
     } 
 
-    windowManager_->receive(gui::event::KeyboardKeyReleased{
+    receiver_->receive(gui::event::KeyboardKeyReleased{
         .key = keyEvent.code,
         .modifiers = {
             .alt = keyEvent.alt,

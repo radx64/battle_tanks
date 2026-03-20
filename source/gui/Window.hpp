@@ -48,11 +48,13 @@ class Window : public Component
 {
 public:
     using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
+    using WindowCloseHandler = std::function<void()>;
 
     Window();
 
     void setTitle(const std::string_view& text);
     void setContextMenuHandler(ContextMenuHandler handler);
+    void setWindowCloseHandler(WindowCloseHandler handler);
     void close();
     bool isDead() const;
 
@@ -102,6 +104,7 @@ protected:
 
     gui::WindowManager* windowManager_;
     ContextMenuHandler contextMenuHandler_;
+    WindowCloseHandler windowCloseHandler_;
     sf::Vector2f windowSizeToRestore_;
     sf::Vector2f windowPositionToRestore_;
 

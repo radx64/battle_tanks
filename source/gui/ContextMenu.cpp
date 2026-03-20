@@ -112,7 +112,8 @@ void ContextMenu::open(const sf::Vector2f& globalPosition)
         {
             if (sibling.get() != this)
             {
-                sibling->forceMouseLeave();
+                //FIXME
+                //sibling->forceMouseLeave();
             }
         }
     }
