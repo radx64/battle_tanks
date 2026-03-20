@@ -3,7 +3,7 @@
 
 #include "engine/input/MouseReceiver.hpp"
 
-namespace gui {class WindowManager;}
+namespace gui {class EventReceiver;}
 
 namespace gui
 {   
@@ -11,7 +11,7 @@ namespace gui
 class MouseController : public engine::input::MouseReceiver
 {
 public:
-    MouseController(gui::WindowManager* windowManager, sf::RenderWindow& window, const sf::View& view);
+    MouseController(gui::EventReceiver* receiver, sf::RenderWindow& window, const sf::View& view);
 
 protected:
     gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button, bool doubleClick) override;
@@ -20,7 +20,7 @@ protected:
 
     sf::Vector2f mapPixelToCoords(const sf::Vector2f& mousePosition);
 
-    gui::WindowManager* windowManager_;
+    gui::EventReceiver* receiver_;
     sf::RenderWindow& window_;
     const sf::View& view_;
 };

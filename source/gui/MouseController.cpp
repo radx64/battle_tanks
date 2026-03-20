@@ -1,12 +1,12 @@
 #include "gui/MouseController.hpp"
 
-#include "gui/WindowManager.hpp"
+#include "gui/EventReceiver.hpp"
 
 namespace gui
 {
 
-MouseController::MouseController(gui::WindowManager* windowManager, sf::RenderWindow& window, const sf::View& view)
-: windowManager_(windowManager)
+MouseController::MouseController(gui::EventReceiver* receiver, sf::RenderWindow& window, const sf::View& view)
+: receiver_(receiver)
 , window_(window)
 , view_(view)
 {}    
@@ -29,14 +29,14 @@ gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mousePosti
 
     if (doubleClick)
     {
-        return windowManager_->receive(
+        return receiver_->receive(
             gui::event::MouseButtonDoublePressed{
                 .button = guiButton,
                 .position = {.x = screenCoords.x, .y = screenCoords.y}
             });
     }
 
-    return windowManager_->receive(
+    return receiver_->receive(
         gui::event::MouseButtonPressed{
             .button = guiButton,
             .position = {.x = screenCoords.x, .y = screenCoords.y}
@@ -59,7 +59,7 @@ gui::EventStatus MouseController::onButtonReleased(const sf::Vector2f& mousePost
         }
     }();
 
-    return windowManager_->receive(
+    return receiver_->receive(
         gui::event::MouseButtonReleased{
             .button = guiButton,
             .position = {.x = screenCoords.x, .y = screenCoords.y}
@@ -70,7 +70,7 @@ gui::EventStatus MouseController::onMouseMoved(const sf::Vector2f& mousePostion)
 {   
     const auto screenCoords = mapPixelToCoords(mousePostion);
 
-    const auto result = windowManager_->receive(
+    const auto result = receiver_->receive(
         gui::event::MouseMoved{.position = gui::event::MousePosition{
             .x = screenCoords.x, 
             .y = screenCoords.y

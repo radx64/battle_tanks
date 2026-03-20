@@ -2,19 +2,19 @@
 
 #include <engine/input/TextEnteredReceiver.hpp>
 
-namespace gui {class WindowManager;}
+namespace gui {class EventReceiver;}
 
 namespace gui
 {
 class TextEnteredController : public engine::input::TextEnteredReceiver
 {
 public:
-    TextEnteredController(gui::WindowManager* windowManager);
+    TextEnteredController(gui::EventReceiver* receiver);
 
 protected:
     void onTextEntered(const uint32_t unicode) override;
 
-    gui::WindowManager* windowManager_;
+    gui::EventReceiver* receiver_;
 };
 
 }  // namespace gui

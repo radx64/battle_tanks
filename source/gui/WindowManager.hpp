@@ -41,9 +41,12 @@ public:
     EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
     EventStatus receive(const event::TextEntered& textEntered) override;
 
-    EventStatus receive(const event::FocusChange& focusChange) override;
-
     MainWindow& mainWindow();
+
+    Window* getActiveWindow() const;
+    void setActiveWindow(Window* window);
+
+    Window* getTopWindowAtPosition(const event::MousePosition position) const;
 
 protected:
     template<class T>
@@ -52,13 +55,11 @@ protected:
     template<class T>
     EventStatus processEventWithActiveWindow(const T& event);
 
-    EventStatus forwardFocusChange(const event::FocusChange& focusChange);
-
     void addOverlay(std::unique_ptr<Component> overlay);
     void removeOverlay(Component* overlay);
 
     std::list<std::unique_ptr<Window>> windows_;
-    Window* activeWindowHandle_;
+    Window* activeWindow_;
     MainWindow mainWindow_;
 
     // Components drawn on top of all windows (e.g. context menus)

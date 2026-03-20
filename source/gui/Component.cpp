@@ -47,11 +47,11 @@ Component::Component(const std::source_location location)
 , children_ {}
 , focusedChild_{nullptr}
 , isVisible_ {true}
-, wasMouseInside_{false}
 , isFocused_{false}
 , isFocusable_{false}
 , isProcessingEvents_{false}
 , id_{InstanceIdGenerator::getId()}
+, debugName_{debug::getFunctionNameOnly(location)+ " id:" + std::to_string(id_)}
 , logger_{debug::getFunctionNameOnly(location)+ " id:" + std::to_string(id_)}
 {
     logger_.debug("Creating");
@@ -65,6 +65,11 @@ Component::~Component()
 uint32_t Component::getId() const
 {
     return id_;
+}
+
+const std::string_view Component::getDebugName() const
+{
+    return debugName_;
 }
 
 void Component::render(sf::RenderTexture& renderTexture)
@@ -81,64 +86,29 @@ void Component::render(sf::RenderTexture& renderTexture)
 template <typename T>
 EventStatus Component::processEvent(const T& event)
 {
-    isProcessingEvents_ = true;
-    auto eventStatus = EventStatus::NotConsumed;
+    auto eventStatus = this->on(event);
 
-    // Its important to send update events in reverse order
-    // as if child is rendered on top of another
-    // it's better if topmost child captures event first
-    // so it will not be send to back layer ones
-    if (childrenEventsProcessingEnabled_)
+    if (eventStatus == EventStatus::Consumed)
     {
-        for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
-        {
-            eventStatus = (*child)->receive(event);
-            if (eventStatus == EventStatus::Consumed) 
-            {
-                //TODO: do some RAII for these pending operations cause I hate doing this flags manually
-                isProcessingEvents_ = false;
-                applyPendingOperations();
-                return eventStatus;
-            }
-        }
+        return eventStatus;
     }
-    isProcessingEvents_ = false;
-    applyPendingOperations();
-    return this->on(event);
+
+    if (auto* parent = getParent())
+    {
+        return parent->receive(event);
+    }
+
+    return EventStatus::NotConsumed;
 }
 
 EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
 {
-    bool hasChildComponentCapturesMouseEnterEvent{false};
-    for (auto& child : children_)
-    {
-        // FIXME refactor this loop body to reduce number of if statements
-        bool isMouseInside = child->isInside(toVector2f(mouseMovedEvent.position));
-        bool wasMouseInside = child->wasMouseInside_;
-
-        if (hasChildComponentCapturesMouseEnterEvent and wasMouseInside)
-        {
-            child->receive(event::MouseLeft{});
-            continue; // generate mouse left event to every child that has previously mouse inside
-        }
-
-        if (not wasMouseInside and isMouseInside)
-        {
-            child->receive(event::MouseEntered{});
-            hasChildComponentCapturesMouseEnterEvent = true;
-        }
-
-        if (wasMouseInside and not isMouseInside)
-        {
-            child->receive(event::MouseLeft{});
-        }
-    }
-
-    auto status = processEvent(mouseMovedEvent);
-    return status;
+    return processEvent(mouseMovedEvent);
 }
+
 EventStatus Component::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
+    logger_.error("Mouse button pressed event received by component, id: " + std::string(getDebugName()));
     return processEvent(mouseButtonPressedEvent);
 }
 
@@ -152,30 +122,13 @@ EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonRele
     return processEvent(mouseButtonReleasedEvent);
 }
 
-/* These two events (entered, left) are generated insde component using MouseMoveEvent*/
-/* This two should not be propagated downwards to child components*/
 EventStatus Component::receive(const event::MouseEntered& mouseEnteredEvent)
 {
-    if (not childrenEventsProcessingEnabled_) return EventStatus::NotConsumed;
-    wasMouseInside_ = true;
-    return on(mouseEnteredEvent);
+    return processEvent(mouseEnteredEvent);
 }
 EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
 {
-    // FIXME: this if statement might be wrong as it also disable event processing
-    // of this component. I need to think about it later
-    // same in MouseEntered event
-    if (not childrenEventsProcessingEnabled_) return EventStatus::NotConsumed;
-    for (auto child = children_.rbegin(); child != children_.rend(); ++child  )
-    {
-        if ((*child)->wasMouseInside_)
-        {
-            (*child)->receive(mouseLeftEvent);
-        }
-    }
-
-    wasMouseInside_ = false;
-    return on(mouseLeftEvent);
+    return processEvent(mouseLeftEvent);
 }
 
 EventStatus Component::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
@@ -193,136 +146,6 @@ EventStatus Component::receive(const event::TextEntered& textEntered)
     return processEvent(textEntered);
 }
 
-EventStatus Component::processFocusForwardEvent(const event::FocusChange& focusChange)
-{
-    if (focusedChild_ == nullptr and not isFocused() and isFocusable())
-    {
-        logger_.debug("Selecting this as a focus");
-        this->focus();
-        return EventStatus::Consumed;
-    }
-
-    if (isFocused() and children_.empty())
-    {
-        logger_.debug("No children to forward event to");
-        this->defocusWithAllChildren();
-        focusedChild_ = nullptr;
-        return EventStatus::NotConsumed;
-    }
-
-    auto currentSelectionIt = std::end(children_);
-
-    if (focusedChild_ != nullptr)
-    {
-        currentSelectionIt = std::find_if(std::begin(children_), std::end(children_),
-            [this] (const auto& child) {return child.get() == focusedChild_;});
-    }
-    else
-    {
-        logger_.debug("Selecting first child");
-        currentSelectionIt = std::begin(children_);
-    }
-
-    auto result = EventStatus::NotConsumed;
-
-    while (currentSelectionIt != std::end(children_))
-    {
-        logger_.debug(fmt::format("Trying: {}", fmt::ptr(currentSelectionIt->get())));
-        result = (*currentSelectionIt)->receive(focusChange);
-        logger_.debug(fmt::format("Result from child: {}", toString(result)));
-        
-        if (result == EventStatus::Consumed)
-        {
-            focusedChild_ = currentSelectionIt->get();
-            break;
-        }
-
-        currentSelectionIt = std::next(currentSelectionIt);
-    }
-
-    if (isFocused())
-    {
-        logger_.debug("Defocusing this element, leaving children do the work");
-        defocus();
-    }
-
-    if (result == EventStatus::NotConsumed)
-    {
-        focusedChild_ = nullptr;
-    }
-
-    return result;
-}
-
-EventStatus Component::processFocusBackwardEvent(const event::FocusChange& focusChange)
-{
-    if (isFocused())
-    {
-        logger_.debug("Defocusing this element, leaving parent do the work");
-        defocus();
-        return EventStatus::NotConsumed;
-    }
-
-    auto currentSelectionIt = std::prev(std::begin(children_));
-
-    if (focusedChild_ == nullptr)
-    {
-        if (children_.empty() and not isFocused() and isFocusable())
-        {
-            logger_.debug("No children to forward event to. Selecting this as a focus");
-            this->focus();
-            return EventStatus::Consumed;
-        }
-        else
-        {
-            logger_.debug("Selecting last if possible");
-            currentSelectionIt = std::prev(children_.end());
-        }
-    }
-
-    if (focusedChild_ != nullptr)
-    {
-        currentSelectionIt = std::find_if(std::begin(children_), std::end(children_),
-            [this] (const auto& child) {return child.get() == focusedChild_;});
-    }
-
-    auto result = EventStatus::NotConsumed;
-
-    while(std::distance(std::begin(children_), currentSelectionIt) >= 0)
-    {
-        logger_.debug(fmt::format("Trying: {}", fmt::ptr(currentSelectionIt->get())));
-        result = (*currentSelectionIt)->receive(focusChange);
-        logger_.debug(fmt::format("Got from child {}", toString(result)));
-        
-        if (result == EventStatus::Consumed) 
-        {
-            focusedChild_ = currentSelectionIt->get();   
-            break;
-        }
-
-        currentSelectionIt = std::prev(currentSelectionIt);
-    }
-
-    if (result == EventStatus::NotConsumed)
-    {
-        logger_.debug("No more children to focus");
-    }
-
-    if (isFocusable() and (result == EventStatus::NotConsumed))
-    {
-        logger_.debug("Trying to focus this now");
-        this->focus();
-        result = EventStatus::Consumed;
-    }
-    
-    if (result == EventStatus::NotConsumed)
-    {
-        focusedChild_ = nullptr;
-    }
-
-    return result;
-}
-
 void Component::applyPendingOperations()
 {
     for (auto* child : pendingChildrenToRemove_)
@@ -336,28 +159,6 @@ void Component::applyPendingOperations()
         addChild(std::move(child));
     }
     pendingChildrenToAdd_.clear();
-}
-
-EventStatus Component::receive(const event::FocusChange& focusChange)
-{
-    if (not childrenEventsProcessingEnabled_)
-    {
-        return EventStatus::NotConsumed;
-    }
-
-    auto result{EventStatus::NotConsumed};
-    if (focusChange.type == event::FocusChange::Type::Next)
-    {
-        result = processFocusForwardEvent(focusChange);
-    }
-    else
-    {
-        result = processFocusBackwardEvent(focusChange);
-    }
-
-    logger_.debug(fmt::format("Returning {}", toString(result)));
-
-    return result;
 }
 
 EventStatus Component::receive(const event::FocusLost& focusLost)
@@ -381,7 +182,6 @@ EMPTY_ON_METHOD(Component, event::KeyboardKeyPressed);
 EMPTY_ON_METHOD(Component, event::KeyboardKeyReleased);
 EMPTY_ON_METHOD(Component, event::TextEntered);
 
-EMPTY_ON_METHOD(Component, event::FocusChange);
 EMPTY_ON_METHOD(Component, event::FocusLost);
 EMPTY_ON_METHOD(Component, event::FocusGained);
 
@@ -442,11 +242,6 @@ bool Component::isInside(sf::Vector2f point) const
 bool Component::isInside(const event::MousePosition& position) const
 {
     return isInside(toVector2f(position));
-}
-
-bool Component::wasMouseInside() const
-{
-    return wasMouseInside_;
 }
 
 const sf::Vector2f Component::getGlobalPosition() const
@@ -639,18 +434,6 @@ void Component::enableChildrenEvents()
     childrenEventsProcessingEnabled_ = true;
 }
 
-void Component::forceMouseLeave()
-{
-    if (wasMouseInside_)
-    {
-        receive(event::MouseLeft{});
-    }
-    for (auto& child : children_)
-    {
-        child->forceMouseLeave();
-    }
-}
-
 void Component::new_focus()
 {
     isFocused_ = true;
@@ -663,7 +446,7 @@ void Component::new_defocus()
     receive(gui::event::FocusLost{});
 }
 
- Component* Component::getNextChild(Component* child)
+Component* Component::getNextChild(Component* child)
  {
     auto it = std::find_if(std::begin(children_), std::end(children_),
         [child](const auto& c) { return c.get() == child; });

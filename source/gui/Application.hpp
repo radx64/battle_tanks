@@ -2,6 +2,7 @@
 
 #include "engine/Application.hpp"
 
+#include "gui/GuiController.hpp"
 #include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
 #include "gui/TextEnteredController.hpp"
@@ -20,6 +21,7 @@ protected:
     void onUpdate(float timeStep) override;
 
     gui::WindowManager windowManager_;
+    gui::GuiController guiController_;
     gui::MouseController mouseController_;
     gui::KeyboardController keyboardController_;
     gui::TextEnteredController textEnteredController_;

@@ -109,6 +109,11 @@ void Window::setContextMenuHandler(ContextMenuHandler handler)
     contextMenuHandler_ = std::move(handler);
 }
 
+void Window::setWindowCloseHandler(WindowCloseHandler handler)
+{
+    windowCloseHandler_ = std::move(handler);
+}
+
 bool Window::isInsideHeader(const sf::Vector2f& point)
 {
     return header_->isInside(point);
@@ -133,6 +138,10 @@ void Window::close()
 {
     setVisibility(false);
     isDead_ = true;
+    if (windowCloseHandler_)
+    {
+        windowCloseHandler_();
+    }
 }
 
 bool Window::isDead() const
@@ -176,6 +185,7 @@ EventStatus Window::on(const event::MouseButtonDoublePressed&)
 
 EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
+    logger_.debug("Mouse button pressed event received by window, id: " + std::to_string(getId()));
     auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
     if (mouseButtonPressedEvent.button == gui::event::MouseButton::Right)

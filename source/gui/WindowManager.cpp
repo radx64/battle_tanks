@@ -11,7 +11,7 @@ namespace gui
 {
 
 WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
-: activeWindowHandle_{nullptr}
+: activeWindow_{nullptr}
 , mainWindow_{}
 , focusedComponent_{nullptr}
 , logger_{"WindowManager"}
@@ -24,12 +24,17 @@ WindowManager::~WindowManager() = default;
 
 void WindowManager::openWindow(std::unique_ptr<Window> window)
 {
-    if (activeWindowHandle_)
+    window->setWindowCloseHandler([this, windowPtr = window.get()]() {
+        if (activeWindow_ == windowPtr) activeWindow_ = nullptr;
+        logger_.debug("Window closed, id: " + std::to_string(windowPtr->getId()));
+    });
+
+    if (activeWindow_)
     {
-        activeWindowHandle_->disable();
+        activeWindow_->disable();
     }
-    activeWindowHandle_ = window.get();
-    activeWindowHandle_->enable();
+    activeWindow_ = window.get();
+    activeWindow_->enable();
     mainWindow_.defocusWithAllChildren();
     window->setManager(this);
     
@@ -63,11 +68,11 @@ void WindowManager::addOverlay(std::unique_ptr<Component> overlay)
 
     // When an overlay is active we want to treat the UI as modal; prevent hover/interaction
     // with underlying windows while the overlay is visible.
-    mainWindow_.forceMouseLeave();
+    //mainWindow_.forceMouseLeave();
     mainWindow_.defocusWithAllChildren();
     for (auto& window : windows_)
     {
-        window->forceMouseLeave();
+        //window->forceMouseLeave();
         window->defocusWithAllChildren();
     }
 
@@ -93,6 +98,9 @@ void WindowManager::removeOverlay(Component* overlay)
     // end then event bubbling propagates events to parents if not consumed
     // Hit testing for components need to be done in that central place, not in each component, so I can easily update hover states of windows under overlay when it is closed
     // Overlays could be handled as special windows, so extra handling would not be needed, and they would be part of normal event distribution system, instead of being special cased in each receive method in window manager
+
+    // Events bubbling will have to be reversed, so they will start from target component and then propagate to parents, not the other way around as it is now, 
+    // so I can stop propagation when event is consumed, and I don't have to check if event is consumed in each receive method in window manager
 }
 
 void WindowManager::render(sf::RenderWindow& renderWindow)
@@ -119,8 +127,6 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderTexture_.display();
     textureSprite_.setTexture(renderTexture_.getTexture());
     renderWindow.draw(textureSprite_);
-
-
 }
 
 void WindowManager::update()
@@ -131,6 +137,52 @@ void WindowManager::update()
 MainWindow& WindowManager::mainWindow()
 {
     return mainWindow_;
+}
+
+Window* WindowManager::getActiveWindow() const
+{
+    return activeWindow_;
+}
+
+void WindowManager::setActiveWindow(Window* window)
+{
+    if (activeWindow_ == window)
+    {
+        return;
+    }
+
+    if (activeWindow_)
+    {
+        activeWindow_->disable();
+    }
+
+    activeWindow_ = window;
+
+    if (!window)
+    {
+        return;
+    }
+
+    window->enable();
+
+    auto windowIterator = std::find_if(windows_.begin(), windows_.end(), [window](const std::unique_ptr<Window>& w) {
+        return w.get() == window;
+    });
+    
+    windows_.splice(windows_.begin(), windows_, windowIterator);
+}
+
+Window* WindowManager::getTopWindowAtPosition(const event::MousePosition position) const
+{
+    for (auto& window : windows_)
+    {
+        if (window->isInside(position))
+        {
+            return window.get();
+        }
+    }
+
+    return nullptr;
 }
 
 template<class T>
@@ -147,7 +199,7 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
 
         if (window->isDead())
         {
-            if (activeWindowHandle_ == window) activeWindowHandle_ = nullptr;
+            if (activeWindow_ == window) activeWindow_ = nullptr;
             windowIterator = windows_.erase(windowIterator);
             continue;
         }
@@ -156,11 +208,11 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
 
         if (not window->isInside(mousePosition)) { windowIterator++; continue; }
 
-        if (activeWindowHandle_ != window) // Replace active window
+        if (activeWindow_ != window) // Replace active window
         {
-            if (activeWindowHandle_) activeWindowHandle_->disable();
-            activeWindowHandle_ = window;
-            activeWindowHandle_->enable();
+            if (activeWindow_) activeWindow_->disable();
+            activeWindow_ = window;
+            activeWindow_->enable();
 
             // Make sure components in main window are defocused
             mainWindow_.defocusWithAllChildren();
@@ -169,16 +221,16 @@ EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
             windows_.splice(windows_.begin(), windows_, windowIterator);
         }
 
-        auto result = activeWindowHandle_->receive(mouseButtonPressedEvent);
+        auto result = activeWindow_->receive(mouseButtonPressedEvent);
 
         // FIXME: I'm checking twice if window is dead (see top of this method)
         // FIXME2: Window manager knows to late that the window is closed
         //          So it is dead but stil have active handle to it
         //          For now i will work around on that but I need consider some solution.
-        if (activeWindowHandle_->isDead())
+        if (activeWindow_->isDead())
         {
-            windows_.remove_if([this](auto& window){ return window.get() == activeWindowHandle_;});
-            activeWindowHandle_ = nullptr;
+            windows_.remove_if([this](auto& window){ return window.get() == activeWindow_;});
+            activeWindow_ = nullptr;
         }
         return result;
 
@@ -194,9 +246,9 @@ EventStatus WindowManager::processEventWithActiveWindow(const T& event)
     EventStatus result{EventStatus::NotConsumed};
 
     //Forward event to active window
-    if (activeWindowHandle_ and activeWindowHandle_->isActive() and not activeWindowHandle_->isDead())
+    if (activeWindow_ and activeWindow_->isActive() and not activeWindow_->isDead())
     {
-        result = activeWindowHandle_->receive(event);
+        result = activeWindow_->receive(event);
     }
 
     if (result ==  EventStatus::NotConsumed)
@@ -245,7 +297,7 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
         return EventStatus::Consumed;
     }
 
-    auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+    //auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
     gui::EventStatus status {EventStatus::NotConsumed};
 
@@ -255,33 +307,33 @@ EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
     {
         if (hasAnyWindowReceivedMouseEnterEvent)
         {
-            if ((*window)->wasMouseInside())
-            {
-                (*window)->receive(event::MouseLeft{});
-            }
+            // if ((*window)->wasMouseInside())
+            // {
+            //     (*window)->receive(event::MouseLeft{});
+            // }
             continue;
         }
 
         // FIXME refactor this loop body to reduce number of if statements
-        bool isMouseInside = (*window)->isInside(mousePosition);
-        bool wasMouseInside = (*window)->wasMouseInside();
+        //bool isMouseInside = (*window)->isInside(mousePosition);
+        //bool wasMouseInside = (*window)->wasMouseInside();
 
         // Mouse still in active window
-        if (wasMouseInside and isMouseInside)
-        {
-            hasAnyWindowReceivedMouseEnterEvent = true;
-        }
+        // if (wasMouseInside and isMouseInside)
+        // {
+        //     hasAnyWindowReceivedMouseEnterEvent = true;
+        // }
 
-        if (not wasMouseInside and isMouseInside and not hasAnyWindowReceivedMouseEnterEvent)
-        {
-            hasAnyWindowReceivedMouseEnterEvent = true;
-            (*window)->receive(event::MouseEntered{});
-        }
+        // if (not wasMouseInside and isMouseInside and not hasAnyWindowReceivedMouseEnterEvent)
+        // {
+        //     hasAnyWindowReceivedMouseEnterEvent = true;
+        //     (*window)->receive(event::MouseEntered{});
+        // }
 
-        if (wasMouseInside and not isMouseInside)
-        {
-            (*window)->receive(event::MouseLeft{});
-        }
+        // if (wasMouseInside and not isMouseInside)
+        // {
+        //     (*window)->receive(event::MouseLeft{});
+        // }
 
         auto currentWindowStatus = (*window)->receive(mouseMovedEvent);
 
@@ -384,44 +436,6 @@ EventStatus WindowManager::receive(const event::TextEntered& textEntered)
     }
 
     return processEventWithActiveWindow(textEntered);
-}
-
-EventStatus WindowManager::forwardFocusChange(const event::FocusChange& focusChange)
-{
-    // If there is a modal overlay active, it should be the only recipient of focus traversal.
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        return topOverlay->receive(focusChange);
-    }
-
-    EventStatus result{EventStatus::NotConsumed};
-
-    // Forward event to active window
-    if (activeWindowHandle_ and activeWindowHandle_->isActive() and not activeWindowHandle_->isDead())
-    {
-        result = activeWindowHandle_->receive(focusChange);
-    }
-    else
-    {
-        // Focus change is a bit different than other events.
-        // I don't want to forward to main window if there is an active displayed one.
-        result = mainWindow_.receive(focusChange);
-    }
-    return result;
-}
-
-EventStatus WindowManager::receive(const event::FocusChange& focusChange)
-{
-    auto result = forwardFocusChange(focusChange);
-
-    if (result == EventStatus::NotConsumed)
-    {
-        //Try  again. It might be a last child that was already focused so this will restart from beggining.
-        forwardFocusChange(focusChange);
-    }
-
-    return result;
 }
 
 Component* getNext(Component* node)
