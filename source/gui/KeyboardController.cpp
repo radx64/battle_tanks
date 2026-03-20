@@ -24,14 +24,13 @@ void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
     {
         if (keyEvent.shift)
         {
-            // FIXME this should be now handled by GuiController
-            // receiver_->receive(gui::event::FocusChange{
-            //     .type = gui::event::FocusChange::Type::Previous});
+            receiver_->receive(gui::event::FocusChange{
+                .type = gui::event::FocusChange::Type::Previous});
         }
         else
         {
-            // receiver_->receive(gui::event::FocusChange{
-            //     .type = gui::event::FocusChange::Type::Next});
+            receiver_->receive(gui::event::FocusChange{
+                .type = gui::event::FocusChange::Type::Next});
         }
     }
 }

@@ -4,15 +4,13 @@
 
 #include "engine/input/MouseReceiver.hpp"
 
-namespace gui {class WindowManager;}
-
 namespace game
 {
 
 class WaypointMouseController : public engine::input::MouseReceiver
 {
 public:
-    WaypointMouseController(gui::WindowManager* windowManager, std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view);
+    WaypointMouseController(std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view);
 
 protected:
     gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button, bool doubleClick) override;
@@ -21,11 +19,9 @@ protected:
 
     sf::Vector2f mapPixelToCoords(const sf::Vector2f& mousePosition);
 
-    gui::WindowManager* windowManager_;
     std::vector<sf::Vector2i>& waypoints_;
     sf::RenderWindow& window_;
     sf::View& view_;
-
 };
 
 

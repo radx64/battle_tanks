@@ -11,6 +11,7 @@ class Logger
 public:
     Logger(const std::string_view prefix);
 
+    void vip(const std::string_view log) const;
     void error(const std::string_view log) const;
     void warning(const std::string_view log) const;
     void info(const std::string_view log) const;

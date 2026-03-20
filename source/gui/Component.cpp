@@ -108,7 +108,6 @@ EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
 
 EventStatus Component::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    logger_.error("Mouse button pressed event received by component, id: " + std::string(getDebugName()));
     return processEvent(mouseButtonPressedEvent);
 }
 

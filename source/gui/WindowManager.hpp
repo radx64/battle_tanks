@@ -30,7 +30,7 @@ public:
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
 
     void render(sf::RenderWindow& renderWindow);
-    void update();
+    //void update();
 
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
@@ -72,8 +72,6 @@ protected:
     
     Component* getNextFocusableComponent(Component* root, Component* current);
     Component* getPreviousFocusableComponent(Component* root, Component* current);
-    
-    Component* focusedComponent_;
     engine::Logger logger_;
 };
 

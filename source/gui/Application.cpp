@@ -7,8 +7,7 @@ namespace gui
 {
 Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
 : engine::Application{windowName, logPrefix, windowSize}
-, windowManager_{windowSize}
-, guiController_{windowManager_}
+, guiController_{windowSize}
 , mouseController_{&guiController_, window_, window_.getDefaultView()}
 , keyboardController_{&guiController_}
 , textEnteredController_{&guiController_}
@@ -28,13 +27,13 @@ Application::~Application()
 
 void Application::onRender()
 {
-    windowManager_.render(window_);
+    guiController_.render(window_);
 }
 
 void Application::onUpdate(float timeStep)
 {
     (void) timeStep;
-    windowManager_.update();
+    //guiController_.update();
 }
 
 }  // namespace gui

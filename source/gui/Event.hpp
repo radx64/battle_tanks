@@ -85,6 +85,17 @@ namespace gui::event
         uint32_t unicode;
     };
 
+    struct FocusChange
+    {
+        enum class Type
+        {
+            Next,
+            Previous
+        };
+
+        Type type;
+    };
+
     struct FocusGained
     {
     };
