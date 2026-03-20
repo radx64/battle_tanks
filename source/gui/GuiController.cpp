@@ -111,11 +111,10 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
 
     pressed_ = pressed;
     setFocus(pressed_);
-    pressed_->receive(mouseButtonPressedEvent);
-
+    
+    auto eventStatus = pressed_->receive(mouseButtonPressedEvent);
     updateHover(mouseButtonPressedEvent.position);
-
-    return EventStatus::NotConsumed;
+    return eventStatus;
 }
 
 EventStatus GuiController::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
