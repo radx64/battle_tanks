@@ -46,11 +46,6 @@ void EditBox::updateTextVisbleArea()
 
 EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (not isInside(mouseButtonPressedEvent.position))
-    {
-        return EventStatus::NotConsumed;
-    }
-
     if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left)
     {
         return EventStatus::NotConsumed;

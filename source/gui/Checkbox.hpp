@@ -58,8 +58,6 @@ protected:
     const sf::Texture& focusTexture_;
     const sf::Texture& normalTexture_;
     const sf::Texture& checkedTexture_;
-
 };
-
 
 }  // namespace gui
