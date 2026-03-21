@@ -71,6 +71,10 @@ GuiController::GuiController(const sf::Vector2f& mainWindowSize)
     windowManager_.setWindowCloseHandler([this](Window*) {
         onActiveWindowChanged(nullptr);
     });
+
+    windowManager_.setOverlayCloseHandler([this](Overlay* removedOverlay) {
+        onOverlayRemoval(removedOverlay);
+    });
 }
 
 GuiController::~GuiController() = default;
@@ -78,11 +82,6 @@ GuiController::~GuiController() = default;
 void GuiController::render(sf::RenderWindow& renderWindow)
 {
     windowManager_.render(renderWindow);
-}
-
-void GuiController::update()
-{
-    windowManager_.update();
 }
 
 MainWindow& GuiController::mainWindow()
@@ -101,6 +100,28 @@ void GuiController::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf:
 
 EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
+    if (windowManager_.hasOverlays())
+    {
+        auto* pressed = hitTestOverlaysOnly(mouseButtonPressedEvent.position);
+        if (pressed)
+        {
+            pressed_ = pressed;
+            setFocus(pressed_);
+            auto eventStatus = pressed_->receive(mouseButtonPressedEvent);
+            updateHover(mouseButtonPressedEvent.position);
+            return eventStatus;
+        }
+        else
+        {
+            // Clicked outside of overlays, close all overlays and don't process click on windows below
+            for (auto& overlay : windowManager_.getOverlays())
+            {
+                overlay->close();
+            }
+            return EventStatus::Consumed;
+        }
+    }
+
     Window* clickedWindow = windowManager_.getTopWindowAtPosition(mouseButtonPressedEvent.position);
     Window* oldWindow = windowManager_.getActiveWindow();
     if (clickedWindow and clickedWindow != oldWindow)
@@ -111,7 +132,7 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
         onActiveWindowChanged(clickedWindow);
     }
     
-    auto* pressed = hitTest(mouseButtonPressedEvent.position);
+    auto* pressed = hitTestWindowsOnly(mouseButtonPressedEvent.position);
 
     if (not pressed)
     {
@@ -128,7 +149,7 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
 
 EventStatus GuiController::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
-    auto* pressed = hitTest(mouseButtonDoublePressedEvent.position);
+    auto* pressed = hitTestWindowsOnly(mouseButtonDoublePressedEvent.position);
 
     if (not pressed)
     {
@@ -211,7 +232,7 @@ EventStatus GuiController::receive(const event::TextEntered& textEnteredEvent)
     return EventStatus::NotConsumed;
 }
 
-Component* GuiController::hitTest(const gui::event::MousePosition position)
+Component* GuiController::hitTestWindowsOnly(const gui::event::MousePosition position)
 {
     Component* hit = nullptr;
 
@@ -237,6 +258,47 @@ Component* GuiController::hitTest(const gui::event::MousePosition position)
     }
 
     return hit;
+}
+
+Component* GuiController::hitTestOverlaysOnly(const gui::event::MousePosition position)
+{
+    Component* hit = nullptr;
+
+    // First check overlays, they are on top of everything
+    auto& overlays = windowManager_.getOverlays();
+    for (auto it = overlays.rbegin(); it != overlays.rend(); ++it)
+    {
+        auto* overlay = it->get();
+        if (overlay->isVisible() && not overlay->isDead())
+        {
+            hit = hitTestRecursive(overlay, position);
+            if (hit)
+            {
+                return hit;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+Component* GuiController::hitTest(const gui::event::MousePosition position)
+{
+    if (windowManager_.hasOverlays())
+    {
+        auto* hit = hitTestOverlaysOnly(position);
+        if (hit)
+        {
+            return hit;
+        }
+    }
+    else
+    {
+        // If there are no overlays, we can skip checking them
+        // and go directly to windows, which is more efficient
+        return hitTestWindowsOnly(position);
+    }
+    return nullptr;
 }
 
 Component* GuiController::getNextFocusableComponent(Component* root, Component* current)
@@ -336,5 +398,23 @@ void GuiController::onActiveWindowChanged(Window* newActiveWindow)
     }
 
 }
+
+ void GuiController::onOverlayRemoval(Overlay* removedOverlay)
+ {
+    if (focused_ and focused_->getRoot() == removedOverlay)
+    {
+        focused_ = nullptr;
+    }
+
+    if (hovered_ and hovered_->getRoot() == removedOverlay)
+    {
+        hovered_ = nullptr;
+    }
+
+    if (pressed_ and pressed_->getRoot() == removedOverlay)
+    {
+        pressed_ = nullptr;
+    }
+ }
 
 }  // namespace gui

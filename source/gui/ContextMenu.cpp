@@ -13,7 +13,6 @@
 
 namespace gui
 {
-
 namespace
 {
     constexpr float MENU_ENTRY_HEIGHT = 26.f;
@@ -72,6 +71,20 @@ namespace
 
 } // namespace
 
+Overlay::Overlay()
+: isDead_{false}
+{ }
+
+bool Overlay::isDead() const
+{
+    return isDead_;
+}
+
+void Overlay::markAsDead()
+{
+    isDead_ = true;
+}
+
 std::unique_ptr<ContextMenu> ContextMenu::create(const std::vector<Item>& items)
 {
     return std::unique_ptr<ContextMenu>{new ContextMenu(items, nullptr)};
@@ -121,6 +134,7 @@ void ContextMenu::open(const sf::Vector2f& globalPosition)
 
 void ContextMenu::close()
 {
+    //setVisibility(false);
     closeSubmenu();
 
     if (parentMenu_)
@@ -278,16 +292,6 @@ EventStatus ContextMenu::on(const event::MouseButtonPressed& mouseButtonPressedE
         getRootMenu()->close();
     }
 
-    return EventStatus::NotConsumed;
-}
-
-EventStatus ContextMenu::on(const event::MouseButtonReleased&)
-{
-    return EventStatus::NotConsumed;
-}
-
-EventStatus ContextMenu::on(const event::MouseMoved&)
-{
     return EventStatus::NotConsumed;
 }
 

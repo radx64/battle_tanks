@@ -15,7 +15,19 @@ namespace gui {class TextButton;}
 namespace gui
 {
 
-class ContextMenu : public Component
+class Overlay : public Component
+{
+public:
+    Overlay();
+    bool isDead() const;
+    virtual void close() =  0;
+
+protected:
+    void markAsDead();
+    bool isDead_ = false;
+};
+
+class ContextMenu : public Overlay
 {
 public:
     struct Item
@@ -45,7 +57,7 @@ public:
     ~ContextMenu() override;
     
     void open(const sf::Vector2f& globalPosition);
-    void close();
+    void close() override;
     
     void setCloseCallback(std::function<void(ContextMenu*)> callback);
     
@@ -55,8 +67,6 @@ protected:
     void onRender(sf::RenderTexture& renderTexture) override;
     
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
 
     void onPositionChange() override;
     void onSizeChange() override;

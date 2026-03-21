@@ -31,18 +31,20 @@ public:
     virtual ~GuiController();
 
     void render(sf::RenderWindow& renderWindow);
-    void update();
     MainWindow& mainWindow();
     void openWindow(std::unique_ptr<Window> window);
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
 
 protected:
+    Component* hitTestWindowsOnly(const gui::event::MousePosition position);
+    Component* hitTestOverlaysOnly(const gui::event::MousePosition position);
     Component* hitTest(const gui::event::MousePosition position);
     Component* getNextFocusableComponent(Component* root, Component* current);
     Component* getPreviousFocusableComponent(Component* root, Component* current);
     void setFocus(Component* component);
     EventStatus updateHover(const gui::event::MousePosition position);
     void onActiveWindowChanged(Window* newActiveWindow);
+    void onOverlayRemoval(Overlay* removedOverlay); 
 
     WindowManager windowManager_;
     Component* hovered_ = nullptr; //fixme move these nullptr to constructor 
