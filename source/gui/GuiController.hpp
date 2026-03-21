@@ -19,6 +19,7 @@ public:
     using EventReceiver::receive; // to unshadow EventReceiver not overloaded methods
 
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
     EventStatus receive(const event::FocusChange& focusChangeEvent) override;

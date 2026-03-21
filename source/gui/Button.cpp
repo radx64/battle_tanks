@@ -2,7 +2,6 @@
 
 #include "gui/Label.hpp"
 #include "gui/TextureLibrary.hpp"
-
 #include "gui/layout/Inset.hpp"
 
 namespace
@@ -140,18 +139,10 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
 {
     if (not isVisible_) return EventStatus::NotConsumed;
 
-    auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftClicked = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
 
-    if (isLeftClicked and isInside(mousePosition))
+    if (isLeftClicked)
     {
-        // wasMouseInside() call is added
-        // due to nondeterministic behaviour of mouseLeft 
-        // and mouseClick events when mouse is moved quickly
-        // There might be a situation that mouseLeft event is send before mouse click
-        // although click has old position stored
-        // FIXME: I need to sort it out later, but at least I know the reason now
-
         state_ = State::Pressed;
         updateTexture();
 
@@ -162,20 +153,12 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
 
 EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    // I need to rethink event consuming as this creates some implicit dependencies
-    // eg if button is has consumed mouse release event, no one else can see it
-    // this is problematic when mouse is release from control out of bounds of that control
-    // and landed by accident on button. If button consumes it, control will not process mouse release.
-    
-    // Maybe I should just consume only if I explicitly want to block other controls from fetching given event?
-    
     if (state_ != State::Pressed) return EventStatus::NotConsumed;
 
-    auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
     if (isLeftReleased)
     {
-       return  processLeftMouseClick(mousePosition);               
+       return  processLeftMouseClick();               
     }
     return EventStatus::NotConsumed;
 }
@@ -187,23 +170,19 @@ EventStatus ButtonBase::on(const event::MouseButtonDoublePressed& mouseButtonDou
     bool isLeftDoubleClicked = mouseButtonDoublePressedEvent.button == gui::event::MouseButton::Left;
     if (not isLeftDoubleClicked) return EventStatus::NotConsumed;
 
-    auto mousePosition = sf::Vector2f{mouseButtonDoublePressedEvent.position.x, mouseButtonDoublePressedEvent.position.y};
-    return processLeftMouseClick(mousePosition);
+    return processLeftMouseClick();
 }
 
-EventStatus ButtonBase::processLeftMouseClick(sf::Vector2f mousePosition)
+EventStatus ButtonBase::processLeftMouseClick()
 {
-    if (isInside(mousePosition))
-    {
-        focus();
+    focus();
 
-        state_ = State::Hover;
-        updateTexture();
+    state_ = State::Hover;
+    updateTexture();
 
-        if (onClick_) onClick_();
-        return EventStatus::Consumed;
-    }
-    return EventStatus::NotConsumed;
+    if (onClick_) onClick_();
+    return EventStatus::Consumed;
+
 }
 
 EventStatus ButtonBase::on(const event::FocusLost&)

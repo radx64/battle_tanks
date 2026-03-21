@@ -99,11 +99,6 @@ void BaseEditBox::onPositionChange()
 
 EventStatus BaseEditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (not isInside(mouseButtonPressedEvent.position))
-    {
-        return EventStatus::NotConsumed;
-    }
-
     if (mouseButtonPressedEvent.button != gui::event::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
@@ -131,13 +126,8 @@ EventStatus BaseEditBox::on(const event::MouseButtonPressed& mouseButtonPressedE
     return EventStatus::NotConsumed;
 }
 
-EventStatus BaseEditBox::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus BaseEditBox::on(const event::MouseButtonDoublePressed&)
 {
-    if (not isInside(mouseButtonDoublePressedEvent.position))
-    {
-        return EventStatus::NotConsumed;
-    }
-
     if (not isFocused())
     {
         focus();
