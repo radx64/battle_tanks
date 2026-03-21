@@ -215,13 +215,21 @@ Component* GuiController::hitTest(const gui::event::MousePosition position)
 {
     Component* hit = nullptr;
 
+    // Try active window first, then inactive windows, and finally main window
     if (auto* activeWindow = windowManager_.getActiveWindow())
     {
-        // TODO: Consider not checking active window but all windows
-        // this will allow to click on not active window and make it active, but also will allow to click on buttons of not active windows, 
-        // so maybe we should check if clicked window is active or not and then decide if we should send event to it or not
         hit = hitTestRecursive(activeWindow, position);
     }
+
+    if (not hit)
+    {
+        for (auto* inactiveWindow : windowManager_.getInactiveWindows())
+        {
+            hit = hitTestRecursive(inactiveWindow, position);
+            if (hit) break;
+        }
+    }
+
     if (not hit)
     {
         // TODO: main window should be handled in some better way, maybe it should be also a window with some special properties instead of just component

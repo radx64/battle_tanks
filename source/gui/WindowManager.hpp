@@ -34,6 +34,7 @@ public:
     MainWindow& mainWindow();
 
     Window* getActiveWindow() const;
+    std::vector<Window*> getInactiveWindows() const;
     void setActiveWindow(Window* window);
     void setWindowCloseHandler(WindowCloseHandler handler);
 
