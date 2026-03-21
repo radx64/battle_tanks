@@ -199,149 +199,94 @@ Window* WindowManager::getTopWindowAtPosition(const event::MousePosition positio
     return nullptr;
 }
 
-template<class T>
-EventStatus WindowManager::processMouseButton(const T& mouseButtonPressedEvent)
-{
-    auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+// EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+// {
+//     // If there are overlays present, treat the UI as modal.
+//     // Always deliver mouse button events to the topmost overlay so it can
+//     // react to clicks inside or outside its bounds (e.g. close on outside click).
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(mouseButtonPressedEvent);
+//         return EventStatus::Consumed;
+//     }
 
-    // Find which window should be active and forward click events only there
-    auto windowIterator = windows_.begin();
+//     return processMouseButton(mouseButtonPressedEvent);
+// }
 
-    while(windowIterator != windows_.end())
-    {
-        auto window = (*windowIterator).get();
+// EventStatus WindowManager::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+// {
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(mouseButtonDoublePressedEvent);
+//         return EventStatus::Consumed;
+//     }
 
-        if (window->isDead())
-        {
-            if (activeWindow_ == window) activeWindow_ = nullptr;
-            windowIterator = windows_.erase(windowIterator);
-            continue;
-        }
+//     return processMouseButton(mouseButtonDoublePressedEvent);
+// }
 
-        if (not window->isVisible()) { windowIterator++; continue; }
+// EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
+// {
+//     // If overlays are present, treat them as modal UI and prevent underlying windows
+//     // from reacting to mouse movement (e.g. hover states).
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(mouseMovedEvent);
+//         return EventStatus::Consumed;
+//     }
 
-        if (not window->isInside(mousePosition)) { windowIterator++; continue; }
+//     return EventStatus::NotConsumed;
+// }
 
-        if (activeWindow_ != window) // Replace active window
-        {
-            if (activeWindow_) activeWindow_->disable();
-            activeWindow_ = window;
-            activeWindow_->enable();
+// // TODO: These receive methods are almost same, make one template (as in gui component)
+// EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+// {
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(mouseButtonReleasedEvent);
+//         return EventStatus::Consumed;
+//     }
 
-            // Make sure components in main window are defocused
-            mainWindow_.defocusWithAllChildren();
+//     return EventStatus::NotConsumed;
+// }
 
-            // bring window to front (rendering back to forth, so top window is at start of this list)
-            windows_.splice(windows_.begin(), windows_, windowIterator);
-        }
+// EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+// {
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(keyboardKeyPressedEvent);
+//         return EventStatus::Consumed;
+//     }
 
-        auto result = activeWindow_->receive(mouseButtonPressedEvent);
+//     return EventStatus::NotConsumed;
+// }
 
-        // FIXME: I'm checking twice if window is dead (see top of this method)
-        // FIXME2: Window manager knows to late that the window is closed
-        //          So it is dead but stil have active handle to it
-        //          For now i will work around on that but I need consider some solution.
-        if (activeWindow_->isDead())
-        {
-            windows_.remove_if([this](auto& window){ return window.get() == activeWindow_;});
-            activeWindow_ = nullptr;
-        }
-        return result;
+// EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+// {
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(keyboardKeyReleasedEvent);
+//         return EventStatus::Consumed;
+//     }
 
-        windowIterator++;
-    }
+//     return EventStatus::NotConsumed;
+// }
 
-    return mainWindow_.receive(mouseButtonPressedEvent);
-}
+// EventStatus WindowManager::receive(const event::TextEntered& textEntered)
+// {
+//     if (not overlays_.empty())
+//     {
+//         auto* topOverlay = overlays_.back().get();
+//         topOverlay->receive(textEntered);
+//         return EventStatus::Consumed;
+//     }
 
-EventStatus WindowManager::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
-{
-    // If there are overlays present, treat the UI as modal.
-    // Always deliver mouse button events to the topmost overlay so it can
-    // react to clicks inside or outside its bounds (e.g. close on outside click).
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(mouseButtonPressedEvent);
-        return EventStatus::Consumed;
-    }
-
-    return processMouseButton(mouseButtonPressedEvent);
-}
-
-EventStatus WindowManager::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
-{
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(mouseButtonDoublePressedEvent);
-        return EventStatus::Consumed;
-    }
-
-    return processMouseButton(mouseButtonDoublePressedEvent);
-}
-
-EventStatus WindowManager::receive(const event::MouseMoved& mouseMovedEvent)
-{
-    // If overlays are present, treat them as modal UI and prevent underlying windows
-    // from reacting to mouse movement (e.g. hover states).
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(mouseMovedEvent);
-        return EventStatus::Consumed;
-    }
-
-    return EventStatus::NotConsumed;
-}
-
-// TODO: These receive methods are almost same, make one template (as in gui component)
-EventStatus WindowManager::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
-{
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(mouseButtonReleasedEvent);
-        return EventStatus::Consumed;
-    }
-
-    return EventStatus::NotConsumed;
-}
-
-EventStatus WindowManager::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
-{
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(keyboardKeyPressedEvent);
-        return EventStatus::Consumed;
-    }
-
-    return EventStatus::NotConsumed;
-}
-
-EventStatus WindowManager::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
-{
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(keyboardKeyReleasedEvent);
-        return EventStatus::Consumed;
-    }
-
-    return EventStatus::NotConsumed;
-}
-
-EventStatus WindowManager::receive(const event::TextEntered& textEntered)
-{
-    if (not overlays_.empty())
-    {
-        auto* topOverlay = overlays_.back().get();
-        topOverlay->receive(textEntered);
-        return EventStatus::Consumed;
-    }
-
-    return EventStatus::NotConsumed;
-}
+//     return EventStatus::NotConsumed;
+// }
 
 }  // namespace gui
