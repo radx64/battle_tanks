@@ -23,6 +23,10 @@ std::unique_ptr<MultiLineEditBox> MultiLineEditBox::create()
     return std::unique_ptr<MultiLineEditBox>{new MultiLineEditBox{}};
 }
 
+// FIXME: multiline double click selection is selecting not to end of a line
+// but to the first space in next line
+// It should consider newline as a word boundary and select to the end of line in this case
+
 MultiLineEditBox::MultiLineEditBox()
 : BaseEditBox()
 , maxLines_{DEFAULT_MAX_LINES}

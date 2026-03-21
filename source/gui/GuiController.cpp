@@ -126,6 +126,22 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
     return eventStatus;
 }
 
+EventStatus GuiController::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    auto* pressed = hitTest(mouseButtonDoublePressedEvent.position);
+
+    if (not pressed)
+    {
+        return EventStatus::NotConsumed;
+    }
+
+    setFocus(pressed);
+    
+    auto eventStatus = pressed->receive(mouseButtonDoublePressedEvent);
+    updateHover(mouseButtonDoublePressedEvent.position);
+    return eventStatus;
+}
+
 EventStatus GuiController::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     if (pressed_)
