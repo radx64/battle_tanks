@@ -27,14 +27,12 @@ Checkbox::Checkbox(const bool isChecked,
 }
 
 Checkbox::Checkbox(const bool isChecked)
-: Checkbox(isChecked,
-    TextureLibrary::instance().get("checkbox_normal"),
-    TextureLibrary::instance().get("checkbox_hover"),
-    TextureLibrary::instance().get("checkbox_focus"),
-    TextureLibrary::instance().get("checkbox_checked"))
-{
-
-}
+: Checkbox(isChecked
+, TextureLibrary::instance().get("checkbox_normal")
+, TextureLibrary::instance().get("checkbox_hover")
+, TextureLibrary::instance().get("checkbox_focus")
+, TextureLibrary::instance().get("checkbox_checked"))
+{}
 
 std::unique_ptr<Checkbox> Checkbox::create(const bool isChecked)
 {
@@ -105,13 +103,6 @@ EventStatus Checkbox::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEv
 EventStatus Checkbox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     if (mouseButtonReleasedEvent.button != gui::event::MouseButton::Left)
-    {
-        return EventStatus::NotConsumed;
-    }
-    
-    auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
-
-    if (not isInside(mousePosition))
     {
         return EventStatus::NotConsumed;
     }

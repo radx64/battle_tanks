@@ -58,7 +58,7 @@ ProgressBar::ProgressBar()
 , normalTexture_{TextureLibrary::instance().get("progressbar_background")}
 {
     auto style = BasicStyleSheetFactory::instance();
-    //FIXME: I need to redesign style "subsystem" :)
+    // FIXME: I need to redesign style "subsystem" :)
     bar_.setFillColor(style.getWindowHeaderColor());
     bar_.setOutlineThickness(0.f);
     bar_.setPosition(getGlobalPosition());

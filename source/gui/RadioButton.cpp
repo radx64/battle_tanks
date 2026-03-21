@@ -55,13 +55,6 @@ EventStatus RadioButton::on(const event::MouseButtonReleased& mouseButtonRelease
     {
         return EventStatus::NotConsumed;
     }
-    
-    auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
-
-    if (not isInside(mousePosition))
-    {
-        return EventStatus::NotConsumed;
-    }
 
     setState(true);
     if (groupHandler_ && isChecked())
