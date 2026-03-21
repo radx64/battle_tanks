@@ -31,13 +31,20 @@ void Logger::info(const std::string_view log) const
     LoggerSink::instance().log(fmt::color::green, "info", prefix_, std::string(log));
 }
 
-void Logger::debug(const std::string_view log) const
+void Logger::debug(const std::string_view log, std::source_location location) const
 {
 #ifdef NDEBUG
     UNUSED(log);
     return;
 #else
-    LoggerSink::instance().log(fmt::color::cornflower_blue, "debug", prefix_, std::string(log));
+    std::string file = location.file_name();
+    size_t lastSlashPos = file.find_last_of("/\\");
+    if (lastSlashPos != std::string::npos)    {
+        file = file.substr(lastSlashPos + 1);
+    }
+
+    std::string locationInfo = std::string(location.file_name()) + ":" + std::to_string(location.line()) + " in " + location.function_name();
+    LoggerSink::instance().log(fmt::color::cornflower_blue, "debug", "(" + file + ":" + std::to_string(location.line()) + ") " + prefix_, std::string(log));
 #endif
 }
 

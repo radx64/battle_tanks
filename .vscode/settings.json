@@ -101,7 +101,7 @@
             }
         ]
     },
-    "cmake.useCMakePresets": "auto",
+    "cmake.useCMakePresets": "never",
     "workbench.colorCustomizations": {
         "activityBar.background": "#0F3046",
         "titleBar.activeBackground": "#164462",

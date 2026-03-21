@@ -47,6 +47,7 @@ public:
     virtual void addChild(std::unique_ptr<Component> child);
     virtual void removeChild(const Component* child);
     Component* getParent() const;
+    Component* getRoot();
     const std::vector<std::unique_ptr<Component>>& getChildren() const;
 
     void focus();

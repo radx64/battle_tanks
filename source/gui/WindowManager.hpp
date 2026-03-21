@@ -22,6 +22,7 @@ class WindowManager : public EventReceiver
 {
 public:
     using EventReceiver::receive;    // to unshadow EventReceiver not overloaded methods
+    using WindowCloseHandler = std::function<void(Window*)>;
 
     WindowManager(const sf::Vector2f& mainWindowSize);
     virtual ~WindowManager();
@@ -30,7 +31,7 @@ public:
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
 
     void render(sf::RenderWindow& renderWindow);
-    //void update();
+    void update();
 
     EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
@@ -45,6 +46,7 @@ public:
 
     Window* getActiveWindow() const;
     void setActiveWindow(Window* window);
+    void setWindowCloseHandler(WindowCloseHandler handler);
 
     Window* getTopWindowAtPosition(const event::MousePosition position) const;
 
@@ -67,7 +69,8 @@ protected:
 
     sf::RenderTexture renderTexture_;
     sf::Sprite textureSprite_;
-    
+
+    WindowCloseHandler windowCloseHandler_;
     engine::TasksQueue tasksQueue_;
     
     Component* getNextFocusableComponent(Component* root, Component* current);

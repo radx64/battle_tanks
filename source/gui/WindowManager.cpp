@@ -24,8 +24,27 @@ WindowManager::~WindowManager() = default;
 void WindowManager::openWindow(std::unique_ptr<Window> window)
 {
     window->setWindowCloseHandler([this, windowPtr = window.get()]() {
-        if (activeWindow_ == windowPtr) activeWindow_ = nullptr;
+        if (activeWindow_ != windowPtr) return;
+
+        // select next active window (if any)
+        // this is done before removing window from list, so I can select next active window based on current order of windows, 
+        // not based on order after closed window is removed
+        activeWindow_ = windows_.size() > 1 ? std::next(windows_.begin())->get() : nullptr;
+
+        if (activeWindow_)
+        {
+            activeWindow_->enable();
+        }
+
+        windowCloseHandler_? windowCloseHandler_(windowPtr) : logger_.debug("Window close handler not set");
+
         logger_.debug("Window closed, id: " + std::to_string(windowPtr->getId()));
+
+        tasksQueue_.push([this, windowPtr](){
+                windows_.remove_if([windowPtr](const std::unique_ptr<Window>& ptr) {
+                    return ptr.get() == windowPtr;
+                });
+            });
     });
 
     if (activeWindow_)
@@ -119,10 +138,10 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderWindow.draw(textureSprite_);
 }
 
-// void WindowManager::update()
-// {
-//     tasksQueue_.executeAll();
-// }
+void WindowManager::update()
+{
+    tasksQueue_.executeAll();
+}
 
 MainWindow& WindowManager::mainWindow()
 {
@@ -160,6 +179,11 @@ void WindowManager::setActiveWindow(Window* window)
     });
 
     windows_.splice(windows_.begin(), windows_, windowIterator);
+}
+
+void WindowManager::setWindowCloseHandler(WindowCloseHandler handler)
+{
+    windowCloseHandler_ = handler;
 }
 
 Window* WindowManager::getTopWindowAtPosition(const event::MousePosition position) const
