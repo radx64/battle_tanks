@@ -153,6 +153,20 @@ Window* WindowManager::getActiveWindow() const
     return activeWindow_;
 }
 
+std::vector<Window*> WindowManager::getInactiveWindows() const
+{
+    std::vector<Window*> inactiveWindows;
+    inactiveWindows.reserve(windows_.size());
+    for (const auto& window : windows_)
+    {
+        if (window.get() != activeWindow_)
+        {
+            inactiveWindows.push_back(window.get());
+        }
+    }
+    return inactiveWindows;
+}
+
 void WindowManager::setActiveWindow(Window* window)
 {
     if (activeWindow_ == window)
