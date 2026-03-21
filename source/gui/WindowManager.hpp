@@ -8,7 +8,6 @@
 #include "engine/TasksQueue.hpp"
 #include "engine/Logger.hpp"
 
-#include "gui/EventReceiver.hpp"
 #include "gui/Window.hpp"
 #include "gui/ContextMenu.hpp"
 
@@ -18,10 +17,9 @@ namespace gui { class MainWindow; }
 namespace gui
 {
 
-class WindowManager : public EventReceiver
+class WindowManager
 {
 public:
-    using EventReceiver::receive;    // to unshadow EventReceiver not overloaded methods
     using WindowCloseHandler = std::function<void(Window*)>;
 
     WindowManager(const sf::Vector2f& mainWindowSize);
@@ -33,15 +31,6 @@ public:
     void render(sf::RenderWindow& renderWindow);
     void update();
 
-    EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
-    EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
-    EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
-
-    EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
-    EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
-    EventStatus receive(const event::TextEntered& textEntered) override;
-
     MainWindow& mainWindow();
 
     Window* getActiveWindow() const;
@@ -51,12 +40,6 @@ public:
     Window* getTopWindowAtPosition(const event::MousePosition position) const;
 
 protected:
-    template<class T>
-    EventStatus processMouseButton(const T& mouseButtonPressedEvent);
-
-    template<class T>
-    EventStatus processEventWithActiveWindow(const T& event);
-
     void addOverlay(std::unique_ptr<Component> overlay);
     void removeOverlay(Component* overlay);
 
@@ -72,9 +55,7 @@ protected:
 
     WindowCloseHandler windowCloseHandler_;
     engine::TasksQueue tasksQueue_;
-    
-    Component* getNextFocusableComponent(Component* root, Component* current);
-    Component* getPreviousFocusableComponent(Component* root, Component* current);
+
     engine::Logger logger_;
 };
 
