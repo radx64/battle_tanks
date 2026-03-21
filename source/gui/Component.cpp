@@ -295,6 +295,16 @@ Component* Component::getParent() const
     return parent_;
 }
 
+Component* Component::getRoot()
+{
+    Component* root = this;
+    while (root->parent_ != nullptr)
+    {
+        root = root->parent_;
+    }
+    return root;
+}
+
 const std::vector<std::unique_ptr<Component>>& Component::getChildren() const
 {
     return children_;

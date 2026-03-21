@@ -33,7 +33,7 @@ void Application::onRender()
 void Application::onUpdate(float timeStep)
 {
     (void) timeStep;
-    //guiController_.update();
+    guiController_.update();
 }
 
 }  // namespace gui

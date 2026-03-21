@@ -67,13 +67,22 @@ Component* getNext(Component* node)
 GuiController::GuiController(const sf::Vector2f& mainWindowSize)
 : windowManager_{mainWindowSize}
 , logger_{"GuiController"}
-{}
+{
+    windowManager_.setWindowCloseHandler([this](Window*) {
+        onActiveWindowChanged(nullptr);
+    });
+}
 
 GuiController::~GuiController() = default;
 
 void GuiController::render(sf::RenderWindow& renderWindow)
 {
     windowManager_.render(renderWindow);
+}
+
+void GuiController::update()
+{
+    windowManager_.update();
 }
 
 MainWindow& GuiController::mainWindow()
@@ -99,7 +108,7 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
         logger_.debug("Clicked window id: " + std::to_string(clickedWindow->getId()));
         // Clicked on a window that is not active, make it active
         windowManager_.setActiveWindow(clickedWindow);
-        // TODO consider changing focuses on active window change onActiveWindowChanged event or something like that
+        onActiveWindowChanged(clickedWindow);
     }
     
     auto* pressed = hitTest(mouseButtonPressedEvent.position);
@@ -173,6 +182,15 @@ EventStatus GuiController::receive(const event::KeyboardKeyReleased& keyboardKey
     if (focused_)
     {
         return focused_->receive(keyboardKeyReleasedEvent);
+    }
+    return EventStatus::NotConsumed;
+}
+
+EventStatus GuiController::receive(const event::TextEntered& textEnteredEvent)
+{
+    if (focused_)
+    {
+        return focused_->receive(textEnteredEvent);
     }
     return EventStatus::NotConsumed;
 }
@@ -262,6 +280,34 @@ EventStatus GuiController::updateHover(const gui::event::MousePosition position)
         hovered_->receive(event::MouseEntered{});
     }
     return EventStatus::NotConsumed;
+}
+
+void GuiController::onActiveWindowChanged(Window* newActiveWindow)
+{
+    if (newActiveWindow)
+    {
+        logger_.debug("Active window changed to id: " + std::to_string(newActiveWindow->getId()));
+    }
+    else
+    {
+        logger_.debug("Active window changed to none");
+    }
+
+    if (focused_ and focused_->getRoot() != newActiveWindow)
+    {
+        focused_ = nullptr;
+    }
+
+    if (hovered_ and hovered_->getRoot() != newActiveWindow)
+    {
+        hovered_ = nullptr;
+    }
+
+    if (pressed_ and pressed_->getRoot() != newActiveWindow)
+    {
+        pressed_ = nullptr;
+    }
+
 }
 
 }  // namespace gui
