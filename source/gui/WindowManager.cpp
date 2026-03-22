@@ -40,9 +40,11 @@ void WindowManager::openWindow(std::unique_ptr<Window> window)
 
         logger_.debug("Window closed, id: " + std::to_string(windowPtr->getId()));
 
-        windows_.remove_if([windowPtr](const std::unique_ptr<Window>& ptr) {
-            return ptr.get() == windowPtr;
-        });
+        tasksQueue_.push([this, windowPtr](){
+                windows_.remove_if([windowPtr](const std::unique_ptr<Window>& ptr) {
+                    return ptr.get() == windowPtr;
+                });
+            });
     });
 
     if (activeWindow_)
@@ -90,15 +92,11 @@ void WindowManager::removeOverlay(Overlay* overlay)
 {
     overlayCloseHandler_? overlayCloseHandler_(overlay) : logger_.debug("Overlay close handler not set");
 
-    // TODO: Right now I don't need to defer overlay removal
-    // as this is the last action done from menu callback
-    // But if I will need to do something after closing menu in callback, I will have to defer it, 
-    // as removing overlay immediately will cause invalid memory access when callback tries to access menu after it is closed
-    // Just in case I can always restore engine::taskQueue
-    // Rethink that later
-    overlays_.remove_if([overlay](const std::unique_ptr<Overlay>& ptr) {
-        return ptr.get() == overlay;
-    });
+    tasksQueue_.push([this, overlay](){
+        overlays_.remove_if([overlay](const std::unique_ptr<Overlay>& ptr) {
+            return ptr.get() == overlay;
+                });
+        });
 }
 
 void WindowManager::render(sf::RenderWindow& renderWindow)
@@ -120,6 +118,11 @@ void WindowManager::render(sf::RenderWindow& renderWindow)
     renderTexture_.display();
     textureSprite_.setTexture(renderTexture_.getTexture());
     renderWindow.draw(textureSprite_);
+}
+
+void WindowManager::update()
+{
+    tasksQueue_.executeAll();
 }
 
 MainWindow& WindowManager::mainWindow()

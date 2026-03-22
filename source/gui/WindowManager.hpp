@@ -6,8 +6,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/Logger.hpp"
-#include "gui/Window.hpp"
+#include "engine/TasksQueue.hpp"
 #include "gui/ContextMenu.hpp"
+#include "gui/Window.hpp"
 
 namespace gui { class Window; }
 namespace gui { class MainWindow; }
@@ -29,6 +30,7 @@ public:
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
 
     void render(sf::RenderWindow& renderWindow);
+    void update();
 
     MainWindow& mainWindow();
 
@@ -59,6 +61,7 @@ protected:
     WindowCloseHandler windowCloseHandler_;
     OverlayCloseHandler overlayCloseHandler_;
 
+    engine::TasksQueue tasksQueue_;
     engine::Logger logger_;
 };
 

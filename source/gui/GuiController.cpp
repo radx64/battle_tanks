@@ -84,6 +84,11 @@ void GuiController::render(sf::RenderWindow& renderWindow)
     windowManager_.render(renderWindow);
 }
 
+void GuiController::update()
+{
+    windowManager_.update();
+}
+
 MainWindow& GuiController::mainWindow()
 {
     return windowManager_.mainWindow();
@@ -116,6 +121,7 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
             // Clicked outside of overlays, close all overlays and don't process click on windows below
             for (auto& overlay : windowManager_.getOverlays())
             {
+                logger_.debug("Removing overlay id: " + std::to_string(overlay->getId()));
                 overlay->close();
             }
             return EventStatus::Consumed;
@@ -399,8 +405,8 @@ void GuiController::onActiveWindowChanged(Window* newActiveWindow)
 
 }
 
- void GuiController::onOverlayRemoval(Overlay* removedOverlay)
- {
+void GuiController::onOverlayRemoval(Overlay* removedOverlay)
+{
     if (focused_ and focused_->getRoot() == removedOverlay)
     {
         focused_ = nullptr;
@@ -415,6 +421,6 @@ void GuiController::onActiveWindowChanged(Window* newActiveWindow)
     {
         pressed_ = nullptr;
     }
- }
+}
 
 }  // namespace gui
