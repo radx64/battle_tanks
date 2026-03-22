@@ -10,7 +10,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
 
-  PACKAGE_LIST: "cmake g++ ninja-build lcov gcovr valgrind libxrandr-dev libopenal-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev"
+  PACKAGE_LIST: "cmake g++ ninja-build lcov gcovr valgrind libxrandr-dev libopenal-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev xvfb"
 
 jobs:
   build:
@@ -54,7 +54,10 @@ jobs:
         working-directory: ${{github.workspace}}/build
         # Execute tests defined by the CMake configuration.
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-        run: ctest -C ${{env.BUILD_TYPE}} --verbose
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 &
+          export DISPLAY=:99    
+          ctest -C ${{env.BUILD_TYPE}} --verbose
 
   coverage:
     runs-on: ubuntu-latest
@@ -65,7 +68,10 @@ jobs:
           packages: ${{env.PACKAGE_LIST}}
           version: 1.0
       - name: Coverage
-        run: ./coverage.sh
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 &
+          export DISPLAY=:99    
+          ./coverage.sh
 
   valgrind:
     runs-on: ubuntu-latest
@@ -76,4 +82,6 @@ jobs:
           packages: ${{env.PACKAGE_LIST}}
           version: 1.0
       - name: Valgrind
-        run: ./valgrind.sh
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 &
+          export DISPLAY=:99    ./valgrind.sh
