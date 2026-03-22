@@ -21,25 +21,33 @@ Component* hitTestRecursive(Component* component, const gui::event::MousePositio
     return nullptr;
 }
 
+Component* getDeepestLastDescendant(Component* node)
+{
+    if (!node)
+        return nullptr;
+
+    while (node->hasChildren())
+        node = node->getChildren().back().get();
+
+    return node;
+}
+
 Component* getPrevious(Component* node)
 {
     if (!node)
         return nullptr;
 
-    // Go down
-    if (node->hasChildren())
-        return node->getChildren().back().get();
+    if (auto sibling = node->getPreviousSibling())
+        return getDeepestLastDescendant(sibling);
 
-    // Go sideways or up
-    while (node)
-    {
-        if (auto sibling = node->getPreviousSibling())
-            return sibling;
+    if (auto parent = node->getParent())
+        return parent;
 
-        node = node->getParent();
-    }
+    Component* root = node;            // start from current node
+    while (root->getParent())          // climb to the top
+        root = root->getParent();
 
-    return nullptr;
+    return getDeepestLastDescendant(root);
 }
 
 Component* getNext(Component* node)
@@ -325,8 +333,6 @@ Component* GuiController::getNextFocusableComponent(Component* root, Component* 
 
     while (next)
     {
-        logger_.error("Trying " + std::string(next->getDebugName()));
-
         if (next->isFocusable())
             return next;
 
