@@ -106,7 +106,7 @@ TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyedEvenInHierarchy)
 
 // This test is disabled until i will figure out how to properly mock rendering
 // in X11 headless environment like github actions
-TEST(ComponentShould, DISABLED_callOnRenderMethodOnlyWhenComponentIsVisible)
+TEST(ComponentShould, callOnRenderMethodOnlyWhenComponentIsVisible)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
     auto sut_ptr = sut_.get();
@@ -138,7 +138,7 @@ TEST(ComponentShould, handleItsVisibilityParameter)
 
 // This test is disabled until i will figure out how to properly mock rendering
 // in X11 headless environment like github actions
-TEST(ComponentShould, DISABLED_renderChildrenOnlyWhenComponentItselfIsVisible)
+TEST(ComponentShould, renderChildrenOnlyWhenComponentItselfIsVisible)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
     auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
