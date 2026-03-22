@@ -32,7 +32,7 @@ public:
     MOCK_METHOD(void, action, ());
 };
 
-TEST_F(ButtonShould, DISABLED_callOnClickWhenClickedInside)
+TEST_F(ButtonShould, callOnClickWhenClickedInside)
 {
     ActionReceiver receiver;
     auto sut = gui::TextButton::create("TEST button");
@@ -42,18 +42,6 @@ TEST_F(ButtonShould, DISABLED_callOnClickWhenClickedInside)
     EXPECT_CALL(receiver, action());
     sut->receive(gui::event::MouseButtonPressed{.button = gui::event::MouseButton::Left, .position = {1.f, 1.f}});
     sut->receive(gui::event::MouseButtonReleased{.button = gui::event::MouseButton::Left, .position = {1.f, 1.f}});
-}
-
-TEST_F(ButtonShould, DISABLED_dontCallOnClickWhenClickedOutside)
-{
-    ActionReceiver receiver;
-    auto sut = gui::TextButton::create("TEST button");
-    sut->setSize(sf::Vector2f{10.f, 10.f});
-    sut->setPosition(sf::Vector2f{0.f,0.f});
-    sut->onClick([&receiver](){receiver.action();});
-    EXPECT_CALL(receiver, action()).Times(0);
-    sut->receive(gui::event::MouseButtonPressed{.button = gui::event::MouseButton::Left, .position = {20.f, 20.f}});
-    sut->receive(gui::event::MouseButtonReleased{.button = gui::event::MouseButton::Left, .position = {20.f, 20.f}});
 }
 
 }  // namespace gui
