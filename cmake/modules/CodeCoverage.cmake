@@ -103,7 +103,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname _srctokee
 		MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
 	ENDIF() # NOT GENHTML_PATH
 
-	SET(IGNORE_LCOV_LIST --ignore-errors inconsistent,gcov,unused,mismatch )
+	SET(IGNORE_LCOV_LIST --ignore-errors inconsistent,gcov,unused,mismatch,corrupt )
 
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
@@ -120,7 +120,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname _srctokee
 		# Capture the test coverage
 		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}_tests.info ${IGNORE_LCOV_LIST}
 		# Merge the baseline and test coverage
-		COMMAND ${LCOV_PATH} --directory . --add-tracefile ${_outputname}_baseline.info --add-tracefile ${_outputname}_tests.info --output-file ${_outputname}.info
+		COMMAND ${LCOV_PATH} --directory . --add-tracefile ${_outputname}_baseline.info --add-tracefile ${_outputname}_tests.info --output-file ${_outputname}.info ${IGNORE_LCOV_LIST}
 		# Extract the source files we want to keep
 		COMMAND ${LCOV_PATH} --extract ${_outputname}.info ${_srctokeep} --output-file ${_outputname}.info.cleaned ${IGNORE_LCOV_LIST}
 		# Generate HTML report
