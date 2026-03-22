@@ -191,7 +191,18 @@ EventStatus GuiController::receive(const event::MouseMoved& mouseMovedEvent)
 
 EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
 {
-    Component* activeRoot = windowManager_.getActiveWindow();
+    Component* activeRoot{nullptr};
+
+    if (not windowManager_.getOverlays().empty())
+    {
+        activeRoot = windowManager_.getOverlays().front().get();
+    }
+
+    if (not activeRoot)
+    {
+        activeRoot = windowManager_.getActiveWindow();
+    }
+
     if (not activeRoot)
     {
         activeRoot = &windowManager_.mainWindow();
