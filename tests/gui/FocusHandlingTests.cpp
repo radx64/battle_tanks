@@ -141,7 +141,7 @@ protected:
     GuiController sut_;
 };
 
-TEST_F(GuiControllerFocusHandlingShould, DISABLED_properlyFocusElementsGoingForward)
+TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingForward)
 {
     sut_.mainWindow().addChild(buildComponentsTree());
 
@@ -188,7 +188,7 @@ TEST_F(GuiControllerFocusHandlingShould, DISABLED_properlyFocusElementsGoingForw
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Next}); // focus root inside of a window
 }
 
-TEST_F(GuiControllerFocusHandlingShould, DISABLED_properlyFocusElementsGoingBackwards)
+TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingBackwards)
 {
     sut_.mainWindow().addChild(buildComponentsTree());
 
@@ -230,7 +230,7 @@ TEST_F(GuiControllerFocusHandlingShould, DISABLED_properlyFocusElementsGoingBack
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Previous}); // focus root inside of a main window
 }
 
-TEST_F(GuiControllerFocusHandlingShould, DISABLED_skipNonFocusableCompoenentGoingForward)
+TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableCompoenentGoingForward)
 {
     sut_.mainWindow().addChild(buildComponentsTree());
 
@@ -246,7 +246,7 @@ TEST_F(GuiControllerFocusHandlingShould, DISABLED_skipNonFocusableCompoenentGoin
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Next}); // focus 1.1 child
 }
 
-TEST_F(GuiControllerFocusHandlingShould, DISABLED_skipNonFocusableCompoenentGoingBackwards)
+TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableCompoenentGoingBackwards)
 {
     sut_.mainWindow().addChild(buildComponentsTree());
 
