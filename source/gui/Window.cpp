@@ -212,6 +212,14 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     if (isInsideHeader(mousePosition) and isInState(State::Idle))
     {
         state_ = State::Dragging;
+        if (isMaximized_)
+        {
+            auto x = mousePosition.x - windowSizeToRestore_.x / 2.f;
+            auto y = mousePosition.y - header_->getSize().y / 2.f;
+            setPosition({x, y});
+            setSize(windowSizeToRestore_);
+            setMaximized(false);
+        }
         disableChildrenEvents();
         draggingOffset_ = getPosition() -  mousePosition;
         return gui::EventStatus::Consumed;
