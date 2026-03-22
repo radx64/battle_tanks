@@ -96,6 +96,7 @@ MainWindow& GuiController::mainWindow()
 void GuiController::openWindow(std::unique_ptr<Window> window)
 {
     windowManager_.openWindow(std::move(window));
+    setFocus(windowManager_.getActiveWindow());
 }
 
 void GuiController::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition)
@@ -324,6 +325,8 @@ Component* GuiController::getNextFocusableComponent(Component* root, Component* 
 
     while (next)
     {
+        logger_.error("Trying " + std::string(next->getDebugName()));
+
         if (next->isFocusable())
             return next;
 

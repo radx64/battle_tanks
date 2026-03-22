@@ -400,6 +400,11 @@ void Component::enableFocus()
     isFocusable_ = true;
 }
 
+void Component::disableFocus()
+{
+    isFocusable_ = false;
+}
+
 void Component::updateGlobalPosition()
 {
     sf::Vector2f globalBoundsPosition {};

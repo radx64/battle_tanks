@@ -23,6 +23,7 @@ Header::Header()
     {
         if(closeButtonAction_) closeButtonAction_();
     });
+    closeButton->disableFocus();
     closeButtonPtr_ = closeButton.get();
 
     auto maximizeRestoreButton = gui::IconButton::create(
@@ -32,7 +33,7 @@ Header::Header()
     {
         if(maximizeRestoreButtonAction_) maximizeRestoreButtonAction_();
     });
-
+    maximizeRestoreButton->disableFocus();
     maximizeRestoreButtonPtr_ = maximizeRestoreButton.get();
 
     auto titleText = gui::Label::create("");
