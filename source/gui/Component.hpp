@@ -58,6 +58,7 @@ public:
     void selectFocusedChild(Component* focusedChild);
     bool isFocusable() const;
     void enableFocus(); // enable component to receive focus
+    void disableFocus();
 
     void disableChildrenEvents();
     void enableChildrenEvents();

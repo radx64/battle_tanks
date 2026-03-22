@@ -135,6 +135,11 @@ void ContextMenu::close()
         closeCallback_(this);
         return;
     }
+    
+    if (auto* parent = getParent())
+    {
+        parent->removeChild(this);
+    }
 }
 
 void ContextMenu::onSubmenuClosed(ContextMenu* submenu)
