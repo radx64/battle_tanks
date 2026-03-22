@@ -117,24 +117,12 @@ void ContextMenu::open(const sf::Vector2f& globalPosition)
 {
     setPosition(globalToLocal(getParent(), globalPosition));
     setVisibility(true);
-
-    // Ensure children underneath the menu stop thinking the mouse is over them.
-    if (auto* parent = getParent())
-    {
-        for (auto& sibling : parent->getChildren())
-        {
-            if (sibling.get() != this)
-            {
-                //FIXME
-                //sibling->forceMouseLeave();
-            }
-        }
-    }
 }
 
 void ContextMenu::close()
 {
-    //setVisibility(false);
+    setVisibility(false);
+    markAsDead();
     closeSubmenu();
 
     if (parentMenu_)
@@ -146,11 +134,6 @@ void ContextMenu::close()
     {
         closeCallback_(this);
         return;
-    }
-
-    if (auto* parent = getParent())
-    {
-        parent->removeChild(this);
     }
 }
 
