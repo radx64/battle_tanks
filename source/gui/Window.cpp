@@ -5,9 +5,10 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Button.hpp"
-#include "gui/Widget.hpp"
+#include "gui/GUI.hpp"
 #include "gui/Label.hpp"
 #include "gui/TextureLibrary.hpp"
+#include "gui/Widget.hpp"
 #include "gui/window/Header.hpp"
 #include "gui/window/Panel.hpp"
 #include "gui/window/StatusBar.hpp"
@@ -212,6 +213,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     if (isInsideHeader(mousePosition) and isInState(State::Idle))
     {
         state_ = State::Dragging;
+        gui().captureMouse(this);
         if (isMaximized_)
         {
             auto x = mousePosition.x - windowSizeToRestore_.x / 2.f;
@@ -220,7 +222,6 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
             setSize(windowSizeToRestore_);
             setMaximized(false);
         }
-        disableChildrenEvents();
         draggingOffset_ = getPosition() -  mousePosition;
         return gui::EventStatus::Consumed;
     }
@@ -228,7 +229,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     if (isInsideResizeGadget(mousePosition) and isInState(State::Idle))
     {
         state_ = State::Resizing;
-        disableChildrenEvents();
+        gui().captureMouse(this);
         return gui::EventStatus::Consumed;
     }
 
@@ -240,7 +241,7 @@ EventStatus Window::on(const event::MouseButtonReleased&)
     if (state_ != State::Idle)
     {
         state_ = State::Idle;
-        enableChildrenEvents();
+        gui().releaseMouse();
         return gui::EventStatus::Consumed;
     }
 
@@ -253,14 +254,12 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 
     if (isInState(State::Dragging))
     {
-        disableChildrenEvents();
         setPosition(mousePosition + draggingOffset_);
         return gui::EventStatus::Consumed;
     }
 
     if (isInState(State::Resizing))
     {
-        disableChildrenEvents();
         auto windowTopLeftCorner = getGlobalPosition();
         auto newWindowSize = mousePosition - windowTopLeftCorner
             + sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;

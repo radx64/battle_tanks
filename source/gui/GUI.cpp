@@ -1,4 +1,4 @@
-#include "gui/GuiController.hpp"
+#include "gui/GUI.hpp"
 
 namespace gui
 {
@@ -72,9 +72,9 @@ Widget* getNext(Widget* node)
 }
 
 
-GuiController::GuiController(const sf::Vector2f& mainWindowSize)
+GUI::GUI(const sf::Vector2f& mainWindowSize)
 : windowManager_{mainWindowSize}
-, logger_{"GuiController"}
+, logger_{"GUI"}
 {
     windowManager_.setWindowCloseHandler([this](Window*) {
         onActiveWindowChanged(nullptr);
@@ -83,37 +83,60 @@ GuiController::GuiController(const sf::Vector2f& mainWindowSize)
     windowManager_.setOverlayCloseHandler([this](Overlay* removedOverlay) {
         onOverlayRemoval(removedOverlay);
     });
+
+    windowManager_.mainWindow().setGui(this);
 }
 
-GuiController::~GuiController() = default;
+GUI::~GUI() = default;
 
-void GuiController::render(sf::RenderWindow& renderWindow)
+void GUI::render(sf::RenderWindow& renderWindow)
 {
     windowManager_.render(renderWindow);
 }
 
-void GuiController::update()
+void GUI::update()
 {
     windowManager_.update();
 }
 
-MainWindow& GuiController::mainWindow()
+MainWindow& GUI::mainWindow()
 {
     return windowManager_.mainWindow();
 }
-void GuiController::openWindow(std::unique_ptr<Window> window)
+void GUI::openWindow(std::unique_ptr<Window> window)
 {
+    window->setGui(this);
     windowManager_.openWindow(std::move(window));
     setFocus(windowManager_.getActiveWindow());
 }
 
-void GuiController::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition)
+void GUI::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition)
 {
+    menu->setGui(this);
     windowManager_.openContextMenu(std::move(menu), globalPosition);
 }
 
-EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+void GUI::captureMouse(Widget* widget)
 {
+    if (mouseCapture_ != nullptr)
+    {
+        throw std::runtime_error("Mouse double capture. Panicking!");
+    }
+
+    mouseCapture_ = widget;
+}
+void GUI::releaseMouse()
+{
+    mouseCapture_ = nullptr;
+}
+
+EventStatus GUI::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+{
+    if (mouseCapture_)
+    {
+        return mouseCapture_->receive(mouseButtonPressedEvent);
+    }
+
     if (windowManager_.hasOverlays())
     {
         auto* pressed = hitTestOverlaysOnly(mouseButtonPressedEvent.position);
@@ -162,8 +185,13 @@ EventStatus GuiController::receive(const event::MouseButtonPressed& mouseButtonP
     return eventStatus;
 }
 
-EventStatus GuiController::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus GUI::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
+    if (mouseCapture_)
+    {
+        return mouseCapture_->receive(mouseButtonDoublePressedEvent);
+    }
+
     auto* pressed = hitTestWindowsOnly(mouseButtonDoublePressedEvent.position);
 
     if (not pressed)
@@ -178,27 +206,37 @@ EventStatus GuiController::receive(const event::MouseButtonDoublePressed& mouseB
     return eventStatus;
 }
 
-EventStatus GuiController::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus GUI::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
+    updateHover(mouseButtonReleasedEvent.position);
+
+    if (mouseCapture_)
+    {
+        return mouseCapture_->receive(mouseButtonReleasedEvent);
+    }
+
     if (pressed_)
     {
         pressed_->receive(mouseButtonReleasedEvent);
         pressed_ = nullptr;
     }
-
-    updateHover(mouseButtonReleasedEvent.position);
-
+    
     //TODO generate click and doubleclick events later from here instead checking things in widgets / buttons
 
     return EventStatus::NotConsumed;
 }
 
-EventStatus GuiController::receive(const event::MouseMoved& mouseMovedEvent)
+EventStatus GUI::receive(const event::MouseMoved& mouseMovedEvent)
 {
+    if (mouseCapture_)
+    {
+        return mouseCapture_->receive(mouseMovedEvent);
+    }
+
     return updateHover(mouseMovedEvent.position);
 }
 
-EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
+EventStatus GUI::receive(const event::FocusChange& focusChangeEvent)
 {
     Widget* activeRoot{nullptr};
 
@@ -231,7 +269,7 @@ EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
     return EventStatus::Consumed;
 }
 
-EventStatus GuiController::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+EventStatus GUI::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
 {
     if (focused_)
     {
@@ -240,7 +278,7 @@ EventStatus GuiController::receive(const event::KeyboardKeyPressed& keyboardKeyP
     return EventStatus::NotConsumed;
 }
 
-EventStatus GuiController::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus GUI::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
 {
     if (focused_)
     {
@@ -249,7 +287,7 @@ EventStatus GuiController::receive(const event::KeyboardKeyReleased& keyboardKey
     return EventStatus::NotConsumed;
 }
 
-EventStatus GuiController::receive(const event::TextEntered& textEnteredEvent)
+EventStatus GUI::receive(const event::TextEntered& textEnteredEvent)
 {
     if (focused_)
     {
@@ -258,7 +296,7 @@ EventStatus GuiController::receive(const event::TextEntered& textEnteredEvent)
     return EventStatus::NotConsumed;
 }
 
-Widget* GuiController::hitTestWindowsOnly(const gui::event::MousePosition position)
+Widget* GUI::hitTestWindowsOnly(const gui::event::MousePosition position)
 {
     Widget* hit = nullptr;
 
@@ -286,7 +324,7 @@ Widget* GuiController::hitTestWindowsOnly(const gui::event::MousePosition positi
     return hit;
 }
 
-Widget* GuiController::hitTestOverlaysOnly(const gui::event::MousePosition position)
+Widget* GUI::hitTestOverlaysOnly(const gui::event::MousePosition position)
 {
     Widget* hit = nullptr;
 
@@ -308,7 +346,7 @@ Widget* GuiController::hitTestOverlaysOnly(const gui::event::MousePosition posit
     return nullptr;
 }
 
-Widget* GuiController::hitTest(const gui::event::MousePosition position)
+Widget* GUI::hitTest(const gui::event::MousePosition position)
 {
     if (windowManager_.hasOverlays())
     {
@@ -327,7 +365,7 @@ Widget* GuiController::hitTest(const gui::event::MousePosition position)
     return nullptr;
 }
 
-Widget* GuiController::getNextFocusableWidget(Widget* root, Widget* current)
+Widget* GUI::getNextFocusableWidget(Widget* root, Widget* current)
 {
     Widget* next = getNext(current);
 
@@ -342,7 +380,7 @@ Widget* GuiController::getNextFocusableWidget(Widget* root, Widget* current)
     return root;
 }
 
-Widget* GuiController::getPreviousFocusableWidget(Widget* root, Widget* current)
+Widget* GUI::getPreviousFocusableWidget(Widget* root, Widget* current)
 {
     Widget* next = getPrevious(current);
 
@@ -357,7 +395,7 @@ Widget* GuiController::getPreviousFocusableWidget(Widget* root, Widget* current)
     return root;
 }
 
-void GuiController::setFocus(Widget* widget)
+void GUI::setFocus(Widget* widget)
 {
     if (focused_ == widget)
     {
@@ -369,7 +407,7 @@ void GuiController::setFocus(Widget* widget)
     if (focused_) focused_->focus();
 }
 
-EventStatus GuiController::updateHover(const gui::event::MousePosition position)
+EventStatus GUI::updateHover(const gui::event::MousePosition position)
 {
     auto* newHovered = hitTest(position);
 
@@ -397,7 +435,7 @@ EventStatus GuiController::updateHover(const gui::event::MousePosition position)
     return EventStatus::NotConsumed;
 }
 
-void GuiController::onActiveWindowChanged(Window* newActiveWindow)
+void GUI::onActiveWindowChanged(Window* newActiveWindow)
 {
     if (newActiveWindow)
     {
@@ -425,7 +463,7 @@ void GuiController::onActiveWindowChanged(Window* newActiveWindow)
 
 }
 
-void GuiController::onOverlayRemoval(Overlay* removedOverlay)
+void GUI::onOverlayRemoval(Overlay* removedOverlay)
 {
     if (focused_ and focused_->getRoot() == removedOverlay)
     {

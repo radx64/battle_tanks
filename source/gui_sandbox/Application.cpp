@@ -59,13 +59,13 @@ void Application::onInit()
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quitButton->setSize(sf::Vector2f(250.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
-    guiController_.mainWindow().addChild(std::move(quitButton));
+    gui().mainWindow().addChild(std::move(quitButton));
 
     auto guiDebug = gui::TextButton::create("GUI DEBUG");
     guiDebug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
     guiDebug->setSize(sf::Vector2f(250.f, 30.f));
     guiDebug->onClick([](){gui::debug::toggle();});
-    guiController_.mainWindow().addChild(std::move(guiDebug));
+    gui().mainWindow().addChild(std::move(guiDebug));
 
     auto createEmptyWindowButton = gui::TextButton::create("Empty Window");
     createEmptyWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
@@ -77,10 +77,10 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Nothing here!");
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createEmptyWindowButton));
+    gui().mainWindow().addChild(std::move(createEmptyWindowButton));
 
     auto createSimpleWindowButton = gui::TextButton::create("Simple Window");
     createSimpleWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
@@ -98,10 +98,10 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("So simple!");
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createSimpleWindowButton));
+    gui().mainWindow().addChild(std::move(createSimpleWindowButton));
 
     auto createProgressWindowButton = gui::TextButton::create("ProgressBar Window");
     createProgressWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
@@ -134,11 +134,11 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
 
     });
 
-    guiController_.mainWindow().addChild(std::move(createProgressWindowButton));
+    gui().mainWindow().addChild(std::move(createProgressWindowButton));
 
     auto createEditboxWindowButton = gui::TextButton::create("Edit Box Window");
     createEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
@@ -166,11 +166,11 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
 
     });
 
-    guiController_.mainWindow().addChild(std::move(createEditboxWindowButton));
+    gui().mainWindow().addChild(std::move(createEditboxWindowButton));
 
     auto createMultiLineEditboxWindowButton = gui::TextButton::create("MultiLine EditBox Window");
     createMultiLineEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
@@ -200,11 +200,11 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
 
     });
 
-    guiController_.mainWindow().addChild(std::move(createMultiLineEditboxWindowButton));
+    gui().mainWindow().addChild(std::move(createMultiLineEditboxWindowButton));
 
     auto createLayoutWindowButton = gui::TextButton::create("Simple Layout Window");
     createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
@@ -310,10 +310,10 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Oh my gosh");
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createLayoutWindowButton));
+    gui().mainWindow().addChild(std::move(createLayoutWindowButton));
 
     auto createFocusTestWindowButton = gui::TextButton::create("Focus Test Window");
     createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
@@ -362,10 +362,10 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I need to focus");
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createFocusTestWindowButton));
+    gui().mainWindow().addChild(std::move(createFocusTestWindowButton));
 
     auto createGridLayoutWindowButton = gui::TextButton::create("Grid Layout Window");
     createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
@@ -574,11 +574,11 @@ void Application::onInit()
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("The Grid, a digital frontier...");
 
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
 
     });
 
-    guiController_.mainWindow().addChild(std::move(createGridLayoutWindowButton));
+    gui().mainWindow().addChild(std::move(createGridLayoutWindowButton));
 
     auto createSliderWindowButton = gui::TextButton::create("Slider Window");
     createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
@@ -675,10 +675,10 @@ void Application::onInit()
         gridLayout->addChild(std::move(vSlider3));
 
         window->addChild(std::move(gridLayout));
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createSliderWindowButton));
+    gui().mainWindow().addChild(std::move(createSliderWindowButton));
 
     auto createScrollBarWindowButton = gui::TextButton::create("Scrollbars");
     createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
@@ -714,10 +714,10 @@ void Application::onInit()
 
         window->addChild(std::move(layout));
         window->addChild(std::move(text));
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createScrollBarWindowButton));
+    gui().mainWindow().addChild(std::move(createScrollBarWindowButton));
 
     auto createCalculatorWindowButton = gui::TextButton::create("Calculator");
     createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 600.f));
@@ -729,10 +729,10 @@ void Application::onInit()
         window->setTitle("calc.exe");
 
         window->addChild(calculator::createCalculator({300.f, 300.f}));
-        guiController_.openWindow(std::move(window));
+        gui().openWindow(std::move(window));
     });
 
-    guiController_.mainWindow().addChild(std::move(createCalculatorWindowButton));
+    gui().mainWindow().addChild(std::move(createCalculatorWindowButton));
 
     auto contextMenuTestButton = gui::TextButton::create("Context menu >");
     contextMenuTestButton->setPosition(sf::Vector2f(50.f, 200.f));
@@ -755,10 +755,10 @@ void Application::onInit()
                 }}
             }}
         });
-        guiController_.openContextMenu(std::move(menu), contextMenuTestButtonPtr->getGlobalPosition() + sf::Vector2f(200.f, 30.f));
+        gui().openContextMenu(std::move(menu), contextMenuTestButtonPtr->getGlobalPosition() + sf::Vector2f(200.f, 30.f));
     });
 
-    guiController_.mainWindow().addChild(std::move(contextMenuTestButton));
+    gui().mainWindow().addChild(std::move(contextMenuTestButton));
 
 
     auto leftLabel = gui::Label::create("Left aligned label");
@@ -776,9 +776,9 @@ void Application::onInit()
     rightLabel->setSize({400.f, 40.f});
     rightLabel->setAlignment(gui::Alignment::Right);
 
-    guiController_.mainWindow().addChild(std::move(leftLabel));
-    guiController_.mainWindow().addChild(std::move(hcenterLabel));
-    guiController_.mainWindow().addChild(std::move(rightLabel));
+    gui().mainWindow().addChild(std::move(leftLabel));
+    gui().mainWindow().addChild(std::move(hcenterLabel));
+    gui().mainWindow().addChild(std::move(rightLabel));
 
     auto topLabel = gui::Label::create("Top aligned label");
     topLabel->setPosition({700.f, 20.f});
@@ -795,9 +795,9 @@ void Application::onInit()
     bottomLabel->setSize({400.f, 40.f});
     bottomLabel->setAlignment(gui::Alignment::Bottom);
 
-    guiController_.mainWindow().addChild(std::move(topLabel));
-    guiController_.mainWindow().addChild(std::move(vcenterLabel));
-    guiController_.mainWindow().addChild(std::move(bottomLabel));
+    gui().mainWindow().addChild(std::move(topLabel));
+    gui().mainWindow().addChild(std::move(vcenterLabel));
+    gui().mainWindow().addChild(std::move(bottomLabel));
 
     auto multilineTopAlignedLabel = gui::Label::create("Top multiline\nlabel is here\nand a bit there");
     multilineTopAlignedLabel->setPosition({100.f, 300.f});
@@ -814,9 +814,9 @@ void Application::onInit()
     multilineBottomAlignedLabel->setSize({400.f, 80.f});
     multilineBottomAlignedLabel->setAlignment(gui::Alignment::Bottom);
 
-    guiController_.mainWindow().addChild(std::move(multilineTopAlignedLabel));
-    guiController_.mainWindow().addChild(std::move(multilineCenterAlignedLabel));
-    guiController_.mainWindow().addChild(std::move(multilineBottomAlignedLabel));
+    gui().mainWindow().addChild(std::move(multilineTopAlignedLabel));
+    gui().mainWindow().addChild(std::move(multilineCenterAlignedLabel));
+    gui().mainWindow().addChild(std::move(multilineBottomAlignedLabel));
 }
 
 void Application::onClose()

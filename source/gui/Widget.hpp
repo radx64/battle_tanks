@@ -8,6 +8,8 @@
 #include "engine/Logger.hpp"
 #include "gui/EventReceiver.hpp"
 
+namespace gui {class GUI;}
+
 namespace gui
 {
 
@@ -16,6 +18,10 @@ namespace gui
 // Root element need to be handled by user
 // Children elements are freed by parent during destruction
 // You need to render only parent to enable rendering of children
+
+// TODO rethink if Widget should be an EventReceiver derivative
+// As now GuiController does the heavy lifting maybe this is not needed anymore??
+// Probably calling on(event) method would be suficient
 
 class Widget : public EventReceiver
 {
@@ -49,18 +55,25 @@ public:
     Widget* getRoot();
     const std::vector<std::unique_ptr<Widget>>& getChildren() const;
 
-    void focus();
-    void defocus();
     bool isFocused() const;
     void defocusWithAllChildren();
     void defocusChildrenExcept(const Widget* focusedChild);
-    void selectFocusedChild(Widget* focusedChild);
+
+    void focus();
+    void defocus();
+    bool hasChildren() const;
+    Widget* getNextChild(Widget* child);
+    Widget* getNextSibling();
+
+    Widget* getPreviousChild(Widget* child);
+    Widget* getPreviousSibling();
+
+    void setGui(GUI* gui);
+    GUI& gui() const;
+
     bool isFocusable() const;
     void enableFocus(); // widget can receive focus
     void disableFocus();
-
-    void disableChildrenEvents();
-    void enableChildrenEvents();
 
     /* Mouse events */
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
@@ -116,8 +129,8 @@ protected:
 
     sf::Vector2f localPosition_;   // offset from parent position
     sf::FloatRect bounds_;         // bounds box in global space position
-    Widget* parent_;
-    bool childrenEventsProcessingEnabled_;
+    Widget* parent_; 
+    GUI* gui_;                     // pointer to gui handling this widget
     std::vector<std::unique_ptr<Widget>> children_;
 
     // TODO: engine::TasksQueue can be considered to handle pending add/remove children 
@@ -125,25 +138,14 @@ protected:
     std::vector<std::unique_ptr<Widget>> pendingChildrenToAdd_;
     std::vector<const Widget*> pendingChildrenToRemove_;
 
-    Widget* focusedChild_;
     bool isVisible_;
     
     bool isFocused_;
     bool isFocusable_;          // can widget get focus, if not it should still forward events to children
-    bool isProcessingEvents_;   // when processing events, addChild, removeChild will be posponed to not break current childred iterators. 
+    bool isProcessingEvents_;   // when processing events, addChild, removeChild will be posponed to not break current children iterators. 
     uint32_t id_;
     std::string debugName_;
     engine::Logger logger_;
-
-public:
-    void new_focus();
-    void new_defocus();
-    bool hasChildren() const;
-    Widget* getNextChild(Widget* child);
-    Widget* getNextSibling();
-
-    Widget* getPreviousChild(Widget* child);
-    Widget* getPreviousSibling();
 };
 
 }  // namespace gui

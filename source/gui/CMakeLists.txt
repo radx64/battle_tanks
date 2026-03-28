@@ -22,7 +22,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/debug/ComponentTree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EditBox.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GuiController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MultiLineEditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontHeightCache.cpp

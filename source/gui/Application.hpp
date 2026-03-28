@@ -2,7 +2,7 @@
 
 #include "engine/Application.hpp"
 
-#include "gui/GuiController.hpp"
+#include "gui/GUI.hpp"
 #include "gui/KeyboardController.hpp"
 #include "gui/MouseController.hpp"
 #include "gui/TextEnteredController.hpp"
@@ -19,8 +19,9 @@ public:
 protected:
     void onRender() override; 
     void onUpdate(float timeStep) override;
+    gui::GUI& gui();
 
-    gui::GuiController guiController_;
+    gui::GUI gui_;
     gui::MouseController mouseController_;
     gui::KeyboardController keyboardController_;
     gui::TextEnteredController textEnteredController_;

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "gui/GuiController.hpp"
+#include "gui/GUI.hpp"
 
 #include "tests/mocks/WidgetSpy.hpp"
 
@@ -10,10 +10,10 @@ namespace gui
 
 using WidgetSpy = mocks::WidgetSpy;
 
-class GuiControllerFocusHandlingShould : public ::testing::Test
+class GuiFocusHandlingShould : public ::testing::Test
 {
 public:
-    GuiControllerFocusHandlingShould()
+    GuiFocusHandlingShould()
     : sut_{{100.f, 100.f}}
     { }
 
@@ -138,10 +138,10 @@ protected:
     WidgetSpy* child_3_ptr_;
 
     std::vector<WidgetSpy*> allSpies_;
-    GuiController sut_;
+    GUI sut_;
 };
 
-TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingForward)
+TEST_F(GuiFocusHandlingShould, properlyFocusElementsGoingForward)
 {
     sut_.mainWindow().addChild(buildWidgetsTree());
 
@@ -188,7 +188,7 @@ TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingForward)
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Next}); // focus root inside of a window
 }
 
-TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingBackwards)
+TEST_F(GuiFocusHandlingShould, properlyFocusElementsGoingBackwards)
 {
     sut_.mainWindow().addChild(buildWidgetsTree());
 
@@ -230,7 +230,7 @@ TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingBackwards)
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Previous}); // focus root inside of a main window
 }
 
-TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableWidgetGoingForward)
+TEST_F(GuiFocusHandlingShould, skipNonFocusableWidgetGoingForward)
 {
     sut_.mainWindow().addChild(buildWidgetsTree());
 
@@ -246,7 +246,7 @@ TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableWidgetGoingForward)
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Next}); // focus 1.1 child
 }
 
-TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableWidgetGoingBackwards)
+TEST_F(GuiFocusHandlingShould, skipNonFocusableWidgetGoingBackwards)
 {
     sut_.mainWindow().addChild(buildWidgetsTree());
 

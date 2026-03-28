@@ -25,7 +25,7 @@ Application::Application()
 
 void Application::onInit()
 {
-    guiController_.mainWindow().addChild(createCalculator(guiController_.mainWindow().getSize()));
+    gui().mainWindow().addChild(createCalculator(gui().mainWindow().getSize()));
 }
 
 void Application::onClose()

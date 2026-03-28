@@ -43,9 +43,7 @@ Widget::Widget(const std::source_location location)
 : localPosition_{}
 , bounds_{}
 , parent_{nullptr}
-, childrenEventsProcessingEnabled_{true}
 , children_ {}
-, focusedChild_{nullptr}
 , isVisible_ {true}
 , isFocused_{false}
 , isFocusable_{false}
@@ -259,6 +257,7 @@ void Widget::addChild(std::unique_ptr<Widget> child)
 
     child->parent_ = this;
     child->updateGlobalPosition();
+    child->setGui(gui_);
 
     if (isProcessingEvents_)
     {
@@ -308,54 +307,6 @@ Widget* Widget::getRoot()
 const std::vector<std::unique_ptr<Widget>>& Widget::getChildren() const
 {
     return children_;
-}
-
-void Widget::selectFocusedChild(Widget* focusedChild)
-{
-    if (focusedChild_ != nullptr and focusedChild_ != focusedChild)
-    {
-        focusedChild_->defocus();
-    }
-
-    focusedChild_ = focusedChild;
-}
-
-void Widget::focus()
-{
-    isFocused_ = true;
-
-    for (auto& child : children_)
-    {
-        child->defocusWithAllChildren();
-    }
-
-    if (parent_)
-    {
-        parent_->defocusChildrenExcept(this);
-    }
-
-    auto* parent = parent_;
-    auto* current = this;
-
-    while (parent != nullptr)
-    {
-        parent->defocus();
-        parent->selectFocusedChild(current);
-        current = parent;
-        parent = parent->parent_;
-    }
-
-    receive(gui::event::FocusGained{});
-}
-
-void Widget::defocus()
-{
-    if(isFocused())
-    {
-        isFocused_ = false;
-        focusedChild_ = nullptr;
-        receive(gui::event::FocusLost{});
-    }
 }
 
 bool Widget::isFocused() const
@@ -439,22 +390,13 @@ size_t Widget::getChildrenCount() const
     return children_.size();
 }
 
-void Widget::disableChildrenEvents()
-{
-    childrenEventsProcessingEnabled_ = false;
-}
-void Widget::enableChildrenEvents()
-{
-    childrenEventsProcessingEnabled_ = true;
-}
-
-void Widget::new_focus()
+void Widget::focus()
 {
     isFocused_ = true;
     receive(gui::event::FocusGained{});
 }
 
-void Widget::new_defocus()
+void Widget::defocus()
 {
     isFocused_ = false;
     receive(gui::event::FocusLost{});
@@ -509,6 +451,24 @@ Widget* Widget::getPreviousSibling()
 bool Widget::hasChildren() const
 {
     return !children_.empty();
+}
+
+void Widget::setGui(GUI* gui)
+{
+    gui_ = gui;
+
+    for (auto& child : children_)
+    {
+        child->setGui(gui);
+    }
+}
+
+GUI& Widget::gui() const
+{
+    if (gui_)
+        return *gui_;
+    else
+        throw std::runtime_error("GUI not set in widget!");
 }
 
 

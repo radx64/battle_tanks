@@ -13,7 +13,7 @@ namespace gui { class WindowManager; }
 namespace gui
 {
 
-class GuiController : public gui::EventReceiver
+class GUI : public gui::EventReceiver
 {
 public:
     using EventReceiver::receive; // to unshadow EventReceiver not overloaded methods
@@ -27,8 +27,8 @@ public:
     EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
     EventStatus receive(const event::TextEntered& textEnteredEvent) override;
 
-    GuiController(const sf::Vector2f& mainWindowSize);
-    virtual ~GuiController();
+    GUI(const sf::Vector2f& mainWindowSize);
+    virtual ~GUI();
 
     void render(sf::RenderWindow& renderWindow);
     void update();
@@ -36,6 +36,9 @@ public:
     MainWindow& mainWindow();
     void openWindow(std::unique_ptr<Window> window);
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
+
+    void captureMouse(Widget* widget);
+    void releaseMouse();
 
 protected:
     Widget* hitTestWindowsOnly(const gui::event::MousePosition position);
@@ -52,6 +55,8 @@ protected:
     Widget* hovered_ = nullptr; //fixme move these nullptr to constructor 
     Widget* pressed_ = nullptr;
     Widget* focused_ = nullptr;
+    Widget* mouseCapture_ = nullptr;
+
     engine::Logger logger_;
 };
 

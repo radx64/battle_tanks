@@ -239,7 +239,7 @@ void Application::configureGUI()
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quitButton->setSize(sf::Vector2f(150.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
-    guiController_.mainWindow().addChild(std::move(quitButton));
+    gui().mainWindow().addChild(std::move(quitButton));
 
     auto button = gui::TextButton::create("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
@@ -247,9 +247,9 @@ void Application::configureGUI()
     button->onClick([this](){
         auto helpWindow = std::make_unique<game::HelpWindow>(sf::Vector2f(300.f, 300.f));
         helpWindow->setTitle("Help");
-        guiController_.openWindow(std::move(helpWindow));
+        gui().openWindow(std::move(helpWindow));
     });
-    guiController_.mainWindow().addChild(std::move(button));
+    gui().mainWindow().addChild(std::move(button));
 
     auto reloadLuaButton = gui::TextButton::create("Reload Lua script");
     reloadLuaButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
@@ -257,7 +257,7 @@ void Application::configureGUI()
     reloadLuaButton->onClick([this](){
         luaTankHandle_->getScript()->reload();
     });
-    guiController_.mainWindow().addChild(std::move(reloadLuaButton));
+    gui().mainWindow().addChild(std::move(reloadLuaButton));
 
     auto menuButton = gui::TextButton::create("Menu");
     menuButton->setPosition(sf::Vector2f(20.f, 250.f));
@@ -282,12 +282,12 @@ void Application::configureGUI()
             }
         );
 
-        guiController_.openContextMenu(std::move(menu), menuPosition);
+        gui().openContextMenu(std::move(menu), menuPosition);
     });
     
-    guiController_.mainWindow().addChild(std::move(menuButton));
+    gui().mainWindow().addChild(std::move(menuButton));
 
-    guiController_.mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
+    gui().mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
         auto menu = gui::ContextMenu::create(
             {
                 {"Reload Lua", [this]() { luaTankHandle_->getScript()->reload(); }},
@@ -296,7 +296,7 @@ void Application::configureGUI()
             }
         );
         menu->open(pos);
-        guiController_.openContextMenu(std::move(menu), pos);
+        gui().openContextMenu(std::move(menu), pos);
     });
 }
 

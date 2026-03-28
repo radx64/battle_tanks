@@ -4,10 +4,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
+#include "gui/GUI.hpp"
 #include "gui/slider/LayoutBuilder.hpp"
 #include "gui/TextureLibrary.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui::slider
 {
@@ -215,6 +216,7 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseBut
     if (isLeftPressed and isInside(mousePosition))
     {
         state_ = State::Dragging;
+        gui().captureMouse(this);
         processMovement(mousePosition);
         return EventStatus::Consumed;
     }
@@ -260,6 +262,7 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseBut
     if (isLeftReleased and state_ == State::Dragging)
     {
         state_ = State::Idle;
+        gui().releaseMouse();
         processMovement(mousePosition);
         return EventStatus::Consumed;
     }
