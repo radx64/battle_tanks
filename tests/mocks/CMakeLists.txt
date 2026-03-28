@@ -14,5 +14,5 @@ PRIVATE
 
 target_sources(testing_mocks
 PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/ComponentSpy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/WidgetSpy.cpp
 )

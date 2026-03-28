@@ -2,12 +2,12 @@
 #include <gmock/gmock.h>
 
 #include "gui/layout/Grid.hpp"
-#include "tests/mocks/ComponentSpy.hpp"
+#include "tests/mocks/WidgetSpy.hpp"
 
 namespace gui::layout
 {
 
-using Spy = ::testing::NiceMock<mocks::ComponentSpy>;
+using Spy = ::testing::NiceMock<mocks::WidgetSpy>;
 
 TEST(GridShould, createGridLayout)
 {

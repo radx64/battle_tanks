@@ -62,10 +62,10 @@ namespace
         return std::max(needed, MENU_ENTRY_MIN_WIDTH);
     }
 
-    sf::Vector2f globalToLocal(const Component* component, const sf::Vector2f& globalPosition)
+    sf::Vector2f globalToLocal(const Widget* widget, const sf::Vector2f& globalPosition)
     {
-        if (component == nullptr) return globalPosition;
-        const auto parentGlobal = component->getGlobalPosition();
+        if (widget == nullptr) return globalPosition;
+        const auto parentGlobal = widget->getGlobalPosition();
         return globalPosition - parentGlobal;
     }
 
@@ -215,7 +215,7 @@ void ContextMenu::buildMenu()
     }
 
     layout_ = vertical.get();
-    Component::addChild(std::move(vertical));
+    Widget::addChild(std::move(vertical));
 }
 
 void ContextMenu::updateSubmenu(gui::TextButton* buttonPtr, const Item& item, ptrdiff_t index)

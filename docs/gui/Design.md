@@ -2,7 +2,7 @@ Design
 =====
 
 - [Design](#design)
-  - [Component](#component)
+  - [Widget](#widget)
   - [Window](#window)
   - [Button](#button)
   - [Label](#label)
@@ -14,21 +14,19 @@ Design
 - [Layout management](#layout-management)
 
 
-## Component
-It is a abstract base class for all other gui components
+## Widget
+It is a abstract base class for all other gui widgets
 Implements basic objects suppport with childs aggregation and it's lifetime management
 as well as some basic position and size control
 
-![](Component.drawio.svg "Component diagram")
 
-
-Component derivate should implement required behaviour of below methods
+Widget derivate should implement required behaviour of below methods
 - onSizeChange
-  - By default component is not handling children sizes. Specific component like WindowPanel or GridLayout could define own ways of handling children position and size.
+  - By default widget is not handling children sizes. Specific widget like WindowPanel or GridLayout could define own ways of handling children position and size.
 
 
 ## Window
-Implements simple closable window (managed by WindowManager). It can contain any `Component` 
+Implements simple closable window (managed by WindowManager). It can contain any `Widget` 
 
 Possible / target implementation:
 
@@ -44,7 +42,7 @@ Class for creating text labels
 Manages `Window` instances (added to given window manager) with Z-ordering, focusing and destroying dead windows.
 
 ## Stylesheet
-Describes visual theme of components
+Describes visual theme of widgets
 
 # Dependencies
 
@@ -54,16 +52,16 @@ Rough sketch of dependencies
 @startuml
 class WindowManager
 
-class Component
+class Widget
 
 class Window
 class Button
 class Label
 
-Component <|-- Label
+Widget <|-- Label
 
-Component <|-- Window
-Component <|--  Button
+Widget <|-- Window
+Widget <|--  Button
 
 Window *--up> WindowManager
 
@@ -75,13 +73,13 @@ Label --> StyleSheet
 
 ```
 # Drawing
-Currently components draw themselve on sfml render target.
+Currently widgets draw themselve on sfml render target.
 Consider moving it to separate texture and redraw those only when needed to boost performance.
 
 # Event processing
 
 There is a hierarchy how mouse events are beeing processed.
-If user clicks on given component it iterates over all its children to check if any of them captures the event. If captured, event is not processed further. If any child has not captured the event, event is processed with component itself.
+If user clicks on given widget it iterates over all its children to check if any of them captures the event. If captured, event is not processed further. If any child has not captured the event, event is processed with widget itself.
 
 # Layout management
 

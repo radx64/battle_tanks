@@ -2,12 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui::window
 {
 
-class Panel : public Component
+class Panel : public Widget
 {
 public:
     Panel();
@@ -15,7 +15,7 @@ public:
     void enable();
     void disable();
 
-    void addChild(std::unique_ptr<Component> child) override;
+    void addChild(std::unique_ptr<Widget> child) override;
 
 protected:
     void onSizeChange() override;

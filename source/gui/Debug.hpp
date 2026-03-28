@@ -2,13 +2,13 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui::debug
 {
     void toggle();
 
-    void drawBounds(sf::RenderTarget& renderTarget, const Component* component);
+    void drawBounds(sf::RenderTarget& renderTarget, const Widget* widget);
 
     void drawBox(sf::RenderTarget& renderTarget, const sf::Vector2f position, 
         const sf::Vector2f size, const sf::Color color, const float thickness);

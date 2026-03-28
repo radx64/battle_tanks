@@ -52,7 +52,7 @@ protected:
     Window* activeWindow_;
     MainWindow mainWindow_;
 
-    // Components drawn on top of all windows (e.g. context menus)
+    // Widgets drawn on top of all windows (e.g. context menus)
     std::list<std::unique_ptr<Overlay>> overlays_;
 
     sf::RenderTexture renderTexture_;

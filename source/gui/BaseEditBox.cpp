@@ -45,7 +45,7 @@ BaseEditBox::BaseEditBox()
     text_.setCharacterSize(style.getFontSize());
     text_.setFillColor(style.getFontColor());
     text_.setOutlineColor(style.getOutlineColor());
-    text_.setGlobalPosition(Component::getGlobalPosition());
+    text_.setGlobalPosition(Widget::getGlobalPosition());
 
     textCursor_.setFont(text_.getFont());
     textCursor_.setCharacterSize(text_.getCharacterSize());
@@ -80,9 +80,9 @@ void BaseEditBox::onRender(sf::RenderTexture& renderTexture)
 
 void BaseEditBox::onSizeChange()
 {
-    text_.setSize(Component::getSize() - EXTRA_END_OFFSET * 2.f);
-    text_.setGlobalPosition(Component::getGlobalPosition() + EXTRA_END_OFFSET);
-    background_.setSize(Component::getSize());
+    text_.setSize(Widget::getSize() - EXTRA_END_OFFSET * 2.f);
+    text_.setGlobalPosition(Widget::getGlobalPosition() + EXTRA_END_OFFSET);
+    background_.setSize(Widget::getSize());
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -90,7 +90,7 @@ void BaseEditBox::onSizeChange()
 
 void BaseEditBox::onPositionChange()
 {
-    text_.setGlobalPosition(Component::getGlobalPosition() + EXTRA_END_OFFSET);
+    text_.setGlobalPosition(Widget::getGlobalPosition() + EXTRA_END_OFFSET);
     background_.setPosition(getGlobalPosition());
     updateTextVisbleArea();
     textCursor_.update();

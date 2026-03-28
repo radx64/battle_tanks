@@ -14,7 +14,7 @@ class Grid : public Base
 public:
     static std::unique_ptr<Grid> create(size_t width, size_t height);
 
-    void addChild(std::unique_ptr<Component> child) override;
+    void addChild(std::unique_ptr<Widget> child) override;
     bool addColumn(const size_t index, const Constraint& constraint);
     bool removeColumn(const size_t index);
     void setColumnSize(const size_t column, const Constraint& constraint);
@@ -26,8 +26,8 @@ public:
     void setHorizontalPadding(const size_t padding);
     void setVerticalPadding(const size_t padding);
 
-    void setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element);
-    Component* getElementAt(const size_t x, const size_t y) const;
+    void setElementAt(const size_t x, const size_t y, std::unique_ptr<Widget> element);
+    Widget* getElementAt(const size_t x, const size_t y) const;
     void removeElementAt(const size_t x, const size_t y);
     
 protected:
@@ -45,7 +45,7 @@ protected:
     SizeConstraintResolver columnConstraintLayout_;
     SizeConstraintResolver rowConstraintLayout_;
 
-    std::vector<std::vector<Component*>> grid_;
+    std::vector<std::vector<Widget*>> grid_;
 };
 
 }  // namespace gui::layout

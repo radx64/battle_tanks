@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 namespace mocks
 {
 
-class ComponentSpy : public gui::Component
+class WidgetSpy : public gui::Widget
 {
 public:
     MOCK_METHOD(void, die, ());
@@ -15,7 +15,7 @@ public:
     MOCK_METHOD(void, focusGained, ());
     MOCK_METHOD(void, focusLost, ());
 
-    ~ComponentSpy() override;
+    ~WidgetSpy() override;
 
     void onRender(sf::RenderTexture&) override;
     gui::EventStatus on(const gui::event::FocusGained&) override;

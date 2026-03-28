@@ -1,4 +1,4 @@
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 #include <cassert>
 
@@ -39,7 +39,7 @@ uint32_t InstanceIdGenerator::nextInstanceId = 0;
 
 }  // namespace
 
-Component::Component(const std::source_location location)
+Widget::Widget(const std::source_location location)
 : localPosition_{}
 , bounds_{}
 , parent_{nullptr}
@@ -57,22 +57,22 @@ Component::Component(const std::source_location location)
     logger_.debug("Creating");
 }
 
-Component::~Component()
+Widget::~Widget()
 {
     logger_.debug("Destroying");
 }
 
-uint32_t Component::getId() const
+uint32_t Widget::getId() const
 {
     return id_;
 }
 
-const std::string_view Component::getDebugName() const
+const std::string_view Widget::getDebugName() const
 {
     return debugName_;
 }
 
-void Component::render(sf::RenderTexture& renderTexture)
+void Widget::render(sf::RenderTexture& renderTexture)
 {
     if (!isVisible_) return;
     onRender(renderTexture);
@@ -84,7 +84,7 @@ void Component::render(sf::RenderTexture& renderTexture)
 }
 
 template <typename T>
-EventStatus Component::processEvent(const T& event)
+EventStatus Widget::processEvent(const T& event)
 {
     auto eventStatus = this->on(event);
 
@@ -101,51 +101,51 @@ EventStatus Component::processEvent(const T& event)
     return EventStatus::NotConsumed;
 }
 
-EventStatus Component::receive(const event::MouseMoved& mouseMovedEvent)
+EventStatus Widget::receive(const event::MouseMoved& mouseMovedEvent)
 {
     return processEvent(mouseMovedEvent);
 }
 
-EventStatus Component::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus Widget::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
     return processEvent(mouseButtonPressedEvent);
 }
 
-EventStatus Component::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus Widget::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
     return processEvent(mouseButtonDoublePressedEvent);
 }
 
-EventStatus Component::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus Widget::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     return processEvent(mouseButtonReleasedEvent);
 }
 
-EventStatus Component::receive(const event::MouseEntered& mouseEnteredEvent)
+EventStatus Widget::receive(const event::MouseEntered& mouseEnteredEvent)
 {
     return processEvent(mouseEnteredEvent);
 }
-EventStatus Component::receive(const event::MouseLeft& mouseLeftEvent)
+EventStatus Widget::receive(const event::MouseLeft& mouseLeftEvent)
 {
     return processEvent(mouseLeftEvent);
 }
 
-EventStatus Component::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
+EventStatus Widget::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
 {
     return processEvent(keyboardKeyPressed);
 }
 
-EventStatus Component::receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
+EventStatus Widget::receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
 {
     return processEvent(keyboardKeyReleased);
 }
 
-EventStatus Component::receive(const event::TextEntered& textEntered)
+EventStatus Widget::receive(const event::TextEntered& textEntered)
 {
     return processEvent(textEntered);
 }
 
-void Component::applyPendingOperations()
+void Widget::applyPendingOperations()
 {
     for (auto* child : pendingChildrenToRemove_)
     {
@@ -160,33 +160,33 @@ void Component::applyPendingOperations()
     pendingChildrenToAdd_.clear();
 }
 
-EventStatus Component::receive(const event::FocusLost& focusLost)
+EventStatus Widget::receive(const event::FocusLost& focusLost)
 {
     return this->on(focusLost);
 }
 
-EventStatus Component::receive(const event::FocusGained& focusGained)
+EventStatus Widget::receive(const event::FocusGained& focusGained)
 {
     return this->on(focusGained);
 }
 
-EMPTY_ON_METHOD(Component, event::MouseMoved);
-EMPTY_ON_METHOD(Component, event::MouseButtonPressed);
-EMPTY_ON_METHOD(Component, event::MouseButtonDoublePressed);
-EMPTY_ON_METHOD(Component, event::MouseButtonReleased);
-EMPTY_ON_METHOD(Component, event::MouseEntered);
-EMPTY_ON_METHOD(Component, event::MouseLeft);
+EMPTY_ON_METHOD(Widget, event::MouseMoved);
+EMPTY_ON_METHOD(Widget, event::MouseButtonPressed);
+EMPTY_ON_METHOD(Widget, event::MouseButtonDoublePressed);
+EMPTY_ON_METHOD(Widget, event::MouseButtonReleased);
+EMPTY_ON_METHOD(Widget, event::MouseEntered);
+EMPTY_ON_METHOD(Widget, event::MouseLeft);
 
-EMPTY_ON_METHOD(Component, event::KeyboardKeyPressed);
-EMPTY_ON_METHOD(Component, event::KeyboardKeyReleased);
-EMPTY_ON_METHOD(Component, event::TextEntered);
+EMPTY_ON_METHOD(Widget, event::KeyboardKeyPressed);
+EMPTY_ON_METHOD(Widget, event::KeyboardKeyReleased);
+EMPTY_ON_METHOD(Widget, event::TextEntered);
 
-EMPTY_ON_METHOD(Component, event::FocusLost);
-EMPTY_ON_METHOD(Component, event::FocusGained);
+EMPTY_ON_METHOD(Widget, event::FocusLost);
+EMPTY_ON_METHOD(Widget, event::FocusGained);
 
 #undef EMPTY_ON_METHOD
 
-void Component::setPosition(const sf::Vector2f& position)
+void Widget::setPosition(const sf::Vector2f& position)
 {
     localPosition_ = position;
     updateGlobalPosition();
@@ -197,12 +197,12 @@ void Component::setPosition(const sf::Vector2f& position)
     }
 }
 
-sf::Vector2f Component::getSize() const
+sf::Vector2f Widget::getSize() const
 {
     return sf::Vector2f{bounds_.width, bounds_.height};
 }
 
-void Component::setSize(const sf::Vector2f& size)
+void Widget::setSize(const sf::Vector2f& size)
 {
     bounds_.width = size.x;
     bounds_.height = size.y;
@@ -210,45 +210,45 @@ void Component::setSize(const sf::Vector2f& size)
     onSizeChange();
 }
 
-void Component::onSizeChange()
+void Widget::onSizeChange()
 {
 }
 
-void Component::setVisibility(bool isVisible)
+void Widget::setVisibility(bool isVisible)
 {
     isVisible_ = isVisible;
 }
 
-bool Component::isVisible() const
+bool Widget::isVisible() const
 {
     return isVisible_;
 }
 
-const sf::Vector2f Component::getPosition() const
+const sf::Vector2f Widget::getPosition() const
 {
     return localPosition_;
 }
 
-void Component::onPositionChange()
+void Widget::onPositionChange()
 {
 }
 
-bool Component::isInside(sf::Vector2f point) const
+bool Widget::isInside(sf::Vector2f point) const
 {
     return bounds_.contains(point);
 }
 
-bool Component::isInside(const event::MousePosition& position) const
+bool Widget::isInside(const event::MousePosition& position) const
 {
     return isInside(toVector2f(position));
 }
 
-const sf::Vector2f Component::getGlobalPosition() const
+const sf::Vector2f Widget::getGlobalPosition() const
 {
     return sf::Vector2f{bounds_.left, bounds_.top};
 }
 
-void Component::addChild(std::unique_ptr<Component> child)
+void Widget::addChild(std::unique_ptr<Widget> child)
 {
     auto found = std::find(children_.cbegin(), children_.cend(), child);
     if (found != children_.cend())
@@ -269,7 +269,7 @@ void Component::addChild(std::unique_ptr<Component> child)
     children_.emplace_back(std::move(child));
 }
 
-void Component::removeChild(const Component* child)
+void Widget::removeChild(const Widget* child)
 {
     if (isProcessingEvents_)
     {
@@ -290,14 +290,14 @@ void Component::removeChild(const Component* child)
     }
 }
 
-Component* Component::getParent() const
+Widget* Widget::getParent() const
 {
     return parent_;
 }
 
-Component* Component::getRoot()
+Widget* Widget::getRoot()
 {
-    Component* root = this;
+    Widget* root = this;
     while (root->parent_ != nullptr)
     {
         root = root->parent_;
@@ -305,12 +305,12 @@ Component* Component::getRoot()
     return root;
 }
 
-const std::vector<std::unique_ptr<Component>>& Component::getChildren() const
+const std::vector<std::unique_ptr<Widget>>& Widget::getChildren() const
 {
     return children_;
 }
 
-void Component::selectFocusedChild(Component* focusedChild)
+void Widget::selectFocusedChild(Widget* focusedChild)
 {
     if (focusedChild_ != nullptr and focusedChild_ != focusedChild)
     {
@@ -320,7 +320,7 @@ void Component::selectFocusedChild(Component* focusedChild)
     focusedChild_ = focusedChild;
 }
 
-void Component::focus()
+void Widget::focus()
 {
     isFocused_ = true;
 
@@ -348,7 +348,7 @@ void Component::focus()
     receive(gui::event::FocusGained{});
 }
 
-void Component::defocus()
+void Widget::defocus()
 {
     if(isFocused())
     {
@@ -358,12 +358,12 @@ void Component::defocus()
     }
 }
 
-bool Component::isFocused() const
+bool Widget::isFocused() const
 {
     return isFocused_;
 }
 
-void Component::defocusWithAllChildren()
+void Widget::defocusWithAllChildren()
 {
     defocus();
 
@@ -374,7 +374,7 @@ void Component::defocusWithAllChildren()
 
 }
 
-void Component::defocusChildrenExcept(const Component* focusedChild)
+void Widget::defocusChildrenExcept(const Widget* focusedChild)
 {
     for (auto& child : children_)
     {
@@ -390,22 +390,22 @@ void Component::defocusChildrenExcept(const Component* focusedChild)
     }
 }
 
-bool Component::isFocusable() const
+bool Widget::isFocusable() const
 {
     return isFocusable_;
 }
 
-void Component::enableFocus()
+void Widget::enableFocus()
 {
     isFocusable_ = true;
 }
 
-void Component::disableFocus()
+void Widget::disableFocus()
 {
     isFocusable_ = false;
 }
 
-void Component::updateGlobalPosition()
+void Widget::updateGlobalPosition()
 {
     sf::Vector2f globalBoundsPosition {};
 
@@ -434,33 +434,33 @@ void Component::updateGlobalPosition()
     }
 }
 
-size_t Component::getChildrenCount() const
+size_t Widget::getChildrenCount() const
 {
     return children_.size();
 }
 
-void Component::disableChildrenEvents()
+void Widget::disableChildrenEvents()
 {
     childrenEventsProcessingEnabled_ = false;
 }
-void Component::enableChildrenEvents()
+void Widget::enableChildrenEvents()
 {
     childrenEventsProcessingEnabled_ = true;
 }
 
-void Component::new_focus()
+void Widget::new_focus()
 {
     isFocused_ = true;
     receive(gui::event::FocusGained{});
 }
 
-void Component::new_defocus()
+void Widget::new_defocus()
 {
     isFocused_ = false;
     receive(gui::event::FocusLost{});
 }
 
-Component* Component::getNextChild(Component* child)
+Widget* Widget::getNextChild(Widget* child)
  {
     auto it = std::find_if(std::begin(children_), std::end(children_),
         [child](const auto& c) { return c.get() == child; });
@@ -473,7 +473,7 @@ Component* Component::getNextChild(Component* child)
     return nullptr;
  }
 
-Component* Component::getNextSibling()
+Widget* Widget::getNextSibling()
 {
     if (parent_ == nullptr)
     {
@@ -483,7 +483,7 @@ Component* Component::getNextSibling()
     return parent_->getNextChild(this);
 }
 
-Component* Component::getPreviousChild(Component* child)
+Widget* Widget::getPreviousChild(Widget* child)
 {
     auto it = std::find_if(std::begin(children_), std::end(children_),
         [child](const auto& c) { return c.get() == child; });
@@ -496,7 +496,7 @@ Component* Component::getPreviousChild(Component* child)
     return nullptr;
 }
 
-Component* Component::getPreviousSibling()
+Widget* Widget::getPreviousSibling()
 {
     if (parent_ == nullptr)
     {
@@ -506,7 +506,7 @@ Component* Component::getPreviousSibling()
     return parent_->getPreviousChild(this);
 }
 
-bool Component::hasChildren() const
+bool Widget::hasChildren() const
 {
     return !children_.empty();
 }

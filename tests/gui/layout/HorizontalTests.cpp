@@ -2,12 +2,12 @@
 #include <gmock/gmock.h>
 
 #include "gui/layout/Horizontal.hpp"
-#include "tests/mocks/ComponentSpy.hpp"
+#include "tests/mocks/WidgetSpy.hpp"
 
 namespace gui::layout
 {
 
-using Spy = ::testing::NiceMock<mocks::ComponentSpy>;
+using Spy = ::testing::NiceMock<mocks::WidgetSpy>;
 
 TEST(HorizontalShould, createHorizontalLayout)
 {

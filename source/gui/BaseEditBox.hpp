@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Alignment.hpp"
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/Selection.hpp"
 #include "gui/Text.hpp"
@@ -14,7 +14,7 @@
 namespace gui
 {
 
-class BaseEditBox : public Component
+class BaseEditBox : public Widget
 {
 public:
     ~BaseEditBox();

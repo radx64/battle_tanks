@@ -22,7 +22,7 @@ void StatusBar::onSizeChange()
     auto statusBarHeight = getSize().y;
     
     resize_gadget_.setPosition(
-        Component::getGlobalPosition() + Component::getSize()
+        Widget::getGlobalPosition() + Widget::getSize()
         - sf::Vector2f{window::config::RESIZE_BOX_SIZE, statusBarHeight}); 
 }
 
@@ -31,7 +31,7 @@ void StatusBar::onPositionChange()
     auto statusBarHeight = getSize().y;
 
     resize_gadget_.setPosition(
-        Component::getGlobalPosition() + Component::getSize()
+        Widget::getGlobalPosition() + Widget::getSize()
         - sf::Vector2f{window::config::RESIZE_BOX_SIZE, statusBarHeight});
 }
 

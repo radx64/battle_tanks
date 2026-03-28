@@ -18,7 +18,6 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Button.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Checkbox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Clipboard.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Component.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ContextMenu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/debug/ComponentTree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.cpp
@@ -63,6 +62,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextCursor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextEnteredController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Widget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window/Header.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window/Panel.cpp

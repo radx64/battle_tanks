@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 
 namespace gui { class Label; }
@@ -9,7 +9,7 @@ namespace gui { class Label; }
 namespace gui
 {
 
-class ProgressBar : public Component
+class ProgressBar : public Widget
 {
 public:
     static std::unique_ptr<ProgressBar> create();

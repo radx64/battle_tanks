@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Button.hpp"
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/Label.hpp"
 #include "gui/TextureLibrary.hpp"
 #include "gui/window/Header.hpp"
@@ -79,24 +79,24 @@ Window::Window()
         window->maximizeRestoreAction();
     });
     header_->setSize({getSize().x, window::config::HEADER_HEIGHT});
-    Component::addChild(std::move(header));
+    Widget::addChild(std::move(header));
 
     auto windowPanel = std::make_unique<gui::window::Panel>();
     windowPanel_ = windowPanel.get();
-    Component::addChild(std::move(windowPanel));
+    Widget::addChild(std::move(windowPanel));
 
     auto statusBar = std::make_unique<gui::window::StatusBar>();
     statusBar_ = statusBar.get();
     statusBar_->setSize(getSize());
-    Component::addChild(std::move(statusBar));
+    Widget::addChild(std::move(statusBar));
 
     header_->setPosition(window::config::WINDOW_BORDER_OFFSET);
     windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
 }
 
-void Window::addChild(std::unique_ptr<Component> component)
+void Window::addChild(std::unique_ptr<Widget> widget)
 {
-    windowPanel_->addChild(std::move(component));
+    windowPanel_->addChild(std::move(widget));
 }
 
 void Window::setTitle(const std::string_view& text)
@@ -275,7 +275,7 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 
 void Window::onPositionChange()
 {
-    background_.setPosition(Component::getGlobalPosition());
+    background_.setPosition(Widget::getGlobalPosition());
     setMaximized(false);
 }
 

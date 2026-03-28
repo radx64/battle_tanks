@@ -2,12 +2,12 @@
 
 #include <functional>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui::scrollbar
 {
 
-class Base : public gui::Component
+class Base : public gui::Widget
 {
 public:
     void onValueChange(std::function<void(float)> onChangeCallback);
@@ -17,7 +17,7 @@ protected:
     
     void notifyChange(const float value);
 
-    Component* layout_ptr_;
+    Widget* layout_ptr_;
     std::function<void(float)> onChangeCallback_;
 };
 

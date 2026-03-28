@@ -12,7 +12,7 @@ std::unique_ptr<Vertical> Vertical::create(size_t height)
 
 // TODO addChild and addRow have conflicting interface
 // Both are adding row to the layout
-void Vertical::addChild(std::unique_ptr<Component> child)
+void Vertical::addChild(std::unique_ptr<Widget> child)
 {
     layoutImpl_->addRow(layoutImpl_->getHeight(), Constraint::Auto());
     layoutImpl_->addChild(std::move(child));
@@ -44,7 +44,7 @@ Vertical::Vertical(size_t height)
     auto grid = Grid::create(1, height);
     layoutImpl_ = grid.get();
 
-    Component::addChild(std::move(grid));
+    Widget::addChild(std::move(grid));
 }
 
 void Vertical::onSizeChange()

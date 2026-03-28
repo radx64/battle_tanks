@@ -5,13 +5,13 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Alignment.hpp"
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/Text.hpp"
 
 namespace gui
 {
 
-class Label : public Component
+class Label : public Widget
 {
 public:
     static std::unique_ptr<Label> create(const std::string_view& text);

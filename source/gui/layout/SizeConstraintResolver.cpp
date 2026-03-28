@@ -139,7 +139,7 @@ void SizeConstraintResolver::resolveElementsSizes()
 
     if (remainingWidth < 0.f) 
     {
-        // Not enough space for all fixed components
+        // Not enough space for all fixed widgets
         remainingWidth = 0.f;
         totalPercentageWidth = 0.f; // Don't allow percentages if space is gone
     }

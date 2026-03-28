@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/Image.hpp"
 
@@ -16,7 +16,7 @@ namespace gui { class Label; }
 namespace gui
 {
 
-class ButtonBase : public Component
+class ButtonBase : public Widget
 {
 public:
     void onRender(sf::RenderTexture& renderTexture) override;
@@ -92,7 +92,7 @@ protected:
     void onPositionChange() override;
 
     Image* icon_;
-    Component* layout_;
+    Widget* layout_;
 };
 
 }  // namespace gui

@@ -3,25 +3,25 @@
 namespace gui
 {
 
-Component* hitTestRecursive(Component* component, const gui::event::MousePosition position)
+Widget* hitTestRecursive(Widget* widget, const gui::event::MousePosition position)
 {
-    if (!component->isVisible())
+    if (!widget->isVisible())
         return nullptr;
 
-    for (const auto& child : component->getChildren())
+    for (const auto& child : widget->getChildren())
     {
         auto hitChild = hitTestRecursive(child.get(), position);
         if (hitChild)
             return hitChild;
     }
 
-    if (component->isInside(position))
-        return component;
+    if (widget->isInside(position))
+        return widget;
 
     return nullptr;
 }
 
-Component* getDeepestLastDescendant(Component* node)
+Widget* getDeepestLastDescendant(Widget* node)
 {
     if (!node)
         return nullptr;
@@ -32,7 +32,7 @@ Component* getDeepestLastDescendant(Component* node)
     return node;
 }
 
-Component* getPrevious(Component* node)
+Widget* getPrevious(Widget* node)
 {
     if (!node)
         return nullptr;
@@ -43,14 +43,14 @@ Component* getPrevious(Component* node)
     if (auto parent = node->getParent())
         return parent;
 
-    Component* root = node;            // start from current node
+    Widget* root = node;            // start from current node
     while (root->getParent())          // climb to the top
         root = root->getParent();
 
     return getDeepestLastDescendant(root);
 }
 
-Component* getNext(Component* node)
+Widget* getNext(Widget* node)
 {
     if (!node)
         return nullptr;
@@ -188,7 +188,7 @@ EventStatus GuiController::receive(const event::MouseButtonReleased& mouseButton
 
     updateHover(mouseButtonReleasedEvent.position);
 
-    //TODO generate click and doubleclick events later from here instead checking things in compoenent / buttons
+    //TODO generate click and doubleclick events later from here instead checking things in widgets / buttons
 
     return EventStatus::NotConsumed;
 }
@@ -200,7 +200,7 @@ EventStatus GuiController::receive(const event::MouseMoved& mouseMovedEvent)
 
 EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
 {
-    Component* activeRoot{nullptr};
+    Widget* activeRoot{nullptr};
 
     if (not windowManager_.getOverlays().empty())
     {
@@ -219,12 +219,12 @@ EventStatus GuiController::receive(const event::FocusChange& focusChangeEvent)
 
     if (focusChangeEvent.type == event::FocusChange::Type::Next)
     {
-        auto* next = getNextFocusableComponent(activeRoot, focused_);
+        auto* next = getNextFocusableWidget(activeRoot, focused_);
         setFocus(next);
     }
     else
     {
-        auto* previous = getPreviousFocusableComponent(activeRoot, focused_);
+        auto* previous = getPreviousFocusableWidget(activeRoot, focused_);
         setFocus(previous);
     }
 
@@ -258,9 +258,9 @@ EventStatus GuiController::receive(const event::TextEntered& textEnteredEvent)
     return EventStatus::NotConsumed;
 }
 
-Component* GuiController::hitTestWindowsOnly(const gui::event::MousePosition position)
+Widget* GuiController::hitTestWindowsOnly(const gui::event::MousePosition position)
 {
-    Component* hit = nullptr;
+    Widget* hit = nullptr;
 
     // Try active window first, then inactive windows, and finally main window
     if (auto* activeWindow = windowManager_.getActiveWindow())
@@ -279,16 +279,16 @@ Component* GuiController::hitTestWindowsOnly(const gui::event::MousePosition pos
 
     if (not hit)
     {
-        // TODO: main window should be handled in some better way, maybe it should be also a window with some special properties instead of just component
+        // TODO: main window should be handled in some better way, maybe it should be also a window with some special properties instead of just widget
         hit = hitTestRecursive(&windowManager_.mainWindow(), position);
     }
 
     return hit;
 }
 
-Component* GuiController::hitTestOverlaysOnly(const gui::event::MousePosition position)
+Widget* GuiController::hitTestOverlaysOnly(const gui::event::MousePosition position)
 {
-    Component* hit = nullptr;
+    Widget* hit = nullptr;
 
     // First check overlays, they are on top of everything
     auto& overlays = windowManager_.getOverlays();
@@ -308,7 +308,7 @@ Component* GuiController::hitTestOverlaysOnly(const gui::event::MousePosition po
     return nullptr;
 }
 
-Component* GuiController::hitTest(const gui::event::MousePosition position)
+Widget* GuiController::hitTest(const gui::event::MousePosition position)
 {
     if (windowManager_.hasOverlays())
     {
@@ -327,9 +327,9 @@ Component* GuiController::hitTest(const gui::event::MousePosition position)
     return nullptr;
 }
 
-Component* GuiController::getNextFocusableComponent(Component* root, Component* current)
+Widget* GuiController::getNextFocusableWidget(Widget* root, Widget* current)
 {
-    Component* next = getNext(current);
+    Widget* next = getNext(current);
 
     while (next)
     {
@@ -342,9 +342,9 @@ Component* GuiController::getNextFocusableComponent(Component* root, Component* 
     return root;
 }
 
-Component* GuiController::getPreviousFocusableComponent(Component* root, Component* current)
+Widget* GuiController::getPreviousFocusableWidget(Widget* root, Widget* current)
 {
-    Component* next = getPrevious(current);
+    Widget* next = getPrevious(current);
 
     while (next)
     {
@@ -357,15 +357,15 @@ Component* GuiController::getPreviousFocusableComponent(Component* root, Compone
     return root;
 }
 
-void GuiController::setFocus(Component* component)
+void GuiController::setFocus(Widget* widget)
 {
-    if (focused_ == component)
+    if (focused_ == widget)
     {
         return;
     }
 
     if (focused_) focused_->defocus();
-    focused_ = component;
+    focused_ = widget;
     if (focused_) focused_->focus();
 }
 

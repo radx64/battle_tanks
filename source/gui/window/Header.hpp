@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/StyleSheet.hpp"
 
 namespace gui { class IconButton; }
@@ -13,7 +13,7 @@ namespace gui { class Label; }
 namespace gui::window
 {
 
-class Header : public Component
+class Header : public Widget
 {
 public:
     Header();

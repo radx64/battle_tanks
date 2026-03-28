@@ -4,12 +4,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <gui/Component.hpp>
+#include "gui/Widget.hpp"
 
 namespace gui
 {
 
-class Image : public Component
+class Image : public Widget
 {
 public:
     static std::unique_ptr<Image> create(const sf::Texture& texture);

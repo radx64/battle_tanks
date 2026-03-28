@@ -51,7 +51,7 @@ void Grid::setVerticalPadding(const size_t padding)
     recalculateChildrenBounds();
 }
 
-void Grid::addChild(std::unique_ptr<Component> child)
+void Grid::addChild(std::unique_ptr<Widget> child)
 {
     for (size_t y = 0; y < height_; y++)
     {
@@ -62,7 +62,7 @@ void Grid::addChild(std::unique_ptr<Component> child)
                 continue;
             }
             grid_[x][y] = child.get();
-            Component::addChild(std::move(child));
+            Widget::addChild(std::move(child));
             recalculateChildrenBounds();
             return;
         }
@@ -97,10 +97,10 @@ bool Grid::removeColumn(const size_t index)
     width_--;
     for (size_t y = 0; y < height_; y++)
     {
-        auto* component = grid_[index][y];
-        if (component != nullptr)
+        auto* widget = grid_[index][y];
+        if (widget != nullptr)
         {
-            removeChild(component);
+            removeChild(widget);
         }
     }
     grid_.erase(std::begin(grid_) + index);
@@ -190,7 +190,7 @@ void Grid::setRowSize(const size_t index, const Constraint& constraint)
     rowConstraintLayout_.setElementSize(index, constraint);
 }
 
-void Grid::setElementAt(const size_t x, const size_t y, std::unique_ptr<Component> element)
+void Grid::setElementAt(const size_t x, const size_t y, std::unique_ptr<Widget> element)
 {
     if (x >= width_ || y >= height_)
     {
@@ -211,11 +211,11 @@ void Grid::setElementAt(const size_t x, const size_t y, std::unique_ptr<Componen
     else
     {
         grid_[x][y] = element.get();
-        Component::addChild(std::move(element));
+        Widget::addChild(std::move(element));
     }
     recalculateChildrenBounds();
 }
-Component* Grid::getElementAt(const size_t x, const size_t y) const
+Widget* Grid::getElementAt(const size_t x, const size_t y) const
 {
     if (x >= width_ || y >= height_)
     {

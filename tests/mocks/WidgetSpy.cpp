@@ -1,35 +1,35 @@
-#include "ComponentSpy.hpp"
+#include "WidgetSpy.hpp"
 
 namespace mocks
 {
 
-ComponentSpy::~ComponentSpy()
+WidgetSpy::~WidgetSpy()
 {
     logger_.debug("Dying");
     die();
 }   
 
-void ComponentSpy::onRender(sf::RenderTexture&)
+void WidgetSpy::onRender(sf::RenderTexture&)
 {
     logger_.debug("onRender called");
     render_mock();
 }
 
-gui::EventStatus ComponentSpy::on(const gui::event::FocusGained&)
+gui::EventStatus WidgetSpy::on(const gui::event::FocusGained&)
 {
     logger_.debug("Focus gained");
     focusGained();
     return gui::EventStatus::Consumed;
 }
 
-gui::EventStatus ComponentSpy::on(const gui::event::FocusLost&)
+gui::EventStatus WidgetSpy::on(const gui::event::FocusLost&)
 {
     logger_.debug("Focus lost");
     focusLost();
     return gui::EventStatus::Consumed;
 }  
  
-void ComponentSpy::makeSpyFocusable()
+void WidgetSpy::makeSpyFocusable()
 {
     logger_.debug("Spy made focusable");
     enableFocus();

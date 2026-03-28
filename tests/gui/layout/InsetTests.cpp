@@ -3,19 +3,19 @@
 
 #include "gui/layout/Inset.hpp"
 
-#include "tests/mocks/ComponentSpy.hpp"
+#include "tests/mocks/WidgetSpy.hpp"
 
 namespace gui::layout
 {
 
 auto makeSpy()
 {
-    auto spy = std::make_unique<mocks::ComponentSpy>();
+    auto spy = std::make_unique<mocks::WidgetSpy>();
     EXPECT_CALL(*spy, die()).Times(1);
     return spy;
 }
 
-TEST(InsetShould, offsetChildComponentFromItsParentByPixels)
+TEST(InsetShould, offsetChildWidgetFromItsParentByPixels)
 {
     auto sut = Inset::create(Constraint::Pixels(10));
     auto child = makeSpy();
@@ -35,7 +35,7 @@ TEST(InsetShould, offsetChildComponentFromItsParentByPixels)
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(10.0f, 10.0f));
 }
 
-TEST(InsetShould, offsetChildComponentFromItsParentByPercentage)
+TEST(InsetShould, offsetChildWidgetFromItsParentByPercentage)
 {
     auto sut = Inset::create(Constraint::Percent(10));
     auto child = makeSpy();
@@ -55,7 +55,7 @@ TEST(InsetShould, offsetChildComponentFromItsParentByPercentage)
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(40.0f, 40.0f));
 }
 
-TEST(InsetShould, doNotoffsetChildComponentFromItsParentWhenAuto)
+TEST(InsetShould, doNotoffsetChildWidgetFromItsParentWhenAuto)
 {
     auto sut = Inset::create(Constraint::Auto());
     auto child = makeSpy();
@@ -75,7 +75,7 @@ TEST(InsetShould, doNotoffsetChildComponentFromItsParentWhenAuto)
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
 }
 
-TEST(InsetShould, setChildComponentSizeToParentWhenInsetIsZeroPixels)
+TEST(InsetShould, setChildWidgetSizeToParentWhenInsetIsZeroPixels)
 {
     auto sut = Inset::create(Constraint::Pixels(0));
     auto child = makeSpy();
@@ -95,7 +95,7 @@ TEST(InsetShould, setChildComponentSizeToParentWhenInsetIsZeroPixels)
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
 }
 
-TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsZeroPercent)
+TEST(InsetShould, setChildWidgetSizeToZeroWhenInsetIsZeroPercent)
 {
     auto sut = Inset::create(Constraint::Percent(0));
     auto child = makeSpy();
@@ -113,7 +113,7 @@ TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsZeroPercent)
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f)); 
 }
 
-TEST(InsetShould, setChildComponentSizeProperlyWhenInsetIsNegativeInPixels)
+TEST(InsetShould, setChildWidgetSizeProperlyWhenInsetIsNegativeInPixels)
 {
     auto sut = Inset::create(Constraint::Pixels(-10));
     auto child = makeSpy();
@@ -133,7 +133,7 @@ TEST(InsetShould, setChildComponentSizeProperlyWhenInsetIsNegativeInPixels)
     EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(-10.0f, -10.0f));
 }
 
-TEST(InsetShould, setChildComponentSizeToZeroWhenInsetIsNegativeInPercent)
+TEST(InsetShould, setChildWidgetSizeToZeroWhenInsetIsNegativeInPercent)
 {
     auto sut = Inset::create(Constraint::Percent(-10));
     auto child = makeSpy();

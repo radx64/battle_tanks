@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/StyleSheet.hpp"
 #include "gui/window/Config.hpp"
@@ -22,11 +22,11 @@ namespace gui
 
 // Class for main application window layer
 // It should always be as a backlayer
-// Can be used to place GUI components
+// Can be used to place GUI widgets
 // on screen
 // Can't be moved
 // It's size is application window size
-class MainWindow : public Component
+class MainWindow : public Widget
 {
 public:
     using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
@@ -44,7 +44,7 @@ private:
     ContextMenuHandler contextMenuHandler_;
 };
 
-class Window : public Component
+class Window : public Widget
 {
 public:
     using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
@@ -63,7 +63,7 @@ public:
     bool isActive() const;
 
     bool isIdle() const;
-    void addChild(std::unique_ptr<Component> child) override;
+    void addChild(std::unique_ptr<Widget> child) override;
     
 protected:
     enum class State

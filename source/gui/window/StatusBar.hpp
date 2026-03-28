@@ -2,14 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui::window
 {
 
 //TODO: add statusbar inset texture
 
-class StatusBar : public Component
+class StatusBar : public Widget
 {
 public:
     StatusBar();

@@ -20,7 +20,7 @@ class Vertical : public Base
 public:
     static std::unique_ptr<Vertical> create(size_t height = 0);
 
-    void addChild(std::unique_ptr<Component> child) override;
+    void addChild(std::unique_ptr<Widget> child) override;
     bool addRow(const size_t index, const Constraint& constraint);
     bool removeRow(const size_t index);
     void setRowSize(const size_t index, const Constraint& constraint);

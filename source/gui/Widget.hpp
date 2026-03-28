@@ -12,18 +12,17 @@ namespace gui
 {
 
 // TODO: Notes to document later in some better way
-// Component is basic object type for gui assembly
+// Widget is basic object type for gui assembly
 // Root element need to be handled by user
 // Children elements are freed by parent during destruction
 // You need to render only parent to enable rendering of children
 
-// TODO: I hate this Component name, rename it to Widget later.
-class Component : public EventReceiver
+class Widget : public EventReceiver
 {
 public:
-    Component(const std::source_location location =
+    Widget(const std::source_location location =
                std::source_location::current());
-    virtual ~Component();
+    virtual ~Widget();
 
     uint32_t getId() const;
     const std::string_view getDebugName() const;
@@ -44,20 +43,20 @@ public:
     bool isInside(const event::MousePosition& position) const;
 
     const sf::Vector2f getGlobalPosition() const;
-    virtual void addChild(std::unique_ptr<Component> child);
-    virtual void removeChild(const Component* child);
-    Component* getParent() const;
-    Component* getRoot();
-    const std::vector<std::unique_ptr<Component>>& getChildren() const;
+    virtual void addChild(std::unique_ptr<Widget> child);
+    virtual void removeChild(const Widget* child);
+    Widget* getParent() const;
+    Widget* getRoot();
+    const std::vector<std::unique_ptr<Widget>>& getChildren() const;
 
     void focus();
     void defocus();
     bool isFocused() const;
     void defocusWithAllChildren();
-    void defocusChildrenExcept(const Component* focusedChild);
-    void selectFocusedChild(Component* focusedChild);
+    void defocusChildrenExcept(const Widget* focusedChild);
+    void selectFocusedChild(Widget* focusedChild);
     bool isFocusable() const;
-    void enableFocus(); // enable component to receive focus
+    void enableFocus(); // widget can receive focus
     void disableFocus();
 
     void disableChildrenEvents();
@@ -84,7 +83,7 @@ protected:
     /*
         These on methods should be overrided to define handling
         of mouse and keyboards events
-        those are called when component receives an event
+        These are called when widget receives an event
         first forwards it to it's children
         and then handles it itself
         so this is some kind bubbling mechanism
@@ -117,21 +116,21 @@ protected:
 
     sf::Vector2f localPosition_;   // offset from parent position
     sf::FloatRect bounds_;         // bounds box in global space position
-    Component* parent_;
+    Widget* parent_;
     bool childrenEventsProcessingEnabled_;
-    std::vector<std::unique_ptr<Component>> children_;
+    std::vector<std::unique_ptr<Widget>> children_;
 
     // TODO: engine::TasksQueue can be considered to handle pending add/remove children 
     // operations instead of vector of pending operations and applyPendingOperations method 
-    std::vector<std::unique_ptr<Component>> pendingChildrenToAdd_;
-    std::vector<const Component*> pendingChildrenToRemove_;
+    std::vector<std::unique_ptr<Widget>> pendingChildrenToAdd_;
+    std::vector<const Widget*> pendingChildrenToRemove_;
 
-    Component* focusedChild_;
+    Widget* focusedChild_;
     bool isVisible_;
     
     bool isFocused_;
-    bool isFocusable_; // can component get focus, if not it should still forward events to children
-    bool isProcessingEvents_; // when processing events, addChild, removeChild will be posponed to not break current childred iterators. 
+    bool isFocusable_;          // can widget get focus, if not it should still forward events to children
+    bool isProcessingEvents_;   // when processing events, addChild, removeChild will be posponed to not break current childred iterators. 
     uint32_t id_;
     std::string debugName_;
     engine::Logger logger_;
@@ -140,11 +139,11 @@ public:
     void new_focus();
     void new_defocus();
     bool hasChildren() const;
-    Component* getNextChild(Component* child);
-    Component* getNextSibling();
+    Widget* getNextChild(Widget* child);
+    Widget* getNextSibling();
 
-    Component* getPreviousChild(Component* child);
-    Component* getPreviousSibling();
+    Widget* getPreviousChild(Widget* child);
+    Widget* getPreviousSibling();
 };
 
 }  // namespace gui

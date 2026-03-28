@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 
 namespace gui {class TextButton;}
@@ -15,7 +15,7 @@ namespace gui {class TextButton;}
 namespace gui
 {
 
-class Overlay : public Component
+class Overlay : public Widget
 {
 public:
     Overlay();
@@ -80,7 +80,7 @@ protected:
     void updateSubmenu(gui::TextButton* buttonPtr, const Item& item, ptrdiff_t index);
 
     std::vector<Item> items_;
-    Component* layout_ = nullptr;
+    Widget* layout_ = nullptr;
     ContextMenu* parentMenu_;
     SubmenuEntity openSubmenu_;
 

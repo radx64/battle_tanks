@@ -3,12 +3,12 @@
 
 #include "gui/GuiController.hpp"
 
-#include "tests/mocks/ComponentSpy.hpp"
+#include "tests/mocks/WidgetSpy.hpp"
 
 namespace gui
 {
 
-using ComponentSpy = mocks::ComponentSpy;
+using WidgetSpy = mocks::WidgetSpy;
 
 class GuiControllerFocusHandlingShould : public ::testing::Test
 {
@@ -18,7 +18,7 @@ public:
     { }
 
 /*
-    Components hierarchy: (all focusable)
+    Widgets hierarchy: (all focusable)
     root
         child_1
             child_1_1
@@ -31,17 +31,17 @@ public:
 */
 
 protected:
-    std::unique_ptr<::testing::NiceMock<ComponentSpy>> buildComponentsTree()
+    std::unique_ptr<::testing::NiceMock<WidgetSpy>> buildWidgetsTree()
     {
-        auto root = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_1_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_1_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_2_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_2_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_2_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-        auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+        auto root = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_1_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_1_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_2_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_2_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_2_3 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+        auto child_3 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
         root->enableFocus();
         child_1->enableFocus();
@@ -89,7 +89,7 @@ protected:
         return root; 
     }
 
-    void expectFocusGainedOnlyOn(ComponentSpy* expected)
+    void expectFocusGainedOnlyOn(WidgetSpy* expected)
     {
         for (auto* spy : allSpies_)
         {
@@ -104,7 +104,7 @@ protected:
         }
     }
 
-    void expectFocusLostOnlyOn(ComponentSpy* expected)
+    void expectFocusLostOnlyOn(WidgetSpy* expected)
     {
         for (auto* spy : allSpies_)
         {
@@ -127,23 +127,23 @@ protected:
         }
     };
 
-    ComponentSpy* root_ptr_;
-    ComponentSpy* child_1_ptr_;
-    ComponentSpy* child_1_1_ptr_;
-    ComponentSpy* child_1_2_ptr_;
-    ComponentSpy* child_2_ptr_;
-    ComponentSpy* child_2_1_ptr_;
-    ComponentSpy* child_2_2_ptr_;
-    ComponentSpy* child_2_3_ptr_;
-    ComponentSpy* child_3_ptr_;
+    WidgetSpy* root_ptr_;
+    WidgetSpy* child_1_ptr_;
+    WidgetSpy* child_1_1_ptr_;
+    WidgetSpy* child_1_2_ptr_;
+    WidgetSpy* child_2_ptr_;
+    WidgetSpy* child_2_1_ptr_;
+    WidgetSpy* child_2_2_ptr_;
+    WidgetSpy* child_2_3_ptr_;
+    WidgetSpy* child_3_ptr_;
 
-    std::vector<ComponentSpy*> allSpies_;
+    std::vector<WidgetSpy*> allSpies_;
     GuiController sut_;
 };
 
 TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingForward)
 {
-    sut_.mainWindow().addChild(buildComponentsTree());
+    sut_.mainWindow().addChild(buildWidgetsTree());
 
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Next}); // focus main window
     EXPECT_CALL(*root_ptr_, focusGained());
@@ -190,7 +190,7 @@ TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingForward)
 
 TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingBackwards)
 {
-    sut_.mainWindow().addChild(buildComponentsTree());
+    sut_.mainWindow().addChild(buildWidgetsTree());
 
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Previous}); // focus main window
 
@@ -230,9 +230,9 @@ TEST_F(GuiControllerFocusHandlingShould, properlyFocusElementsGoingBackwards)
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Previous}); // focus root inside of a main window
 }
 
-TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableCompoenentGoingForward)
+TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableWidgetGoingForward)
 {
-    sut_.mainWindow().addChild(buildComponentsTree());
+    sut_.mainWindow().addChild(buildWidgetsTree());
 
     root_ptr_->disableFocus();
 
@@ -246,9 +246,9 @@ TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableCompoenentGoingForward)
     sut_.receive(event::FocusChange{.type = event::FocusChange::Type::Next}); // focus 1.1 child
 }
 
-TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableCompoenentGoingBackwards)
+TEST_F(GuiControllerFocusHandlingShould, skipNonFocusableWidgetGoingBackwards)
 {
-    sut_.mainWindow().addChild(buildComponentsTree());
+    sut_.mainWindow().addChild(buildWidgetsTree());
 
     child_3_ptr_->disableFocus();
 

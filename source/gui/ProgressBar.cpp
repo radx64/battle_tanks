@@ -121,13 +121,13 @@ void ProgressBar::onRender(sf::RenderTexture& renderTexture)
 
 void ProgressBar::recalculateSize()
 {
-    auto componentSize = getSize();
-    background_.setSize(componentSize);
+    auto widgetSize = getSize();
+    background_.setSize(widgetSize);
 
-    auto componentSizeWithOffset = componentSize - BORDER_OFFSET * 2.f;
-    bar_.setSize(sf::Vector2f{componentSizeWithOffset.x * progress_, componentSizeWithOffset.y});
+    auto widgetSizeWithOffset = widgetSize - BORDER_OFFSET * 2.f;
+    bar_.setSize(sf::Vector2f{widgetSizeWithOffset.x * progress_, widgetSizeWithOffset.y});
     
-    text_->setSize(componentSize);    
+    text_->setSize(widgetSize);    
 }
 
 }  // namespace

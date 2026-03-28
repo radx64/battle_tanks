@@ -3,25 +3,25 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
-#include "tests/mocks/ComponentSpy.hpp"
+#include "tests/mocks/WidgetSpy.hpp"
 
 namespace gui
 {
 
-using ComponentSpy = mocks::ComponentSpy;
+using WidgetSpy = mocks::WidgetSpy;
 
 /***************************
      POINTERS MGMT TESTS
 ****************************/
 
-TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyed)
+TEST(WidgetShould, handleChildObjectsDestructionWhenDestroyed)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_3 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
     auto child_1_ptr = child_1.get();
     auto child_2_ptr = child_2.get();
@@ -48,12 +48,12 @@ TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyed)
     sut_.reset();
 }
 
-TEST(ComponentShould, beAbleToRemoveChildrenOnDemand)
+TEST(WidgetShould, beAbleToRemoveChildrenOnDemand)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_3 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
     auto child_1_ptr = child_1.get();
     auto child_2_ptr = child_2.get();
@@ -78,12 +78,12 @@ TEST(ComponentShould, beAbleToRemoveChildrenOnDemand)
     ::testing::Mock::VerifyAndClearExpectations(child_3_ptr);
 }
 
-TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyedEvenInHierarchy)
+TEST(WidgetShould, handleChildObjectsDestructionWhenDestroyedEvenInHierarchy)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_3 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_3 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
     auto child_1_ptr = child_1.get();
     auto child_2_ptr = child_2.get();
@@ -106,9 +106,9 @@ TEST(ComponentShould, handleChildObjectsDestructionWhenDestroyedEvenInHierarchy)
 
 // This test is disabled until i will figure out how to properly mock rendering
 // in X11 headless environment like github actions
-TEST(ComponentShould, callOnRenderMethodOnlyWhenComponentIsVisible)
+TEST(WidgetShould, callOnRenderMethodOnlyWhenWidgetIsVisible)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
     auto sut_ptr = sut_.get();
 
     sf::RenderTexture guiRenderTexture;
@@ -125,9 +125,9 @@ TEST(ComponentShould, callOnRenderMethodOnlyWhenComponentIsVisible)
 /*********************
      DRAWING TESTS
 **********************/
-TEST(ComponentShould, handleItsVisibilityParameter)
+TEST(WidgetShould, handleItsVisibilityParameter)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
     sut_->setVisibility(false);
 
     EXPECT_FALSE(sut_->isVisible());
@@ -138,11 +138,11 @@ TEST(ComponentShould, handleItsVisibilityParameter)
 
 // This test is disabled until i will figure out how to properly mock rendering
 // in X11 headless environment like github actions
-TEST(ComponentShould, renderChildrenOnlyWhenComponentItselfIsVisible)
+TEST(WidgetShould, renderChildrenOnlyWhenWidgetItselfIsVisible)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_1 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto child_2 = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_1 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto child_2 = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
     auto sut_ptr = sut_.get();
     auto child_1_ptr = child_1.get();
@@ -168,18 +168,18 @@ TEST(ComponentShould, renderChildrenOnlyWhenComponentItselfIsVisible)
 /*******************************
       BOUNDS HANDLING TESTS
 ********************************/
-TEST(ComponentShould, setAndGetItsSize)
+TEST(WidgetShould, setAndGetItsSize)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
     auto required_size = sf::Vector2f{2.f, 9.f};
     sut_->setSize(required_size);
 
     EXPECT_EQ(sut_->getSize(), required_size);
 }
 
-TEST(ComponentShould, KnowOwnPositionWithoutParent)
+TEST(WidgetShould, KnowOwnPositionWithoutParent)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
     sut_->setPosition(sf::Vector2f{10.f,20.f});
 
@@ -188,10 +188,10 @@ TEST(ComponentShould, KnowOwnPositionWithoutParent)
     EXPECT_EQ(sut_->getGlobalPosition(), expected_position);
 }
 
-TEST(ComponentShould, KnowOwnPositionWithParent)
+TEST(WidgetShould, KnowOwnPositionWithParent)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
-    auto parent_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
+    auto parent_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
     parent_->setPosition(sf::Vector2f{10.f,20.f});
     sut_->setPosition(sf::Vector2f{20.f,10.f});
@@ -204,9 +204,9 @@ TEST(ComponentShould, KnowOwnPositionWithParent)
     EXPECT_EQ(sut_ptr->getGlobalPosition(), expected_global_position);
 }
 
-TEST(ComponentShould, DetectIfPointIsInsideOfComponent)
+TEST(WidgetShould, DetectIfPointIsInsideOfWidget)
 {
-    auto sut_ = std::make_unique<::testing::NiceMock<ComponentSpy>>();
+    auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
     sut_->setPosition(sf::Vector2f{20.f,10.f});
     sut_->setSize(sf::Vector2f{10.f,10.f});
 

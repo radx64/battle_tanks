@@ -17,7 +17,7 @@
 namespace calculator
 {
 
-class CalculatorComponent : public gui::Component
+class CalculatorWidget : public gui::Widget
 {
 public:
 
@@ -30,7 +30,7 @@ public:
         Divide,
     };
 
-    CalculatorComponent()
+    CalculatorWidget()
     {
     }
 
@@ -88,7 +88,7 @@ void appendTextToEditBox(gui::EditBox* editBox, const std::string& text)
     editBox->setText(currentText);
 }
 
-std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
+std::unique_ptr<gui::Widget> createCalculator(const sf::Vector2f& initalSize)
 {
     auto verticalLayout = gui::layout::Vertical::create();
     verticalLayout->setSize(initalSize);
@@ -104,8 +104,8 @@ std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
     horizontalLayout->setPadding(10);
 
     /* TOP BUTTONS */
-    auto calculatorComponent = std::make_unique<CalculatorComponent>();
-    CalculatorComponent* calculatorComponentPtr = calculatorComponent.get(); 
+    auto calculatorWidget = std::make_unique<CalculatorWidget>();
+    CalculatorWidget* calculatorWidgetPtr = calculatorWidget.get(); 
 
     auto backspaceButton = gui::TextButton::create("Backspace");
     backspaceButton->onClick([editBoxPtr](){
@@ -120,13 +120,13 @@ std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
     CEButton->onClick([editBoxPtr](){editBoxPtr->setText("");});
 
     auto CButton = gui::TextButton::create("C");
-    CButton->onClick([editBoxPtr, calculatorComponentPtr](){
+    CButton->onClick([editBoxPtr, calculatorWidgetPtr](){
         editBoxPtr->setText("");
-        calculatorComponentPtr->storeValue("0");
-        calculatorComponentPtr->storeOperation(CalculatorComponent::Operation::None);
+        calculatorWidgetPtr->storeValue("0");
+        calculatorWidgetPtr->storeOperation(CalculatorWidget::Operation::None);
     });
 
-    horizontalLayout->addChild(std::move(calculatorComponent));  // This is a trick to store calculatorComponent in the layout :D
+    horizontalLayout->addChild(std::move(calculatorWidget));  // This is a trick to store calculatorWidget in the layout :D
     horizontalLayout->addChild(std::move(backspaceButton));
     horizontalLayout->addChild(std::move(CEButton));
     horizontalLayout->addChild(std::move(CButton));
@@ -151,9 +151,9 @@ std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
     button9->onClick([editBoxPtr](){appendTextToEditBox(editBoxPtr, "9");});
 
     auto buttonDiv = gui::TextButton::create("/");
-    buttonDiv->onClick([editBoxPtr, calculatorComponentPtr](){
-        calculatorComponentPtr->storeValue(editBoxPtr->getText());
-        calculatorComponentPtr->storeOperation(CalculatorComponent::Operation::Divide);
+    buttonDiv->onClick([editBoxPtr, calculatorWidgetPtr](){
+        calculatorWidgetPtr->storeValue(editBoxPtr->getText());
+        calculatorWidgetPtr->storeOperation(CalculatorWidget::Operation::Divide);
         editBoxPtr->setText("");});
 
     auto buttonSqrt = gui::TextButton::create("sqrt");
@@ -178,9 +178,9 @@ std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
     button6->onClick([editBoxPtr](){appendTextToEditBox(editBoxPtr, "6");});
 
     auto buttonMul = gui::TextButton::create("*");
-    buttonMul->onClick([editBoxPtr, calculatorComponentPtr](){
-        calculatorComponentPtr->storeValue(editBoxPtr->getText());
-        calculatorComponentPtr->storeOperation(CalculatorComponent::Operation::Multiply);
+    buttonMul->onClick([editBoxPtr, calculatorWidgetPtr](){
+        calculatorWidgetPtr->storeValue(editBoxPtr->getText());
+        calculatorWidgetPtr->storeOperation(CalculatorWidget::Operation::Multiply);
         editBoxPtr->setText("");});
 
     auto buttonPercent = gui::TextButton::create("%");
@@ -205,9 +205,9 @@ std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
     button3->onClick([editBoxPtr](){appendTextToEditBox(editBoxPtr, "3");});
 
     auto buttonSub = gui::TextButton::create("-");
-    buttonSub->onClick([editBoxPtr, calculatorComponentPtr](){
-        calculatorComponentPtr->storeValue(editBoxPtr->getText());
-        calculatorComponentPtr->storeOperation(CalculatorComponent::Operation::Subtract);
+    buttonSub->onClick([editBoxPtr, calculatorWidgetPtr](){
+        calculatorWidgetPtr->storeValue(editBoxPtr->getText());
+        calculatorWidgetPtr->storeOperation(CalculatorWidget::Operation::Subtract);
         editBoxPtr->setText("");});
     auto button1overX = gui::TextButton::create("1/x");
 
@@ -243,17 +243,17 @@ std::unique_ptr<gui::Component> createCalculator(const sf::Vector2f& initalSize)
     buttonDot->onClick([editBoxPtr](){appendTextToEditBox(editBoxPtr, ".");});
 
     auto buttonAdd = gui::TextButton::create("+");
-    buttonAdd->onClick([editBoxPtr, calculatorComponentPtr](){
-        calculatorComponentPtr->storeValue(editBoxPtr->getText());
-        calculatorComponentPtr->storeOperation(CalculatorComponent::Operation::Add);
+    buttonAdd->onClick([editBoxPtr, calculatorWidgetPtr](){
+        calculatorWidgetPtr->storeValue(editBoxPtr->getText());
+        calculatorWidgetPtr->storeOperation(CalculatorWidget::Operation::Add);
         editBoxPtr->setText("");});
 
     auto buttonEqual = gui::TextButton::create("=");
-    buttonEqual->onClick([editBoxPtr, calculatorComponentPtr](){
-        auto result = calculatorComponentPtr->getResultWith(editBoxPtr->getText());
+    buttonEqual->onClick([editBoxPtr, calculatorWidgetPtr](){
+        auto result = calculatorWidgetPtr->getResultWith(editBoxPtr->getText());
         const std::string resultString = std::to_string(result);
         editBoxPtr->setText(resultString);
-        calculatorComponentPtr->storeValue(resultString);
+        calculatorWidgetPtr->storeValue(resultString);
     });
 
     gridLayout->addChild(std::move(button0));

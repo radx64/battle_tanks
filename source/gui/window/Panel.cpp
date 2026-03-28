@@ -9,10 +9,10 @@ Panel::Panel()
 {
 }
 
-void Panel::addChild(std::unique_ptr<Component> child)
+void Panel::addChild(std::unique_ptr<Widget> child)
 {
     child->setSize(getSize());
-    Component::addChild(std::move(child));
+    Widget::addChild(std::move(child));
 }
 
 void Panel::onSizeChange()

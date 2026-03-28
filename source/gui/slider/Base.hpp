@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/slider/LayoutBuilder.hpp"
 #include "gui/TextureLibrary.hpp"
@@ -18,7 +18,7 @@ namespace gui::slider
 */
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-class Base : public Component
+class Base : public Widget
 {
 public:
     void onValueChange(std::function<void(float)> onValueChangeCallback);

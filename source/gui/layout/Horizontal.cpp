@@ -12,7 +12,7 @@ std::unique_ptr<Horizontal> Horizontal::create(size_t width)
 // TODO: addChild and addColumn have conflicting interface
 // Both are adding row to the layout
 
-void Horizontal::addChild(std::unique_ptr<Component> child)
+void Horizontal::addChild(std::unique_ptr<Widget> child)
 {
     layoutImpl_->addColumn(layoutImpl_->getWidth(), Constraint::Auto());
     layoutImpl_->addChild(std::move(child));
@@ -44,7 +44,7 @@ Horizontal::Horizontal(size_t width)
     auto grid = Grid::create(width, 1);    
     layoutImpl_ = grid.get();
 
-    Component::addChild(std::move(grid));
+    Widget::addChild(std::move(grid));
 }
 
 void Horizontal::onSizeChange()

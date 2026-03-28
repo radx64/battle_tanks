@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui::debug
 {
@@ -12,14 +12,14 @@ void toggle()
     debug_enabled = !debug_enabled;
 }
 
-void drawBounds(sf::RenderTarget& renderTarget, const Component* component)
+void drawBounds(sf::RenderTarget& renderTarget, const Widget* widget)
 {
     if (not debug_enabled) return;
 
     sf::RectangleShape bound_rect;
-    bound_rect.setSize(component->getSize());
-    bound_rect.setPosition(component->getGlobalPosition());
-    if (component->isFocused())
+    bound_rect.setSize(widget->getSize());
+    bound_rect.setPosition(widget->getGlobalPosition());
+    if (widget->isFocused())
     {
         bound_rect.setFillColor(sf::Color(255,255,0,127));
         bound_rect.setOutlineColor(sf::Color::Yellow);

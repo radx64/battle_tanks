@@ -3,14 +3,14 @@
 #include <memory>
 #include <functional>
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 #include <SFML/Graphics.hpp>
 
 namespace gui
 {
 
-class Checkbox : public Component
+class Checkbox : public Widget
 {
 public:
     static std::unique_ptr<Checkbox> create(const bool isChecked);

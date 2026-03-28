@@ -1,27 +1,27 @@
 #include "gui/debug/ComponentTree.hpp"
 
-#include "gui/Component.hpp"
+#include "gui/Widget.hpp"
 
 #include <fmt/format.h>
 
 namespace gui::debug
 {
 
-void ComponentTree::print(const Component* component, const std::string& prefix, bool isLast)
+void ComponentTree::print(const Widget* widget, const std::string& prefix, bool isLast)
 {
-    fmt::print("{}{}{}\n", prefix, isLast ? "└── " : "├── ", component->getId());
+    fmt::print("{}{}{}\n", prefix, isLast ? "└── " : "├── ", widget->getId());
 
     
     std::string childPrefix = prefix + (isLast ? "    " : "│   ");
     
-    const bool notHasChildren = component->getChildren().empty();
-    fmt::print("{}{}position: x: {}, y: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), component->getGlobalPosition().x, component->getGlobalPosition().y);
-    fmt::print("{}{}size: width: {}, height: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), component->getSize().x, component->getSize().y);
-    fmt::print("{}{}isFocusable: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), component->isFocusable());
-    fmt::print("{}{}isVisible: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), component->isVisible());
-    for (size_t i = 0; i < component->getChildren().size(); ++i) {
-        const bool last = (i == component->getChildren().size() - 1);
-        print(component->getChildren()[i].get(), childPrefix, last);
+    const bool notHasChildren = widget->getChildren().empty();
+    fmt::print("{}{}position: x: {}, y: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), widget->getGlobalPosition().x, widget->getGlobalPosition().y);
+    fmt::print("{}{}size: width: {}, height: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), widget->getSize().x, widget->getSize().y);
+    fmt::print("{}{}isFocusable: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), widget->isFocusable());
+    fmt::print("{}{}isVisible: {}\n", childPrefix, (notHasChildren ? "    " : "│   "), widget->isVisible());
+    for (size_t i = 0; i < widget->getChildren().size(); ++i) {
+        const bool last = (i == widget->getChildren().size() - 1);
+        print(widget->getChildren()[i].get(), childPrefix, last);
     }
 }
 
