@@ -9,6 +9,8 @@
 #include "gui/Text.hpp"
 #include "gui/StyleSheet.hpp"
 
+#include <cctype>
+
 constexpr float CURSOR_WIDTH = 4.f;
 constexpr float CURSOR_EXTRA_HEIGHT = 10.f;
 
@@ -16,6 +18,14 @@ using namespace std::literals;
 
 namespace gui
 {
+
+namespace
+{
+bool isWordBoundary(const char character)
+{
+    return std::isspace(static_cast<unsigned char>(character)) != 0;
+}
+}
 
 TextCursor::TextCursor(gui::Text& text)
 : font_{nullptr}
@@ -164,30 +174,19 @@ void TextCursor::moveLeft(const bool moveWholeWord)
     else
     {
         const auto& text = text_.getText();
+        auto index = static_cast<size_t>(cursorIndex_);
 
-        auto characterBeforeCursor = cursorIndex_ - 1;
-        if (characterBeforeCursor <= text.length() && text.at(characterBeforeCursor) == ' ')
+        while (index > 0 && isWordBoundary(text[index - 1]))
         {
-            auto cursorPositionWithSkippedSpaces = text.find_last_not_of(' ', characterBeforeCursor);
-            if (cursorPositionWithSkippedSpaces == std::string::npos)
-            {
-                characterBeforeCursor = 0;
-            }
-            else
-            {
-                characterBeforeCursor = cursorPositionWithSkippedSpaces - 1;
-            }
+            --index;
         }
 
-        auto lastSpace = text.find_last_of(' ', characterBeforeCursor);
-        if (lastSpace != std::string::npos)
+        while (index > 0 && not isWordBoundary(text[index - 1]))
         {
-            cursorIndex_ = lastSpace + 1;
+            --index;
         }
-        else
-        {
-            cursorIndex_ = 0;
-        }
+
+        cursorIndex_ = index;
     }
     update();
 }
@@ -202,30 +201,23 @@ void TextCursor::moveRight(const bool moveWholeWord)
     else
     {
         const auto& text = text_.getText();
+        auto index = static_cast<size_t>(cursorIndex_);
 
-        auto characterAfterCursor = cursorIndex_ + 1;
-        if (characterAfterCursor < text.length() && text.at(characterAfterCursor) == ' ')
+        while (index < text.length() && not isWordBoundary(text[index]))
         {
-            auto cursorPositionWithSkippedSpaces = text.find_first_not_of(' ', characterAfterCursor);
-            if (cursorPositionWithSkippedSpaces == std::string::npos)
-            {
-                characterAfterCursor = text.length();
-            }
-            else
-            {
-                characterAfterCursor = cursorPositionWithSkippedSpaces + 1;
-            }
+            ++index;
         }
 
-        auto firstSpace = text.find_first_of(' ', characterAfterCursor);
-        if (firstSpace != std::string::npos)
+        while (index < text.length() && isWordBoundary(text[index]))
         {
-            cursorIndex_ = firstSpace;
+            if (text[index] == '\n')
+            {
+                break;
+            }
+            ++index;
         }
-        else
-        {
-            cursorIndex_ = text.length();
-        }
+
+        cursorIndex_ = index;
     }
     update();
 }

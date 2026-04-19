@@ -22,15 +22,6 @@ std::unique_ptr<MultiLineEditBox> MultiLineEditBox::create()
 {
     return std::unique_ptr<MultiLineEditBox>{new MultiLineEditBox{}};
 }
-
-
-
-// FIXME: multiline double click selection is selecting not to end of a line
-// but to the first space in next line
-// It should consider newline as a word boundary and select to the end of line in this case
-
-// FIXME: jumping to next word omits new line character
-
 MultiLineEditBox::MultiLineEditBox()
 : BaseEditBox()
 , maxLines_{DEFAULT_MAX_LINES}
@@ -309,6 +300,34 @@ EventStatus MultiLineEditBox::on(const event::MouseMoved& mouseMovedEvent)
     }
 
     return EventStatus::NotConsumed;
+}
+
+EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+{
+    if (mouseButtonDoublePressedEvent.button != gui::event::MouseButton::Left)
+    {
+        return EventStatus::NotConsumed;
+    }
+
+    if (not isFocused())
+    {
+        focus();
+        enterEdit();
+    }
+
+    const sf::Vector2f screenPos{
+        mouseButtonDoublePressedEvent.position.x,
+        mouseButtonDoublePressedEvent.position.y
+    };
+    const size_t textIndex = getIndexFromScreenPosition(screenPos);
+
+    textCursor_.setIndex(textIndex);
+    textCursor_.moveLeft(true);
+    selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
+    textCursor_.moveRight(true);
+    selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
+
+    return EventStatus::Consumed;
 }
 
 EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
