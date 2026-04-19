@@ -52,7 +52,7 @@ protected:
     void onOverlayRemoval(Overlay* removedOverlay); 
 
     WindowManager windowManager_;
-    Widget* hovered_ = nullptr; //fixme move these nullptr to constructor 
+    Widget* hovered_ = nullptr;
     Widget* pressed_ = nullptr;
     Widget* focused_ = nullptr;
     Widget* mouseCapture_ = nullptr;

@@ -8,6 +8,8 @@
 #include "gui/Widget.hpp"
 #include "gui/Text.hpp"
 
+namespace gui::style { class Text; }
+
 namespace gui
 {
 
@@ -15,6 +17,7 @@ class Label : public Widget
 {
 public:
     static std::unique_ptr<Label> create(const std::string_view& text);
+    static std::unique_ptr<Label> create(const std::string_view& text, const style::Text& style);
 
     void setText(const std::string_view& text);
     void setAlignment(const gui::Alignment& alignment);
@@ -23,6 +26,7 @@ public:
 
 protected:
     Label(const std::string_view& text);
+    Label(const std::string_view& text, const style::Text& style);
     void onRender(sf::RenderTexture& renderTexture) override;
     void onSizeChange() override;
     void onPositionChange() override;

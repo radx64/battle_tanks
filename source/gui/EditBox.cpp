@@ -23,7 +23,11 @@ void EditBox::updateTextVisbleArea()
 {
     float textXoffset = text_.getSize().x - text_.getTextBounds().width;
 
-    sf::Vector2f textBounds = boundsToSize(text_.getTextBounds());
+    sf::Vector2f textBounds
+    {
+        text_.getTextBounds().width,
+        text_.getTextSingleLineHeight()
+    };
 
     
     auto alignmentOffset = calculateAlignmentOffset(text_.getSize() - EXTRA_END_OFFSET, textBounds, alignment_);

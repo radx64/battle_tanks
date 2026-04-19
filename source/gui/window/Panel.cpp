@@ -27,7 +27,7 @@ void Panel::onPositionChange()
 {
 }
 
-void Panel::onRender(sf::RenderTexture& )
+void Panel::onRender(sf::RenderTexture&)
 {
 }
 

@@ -8,14 +8,18 @@
 #include "gui/TextureLibrary.hpp"
 #include "gui/window/Config.hpp"
 
+#include "gui/style/StyleFactory.hpp"
+
 namespace gui::window
 {
 
 Header::Header()
+: style_{style::StyleFactory::instance().window}
 {
-    headerShape_.setOutlineColor(BasicStyleSheetFactory::instance().getOutlineColor());
-    headerShape_.setOutlineThickness(BasicStyleSheetFactory::instance().getOutlineThickness());
-    headerShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
+
+    headerShape_.setOutlineColor(style_.borderColor);
+    headerShape_.setOutlineThickness(style_.borderThickness);
+    headerShape_.setFillColor(style_.inactiveHeader);
 
     auto closeButton = gui::IconButton::create(
         TextureLibrary::instance().get("window_close"));
@@ -118,12 +122,12 @@ EventStatus Header::on(const event::MouseButtonDoublePressed& mouseButtonDoubleP
 
 void Header::enable()
 {
-    headerShape_.setFillColor(BasicStyleSheetFactory::instance().getWindowHeaderColor());
+    headerShape_.setFillColor(style_.header);
 }
 
 void Header::disable()
 {
-    headerShape_.setFillColor(BasicStyleSheetFactory::instance().getInactiveWindowHeaderColor());
+    headerShape_.setFillColor(style_.inactiveHeader);
 }
 
 void Header::setMaximizeRestoreButtonState(const bool& state)

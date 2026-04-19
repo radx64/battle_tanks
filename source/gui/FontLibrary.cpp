@@ -14,10 +14,10 @@ void FontLibrary::initDefaultFont()
     fonts_.emplace(std::make_pair("default", sf::Font()));
 }
 
-void FontLibrary::initFont(const std::string& name, const std::string& path)
+void FontLibrary::initFont(const std::string_view& name, const std::string_view& path)
 {
     auto placedElement = fonts_.emplace(std::make_pair(name, sf::Font()));
-    bool hasLoaded = placedElement.first->second.loadFromFile(path);
+    bool hasLoaded = placedElement.first->second.loadFromFile(std::string(path));
     if(not hasLoaded) throw std::string("Couldn't load font file...");
 }
 
@@ -31,11 +31,11 @@ void FontLibrary::init()
     initFont("ibmVGA",      concat(fontPath, "Px437_IBM_VGA_8x16.ttf"));
 }
 
-sf::Font& FontLibrary::get(const std::string& name)
+sf::Font& FontLibrary::get(const std::string_view& name)
 {
-    auto font = fonts_.find(name);
+    auto font = fonts_.find(std::string(name));
     if (font == fonts_.end())
-        throw std::string("No font called " + name + " found in library");
+        throw std::string("No font called " + std::string(name) + " found in library");
     return font->second;
 }
 

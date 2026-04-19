@@ -22,6 +22,18 @@ struct PairHash
 
 namespace gui {
 
+namespace
+{
+sf::FloatRect getReferenceTextBounds(const sf::Font& font, unsigned int characterSize)
+{
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(characterSize);
+    text.setString("Ay|_,q");
+    return text.getLocalBounds();
+}
+}
+
 float getFontHeight(const sf::Font& font, unsigned int characterSize)
 {
     using HashFunc = PairHash<const sf::Font*, unsigned int>;
@@ -37,16 +49,34 @@ float getFontHeight(const sf::Font& font, unsigned int characterSize)
     engine::Logger logger{"FontHeightCache"};
 
     logger.debug(fmt::format("Calculating font height for font: {}, size: {}", fmt::ptr(&font), characterSize));
-    sf::Text text;
-    text.setFont(font);
-    text.setCharacterSize(characterSize);
-    text.setString("Ay|_,q");
-    const auto height = text.getLocalBounds().height;
+    const auto height = getReferenceTextBounds(font, characterSize).height;
     logger.debug(fmt::format("Calculated height: {}", height));
 
     cache[key] = height;
 
     return height;
+}
+
+float getFontTop(const sf::Font& font, unsigned int characterSize)
+{
+    using HashFunc = PairHash<const sf::Font*, unsigned int>;
+    static std::unordered_map<std::pair<const sf::Font*, unsigned int>, float, HashFunc> cache{};
+
+    const auto key = std::make_pair(&font, characterSize);
+    const auto it = cache.find(key);
+    if (it != cache.end())
+    {
+        return it->second;
+    }
+
+    engine::Logger logger{"FontHeightCache"};
+    logger.debug(fmt::format("Calculating font top for font: {}, size: {}", fmt::ptr(&font), characterSize));
+    const auto top = getReferenceTextBounds(font, characterSize).top;
+    logger.debug(fmt::format("Calculated top: {}", top));
+
+    cache[key] = top;
+
+    return top;
 }
 
 float getFontLineSpacing(const sf::Font& font, unsigned int characterSize)

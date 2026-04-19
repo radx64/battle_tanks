@@ -64,6 +64,7 @@ public:
     const sf::Texture& getTexture() const;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void recalculateVerticies();
+    void setColor(const sf::Color& color);
 
 protected:
     void setVertex(size_t index, const sf::Vector2f& position, const sf::Vector2f& uv);

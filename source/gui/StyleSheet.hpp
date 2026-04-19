@@ -12,6 +12,8 @@ namespace gui
 
 // This is a crude stylesheet for GUI styling
 // I'll replace it with something more sophisticated later
+
+
 class StyleSheet
 {
 public:
@@ -48,7 +50,7 @@ protected:
     sf::Color windowInanctiveHeaderColor_;
 };
 
-// FIXME: this is cure factory with some nasty static
+// FIXME: this is crude factory with some nasty static
 // I need to fix that when proper resource manager will be in place
 class BasicStyleSheetFactory
 {

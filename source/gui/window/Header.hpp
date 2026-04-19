@@ -5,10 +5,10 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Widget.hpp"
-#include "gui/StyleSheet.hpp"
 
 namespace gui { class IconButton; }
 namespace gui { class Label; }
+namespace gui::style { struct Window; }
 
 namespace gui::window
 {
@@ -37,6 +37,8 @@ protected:
     gui::IconButton* maximizeRestoreButtonPtr_;
     std::function<void()> closeButtonAction_;
     std::function<void()> maximizeRestoreButtonAction_;
+
+    const style::Window& style_;
 };
 
 }  // namespace gui::window

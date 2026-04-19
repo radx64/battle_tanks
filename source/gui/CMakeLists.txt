@@ -50,6 +50,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalThick.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalThickRenderingPolicy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/slider/VerticalThinRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/style/StyleFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MouseController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgressBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RadioButton.cpp

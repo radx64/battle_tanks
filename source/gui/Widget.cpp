@@ -160,6 +160,7 @@ void Widget::applyPendingOperations()
 
 EventStatus Widget::receive(const event::FocusLost& focusLost)
 {
+    logger_.debug("Widget received focus lost event");
     return this->on(focusLost);
 }
 

@@ -1,5 +1,6 @@
 #include "gui/Text.hpp"
 
+#include <algorithm>
 #include <cassert>
 
 #include "gui/Alignment.hpp"
@@ -55,11 +56,9 @@ void Text::setSize(const sf::Vector2f& size)
 
 sf::FloatRect Text::getTextBounds() const
 {
-    auto height = getTextSingleLineHeight();
     auto textBounds = text_.getLocalBounds();
-
-    textBounds.height = std::max(height, textBounds.height);
-
+    textBounds.top = getFontTop(*text_.getFont(), text_.getCharacterSize());
+    textBounds.height = std::max(getTextSingleLineHeight(), textBounds.height);
     return textBounds;
 }
 
@@ -112,10 +111,15 @@ void Text::setOutlineThickness(float thickness)
 
 void Text::updateTexture()
 {
-    // Dynamically resize texture based on actual text bounds with 20% padding
     auto textBounds = text_.getLocalBounds();
+    const auto referenceTop = getFontTop(*text_.getFont(), text_.getCharacterSize());
+    const auto referenceHeight = getFontHeight(*text_.getFont(), text_.getCharacterSize());
+    const auto actualBottom = textBounds.top + textBounds.height;
+    const auto referenceBottom = referenceTop + referenceHeight;
+
     auto requiredWidth = static_cast<unsigned int>(textBounds.width + textBounds.left + 32);
-    auto requiredHeight = static_cast<unsigned int>(textBounds.height + textBounds.top + 32);
+    auto requiredHeight = static_cast<unsigned int>(
+        std::max(actualBottom, referenceBottom) - referenceTop + 32.f);
 
     auto currentSize = texture_.getSize();
     if (requiredWidth > currentSize.x || requiredHeight > currentSize.y)
@@ -128,7 +132,8 @@ void Text::updateTexture()
 
     texture_.clear(sf::Color::Transparent);
 
-    text_.setPosition({0.f, 0.f});
+    // Keep a stable baseline for the font instead of re-anchoring on the current glyph mix.
+    text_.setPosition(-textBounds.left, -referenceTop);
 
     texture_.draw(text_);
 

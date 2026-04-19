@@ -3,15 +3,17 @@
 #include <functional>
 #include <memory>
 #include <string_view>
-#include <optional>
 
 #include <SFML/Graphics.hpp>
 
-#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/Image.hpp"
+#include "gui/Widget.hpp"
+#include "gui/WidgetState.hpp"
+#include "gui/style/Button.hpp"
 
 namespace gui { class Label; }
+namespace gui::style { class Sheet; }
 
 namespace gui
 {
@@ -26,13 +28,6 @@ public:
 protected:
     ButtonBase();
     void updateTexture();
-    
-    enum class State
-    {
-        Normal,
-        Hover,
-        Pressed,    // TODO add disabled in the future
-    };
     
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
@@ -52,13 +47,10 @@ protected:
     EventStatus processLeftMouseClick();
 
     gui::FramedSprite background_;
-
-    const sf::Texture& hoverTexture_;
+    const style::Button& style_;
     const sf::Texture& focusTexture_;
-    const sf::Texture& normalTexture_;
-    const sf::Texture& pressedTexture_;
 
-    State state_;
+    WidgetState state_;
 
     std::function<void()> onClick_;
     std::function<void()> onMouseEnter_;

@@ -1,23 +1,33 @@
 #include "gui/Label.hpp"
 
 #include "gui/Debug.hpp"
-#include "gui/StyleSheet.hpp"
+#include "gui/style/StyleFactory.hpp"
+#include "gui/FontLibrary.hpp"
 
 namespace gui 
 {
 
- std::unique_ptr<Label> Label::create(const std::string_view& text)
+std::unique_ptr<Label> Label::create(const std::string_view& text)
 {
     return std::unique_ptr<Label>{new Label{text}};
 }
 
+std::unique_ptr<Label> Label::create(const std::string_view& text, const style::Text& style)
+{
+    return std::unique_ptr<Label>{new Label{text, style}};
+}
+
 Label::Label(const std::string_view& text)
+: Label{text, style::StyleFactory::instance().label}
+{
+}
+
+Label::Label(const std::string_view& text, const style::Text& style)
 : alignment_(gui::Alignment::Left)
 {
-    auto style = BasicStyleSheetFactory::instance();
-    text_.setFont(style.getFont());
-    text_.setCharacterSize(style.getFontSize());
-    text_.setFillColor(style.getFontColor());
+    text_.setFont(FontLibrary::get(style.fontName));
+    text_.setCharacterSize(style.size);
+    text_.setFillColor(style.color);
     setText(text.data());
     setPosition({0.0f, 0.0f});
     setSize({20.f, 20.f});

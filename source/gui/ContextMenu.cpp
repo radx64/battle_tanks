@@ -45,8 +45,10 @@ namespace
 
     float calculateMenuWidth(const std::vector<ContextMenu::Item>& items)
     {
+        // FIXME: This need to be reworked.
+        // As submenus are using buttons for entries
+        // I could reuse that.
         auto style = BasicStyleSheetFactory::instance();
-
         gui::Text measure;
         measure.setFont(style.getFont());
         measure.setCharacterSize(style.getFontSize());

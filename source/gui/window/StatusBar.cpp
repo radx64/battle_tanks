@@ -1,6 +1,5 @@
 #include "gui/window/StatusBar.hpp"
 
-#include "gui/StyleSheet.hpp"
 #include "gui/window/Config.hpp"
 #include "gui/TextureLibrary.hpp"
 

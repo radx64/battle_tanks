@@ -240,7 +240,7 @@ float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
         // This need to be accomodated in cursor position calculations
         keringOffset =  font_->getKerning(string[index-1],string[index], characterSize_);
     }
-    // FIXME: do something with false and 0.f params later
+    // TODO: do something with false and 0.f params later
     return font_->getGlyph(string[index], characterSize_, false, 0.f).advance + keringOffset;
 }
 

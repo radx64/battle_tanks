@@ -1,8 +1,10 @@
 #include "gui/Button.hpp"
 
 #include "gui/Label.hpp"
-#include "gui/TextureLibrary.hpp"
 #include "gui/layout/Inset.hpp"
+#include "gui/style/Sheet.hpp"
+#include "gui/style/StyleFactory.hpp"
+#include "gui/TextureLibrary.hpp"
 
 namespace
 {
@@ -40,16 +42,19 @@ gui::FramedSprite::LayoutConfig buildLayoutConfigForButtonTexture()
 
 }  // namespace
 
+inline sf::Texture& getTexture(const std::string_view& name)
+{
+    return gui::TextureLibrary::instance().get(name);
+}
+
 namespace gui
 {
 
 ButtonBase::ButtonBase()
 : background_ {buildLayoutConfigForButtonTexture()}
-, hoverTexture_{TextureLibrary::instance().get("button_hover")}
-, focusTexture_{TextureLibrary::instance().get("button_focus")}
-, normalTexture_{TextureLibrary::instance().get("button_normal")}
-, pressedTexture_{TextureLibrary::instance().get("button_pressed")}
-, state_{State::Normal}
+, style_{style::StyleFactory::instance().button}
+, focusTexture_{getTexture("button_focus")}
+, state_{}
 {
 
     // TODO:
@@ -57,7 +62,8 @@ ButtonBase::ButtonBase()
     // as a separate layer (using texture or primitives?)
 
     enableFocus();
-    background_.setTexture(normalTexture_);
+    background_.setTexture(getTexture(style_.face.texture.get(state_)));
+    background_.setColor(style_.face.color.get(state_));
 }
 
 void ButtonBase::onSizeChange()
@@ -87,7 +93,7 @@ void ButtonBase::onMouseEnter(std::function<void()> onMouseEnterCallback)
 
 EventStatus ButtonBase::on(const event::MouseEntered&)
 {
-    state_ = State::Hover;
+    state_.hovered = true;
     updateTexture();
 
     if (onMouseEnter_) onMouseEnter_();
@@ -96,7 +102,7 @@ EventStatus ButtonBase::on(const event::MouseEntered&)
 }
 EventStatus ButtonBase::on(const event::MouseLeft&)
 {
-    state_ = State::Normal;
+    state_.hovered = false;
     updateTexture();
 
     return EventStatus::Consumed;
@@ -110,7 +116,7 @@ EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEv
 
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
     {
-        state_ = State::Pressed;
+        state_.pressed = true;
         updateTexture();
 
         return EventStatus::Consumed;
@@ -126,7 +132,7 @@ EventStatus ButtonBase::on(const event::KeyboardKeyReleased& keyboardKeyReleased
 
     if (key == gui::event::Key::Space || key == gui::event::Key::Enter)
     {
-        state_ = State::Normal;
+        state_.pressed = false;
         updateTexture();
         
         if (onClick_) onClick_();
@@ -143,7 +149,7 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
 
     if (isLeftClicked)
     {
-        state_ = State::Pressed;
+        state_.pressed = true;
         updateTexture();
 
         return EventStatus::Consumed;
@@ -153,7 +159,7 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
 
 EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    if (state_ != State::Pressed) return EventStatus::NotConsumed;
+    if (not state_.pressed) return EventStatus::NotConsumed;
 
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
     if (isLeftReleased)
@@ -175,9 +181,9 @@ EventStatus ButtonBase::on(const event::MouseButtonDoublePressed& mouseButtonDou
 
 EventStatus ButtonBase::processLeftMouseClick()
 {
-    focus();
+    //focus();
 
-    state_ = State::Hover;
+    state_.pressed = false;
     updateTexture();
 
     if (onClick_) onClick_();
@@ -187,37 +193,26 @@ EventStatus ButtonBase::processLeftMouseClick()
 
 EventStatus ButtonBase::on(const event::FocusLost&)
 {
+    logger_.debug("Button lost focus");
     updateTexture();
     return EventStatus::Consumed;
 }
 
 EventStatus ButtonBase::on(const event::FocusGained&)
 {
+    logger_.debug("Button gained focus");
     updateTexture();
     return EventStatus::Consumed;
 }
 
 void ButtonBase::updateTexture()
 {
-    switch (state_)
+    if (isFocused())
     {
-        case State::Normal:
-            if (isFocused())
-            {
-                background_.setTexture(focusTexture_);
-            }
-            else
-            {
-                background_.setTexture(normalTexture_);
-            }
-            break;
-        case State::Hover:
-            background_.setTexture(hoverTexture_);
-            break;
-        case State::Pressed:
-            background_.setTexture(pressedTexture_);
-            break;
+        background_.setTexture(focusTexture_);
+        return;
     }
+    background_.setTexture(getTexture(style_.face.texture.get(state_)));
 }
 
 std::unique_ptr<TextButton> TextButton::create(const std::string_view& text)
@@ -227,7 +222,7 @@ std::unique_ptr<TextButton> TextButton::create(const std::string_view& text)
 
 TextButton::TextButton(const std::string_view& text)
 {
-    auto textPtr = gui::Label::create(text);
+    auto textPtr = gui::Label::create(text, style_.text);
     text_ = textPtr.get();
     text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
     addChild(std::move(textPtr));

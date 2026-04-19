@@ -70,6 +70,14 @@ void FramedSprite::recalculateVerticies()
     setQuad(8, {size_.x - cornerSizes.bottomRight.x, size_.y - cornerSizes.bottomRight.y, cornerSizes.bottomRight.x, cornerSizes.bottomRight.y}, uvs.bottomRight);
 }
 
+void FramedSprite::setColor(const sf::Color& color)
+{
+    for (size_t index = 0; index < verticies_.getVertexCount(); ++index)
+    {
+        verticies_[index].color = color;
+    }
+}
+
 void FramedSprite::setVertex(size_t index, const sf::Vector2f& position, const sf::Vector2f& uv)
 {
     verticies_[index].position = position;

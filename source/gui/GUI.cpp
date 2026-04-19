@@ -386,8 +386,7 @@ Widget* GUI::getPreviousFocusableWidget(Widget* root, Widget* current)
 
     while (next)
     {
-        if (next->isFocusable())
-            return next;
+        if (next->isFocusable()) return next;
 
         next = getPrevious(next);
     }
@@ -460,7 +459,6 @@ void GUI::onActiveWindowChanged(Window* newActiveWindow)
     {
         pressed_ = nullptr;
     }
-
 }
 
 void GUI::onOverlayRemoval(Overlay* removedOverlay)
