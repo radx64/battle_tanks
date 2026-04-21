@@ -129,9 +129,14 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(warnings "-Wall -Wextra -Werror")
     set(other_flags "-g -ggdb3")
+    set(cxx_only_warnings "")
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(cxx_only_warnings "-Wno-dangling-reference")
+    endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(warnings "/W4 /WX /EHsc")
     set(other_flags "/D_USE_MATH_DEFINES")
+    set(cxx_only_warnings "")
 
     # some hack for compiling on Windows with MSVC 
     set(SFML_STATIC_LIBRARIES TRUE)
@@ -141,7 +146,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     include_directories(${SFML_INCLUDE_DIR})
 endif()
 
-set(CMAKE_CXX_FLAGS "${warnings} ${other_flags}"
+set(CMAKE_CXX_FLAGS "${warnings} ${cxx_only_warnings} ${other_flags}"
    CACHE STRING "Flags used by the compiler during all build types." FORCE)
 set(CMAKE_C_FLAGS   "${warnings} ${other_flags}"
    CACHE STRING "Flags used by the compiler during all build types." FORCE)
