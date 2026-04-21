@@ -4,11 +4,11 @@
 #include <ranges>
 
 #include "gui/Button.hpp"
-#include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
-#include "gui/Text.hpp"
+#include "gui/Label.hpp"
 #include "gui/layout/Constraint.hpp"
 #include "gui/layout/Vertical.hpp"
+#include "gui/style/StyleFactory.hpp"
 
 
 namespace gui
@@ -45,19 +45,15 @@ namespace
 
     float calculateMenuWidth(const std::vector<ContextMenu::Item>& items)
     {
-        // FIXME: This need to be reworked.
-        // As submenus are using buttons for entries
-        // I could reuse that.
-        auto style = BasicStyleSheetFactory::instance();
-        gui::Text measure;
-        measure.setFont(style.getFont());
-        measure.setCharacterSize(style.getFontSize());
+        const auto& style = gui::style::StyleFactory::instance().button.text;
+
+        auto measure = gui::Label::create("", style);
 
         float maxTextWidth = 0.f;
         for (auto& item : items)
         {
-            measure.setText(item.text);
-            maxTextWidth = std::max(maxTextWidth, measure.getTextBounds().width);
+            measure->setText(item.text);
+            maxTextWidth = std::max(maxTextWidth, measure->getTextBounds().width);
         }
 
         const float needed = maxTextWidth + HORIZONTAL_PADDING * 2.f;
