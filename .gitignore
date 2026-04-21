@@ -69,3 +69,6 @@ toolchain-mingw.cmake
 .history
 .ionide
 .vscode/settings.json
+
+# Codex
+.codex
