@@ -60,6 +60,19 @@ const Sheet& StyleFactory::instance()
             .color = sf::Color::Black
         };
 
+        sheet_->progressBar = ProgressBar
+        {
+            .backgroundColor = sf::Color(255, 255, 255, 255),
+            .barColor = sf::Color(0, 0, 128, 255),
+            .text =
+            {
+                .fontName = "armata",
+                .size = 14,
+                .color = sf::Color::Black
+            },
+            .borderThickness = 0.f
+        };
+
     return *sheet_;
     }
 }

@@ -3,6 +3,7 @@
 #include "gui/Label.hpp"
 #include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
+#include "gui/style/StyleFactory.hpp"
 
 #include <string>
 
@@ -57,19 +58,19 @@ ProgressBar::ProgressBar()
 : background_{buildLayoutConfigForProgressBarTexture()}
 , normalTexture_{TextureLibrary::instance().get("progressbar_background")}
 {
-    auto style = BasicStyleSheetFactory::instance();
-    // FIXME: I need to redesign style "subsystem" :)
-    bar_.setFillColor(style.getWindowHeaderColor());
-    bar_.setOutlineThickness(0.f);
+    auto style = style::StyleFactory::instance().progressBar;
+    bar_.setFillColor(style.barColor);
+    bar_.setOutlineThickness(style.borderThickness);
     bar_.setPosition(getGlobalPosition());
 
-    auto textPtr = gui::Label::create("");
+    auto textPtr = gui::Label::create("", style.text);
     text_ = textPtr.get();
     text_->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
     addChild(std::move(textPtr));
     setTextLabel(progress_);
 
     background_.setTexture(normalTexture_);
+    background_.setColor(style.backgroundColor);
     recalculateSize();
 }
 
