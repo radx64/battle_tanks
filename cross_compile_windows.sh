@@ -10,7 +10,7 @@ echo "Setting up cross-compilation for Windows..."
 if ! command -v x86_64-w64-mingw32-gcc &> /dev/null; then
     echo "MinGW-w64 not found. Installing..."
     sudo apt-get update
-    sudo apt-get install -y mingw-w64 mingw-w64-x86-64-freetype
+    sudo apt-get install -y mingw-w64 mingw-w64-x86-64-dev
 else
     echo "MinGW-w64 is already installed."
 fi
