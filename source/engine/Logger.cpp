@@ -35,6 +35,7 @@ void Logger::debug(const std::string_view log, std::source_location location) co
 {
 #ifdef NDEBUG
     UNUSED(log);
+    UNUSED(location);
     return;
 #else
     std::string file = location.file_name();
@@ -43,7 +44,6 @@ void Logger::debug(const std::string_view log, std::source_location location) co
         file = file.substr(lastSlashPos + 1);
     }
 
-    std::string locationInfo = std::string(location.file_name()) + ":" + std::to_string(location.line()) + " in " + location.function_name();
     LoggerSink::instance().log(fmt::color::cornflower_blue, "debug", "(" + file + ":" + std::to_string(location.line()) + ") " + prefix_, std::string(log));
 #endif
 }
