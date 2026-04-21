@@ -35,6 +35,27 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+  build-windows-cross:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: "cmake ninja-build mingw-w64 mingw-w64-x86-64-freetype"
+        version: 1.0
+
+    - name: Cross-compile for Windows
+      run: ./cross_compile_windows.sh
+
+    - name: Upload Windows artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: battle_tanks-windows-cross
+        path: |
+          build_windows/*.exe
+          build_windows/*.dll
+
   test-UT:
     runs-on: ubuntu-latest
     steps:
