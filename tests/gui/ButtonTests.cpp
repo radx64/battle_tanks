@@ -3,7 +3,6 @@
 
 #include "gui/Button.hpp"
 #include "gui/FontLibrary.hpp"
-#include "gui/StyleSheet.hpp"
 
 namespace gui
 {
@@ -19,10 +18,6 @@ protected:
     void TearDown()
     {
         gui::FontLibrary::destroy();
-        // FIXME: this code should not have been here
-        // Proper resource management should keep everything
-        // up to date even if font library is reinitialized
-        gui::BasicStyleSheetFactory::destroy();
     }
 };
 

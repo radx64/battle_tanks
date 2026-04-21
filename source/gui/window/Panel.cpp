@@ -1,7 +1,5 @@
 #include "gui/window/Panel.hpp"
 
-#include "gui/StyleSheet.hpp"
-
 namespace gui::window
 {
 

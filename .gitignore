@@ -30,6 +30,7 @@
 
 # Build directory
 build/*
+build_tests/*
 build_windows/*
 
 ### CMake ###

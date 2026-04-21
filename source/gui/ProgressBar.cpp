@@ -1,7 +1,6 @@
 #include "gui/ProgressBar.hpp"
 
 #include "gui/Label.hpp"
-#include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
 #include "gui/style/StyleFactory.hpp"
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-mkdir -p build
-cd build
+mkdir -p build_tests
+cd build_tests
 build_dir=${PWD}
 
 cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON ..

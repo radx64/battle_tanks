@@ -59,7 +59,6 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Horizontal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/scrollbar/Vertical.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Selection.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/StyleSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextCursor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextEnteredController.cpp

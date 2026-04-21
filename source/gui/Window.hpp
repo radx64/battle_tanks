@@ -6,7 +6,6 @@
 
 #include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
-#include "gui/StyleSheet.hpp"
 #include "gui/window/Config.hpp"
 
 namespace gui { class Label; }

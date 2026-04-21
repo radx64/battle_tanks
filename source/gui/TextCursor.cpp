@@ -1,15 +1,13 @@
 #include "gui/TextCursor.hpp"
 
 #include <cassert>
+#include <cctype>
 
 #include "engine/Context.hpp"
 #include "engine/TimerService.hpp"
 
 #include "gui/FontHeightCache.hpp"
 #include "gui/Text.hpp"
-#include "gui/StyleSheet.hpp"
-
-#include <cctype>
 
 constexpr float CURSOR_WIDTH = 4.f;
 constexpr float CURSOR_EXTRA_HEIGHT = 10.f;

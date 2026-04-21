@@ -5,7 +5,6 @@
 #include "gui/Clipboard.hpp"
 #include "gui/Debug.hpp"
 #include "gui/FontHeightCache.hpp"
-#include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
 
 namespace 
