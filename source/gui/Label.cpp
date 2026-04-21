@@ -2,7 +2,6 @@
 
 #include "gui/Debug.hpp"
 #include "gui/style/StyleFactory.hpp"
-#include "gui/FontLibrary.hpp"
 
 namespace gui 
 {
@@ -23,11 +22,9 @@ Label::Label(const std::string_view& text)
 }
 
 Label::Label(const std::string_view& text, const style::Text& style)
-: alignment_(gui::Alignment::Left)
+: alignment_{gui::Alignment::Left}
+, text_{style}
 {
-    text_.setFont(FontLibrary::get(style.fontName));
-    text_.setCharacterSize(style.size);
-    text_.setFillColor(style.color);
     setText(text.data());
     setPosition({0.0f, 0.0f});
     setSize({20.f, 20.f});

@@ -14,7 +14,7 @@ namespace gui
 class Selection : public TextDisplayModifier
 {
 public:
-    Selection(gui::Text& text);
+    Selection(gui::Text& text, const sf::Color& selectionColor);
     bool isEmpty() const;
 
     void start(const uint32_t index, const sf::Vector2f& position);
@@ -38,6 +38,7 @@ protected:
     sf::Vector2f selectionEndPosition_;
 
     std::vector<sf::RectangleShape> selectionRectangles_;
+    sf::Color selectionColor_;
 
 private:
     size_t getLineFromIndex(const std::string& text, size_t index) const;

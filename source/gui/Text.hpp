@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <gui/style/Text.hpp>
+
 namespace gui {class TextDisplayModifier;}
 
 namespace gui
@@ -17,7 +19,7 @@ namespace gui
 class Text : public sf::Drawable
 {
 public:
-    Text();
+    Text(const style::Text& style);
 
     void setText(const std::string_view& text);
     std::string getText() const;
@@ -59,6 +61,8 @@ protected:
     sf::Text text_;
 
     std::vector<TextDisplayModifier*> modifiers_;
+
+    const style::Text& style_;
 };
 
 }  // namespace gui

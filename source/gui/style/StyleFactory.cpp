@@ -73,6 +73,19 @@ const Sheet& StyleFactory::instance()
             .borderThickness = 0.f
         };
 
+        sheet_->editBox = EditBox
+        {
+            .backgroundColor = sf::Color(255, 255, 255, 255),
+            .focusedBackgroundColor = sf::Color(255, 255, 200, 255),
+            .selectionColor = sf::Color(0, 0, 128, 128),
+            .text =
+            {
+                .fontName = "armata",
+                .size = 14,
+                .color = sf::Color::Black
+            }
+        };
+
     return *sheet_;
     }
 }

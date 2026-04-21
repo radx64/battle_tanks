@@ -4,8 +4,8 @@
 
 #include "gui/Clipboard.hpp"
 #include "gui/Debug.hpp"
-#include "gui/StyleSheet.hpp"
 #include "gui/TextureLibrary.hpp"
+#include "gui/style/StyleFactory.hpp"
 
 namespace 
 {
@@ -18,18 +18,20 @@ namespace gui
 BaseEditBox::~BaseEditBox() = default;
 
 BaseEditBox::BaseEditBox()
-: background_{gui::FramedSprite::LayoutConfig{
+: style_{style::StyleFactory::instance().editBox} 
+, background_{gui::FramedSprite::LayoutConfig{
     .cornerSizes = {.topLeft = {4.f, 4.f}, .bottomRight = {4.f, 4.f}},
     .uvs = gui::FramedSprite::LayoutConfig::UVs{
-        .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
-        .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
-        .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
-        .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
+        .topLeft        = {0.0f, 0.0f, 2.0f, 2.0f},
+        .topRight       = {4.0f, 0.0f, 2.0f, 2.0f},
+        .bottomLeft     = {0.0f, 4.0f, 2.0f, 2.0f},
+        .bottomRight    = {4.0f, 4.0f, 2.0f, 2.0f},
     }}}
 , focusTexture_{TextureLibrary::instance().get("editbox_active")}
 , normalTexture_{TextureLibrary::instance().get("editbox_inactive")}
+, text_{style_.text}
 , textCursor_{text_}
-, selection_{text_}
+, selection_{text_, style_.selectionColor}
 , maxLength_{128}
 , anyShiftHeldDown_{false}
 , mouseLeftButtonPressed_{false}
@@ -40,11 +42,6 @@ BaseEditBox::BaseEditBox()
     text_.addModifier(&selection_);
     text_.addModifier(&textCursor_);
 
-    auto style = BasicStyleSheetFactory::instance();
-    text_.setFont(style.getFont());
-    text_.setCharacterSize(style.getFontSize());
-    text_.setFillColor(style.getFontColor());
-    text_.setOutlineColor(style.getOutlineColor());
     text_.setGlobalPosition(Widget::getGlobalPosition());
 
     textCursor_.setFont(text_.getFont());
@@ -52,6 +49,7 @@ BaseEditBox::BaseEditBox()
     textCursor_.disable();
 
     background_.setTexture(normalTexture_);
+    background_.setColor(style_.backgroundColor);
 }
 
 std::string BaseEditBox::getText()
@@ -406,12 +404,14 @@ EventStatus BaseEditBox::on(const event::TextEntered& textEntered)
 void BaseEditBox::enterEdit()
 {
     background_.setTexture(focusTexture_);
+    background_.setColor(style_.focusedBackgroundColor);
     textCursor_.enable();
 }
 
 EventStatus BaseEditBox::on(const gui::event::FocusLost&)
 {
     background_.setTexture(normalTexture_);
+    background_.setColor(style_.backgroundColor);
     textCursor_.disable();
     selection_.clear();
     text_.updateTexture();

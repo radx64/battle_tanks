@@ -6,6 +6,7 @@
 #include "gui/Alignment.hpp"
 #include "gui/FontHeightCache.hpp"
 #include "gui/TextDisplayModifier.hpp"
+#include "gui/FontLibrary.hpp"
 
 #include <fmt/format.h>
 
@@ -14,12 +15,16 @@
 namespace gui
 {
 
-Text::Text()
+Text::Text(const style::Text& style)
 : offset_{0.f, 0.f}
 , sprite_(texture_.getTexture())
+, style_{style}
 {
     // Start with a small default size; will grow dynamically as text changes.
     texture_.create(256, 256);
+    text_.setFont(FontLibrary::get(style.fontName));
+    text_.setCharacterSize(style.size);
+    text_.setFillColor(style.color);
 }
 
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const

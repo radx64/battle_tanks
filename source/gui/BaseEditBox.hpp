@@ -10,6 +10,7 @@
 #include "gui/Selection.hpp"
 #include "gui/Text.hpp"
 #include "gui/TextCursor.hpp"
+#include "gui/style/EditBox.hpp"
 
 namespace gui
 {
@@ -52,16 +53,18 @@ protected:
     void startSelection();
     void updateCursorAndSelection(const bool atSelectionEndOnCancel);
 
-    gui::FramedSprite background_;
+    style::EditBox style_;
+    FramedSprite background_;
     const sf::Texture& focusTexture_;
     const sf::Texture& normalTexture_;
-    gui::Text text_;
-    gui::TextCursor textCursor_;
-    gui::Selection selection_;
+    Text text_;
+    TextCursor textCursor_;
+    Selection selection_;
     uint32_t maxLength_;
     bool anyShiftHeldDown_;
     bool mouseLeftButtonPressed_;
-    gui::Alignment alignment_;
+    Alignment alignment_;
+
 };
 
 }  // namespace gui

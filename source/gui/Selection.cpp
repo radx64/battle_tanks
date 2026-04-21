@@ -13,12 +13,13 @@ constexpr float CURSOR_EXTRA_HEIGHT = 6.f;
 namespace gui
 {
 
-Selection::Selection(gui::Text& text)
+Selection::Selection(gui::Text& text, const sf::Color& selectionColor)
 : text_{text}
 , selectionStartIndex_{}
 , selectionEndIndex_{}
 , selectionStartPosition_{}
 , selectionEndPosition_{}
+, selectionColor_{selectionColor}
 {
 }
 
@@ -78,87 +79,40 @@ void Selection::update()
         return;
     }
 
-    // Determine actual start and end
-    size_t actualStartIdx = startsAt();
-    size_t actualEndIdx = endsAt();
+    const bool selectionForward = selectionStartIndex_ < selectionEndIndex_;
+    const size_t actualStartIdx = startsAt();
+    const size_t actualEndIdx = endsAt();
+    const sf::Vector2f startPos = selectionForward ? selectionStartPosition_ : selectionEndPosition_;
+    const sf::Vector2f endPos = selectionForward ? selectionEndPosition_ : selectionStartPosition_;
 
-    // Get line information
-    size_t startLineNum = getLineFromIndex(fieldText, actualStartIdx);
-    size_t endLineNum = getLineFromIndex(fieldText, actualEndIdx);
-    
-    uint32_t charSize = text_.getCharacterSize();
-    float lineHeight = getFontLineSpacing(*font, charSize);
-    
-    // Single line selection
-    if (startLineNum == endLineNum)
+    const size_t startLineNum = getLineFromIndex(fieldText, actualStartIdx);
+    const size_t endLineNum = getLineFromIndex(fieldText, actualEndIdx);
+
+    const uint32_t charSize = text_.getCharacterSize();
+    const float lineHeight = getFontLineSpacing(*font, charSize);
+
+    const size_t firstLineStartIdx = getLineStartIndex(fieldText, startLineNum);
+    const float lineBeginX = startPos.x - getLineXWidth(fieldText, firstLineStartIdx, actualStartIdx);
+
+    for (size_t lineNum = startLineNum; lineNum <= endLineNum; ++lineNum)
     {
-        sf::Vector2f startPos = (selectionStartIndex_ < selectionEndIndex_) ? 
-                                selectionStartPosition_ : selectionEndPosition_;
-        sf::Vector2f endPos = (selectionStartIndex_ < selectionEndIndex_) ? 
-                              selectionEndPosition_ : selectionStartPosition_;
-        
+        const bool isFirstLine = lineNum == startLineNum;
+        const bool isLastLine = lineNum == endLineNum;
+
+        const size_t lineStartIdx = isFirstLine ? actualStartIdx : getLineStartIndex(fieldText, lineNum);
+        const size_t lineEndIdx = isLastLine ? actualEndIdx : getLineEndIndex(fieldText, lineNum);
+
+        const float lineYPos = startPos.y + ((lineNum - startLineNum) * lineHeight);
+        const float rectX = isFirstLine ? startPos.x : lineBeginX;
+        const float rectWidth = isFirstLine && isLastLine
+            ? endPos.x - startPos.x
+            : getLineXWidth(fieldText, lineStartIdx, lineEndIdx);
+
         sf::RectangleShape rect;
-        //TODO move this color selection to stylesheet
-        rect.setFillColor(sf::Color(100, 100, 230, 127));
-        rect.setPosition(startPos);
-        rect.setSize(sf::Vector2f(endPos.x - startPos.x, lineHeight));
+        rect.setFillColor(selectionColor_);
+        rect.setPosition({rectX, lineYPos});
+        rect.setSize({rectWidth, lineHeight});
         selectionRectangles_.push_back(rect);
-    }
-    else
-    {
-        // Multi-line selection: create rectangles for each affected line
-        
-        // Determine which position is start and which is end
-        sf::Vector2f startPos = (selectionStartIndex_ < selectionEndIndex_) ? 
-                                selectionStartPosition_ : selectionEndPosition_;
-        
-        // Calculate the X position where the first line begins
-        size_t firstLineStartIdx = getLineStartIndex(fieldText, startLineNum);
-        float firstLineBeginX = startPos.x - getLineXWidth(fieldText, firstLineStartIdx, actualStartIdx);
-        
-        // First line: from selection start to end of line
-        {
-            size_t lineEndIdx = getLineEndIndex(fieldText, startLineNum);
-            
-            // Calculate width from start to end of line
-            float widthToEndOfLine = getLineXWidth(fieldText, actualStartIdx, lineEndIdx);
-            
-            sf::RectangleShape rect;
-            //TODO move this color selection to stylesheet
-            rect.setFillColor(sf::Color(100, 100, 230, 127));
-            rect.setPosition(startPos);
-            rect.setSize(sf::Vector2f(widthToEndOfLine, lineHeight));
-            selectionRectangles_.push_back(rect);
-        }
-        
-        // Middle lines: full width for each complete line
-        for (size_t lineNum = startLineNum + 1; lineNum < endLineNum; ++lineNum)
-        {
-            size_t lineStartIdx = getLineStartIndex(fieldText, lineNum);
-            size_t lineEndIdx = getLineEndIndex(fieldText, lineNum);
-            
-            float lineWidth = getLineXWidth(fieldText, lineStartIdx, lineEndIdx);
-            float lineYPos = startPos.y + ((lineNum - startLineNum) * lineHeight);
-            
-            sf::RectangleShape rect;
-            rect.setFillColor(sf::Color(100, 100, 230, 127));
-            rect.setPosition(firstLineBeginX, lineYPos);
-            rect.setSize(sf::Vector2f(lineWidth, lineHeight));
-            selectionRectangles_.push_back(rect);
-        }
-        
-        // Last line: from start of line to selection end
-        {
-            size_t lineStartIdx = getLineStartIndex(fieldText, endLineNum);
-            float selectedWidth = getLineXWidth(fieldText, lineStartIdx, actualEndIdx);
-            float lineYPos = startPos.y + ((endLineNum - startLineNum) * lineHeight);
-            
-            sf::RectangleShape rect;
-            rect.setFillColor(sf::Color(100, 100, 230, 127));
-            rect.setPosition(firstLineBeginX, lineYPos);
-            rect.setSize(sf::Vector2f(selectedWidth, lineHeight));
-            selectionRectangles_.push_back(rect);
-        }
     }
 
     text_.updateTexture();
