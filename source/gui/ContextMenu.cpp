@@ -18,6 +18,7 @@ namespace
     constexpr float MENU_ENTRY_HEIGHT = 26.f;
     constexpr float MENU_ENTRY_MIN_WIDTH = 120.f;
     constexpr float HORIZONTAL_PADDING = 12.f;
+    constexpr float MENU_BORDER_SPACING = 4.f;
     
     // TODO: implement rendering of arrows to submenus
     
@@ -111,6 +112,11 @@ void ContextMenu::setCloseCallback(std::function<void(ContextMenu*)> callback)
     closeCallback_ = std::move(callback);
 }
 
+void ContextMenu::setOnClose(std::function<void(ContextMenu*)> callback)
+{
+    onClose_ = std::move(callback);
+}
+
 void ContextMenu::open(const sf::Vector2f& globalPosition)
 {
     setPosition(globalToLocal(getParent(), globalPosition));
@@ -126,6 +132,11 @@ void ContextMenu::close()
     if (parentMenu_)
     {
         parentMenu_->onSubmenuClosed(this);
+    }
+
+    if (onClose_)
+    {
+        onClose_(this);
     }
 
     if (closeCallback_)
@@ -171,21 +182,23 @@ void ContextMenu::buildMenu()
         return;
     }
 
-    const float width = calculateMenuWidth(items_);
-    const float height = static_cast<float>(items_.size()) * MENU_ENTRY_HEIGHT;
+    const float contentWidth = calculateMenuWidth(items_);
+    const float contentHeight = static_cast<float>(items_.size()) * MENU_ENTRY_HEIGHT;
+    const float width = contentWidth + MENU_BORDER_SPACING * 2.f;
+    const float height = contentHeight + MENU_BORDER_SPACING * 2.f;
 
     setSize({width, height});
 
     auto vertical = gui::layout::Vertical::create(items_.size());
-    vertical->setPosition({0.f, 0.f});
-    vertical->setSize(getSize());
+    vertical->setPosition({MENU_BORDER_SPACING, MENU_BORDER_SPACING});
+    vertical->setSize({contentWidth, contentHeight});
     vertical->setPadding(0);
 
     for (auto [index, item] : std::views::enumerate(items_))
     {
         vertical->setRowSize(index, gui::layout::Constraint::Pixels(MENU_ENTRY_HEIGHT));
 
-        auto menuEntry = gui::TextButton::create(item.text);
+        auto menuEntry = gui::TextButton::create(item.text, style::StyleFactory::instance().flatButton);
         menuEntry->onClick([this, index, item, menuEntryPtr = menuEntry.get()]() mutable {
             if (not item.subItems.empty())
             {
@@ -220,7 +233,7 @@ void ContextMenu::updateSubmenu(gui::TextButton* buttonPtr, const Item& item, pt
 {
     if (openSubmenu_.ptr &&  openSubmenu_.index == index) return;   // Do not respawn the same submenu if already spawned
     const auto itemGlobalPosition = buttonPtr->getGlobalPosition();
-    const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x, itemGlobalPosition.y};
+    const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x - MENU_BORDER_SPACING * 2.f, itemGlobalPosition.y};
     closeSubmenu();
     auto submenu = ContextMenu::create(item.subItems);
     openSubmenu_.index = index;

@@ -60,6 +60,7 @@ public:
     void close() override;
     
     void setCloseCallback(std::function<void(ContextMenu*)> callback);
+    void setOnClose(std::function<void(ContextMenu*)> callback);
     
 protected:
     explicit ContextMenu(const std::vector<Item>& items, ContextMenu* parent = nullptr);
@@ -85,6 +86,7 @@ protected:
     SubmenuEntity openSubmenu_;
 
     std::function<void(ContextMenu*)> closeCallback_;
+    std::function<void(ContextMenu*)> onClose_;
 
     gui::FramedSprite background_;
 };

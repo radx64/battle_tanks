@@ -1,9 +1,11 @@
 #pragma once
 
 #include <functional>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
 
+#include "gui/ContextMenu.hpp"
 #include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
 #include "gui/window/Config.hpp"
@@ -13,6 +15,7 @@ namespace gui { class Label; }
 namespace gui::window { class Panel; }
 namespace gui::window { class Header; }
 namespace gui::window { class StatusBar; }
+namespace gui::window { class MenuBar; }
 
 namespace gui { class WindowManager; }
 
@@ -52,6 +55,7 @@ public:
     Window();
 
     void setTitle(const std::string_view& text);
+    void setMenuItems(const std::vector<ContextMenu::Item>& items);
     void setContextMenuHandler(ContextMenuHandler handler);
     void setWindowCloseHandler(WindowCloseHandler handler);
     void close();
@@ -98,6 +102,7 @@ protected:
     sf::Vector2f draggingOffset_;
 
     gui::window::Header* header_;
+    gui::window::MenuBar* menuBar_;
     gui::window::Panel* windowPanel_;
     gui::window::StatusBar* statusBar_;
 

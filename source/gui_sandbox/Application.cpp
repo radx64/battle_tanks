@@ -76,6 +76,27 @@ void Application::onInit()
         window->setSize(sf::Vector2f(300.0f, 300.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Nothing here!");
+        window->setMenuItems({
+            {"File", {}, {
+                {"New"},
+                {"Open"},
+                {"Recent >", {}, {
+                    {"tank_layout.gui", [this](){logger_.info("Opening recent layout: tank_layout.gui");}},
+                    {"inventory.gui", [this](){logger_.info("Opening recent layout: inventory.gui");}}
+                }},
+                {"Exit", [this](){logger_.info("Pretending to close the empty window from the File menu");}}
+            }},
+            {"Edit", {}, {
+                {"Copy", [this](){logger_.info("Copy action triggered from window menu");}},
+                {"Paste Special >", {}, {
+                    {"Paste text"},
+                    {"Paste style"}
+                }}
+            }},
+            {"Help", {}, {
+                {"About", [this](){logger_.info("Window menu uses ContextMenu submenus underneath");}}
+            }}
+        });
 
         gui().openWindow(std::move(window));
     });

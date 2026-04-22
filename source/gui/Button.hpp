@@ -27,6 +27,7 @@ public:
     
 protected:
     ButtonBase();
+    ButtonBase(const style::Button& style);
     void updateTexture();
     
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
@@ -60,11 +61,12 @@ class TextButton : public ButtonBase
 {
 public:
     static std::unique_ptr<TextButton> create(const std::string_view& text);
+    static std::unique_ptr<TextButton> create(const std::string_view& text, const style::Button& style);
 
     void setText(const std::string_view& text);
     
 protected:
-    TextButton(const std::string_view& text);
+    TextButton(const std::string_view& text, const style::Button& style);
     void onSizeChange() override;
     
     gui::Label* text_;
@@ -74,12 +76,13 @@ class IconButton : public ButtonBase
 {  
 public:
     static std::unique_ptr<IconButton> create(const sf::Texture& icon);
+    static std::unique_ptr<IconButton> create(const sf::Texture& icon, const style::Button& style);
 
     void setIcon(const sf::Texture& icon);
     void onRender(sf::RenderTexture& renderTexture) override;
 
 protected:
-    IconButton(const sf::Texture& texture);
+    IconButton(const sf::Texture& texture, const style::Button& style);
     void onSizeChange() override;
     void onPositionChange() override;
 

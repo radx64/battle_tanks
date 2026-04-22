@@ -10,6 +10,7 @@
 #include "gui/TextureLibrary.hpp"
 #include "gui/Widget.hpp"
 #include "gui/window/Header.hpp"
+#include "gui/window/MenuBar.hpp"
 #include "gui/window/Panel.hpp"
 #include "gui/window/StatusBar.hpp"
 #include "gui/WindowManager.hpp"
@@ -62,6 +63,7 @@ Window::Window()
 , state_{State::Idle}
 , draggingOffset_{0.f, 0.f}
 , header_{nullptr}
+, menuBar_{nullptr}
 , windowPanel_{nullptr}
 , statusBar_{nullptr}
 , windowManager_{nullptr}
@@ -92,6 +94,11 @@ Window::Window()
     Widget::addChild(std::move(statusBar));
 
     header_->setPosition(window::config::WINDOW_BORDER_OFFSET);
+
+    auto menuBar = std::make_unique<gui::window::MenuBar>();
+    menuBar_ = menuBar.get();
+    Widget::addChild(std::move(menuBar));
+
     windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
 }
 
@@ -103,6 +110,12 @@ void Window::addChild(std::unique_ptr<Widget> widget)
 void Window::setTitle(const std::string_view& text)
 {
     header_->setTitle(text);
+}
+
+void Window::setMenuItems(const std::vector<ContextMenu::Item>& items)
+{
+    menuBar_->setItems(items);
+    onSizeChange();
 }
 
 void Window::setContextMenuHandler(ContextMenuHandler handler)
@@ -154,6 +167,7 @@ void Window::enable()
 {
     isActive_ = true;
     header_->enable();
+    menuBar_->enable();
     windowPanel_->enable();
     statusBar_->enable();
     background_.setTexture(activeTexture_);
@@ -163,6 +177,7 @@ void Window::disable()
 {
     isActive_ = false;
     header_->disable();
+    menuBar_->disable();
     windowPanel_->disable();
     statusBar_->disable();
     background_.setTexture(inactiveTexture_);
@@ -281,9 +296,14 @@ void Window::onPositionChange()
 void Window::onSizeChange()
 {
     auto size = getSize();
+    const auto menuBarHeight = menuBar_->hasItems() ? menuBar_->getPreferredHeight() : 0.f;
 
     header_->setSize(sf::Vector2f{size.x, window::config::HEADER_HEIGHT} - window::config::WINDOW_BORDER_OFFSET * 2.f);
-    windowPanel_->setSize(sf::Vector2f{size.x, size.y - window::config::HEADER_HEIGHT - window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    menuBar_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
+    menuBar_->setSize(sf::Vector2f{size.x, menuBarHeight} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+
+    windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT + menuBarHeight} + window::config::WINDOW_BORDER_OFFSET);
+    windowPanel_->setSize(sf::Vector2f{size.x, size.y - window::config::HEADER_HEIGHT - menuBarHeight - window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
     
     statusBar_->setSize(sf::Vector2f{size.x, window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
     statusBar_->setPosition({0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});

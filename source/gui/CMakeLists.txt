@@ -65,6 +65,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Widget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window/Header.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/window/MenuBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window/Panel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/window/StatusBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.cpp

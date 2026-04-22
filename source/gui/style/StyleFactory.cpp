@@ -37,6 +37,14 @@ const Sheet& StyleFactory::instance()
     
         };
 
+        sheet_->flatButton = sheet_->button;
+        sheet_->flatButton.face.texture = 
+        {
+            .normal = "flat_button",
+            .hovered = "flat_button_hover",
+            .pressed = "flat_button_pressed"
+        };
+        
         sheet_->window = Window
         {
             .background = sf::Color(200, 200, 200, 255),

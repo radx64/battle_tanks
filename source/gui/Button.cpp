@@ -51,12 +51,16 @@ namespace gui
 {
 
 ButtonBase::ButtonBase()
+: ButtonBase{style::StyleFactory::instance().button}
+{
+}
+
+ButtonBase::ButtonBase(const style::Button& style)
 : background_ {buildLayoutConfigForButtonTexture()}
-, style_{style::StyleFactory::instance().button}
+, style_{style}
 , focusTexture_{getTexture("button_focus")}
 , state_{}
 {
-
     // TODO:
     // Implement focus as a nice repeated dot border over normal/hover texture
     // as a separate layer (using texture or primitives?)
@@ -213,14 +217,22 @@ void ButtonBase::updateTexture()
         return;
     }
     background_.setTexture(getTexture(style_.face.texture.get(state_)));
+    background_.setColor(style_.face.color.get(state_));
 }
 
 std::unique_ptr<TextButton> TextButton::create(const std::string_view& text)
 {
-    return std::unique_ptr<TextButton>{new TextButton{text}};
+    return std::unique_ptr<TextButton>{new TextButton{text, style::StyleFactory::instance().button}};
 }
 
-TextButton::TextButton(const std::string_view& text)
+std::unique_ptr<TextButton> TextButton::create(const std::string_view& text, const style::Button& style)
+{
+    return std::unique_ptr<TextButton>{new TextButton{text, style}};
+}
+
+
+TextButton::TextButton(const std::string_view& text, const style::Button& style)
+: ButtonBase{style}
 {
     auto textPtr = gui::Label::create(text, style_.text);
     text_ = textPtr.get();
@@ -242,10 +254,16 @@ void TextButton::onSizeChange()
 
 std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon)
 {
-    return std::unique_ptr<IconButton>{new IconButton{icon}};
+    return std::unique_ptr<IconButton>{new IconButton{icon, style::StyleFactory::instance().button}};
 }
 
-IconButton::IconButton(const sf::Texture& texture)
+std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon, const style::Button& style)
+{
+    return std::unique_ptr<IconButton>{new IconButton{icon, style}};
+}
+
+IconButton::IconButton(const sf::Texture& texture, const style::Button& style)
+: ButtonBase{style}
 {
     auto icon  = gui::Image::create(texture);
     icon_ = icon.get();

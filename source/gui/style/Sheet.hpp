@@ -14,6 +14,7 @@ namespace gui::style
 struct Sheet
 {
     Button button;
+    Button flatButton;
     Window window;
     Text label;
     ProgressBar progressBar;
