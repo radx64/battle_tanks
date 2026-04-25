@@ -27,6 +27,8 @@ protected:
     sf::RenderTexture backgroundTexture_;
     sf::Sprite backgroundSprite_;
     engine::Timer timer_;
+
+    bool isSyncing_ = false;
 };
 
 }  // namespace gui_sandbox

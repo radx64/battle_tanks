@@ -1,6 +1,8 @@
 #include "Application.hpp"
 
 #include <chrono>
+#include <filesystem>
+#include <fstream>
 #include <fmt/format.h>
 
 #include "Config.hpp"
@@ -19,7 +21,9 @@
 #include "gui/EditBox.hpp"
 #include "gui/FontLibrary.hpp"
 #include "gui/FramedSprite.hpp"
+#include "gui/GroupBox.hpp"
 #include "gui/Label.hpp"
+#include "gui/ListBox.hpp"
 #include "gui/layout/Grid.hpp"
 #include "gui/layout/Horizontal.hpp"
 #include "gui/layout/Inset.hpp"
@@ -336,8 +340,281 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createLayoutWindowButton));
 
+    auto createGroupBoxWindowButton = gui::TextButton::create("GroupBox Window");
+    createGroupBoxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
+    createGroupBoxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createGroupBoxWindowButton->onClick([this](){
+
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(420.f, 320.f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 210.f, 220.f));
+        window->setTitle("GroupBox demo");
+
+        auto rootLayout = gui::layout::Vertical::create();
+        rootLayout->setPadding(12);
+
+        auto movementGroup = gui::GroupBox::create("Movement");
+        auto movementLayout = gui::layout::Vertical::create();
+        movementLayout->setPadding(8);
+
+        auto keyboardLabel = gui::Label::create("Keyboard steering");
+        keyboardLabel->setAlignment(gui::Alignment::VerticallyCentered);
+        auto mouseLabel = gui::Label::create("Mouse aiming enabled");
+        mouseLabel->setAlignment(gui::Alignment::VerticallyCentered);
+
+        movementLayout->addChild(std::move(keyboardLabel));
+        movementLayout->addChild(std::move(mouseLabel));
+        movementGroup->addChild(std::move(movementLayout));
+
+        auto weaponGroup = gui::GroupBox::create("Weapons");
+        auto weaponLayout = gui::layout::Vertical::create();
+        weaponLayout->setPadding(8);
+
+        auto cannonLabel = gui::Label::create("Primary cannon");
+        cannonLabel->setAlignment(gui::Alignment::VerticallyCentered);
+        auto rocketsLabel = gui::Label::create("Rocket salvo");
+        rocketsLabel->setAlignment(gui::Alignment::VerticallyCentered);
+
+        weaponLayout->addChild(std::move(cannonLabel));
+        weaponLayout->addChild(std::move(rocketsLabel));
+        weaponGroup->addChild(std::move(weaponLayout));
+
+        rootLayout->addChild(std::move(movementGroup));
+        rootLayout->addChild(std::move(weaponGroup));
+
+        window->addChild(std::move(rootLayout));
+        gui().openWindow(std::move(window));
+    });
+    gui().mainWindow().addChild(std::move(createGroupBoxWindowButton));
+
+    auto createListBoxWindowButton = gui::TextButton::create("ListBox Window");
+    createListBoxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
+    createListBoxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createListBoxWindowButton->onClick([this](){
+
+        auto window = std::make_unique<gui::Window>();
+        window->setSize(sf::Vector2f(420.f, 360.f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 210.f, 240.f));
+        window->setTitle("ListBox demo");
+
+        auto rootLayout = gui::layout::Vertical::create();
+        rootLayout->setPadding(10);
+
+        auto selectedLabel = gui::Label::create("Selected: none");
+        selectedLabel->setAlignment(gui::Alignment::VerticallyCentered);
+
+        auto listBox = gui::ListBox::create();
+        std::vector<gui::ListBox::Item> items;
+        items.reserve(20);
+
+        for (int index = 1; index <= 20; ++index)
+        {
+            items.emplace_back(
+                fmt::format("Vehicle preset {}", index),
+                [this, index]() {
+                    logger_.info(fmt::format("Clicked list item {}", index));
+                });
+        }
+
+        listBox->setItems(items);
+        listBox->onSelectionChange([label = selectedLabel.get()](std::optional<std::size_t> index) {
+            if (index)
+            {
+                label->setText(fmt::format("Selected: Vehicle preset {}", *index + 1));
+            }
+            else
+            {
+                label->setText("Selected: none");
+            }
+        });
+
+        rootLayout->addChild(std::move(selectedLabel));
+        rootLayout->addChild(std::move(listBox));
+
+        window->addChild(std::move(rootLayout));
+        gui().openWindow(std::move(window));
+    });
+    gui().mainWindow().addChild(std::move(createListBoxWindowButton));
+
+    auto createNotepadWindowButton = gui::TextButton::create("Notepad Window");
+    createNotepadWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createNotepadWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createNotepadWindowButton->onClick([this](){
+
+        namespace fs = std::filesystem;
+
+        struct NotepadState
+        {
+            fs::path currentFile;
+        };
+
+        auto state = std::make_shared<NotepadState>();
+        const auto notesDirectory = fs::current_path() / "notepad_files";
+        const auto scratchFile = notesDirectory / "scratchpad.txt";
+        const auto sampleFile = notesDirectory / "welcome_note.txt";
+        fs::create_directories(notesDirectory);
+
+        if (not fs::exists(sampleFile))
+        {
+            std::ofstream sampleOutput(sampleFile);
+            sampleOutput
+                << "GUI Sandbox Notepad\n"
+                << "===================\n\n"
+                << "This demo uses:\n"
+                << "- Window menu bar\n"
+                << "- MultiLineEditBox\n"
+                << "- Vertical scrollbar\n\n"
+                << "Use File -> Save to write your notes.\n";
+        }
+
+        if (not fs::exists(scratchFile))
+        {
+            std::ofstream scratchOutput(scratchFile);
+            scratchOutput << "Start typing here...\n";
+        }
+
+        auto window = std::make_unique<gui::Window>();
+        auto* windowPtr = window.get();
+        window->setSize(sf::Vector2f(720.f, 520.f));
+        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 360.f, 180.f));
+
+        auto rootLayout = gui::layout::Vertical::create();
+        rootLayout->setPadding(8);
+
+        auto fileLabel = gui::Label::create("");
+        fileLabel->setAlignment(gui::Alignment::VerticallyCentered);
+
+        auto editorRow = gui::layout::Horizontal::create();
+        editorRow->setPadding(8);
+
+        auto editor = gui::MultiLineEditBox::create();
+        auto* editorPtr = editor.get();
+
+        auto scrollbar = gui::scrollbar::Vertical::create();
+        auto* scrollbarPtr = scrollbar.get();
+
+        editorRow->addChild(std::move(editor));
+        editorRow->addChild(std::move(scrollbar));
+        editorRow->setColumnSize(1, gui::layout::Constraint::Pixels(32.f));
+
+        auto updateWindowCaption = [fileLabelPtr = fileLabel.get(), windowPtr, state]() {
+            const auto fileName = state->currentFile.empty() ? std::string("Untitled") : state->currentFile.filename().string();
+            const auto fullPath = state->currentFile.empty() ? std::string("<no file>") : state->currentFile.string();
+            fileLabelPtr->setText("File: " + fullPath);
+            windowPtr->setTitle("Notepad - " + fileName);
+        };
+
+        auto syncScrollbar = [this, editorPtr, scrollbarPtr]() {
+            // TODO: this is temporary janky solution (PoC) unitl I implement proper
+            // interfacing of scrollable widgets and their synchronization with scrollbars.
+
+            if (isSyncing_) return;
+            isSyncing_ = true;
+            
+            logger_.info("Syncing scrollbar with editor view"); 
+            const auto lineCount = editorPtr->getLineCount();
+            const auto visibleLineSpan = editorPtr->getVisibleLineSpan();
+            const auto maxFirstVisibleLine = editorPtr->getMaxFirstVisibleLine();
+            
+            scrollbarPtr->setThumbRatio(static_cast<float>(visibleLineSpan) / static_cast<float>(lineCount)); 
+            scrollbarPtr->setStep(lineCount < visibleLineSpan? 1.f/static_cast<float>(visibleLineSpan) : 1.f/static_cast<float>(lineCount-visibleLineSpan)); 
+            
+            const auto value = 1.f - static_cast<float>(editorPtr->getFirstVisibleLine()) / static_cast<float>(maxFirstVisibleLine); 
+            
+            scrollbarPtr->setValue(value);
+
+            isSyncing_ = false;
+        };
+
+        auto loadFile = [this, editorPtr, state, updateWindowCaption](const fs::path& filePath) {
+            std::ifstream input(filePath);
+            if (not input)
+            {
+                logger_.warning(fmt::format("Could not open {}", filePath.string()));
+                return;
+            }
+
+            std::string text((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+            editorPtr->setText(text);
+            editorPtr->setFirstVisibleLine(0);
+            state->currentFile = filePath;
+            updateWindowCaption();
+            logger_.info(fmt::format("Opened {}", filePath.string()));
+        };
+
+        auto saveFile = [this, editorPtr, state, updateWindowCaption](const fs::path& filePath) {
+            std::ofstream output(filePath);
+            if (not output)
+            {
+                logger_.warning(fmt::format("Could not save {}", filePath.string()));
+                return;
+            }
+
+            output << editorPtr->getText();
+            state->currentFile = filePath;
+            updateWindowCaption();
+            logger_.info(fmt::format("Saved {}", filePath.string()));
+        };
+
+        // FIXME: there is cyclic dependency between scrollbar and editor here, 
+        // And it would be good to find a good way to decouple them
+        // as updating view from editor calls scrollbar update which then calls editor update again.
+        // BTW scrollbar should set text offset on editor
+        // and could also handle the cursor tracking?
+        scrollbarPtr->onValueChange([editorPtr, this](const float value) {
+            if (isSyncing_) return;
+            isSyncing_ = true;
+            const auto maxLine = editorPtr->getMaxFirstVisibleLine();
+
+            size_t firstVisible = 0;
+            if (maxLine > 0) 
+            {
+                firstVisible = static_cast<size_t>(
+                    std::round((1.f - value) * static_cast<float>(maxLine))
+                );
+            }
+
+            editorPtr->setFirstVisibleLine(firstVisible);
+            isSyncing_ = false;
+        });
+
+        editorPtr->onViewChange(syncScrollbar);
+
+        rootLayout->addChild(std::move(fileLabel));
+        rootLayout->addChild(std::move(editorRow));
+        rootLayout->setRowSize(0, gui::layout::Constraint::Pixels(24.f));
+
+        window->addChild(std::move(rootLayout));
+        window->setMenuItems({
+            {"File", {}, {
+                {"New", [editorPtr, state, updateWindowCaption, scratchFile]() {
+                    editorPtr->setText("");
+                    editorPtr->setFirstVisibleLine(0);
+                    state->currentFile = scratchFile;
+                    updateWindowCaption();
+                }},
+                // TODO: right now I don't have fancy file open dialog so it is what it is
+                {"Open Scratchpad", [loadFile, scratchFile]() { loadFile(scratchFile); }},
+                {"Open Welcome Note", [loadFile, sampleFile]() { loadFile(sampleFile); }},
+                {"Save", [saveFile, state, scratchFile]() {
+                    saveFile(state->currentFile.empty() ? scratchFile : state->currentFile);
+                }},
+                {"Save As Scratchpad", [saveFile, scratchFile]() { saveFile(scratchFile); }},
+                {"Save As Copy", [saveFile, notesDirectory]() { saveFile(notesDirectory / "copy_note.txt"); }},
+            }}
+        });
+
+        state->currentFile = scratchFile;
+        updateWindowCaption();
+        loadFile(scratchFile);
+        syncScrollbar();
+
+        gui().openWindow(std::move(window));
+    });
+    gui().mainWindow().addChild(std::move(createNotepadWindowButton));
+
     auto createFocusTestWindowButton = gui::TextButton::create("Focus Test Window");
-    createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
+    createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
     createFocusTestWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createFocusTestWindowButton->onClick([this](){
 
@@ -389,7 +666,7 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createFocusTestWindowButton));
 
     auto createGridLayoutWindowButton = gui::TextButton::create("Grid Layout Window");
-    createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
+    createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 600.f));
     createGridLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createGridLayoutWindowButton->onClick([this](){
 
@@ -602,7 +879,7 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createGridLayoutWindowButton));
 
     auto createSliderWindowButton = gui::TextButton::create("Slider Window");
-    createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 650.f));
     createSliderWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createSliderWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
@@ -702,7 +979,7 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createSliderWindowButton));
 
     auto createScrollBarWindowButton = gui::TextButton::create("Scrollbars");
-    createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
+    createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 700.f));
     createScrollBarWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createScrollBarWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
@@ -741,7 +1018,7 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createScrollBarWindowButton));
 
     auto createCalculatorWindowButton = gui::TextButton::create("Calculator");
-    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 600.f));
+    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 750.f));
     createCalculatorWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createCalculatorWindowButton->onClick([this](){
         auto window = std::make_unique<gui::Window>();
