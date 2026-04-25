@@ -12,6 +12,9 @@ class Vertical : public Base
 {
 public:
     static std::unique_ptr<Vertical> create();
+    void setValue(float value);
+    float getValue() const;
+    void setStep(float step);
     void setThumbRatio(const float ratio);
 
 protected:

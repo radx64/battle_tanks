@@ -9,10 +9,18 @@
 
 namespace 
 {
-const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
-constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 2048;
-constexpr uint32_t DEFAULT_MAX_LINES = 10;
+    const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
+    constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 2048;
+    constexpr uint32_t DEFAULT_MAX_LINES = 10;
 }  // namespace
+
+// FIXME:
+// This class is currently a bit of a mess, and needs some refactoring and cleanup.
+// Cursor (caret) behaviour when going up and down need to be reworked
+// View span should be update when cursor escapes it
+// Not every time cursor changes position.
+// Eg. in VSCode "escaping means reaching even 3 lines before end of view"
+// Ensure cursor visible should go away.
 
 namespace gui
 {
@@ -24,21 +32,100 @@ std::unique_ptr<MultiLineEditBox> MultiLineEditBox::create()
 MultiLineEditBox::MultiLineEditBox()
 : BaseEditBox()
 , maxLines_{DEFAULT_MAX_LINES}
+, firstVisibleLine_{0}
 {
     maxLength_ = DEFAULT_TEXT_MAX_LENGTH;
     rebuildLineIndices();
 }
 
+void MultiLineEditBox::setFirstVisibleLine(size_t line)
+{
+    const auto clampedLine = std::min(line, getMaxFirstVisibleLine());
+    if (firstVisibleLine_ == clampedLine)
+    {
+        return;
+    }
+
+    firstVisibleLine_ = clampedLine;
+    updateTextVisbleArea();
+    notifyViewChange();
+}
+
+size_t MultiLineEditBox::getFirstVisibleLine() const
+{
+    return firstVisibleLine_;
+}
+
+size_t MultiLineEditBox::getVisibleLineSpan() const
+{
+    const sf::Font* font = text_.getFont();
+    if (not font)
+    {
+        return 1;
+    }
+
+    const auto lineHeight = getFontLineSpacing(*font, text_.getCharacterSize());
+    if (lineHeight <= 0.f)
+    {
+        return 1;
+    }
+
+    return std::max<size_t>(1, static_cast<size_t>(std::ceil(((text_.getSize().y / lineHeight)) - 0.5f)));
+} 
+
+size_t MultiLineEditBox::getMaxFirstVisibleLine() const
+{
+    const auto visibleLineSpan = getVisibleLineSpan();
+    if (lineIndices_.size() <= visibleLineSpan)
+    {
+        return 0;
+    }
+
+    return lineIndices_.size() - visibleLineSpan;
+}
+
+size_t MultiLineEditBox::getLineCount() const
+{
+    return lineIndices_.size();
+}
+
+size_t MultiLineEditBox::getCursorLine() const
+{
+    return getLineFromIndex(textCursor_.getIndex());
+}
+
+void MultiLineEditBox::onViewChange(std::function<void()> callback)
+{
+    onViewChange_ = std::move(callback);
+}
+
+void MultiLineEditBox::onSizeChange()
+{
+    BaseEditBox::onSizeChange();
+    notifyViewChange();
+}
+
 void MultiLineEditBox::updateTextVisbleArea()
 {
-    // For multiline text, we typically use top-left alignment
-    // with vertical scrolling capability (simplified for now)
-    text_.setOffset(sf::Vector2f{0.f, 0.f});
+    const sf::Font* font = text_.getFont();
+    if (not font)
+    {
+        text_.setOffset(sf::Vector2f{0.f, 0.f});
+        return;
+    }
+
+    const auto lineHeight = getFontLineSpacing(*font, text_.getCharacterSize());
+    text_.setOffset(sf::Vector2f{0.f, -static_cast<float>(firstVisibleLine_) * lineHeight});
+    logger_.debug(fmt::format("Updating text visible area. First visible line: {}, line height: {}, offset: {}", firstVisibleLine_, lineHeight, text_.getOffset().y));
 }
 
 void MultiLineEditBox::onTextChanged()
 {
     rebuildLineIndices();
+    firstVisibleLine_ = std::min(firstVisibleLine_, getMaxFirstVisibleLine());
+    ensureCursorVisible();
+    updateTextVisbleArea();
+    notifyViewChange();
 }
 
 void MultiLineEditBox::rebuildLineIndices()
@@ -67,6 +154,31 @@ void MultiLineEditBox::rebuildLineIndices()
 void MultiLineEditBox::updateCursorPosition()
 {
     textCursor_.update();
+}
+
+void MultiLineEditBox::ensureCursorVisible()
+{
+    const auto currentLine = getLineFromIndex(textCursor_.getIndex());
+    const auto visibleLineSpan = getVisibleLineSpan();
+
+    if (currentLine < firstVisibleLine_)
+    {
+        firstVisibleLine_ = currentLine;
+    }
+    else if (currentLine >= firstVisibleLine_ + visibleLineSpan)
+    {
+        firstVisibleLine_ = currentLine - visibleLineSpan + 1;
+    }
+
+    firstVisibleLine_ = std::min(firstVisibleLine_, getMaxFirstVisibleLine());
+}
+
+void MultiLineEditBox::notifyViewChange()
+{
+    if (onViewChange_)
+    {
+        onViewChange_();
+    }
 }
 
 size_t MultiLineEditBox::getLineFromIndex(size_t textIndex) const
@@ -124,8 +236,8 @@ size_t MultiLineEditBox::getIndexFromScreenPosition(const sf::Vector2f& screenPo
     uint32_t charSize = text_.getCharacterSize();
     float lineHeight = getFontLineSpacing(*font, charSize);
     
-    // Calculate which line was clicked
-    float relativeY = screenPos.y - textGlobalPos.y;
+    // Calculate which line was clicked, accounting for scroll offset
+    float relativeY = screenPos.y - textGlobalPos.y - textOffset.y;
     size_t lineIdx = static_cast<size_t>(relativeY / lineHeight);
     
     // Clamp to valid line range
@@ -181,7 +293,11 @@ void MultiLineEditBox::moveCursorUp()
         size_t column = getColumnFromIndex(currentIdx);
         size_t newIdx = getIndexFromLineColumn(currentLine - 1, column);
         textCursor_.setIndex(newIdx);
+        ensureCursorVisible();
+        updateTextVisbleArea();
+        textCursor_.update();
         updateCursorAndSelection(false);
+        notifyViewChange();
     }
 }
 
@@ -195,7 +311,11 @@ void MultiLineEditBox::moveCursorDown()
         size_t column = getColumnFromIndex(currentIdx);
         size_t newIdx = getIndexFromLineColumn(currentLine + 1, column);
         textCursor_.setIndex(newIdx);
+        ensureCursorVisible();
+        updateTextVisbleArea();
+        textCursor_.update();
         updateCursorAndSelection(false);
+        notifyViewChange();
     }
 }
 
@@ -206,6 +326,9 @@ void MultiLineEditBox::moveCursorHome()
     
     size_t newIdx = lineIndices_[currentLine].startIndex;
     textCursor_.setIndex(newIdx);
+    ensureCursorVisible();
+    updateTextVisbleArea();
+    textCursor_.update();
     updateCursorAndSelection(false);
 }
 
@@ -216,6 +339,9 @@ void MultiLineEditBox::moveCursorEnd()
     
     size_t newIdx = lineIndices_[currentLine].startIndex + lineIndices_[currentLine].length;
     textCursor_.setIndex(newIdx);
+    ensureCursorVisible();
+    updateTextVisbleArea();
+    textCursor_.update();
     updateCursorAndSelection(false);
 }
 
@@ -235,8 +361,11 @@ void MultiLineEditBox::insertNewLine()
         newText.insert(textCursor_.getIndex(), 1, '\n');
         text_.setText(newText);
         rebuildLineIndices();
-        updateTextVisbleArea();
         textCursor_.moveRight(false);
+        ensureCursorVisible();
+        updateTextVisbleArea();
+        textCursor_.update();
+        notifyViewChange();
     }
 }
 
@@ -249,7 +378,10 @@ void MultiLineEditBox::deleteNewLine()
         newText.erase(textCursor_.getIndex(), 1);
         text_.setText(newText);
         rebuildLineIndices();
+        ensureCursorVisible();
         updateTextVisbleArea();
+        textCursor_.update();
+        notifyViewChange();
     }
 }
 
@@ -269,6 +401,10 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonPressed& mouseButtonPre
     sf::Vector2f screenPos{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     size_t textIndex = getIndexFromScreenPosition(screenPos);
     textCursor_.setIndex(textIndex);
+    ensureCursorVisible();
+    updateTextVisbleArea();
+    textCursor_.update();
+    notifyViewChange();
 
     if (anyShiftHeldDown_)
     {
@@ -295,6 +431,10 @@ EventStatus MultiLineEditBox::on(const event::MouseMoved& mouseMovedEvent)
         sf::Vector2f screenPos{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
         size_t textIndex = getIndexFromScreenPosition(screenPos);
         textCursor_.setIndex(textIndex);
+        ensureCursorVisible();
+        updateTextVisbleArea();
+        textCursor_.update();
+        notifyViewChange();
         selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
     }
 
@@ -321,6 +461,10 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseBut
     const size_t textIndex = getIndexFromScreenPosition(screenPos);
 
     textCursor_.setIndex(textIndex);
+    ensureCursorVisible();
+    updateTextVisbleArea();
+    textCursor_.update();
+    notifyViewChange();
     textCursor_.moveLeft(true);
     selection_.start(textCursor_.getIndex(), textCursor_.getPosition());
     textCursor_.moveRight(true);
@@ -411,11 +555,21 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             {
                 rebuildLineIndices();
             }
+            if (result == EventStatus::Consumed)
+            {
+                ensureCursorVisible();
+                updateTextVisbleArea();
+                textCursor_.update();
+                notifyViewChange();
+            }
             return result;
         }
     }
 
+    ensureCursorVisible();
     updateTextVisbleArea();
+    textCursor_.update();
+    notifyViewChange();
     return result;
 }
 
@@ -444,8 +598,11 @@ EventStatus MultiLineEditBox::on(const event::TextEntered& textEntered)
 
         text_.setText(text);
         rebuildLineIndices();
-        updateTextVisbleArea();
         textCursor_.moveRight(false);
+        ensureCursorVisible();
+        updateTextVisbleArea();
+        textCursor_.update();
+        notifyViewChange();
         return EventStatus::Consumed;
     }
 

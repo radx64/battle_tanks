@@ -23,6 +23,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GroupBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MultiLineEditBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/EventReceiver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FontHeightCache.cpp
@@ -32,6 +33,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/keyboard/Utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/KeyboardController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Label.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ListBox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Constraint.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/layout/Grid.cpp

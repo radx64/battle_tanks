@@ -16,6 +16,21 @@ std::unique_ptr<Vertical> Vertical::create()
     return std::unique_ptr<Vertical>(new Vertical{});
 }
 
+void Vertical::setValue(float value)
+{
+    slider_ptr_->setValue(value);
+}
+
+float Vertical::getValue() const
+{
+    return slider_ptr_->getValue();
+}
+
+void Vertical::setStep(float step)
+{
+    slider_ptr_->setStep(step);
+}
+
 void Vertical::setThumbRatio(const float ratio)
 {
     slider_ptr_->setThumbRatio(std::min(ratio, 1.0f));

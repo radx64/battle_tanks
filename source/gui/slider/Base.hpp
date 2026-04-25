@@ -140,6 +140,9 @@ float Base<MouseHandlingPolicy, RenderingPolicy>::getValue() const
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::setStep(const float step)
 {
+    auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
+    thumb_.setSize(thumbSize);
+    thumb_.setOrigin(thumbSize / 2.f);
     step_ = step;
 }
 
