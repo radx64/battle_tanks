@@ -43,6 +43,7 @@ Widget::Widget(const std::source_location location)
 : localPosition_{}
 , bounds_{}
 , parent_{nullptr}
+, gui_{nullptr}
 , children_ {}
 , isVisible_ {true}
 , isFocused_{false}

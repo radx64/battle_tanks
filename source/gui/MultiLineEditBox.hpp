@@ -18,13 +18,8 @@ public:
 
     ~MultiLineEditBox() = default;
 
-    void setFirstVisibleLine(size_t line);
-    size_t getFirstVisibleLine() const;
-    size_t getVisibleLineSpan() const;
-    size_t getMaxFirstVisibleLine() const;
     size_t getLineCount() const;
     size_t getCursorLine() const;
-    void onViewChange(std::function<void()> callback);
 
 protected:
     MultiLineEditBox();
@@ -41,7 +36,6 @@ protected:
 
 private:
     void ensureCursorVisible();
-    void notifyViewChange();
 
     void updateCursorPosition();
 
@@ -65,9 +59,6 @@ private:
     };
 
     std::vector<LineInfo> lineIndices_;
-    uint32_t maxLines_;
-    size_t firstVisibleLine_;
-    std::function<void()> onViewChange_;
 };
 
 }  // namespace gui

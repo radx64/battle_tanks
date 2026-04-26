@@ -94,6 +94,7 @@ protected:
     friend class gui::WindowManager;
 
     void setMaximized(const bool state);
+    void prepareWindow();
 
     bool isDead_;
     bool isActive_;

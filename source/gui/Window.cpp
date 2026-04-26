@@ -362,4 +362,13 @@ EventStatus MainWindow::on(const event::MouseButtonPressed& mouseButtonPressedEv
     return gui::EventStatus::NotConsumed;
 }
 
+ void Window::prepareWindow()
+ {
+    // TODO add other initialization elements if needed
+    // This is called when window is ready to be open
+    // So sizes of elements and Window itself should be 
+    // known at this poitn and can be used for preparations
+    windowPanel_->setSize(windowPanel_->getSize());
+ }
+
 }  // namespace gui

@@ -55,6 +55,7 @@ void WindowManager::openWindow(std::unique_ptr<Window> window)
     activeWindow_->enable();
     mainWindow_.defocusWithAllChildren();
     window->setManager(this);
+    window->prepareWindow();
     windows_.push_front(std::move(window));
 }
 

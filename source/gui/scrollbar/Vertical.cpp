@@ -45,9 +45,9 @@ Vertical::Vertical()
     auto upButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_up"));
     auto downButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_down"));
 
-    slider->setRange(0.f, 1.f);
-    slider->setStep(0.1f);
     slider->setValue(1.f);
+    slider->setRange(0.f, 1.f);
+    slider->setStep(0.01f);
     slider->onValueChange([this](const float value) {notifyChange(value);});
 
     upButton->onClick([sliderPtr = slider.get()]{sliderPtr->increase();});

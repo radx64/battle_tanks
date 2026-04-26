@@ -27,7 +27,8 @@ public:
     void update();
     uint32_t getIndex() const;
     void setIndex(const uint32_t index);
-    sf::Vector2f getPosition();
+    sf::Vector2f getPosition() const;
+    sf::FloatRect getBounds() const;
 
     void disable();
     void enable();

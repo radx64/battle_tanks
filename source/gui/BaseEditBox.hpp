@@ -5,17 +5,18 @@
 #include <SFML/Graphics.hpp>
 
 #include "gui/Alignment.hpp"
-#include "gui/Widget.hpp"
 #include "gui/FramedSprite.hpp"
+#include "gui/IScrollableWidget.hpp"
 #include "gui/Selection.hpp"
+#include "gui/style/EditBox.hpp"
 #include "gui/Text.hpp"
 #include "gui/TextCursor.hpp"
-#include "gui/style/EditBox.hpp"
+#include "gui/Widget.hpp"
 
 namespace gui
 {
 
-class BaseEditBox : public Widget
+class BaseEditBox : public IScrollableWidget
 {
 public:
     ~BaseEditBox();
@@ -23,6 +24,10 @@ public:
     std::string getText();
     void setText(const std::string_view text);
     void setAlignment(const gui::Alignment& alignment);
+
+    sf::Vector2f getViewportSize() override;
+    sf::Vector2f getContentSize() override;
+    void applyOffset(const sf::Vector2f& offset) override;
 
 protected:
     BaseEditBox();
