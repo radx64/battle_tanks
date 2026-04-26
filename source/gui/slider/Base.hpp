@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <functional>
 
 #include <SFML/Graphics.hpp>
@@ -126,6 +127,8 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::setRange(const float min, const
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::setValue(const float value)
 {
+    if (std::isnan(value)) return;
+
     value_ = std::clamp(value, min_, max_);
     updateTexture();
     if (onValueChange_) onValueChange_(value_);
@@ -143,7 +146,7 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::setStep(const float step)
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
     thumb_.setSize(thumbSize);
     thumb_.setOrigin(thumbSize / 2.f);
-    step_ = step;
+    step_ = (step > 0.0f) ? step : 0.01f;
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
@@ -178,7 +181,13 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::onPositionChange()
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 float Base<MouseHandlingPolicy, RenderingPolicy>::normalizeValue()
 {
-    return (value_ - min_) / (max_ - min_);
+    float range = max_ - min_;
+    if (range == 0.0f) return 0.0f;
+
+    auto normalizeValue = (value_ - min_) / range;
+
+    if (std::isnan(normalizeValue)) return 0.0f;
+    return normalizeValue;
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
@@ -190,18 +199,16 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::Keyboard
 
     if (key == gui::event::Key::Left)
     {
-        value_ -= step_;
+        setValue(getValue() - step_);
     }
     else if (key == gui::event::Key::Right)
     {
-        value_ += step_;
+        setValue(getValue() + step_);
     }
     else
     {
         return EventStatus::NotConsumed;
     }
-
-    value_ = std::clamp(value_, min_, max_);
 
     updateTexture();
 
@@ -275,7 +282,7 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseBut
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(sf::Vector2f& mousePosition)
 {
-    value_ = MouseHandlingPolicy::translatePositionToThumbValue(mousePosition, track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_);
+    setValue(MouseHandlingPolicy::translatePositionToThumbValue(mousePosition, track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_));
 
     focus();
     updateTexture();

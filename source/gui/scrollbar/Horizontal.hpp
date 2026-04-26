@@ -23,7 +23,6 @@ protected:
     void onRender(sf::RenderTexture& renderTexture) override;
 
     gui::slider::HorizontalThick* slider_ptr_;
-    float ratio_;
 };
 
 } // namespace gui::scrollbar
