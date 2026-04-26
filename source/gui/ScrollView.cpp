@@ -11,6 +11,11 @@
 namespace gui
 {
 
+// TODO: this should come from IScrollableWidget, so that scroll view can properly calculate max scroll Y based on content needs
+const float EXTRA_SCROLLBAR_SPACE = 200.f; 
+
+// TODO: Scrollbars ranges are not updated when bounds of the text are changing
+
 std::unique_ptr<ScrollView> ScrollView::create()
 {
     return std::unique_ptr<ScrollView>{new ScrollView{}};   
@@ -48,11 +53,11 @@ ScrollView::ScrollView()
 
     auto horizontalScrollBar = scrollbar::Horizontal::create();
     horizontalScrollBar_ = horizontalScrollBar.get();
-    horizontalScrollBar->setThumbRatio(0.2f);
+    horizontalScrollBar->setValue(0.f);
 
     auto verticalScrollBar = scrollbar::Vertical::create();
     verticalScrollBar_ = verticalScrollBar.get();
-    verticalScrollBar->setThumbRatio(0.2f);
+    verticalScrollBar->setValue(1.f);
 
     horizontalScrollBar->onValueChange([this](const float){
         applyScroll();
@@ -98,11 +103,11 @@ void ScrollView::applyScroll()
     const auto contentSize = content_->getContentSize();
     const auto viewableSize = content_->getViewportSize();
 
-    const auto maxScrollX = std::max(0.f, contentSize.x - viewableSize.x);
-    const auto maxScrollY = std::max(0.f, contentSize.y - viewableSize.y);
+    const auto maxScrollX = std::max(0.f, contentSize.x - viewableSize.x + EXTRA_SCROLLBAR_SPACE);
+    const auto maxScrollY = std::max(0.f, contentSize.y - viewableSize.y + EXTRA_SCROLLBAR_SPACE);
 
-    scrollOffset_.x = horizontalScrollBar_->getValue() * maxScrollX;
-    scrollOffset_.y = (1.f - verticalScrollBar_->getValue()) * maxScrollY;
+    scrollOffset_.x = std::min(1.0f, horizontalScrollBar_->getValue()) * maxScrollX;
+    scrollOffset_.y = std::max(0.f, (1.f - verticalScrollBar_->getValue())) * maxScrollY;
 
     content_->applyOffset(-scrollOffset_);
 }
@@ -121,8 +126,6 @@ void ScrollView::updateScrollBars()
     
     const auto contentSize = content_->getContentSize();
     const auto viewableSize = content_->getViewportSize();
-    logger_.debug(fmt::format("updateScrollBars: contentSize=({}, {}), viewableSize=({}, {})", 
-        contentSize.x, contentSize.y, viewableSize.x, viewableSize.y));
 
     // Calculate ratios with proper handling of edge cases
     float horizontalRatio = 0.1f;  // Default to 10% thumb size
@@ -156,8 +159,8 @@ void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
     const auto contentSize = content_->getContentSize();
     const auto viewableSize = content_->getViewportSize();
 
-    const auto maxScrollX = std::max(0.f, contentSize.x - viewableSize.x);
-    const auto maxScrollY = std::max(0.f, contentSize.y - viewableSize.y);
+    const auto maxScrollX = std::max(0.f, contentSize.x - viewableSize.x + EXTRA_SCROLLBAR_SPACE);
+    const auto maxScrollY = std::max(0.f, contentSize.y - viewableSize.y + EXTRA_SCROLLBAR_SPACE);
 
     // Calculate scroll offset to make the rectangle visible
     sf::Vector2f scrollOffset = scrollOffset_;

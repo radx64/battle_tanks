@@ -36,9 +36,9 @@ Horizontal::Horizontal()
     auto leftButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_left"));
     auto rightButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_right"));
 
+    slider->setValue(0.f);
     slider->setRange(0.f, 1.f);
     slider->setStep(0.01f);
-    slider->setValue(0.f);
     slider->onValueChange([this](const float value) {notifyChange(value);});
 
     leftButton->onClick([sliderPtr = slider.get()]{sliderPtr->decrease();});
