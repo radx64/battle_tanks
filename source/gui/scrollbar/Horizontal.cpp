@@ -17,6 +17,16 @@ void Horizontal::setThumbRatio(const float ratio)
     slider_ptr_->setThumbRatio(std::min(ratio, 1.0f));
 }
 
+void Horizontal::setValue(float value)
+{
+    slider_ptr_->setValue(value);
+}
+
+float Horizontal::getValue() const
+{
+    return slider_ptr_->getValue();
+}
+
 Horizontal::Horizontal()
 {
     auto layout = gui::layout::Horizontal::create();
@@ -27,7 +37,7 @@ Horizontal::Horizontal()
     auto rightButton = gui::IconButton::create(gui::TextureLibrary::instance().get("arrow_right"));
 
     slider->setRange(0.f, 1.f);
-    slider->setStep(0.1f);
+    slider->setStep(0.01f);
     slider->setValue(0.f);
     slider->onValueChange([this](const float value) {notifyChange(value);});
 

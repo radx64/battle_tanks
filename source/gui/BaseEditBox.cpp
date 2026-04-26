@@ -70,6 +70,21 @@ void BaseEditBox::setAlignment(const gui::Alignment& alignment)
     updateTextVisbleArea();
 }
 
+sf::Vector2f BaseEditBox::getViewportSize()
+{
+    return Widget::getSize();
+}
+sf::Vector2f BaseEditBox::getContentSize()
+{
+    return text_.getTextBounds().getSize();
+}
+
+void BaseEditBox::applyOffset(const sf::Vector2f& offset)
+{
+    text_.setOffset(offset);
+    updateTextVisbleArea();
+}
+
 void BaseEditBox::onRender(sf::RenderTexture& renderTexture)
 {
     renderTexture.draw(background_);
@@ -90,7 +105,7 @@ void BaseEditBox::onPositionChange()
 {
     text_.setGlobalPosition(Widget::getGlobalPosition() + EXTRA_END_OFFSET);
     background_.setPosition(getGlobalPosition());
-    updateTextVisbleArea();
+
     textCursor_.update();
     selection_.update();
 }

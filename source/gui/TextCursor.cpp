@@ -145,10 +145,16 @@ float TextCursor::getLineHeight() const
     return getFontLineSpacing(*font_, characterSize_);
 }
 
-sf::Vector2f TextCursor::getPosition()
+sf::Vector2f TextCursor::getPosition() const
 {
     return cursorImage_.getPosition();
 }
+
+ sf::FloatRect TextCursor::getBounds() const
+ {
+    return cursorImage_.getGlobalBounds();
+ }
+
 
 void TextCursor::render(sf::RenderTexture& renderTexture)
 {

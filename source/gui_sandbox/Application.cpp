@@ -3,6 +3,8 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <memory>
+
 #include <fmt/format.h>
 
 #include "Config.hpp"
@@ -34,6 +36,7 @@
 #include "gui/RadioButtonGroup.hpp"
 #include "gui/scrollbar/Horizontal.hpp"
 #include "gui/scrollbar/Vertical.hpp"
+#include "gui/ScrollView.hpp"
 #include "gui/slider/Horizontal.hpp"
 #include "gui/slider/HorizontalThick.hpp"
 #include "gui/slider/Vertical.hpp"
@@ -484,46 +487,17 @@ void Application::onInit()
         auto fileLabel = gui::Label::create("");
         fileLabel->setAlignment(gui::Alignment::VerticallyCentered);
 
-        auto editorRow = gui::layout::Horizontal::create();
-        editorRow->setPadding(8);
+        auto editorScrollView = gui::ScrollView::create();
+        auto multilineEditor = gui::MultiLineEditBox::create();
+        auto editorPtr = multilineEditor.get();
 
-        auto editor = gui::MultiLineEditBox::create();
-        auto* editorPtr = editor.get();
-
-        auto scrollbar = gui::scrollbar::Vertical::create();
-        auto* scrollbarPtr = scrollbar.get();
-
-        editorRow->addChild(std::move(editor));
-        editorRow->addChild(std::move(scrollbar));
-        editorRow->setColumnSize(1, gui::layout::Constraint::Pixels(32.f));
+        editorScrollView->setContent(std::move(multilineEditor));
 
         auto updateWindowCaption = [fileLabelPtr = fileLabel.get(), windowPtr, state]() {
             const auto fileName = state->currentFile.empty() ? std::string("Untitled") : state->currentFile.filename().string();
             const auto fullPath = state->currentFile.empty() ? std::string("<no file>") : state->currentFile.string();
             fileLabelPtr->setText("File: " + fullPath);
             windowPtr->setTitle("Notepad - " + fileName);
-        };
-
-        auto syncScrollbar = [this, editorPtr, scrollbarPtr]() {
-            // TODO: this is temporary janky solution (PoC) unitl I implement proper
-            // interfacing of scrollable widgets and their synchronization with scrollbars.
-
-            if (isSyncing_) return;
-            isSyncing_ = true;
-            
-            logger_.info("Syncing scrollbar with editor view"); 
-            const auto lineCount = editorPtr->getLineCount();
-            const auto visibleLineSpan = editorPtr->getVisibleLineSpan();
-            const auto maxFirstVisibleLine = editorPtr->getMaxFirstVisibleLine();
-            
-            scrollbarPtr->setThumbRatio(static_cast<float>(visibleLineSpan) / static_cast<float>(lineCount)); 
-            scrollbarPtr->setStep(lineCount < visibleLineSpan? 1.f/static_cast<float>(visibleLineSpan) : 1.f/static_cast<float>(lineCount-visibleLineSpan)); 
-            
-            const auto value = 1.f - static_cast<float>(editorPtr->getFirstVisibleLine()) / static_cast<float>(maxFirstVisibleLine); 
-            
-            scrollbarPtr->setValue(value);
-
-            isSyncing_ = false;
         };
 
         auto loadFile = [this, editorPtr, state, updateWindowCaption](const fs::path& filePath) {
@@ -536,7 +510,6 @@ void Application::onInit()
 
             std::string text((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
             editorPtr->setText(text);
-            editorPtr->setFirstVisibleLine(0);
             state->currentFile = filePath;
             updateWindowCaption();
             logger_.info(fmt::format("Opened {}", filePath.string()));
@@ -556,40 +529,16 @@ void Application::onInit()
             logger_.info(fmt::format("Saved {}", filePath.string()));
         };
 
-        // FIXME: there is cyclic dependency between scrollbar and editor here, 
-        // And it would be good to find a good way to decouple them
-        // as updating view from editor calls scrollbar update which then calls editor update again.
-        // BTW scrollbar should set text offset on editor
-        // and could also handle the cursor tracking?
-        scrollbarPtr->onValueChange([editorPtr, this](const float value) {
-            if (isSyncing_) return;
-            isSyncing_ = true;
-            const auto maxLine = editorPtr->getMaxFirstVisibleLine();
-
-            size_t firstVisible = 0;
-            if (maxLine > 0) 
-            {
-                firstVisible = static_cast<size_t>(
-                    std::round((1.f - value) * static_cast<float>(maxLine))
-                );
-            }
-
-            editorPtr->setFirstVisibleLine(firstVisible);
-            isSyncing_ = false;
-        });
-
-        editorPtr->onViewChange(syncScrollbar);
 
         rootLayout->addChild(std::move(fileLabel));
-        rootLayout->addChild(std::move(editorRow));
+        rootLayout->addChild(std::move(editorScrollView));
         rootLayout->setRowSize(0, gui::layout::Constraint::Pixels(24.f));
 
         window->addChild(std::move(rootLayout));
         window->setMenuItems({
             {"File", {}, {
-                {"New", [editorPtr, state, updateWindowCaption, scratchFile]() {
+                {"New", [state, editorPtr, updateWindowCaption, scratchFile]() {
                     editorPtr->setText("");
-                    editorPtr->setFirstVisibleLine(0);
                     state->currentFile = scratchFile;
                     updateWindowCaption();
                 }},
@@ -607,9 +556,9 @@ void Application::onInit()
         state->currentFile = scratchFile;
         updateWindowCaption();
         loadFile(scratchFile);
-        syncScrollbar();
-
+        
         gui().openWindow(std::move(window));
+        logger_.debug("Notepad window opened");
     });
     gui().mainWindow().addChild(std::move(createNotepadWindowButton));
 

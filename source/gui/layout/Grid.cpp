@@ -2,6 +2,8 @@
 
 #include <fmt/format.h>
 
+#include "gui/Debug.hpp"
+
 namespace gui::layout
 {
 
@@ -229,5 +231,22 @@ void Grid::removeElementAt(const size_t x, const size_t y)
 {
     setElementAt(x, y, nullptr);
 }
+
+void Grid::onRender(sf::RenderTexture& renderTexture)
+{
+    debug::drawBox(renderTexture, getGlobalPosition(), getSize(), sf::Color::Red, 1.f);
+
+    for (size_t x = 0; x < width_; x++)
+    {
+        for (size_t y = 0; y < height_; y++)
+        {
+            if (grid_[x][y] != nullptr)
+            {
+                debug::drawBox(renderTexture, grid_[x][y]->getGlobalPosition(), grid_[x][y]->getSize(), sf::Color::Green, 1.f);
+            }
+        }
+    }
+}
+
 
 }  // namespace gui::layout

@@ -13,6 +13,8 @@ class Horizontal : public Base
 public:
     static std::unique_ptr<Horizontal> create();
     void setThumbRatio(const float ratio);
+    void setValue(float value);
+    float getValue() const;
     
 protected:
     Horizontal();
