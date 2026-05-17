@@ -35,6 +35,23 @@ MultiLineEditBox::MultiLineEditBox()
     rebuildLineIndices();
 }
 
+sf::Vector2f MultiLineEditBox::getContentSize()
+{
+    const auto textBounds = text_.getTextBounds();
+    const auto* font = text_.getFont();
+    if (font == nullptr)
+    {
+        return textBounds.getSize();
+    }
+
+    const auto lineCount = std::max<size_t>(1, lineIndices_.size());
+    const auto lineSpacing = getFontLineSpacing(*font, text_.getCharacterSize());
+    const auto firstLineHeight = getFontHeight(*font, text_.getCharacterSize());
+    const auto contentHeight = firstLineHeight + static_cast<float>(lineCount - 1) * lineSpacing;
+
+    return {textBounds.width, contentHeight};
+}
+
 size_t MultiLineEditBox::getLineCount() const
 {
     return lineIndices_.size();

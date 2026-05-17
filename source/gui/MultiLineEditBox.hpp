@@ -18,6 +18,7 @@ public:
 
     ~MultiLineEditBox() = default;
 
+    sf::Vector2f getContentSize() override;
     size_t getLineCount() const;
     size_t getCursorLine() const;
 
