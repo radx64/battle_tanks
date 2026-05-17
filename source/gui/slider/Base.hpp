@@ -341,6 +341,9 @@ template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void  Base<MouseHandlingPolicy, RenderingPolicy>::setThumbRatio(const float ratio)
 {
     thumbRatio_ = ratio;
+    auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
+    thumb_.setSize(thumbSize);
+    thumb_.setOrigin(thumbSize / 2.f);
     setValue(getValue());
 }
 
