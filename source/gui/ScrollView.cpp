@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include <fmt/format.h>
-
 #include "gui/ScrollMetrics.hpp"
 #include "gui/scrollbar/Horizontal.hpp"
 #include "gui/scrollbar/Vertical.hpp"
@@ -15,6 +13,7 @@ namespace
 {
 constexpr float SCROLLBAR_THICKNESS = 32.f;
 constexpr float SCROLLBAR_SPACING = 4.f;
+constexpr float EXTRA_MARGIN = 32.f;
 }
 
 std::unique_ptr<ScrollView> ScrollView::create()
@@ -34,13 +33,11 @@ void ScrollView::setContent(std::unique_ptr<IScrollableWidget> content)
 
     content_->onViewChange([this]()
     {
-        logger_.debug("Content view changed, updating scroll bars and applying scroll");
         updateScrollBars();
     });
 
     content_->onFocusRectChange([this](const sf::FloatRect& position)
     {
-        logger_.debug("Content focus rect changed, applying scroll to ensure focus rect is visible");
         ensureRectVisible(position);
     });
 
@@ -73,8 +70,7 @@ ScrollView::ScrollView()
             applyScroll();
         }
     });
-    verticalScrollBar->onValueChange([this](const float value){
-        logger_.debug(fmt::format("Vertical scroll bar value changed, applying scroll {}", value));
+    verticalScrollBar->onValueChange([this](const float){
         if (not isUpdatingScrollBars_)
         {
             applyScroll();
@@ -231,11 +227,6 @@ void ScrollView::updateScrollBars()
     scrollOffset_.x = std::clamp(scrollOffset_.x, 0.f, horizontalMetrics.maxOffset);
     scrollOffset_.y = std::clamp(scrollOffset_.y, 0.f, verticalMetrics.maxOffset);
 
-    logger_.debug(fmt::format(
-        "updateScrollBars: horizontalRatio={}, verticalRatio={}",
-        horizontalMetrics.thumbRatio,
-        verticalMetrics.thumbRatio));
-
     horizontalScrollBar_->setThumbRatio(horizontalMetrics.thumbRatio);
     verticalScrollBar_->setThumbRatio(verticalMetrics.thumbRatio);
     horizontalScrollBar_->setValue(calculateScrollBarValue(scrollOffset_.x, horizontalMetrics.maxOffset, false));
@@ -272,22 +263,27 @@ void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
         rectBounds.height
     };
 
+    const float visibleLeft = scrollOffset_.x + EXTRA_MARGIN;
+    const float visibleRight = scrollOffset_.x + viewportSize.x - EXTRA_MARGIN;
+    const float visibleTop = scrollOffset_.y + EXTRA_MARGIN;
+    const float visibleBottom = scrollOffset_.y + viewportSize.y - EXTRA_MARGIN;
+
     sf::Vector2f scrollOffset = scrollOffset_;
-    if (paddedRectBounds.left < scrollOffset.x)
+    if (paddedRectBounds.left < visibleLeft)
     {
-        scrollOffset.x = paddedRectBounds.left;
+        scrollOffset.x = paddedRectBounds.left - EXTRA_MARGIN;
     }
-    if (paddedRectBounds.left + paddedRectBounds.width > scrollOffset.x + viewportSize.x)
+    if (paddedRectBounds.left + paddedRectBounds.width > visibleRight)
     {
-        scrollOffset.x = paddedRectBounds.left + paddedRectBounds.width - viewportSize.x;
+        scrollOffset.x = paddedRectBounds.left + paddedRectBounds.width - viewportSize.x + EXTRA_MARGIN;
     }
-    if (paddedRectBounds.top < scrollOffset.y)
+    if (paddedRectBounds.top < visibleTop)
     {
-        scrollOffset.y = paddedRectBounds.top;
+        scrollOffset.y = paddedRectBounds.top - EXTRA_MARGIN;
     }
-    if (paddedRectBounds.top + paddedRectBounds.height > scrollOffset.y + viewportSize.y)
+    if (paddedRectBounds.top + paddedRectBounds.height > visibleBottom)
     {
-        scrollOffset.y = paddedRectBounds.top + paddedRectBounds.height - viewportSize.y;
+        scrollOffset.y = paddedRectBounds.top + paddedRectBounds.height - viewportSize.y + EXTRA_MARGIN;
     }
 
     scrollOffset.x = std::clamp(scrollOffset.x, 0.f, horizontalMetrics.maxOffset);

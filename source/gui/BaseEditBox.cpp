@@ -72,7 +72,8 @@ void BaseEditBox::setAlignment(const gui::Alignment& alignment)
 
 sf::Vector2f BaseEditBox::getContentSize()
 {
-    return text_.getTextBounds().getSize();
+    const auto contentSize = text_.getTextBounds().getSize();
+    return {contentSize.x + EXTRA_END_OFFSET.x, contentSize.y};
 }
 
 void BaseEditBox::applyOffset(const sf::Vector2f& offset)
