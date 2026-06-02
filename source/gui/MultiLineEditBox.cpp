@@ -10,6 +10,7 @@
 namespace 
 {
     const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
+    constexpr float CONTENT_WIDTH_MARGIN = 32.f;
     constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 2048;
 }  // namespace
 
@@ -49,7 +50,7 @@ sf::Vector2f MultiLineEditBox::getContentSize()
     const auto firstLineHeight = getFontHeight(*font, text_.getCharacterSize());
     const auto contentHeight = firstLineHeight + static_cast<float>(lineCount - 1) * lineSpacing;
 
-    return {textBounds.width, contentHeight};
+    return {textBounds.width + EXTRA_END_OFFSET.x + CONTENT_WIDTH_MARGIN, contentHeight};
 }
 
 size_t MultiLineEditBox::getLineCount() const
@@ -110,8 +111,8 @@ void MultiLineEditBox::updateCursorPosition()
 
 void MultiLineEditBox::ensureCursorVisible()
 {
-    // TODO this should send event to scrool view
-    // so that scroll can be adjusted to show cursor if needed
+    // Ensure cursor bounds are up to date before notifying the scroll view.
+    textCursor_.update();
     notifyFocusRectChange(textCursor_.getBounds());
 }
 
