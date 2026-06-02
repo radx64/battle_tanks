@@ -22,7 +22,6 @@ public:
         onFocusRectChangeCallback_ = std::move(callback);
     }
 
-    virtual sf::Vector2f getViewportSize() = 0;
     virtual sf::Vector2f getContentSize() = 0;
     virtual void applyOffset(const sf::Vector2f& offset) = 0;
 

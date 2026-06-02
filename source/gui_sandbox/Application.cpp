@@ -491,6 +491,7 @@ void Application::onInit()
         auto multilineEditor = gui::MultiLineEditBox::create();
         auto editorPtr = multilineEditor.get();
 
+        editorScrollView->setScrollPadding(gui::ScrollPadding{0.f, 0.f, 0.f, 200.f});
         editorScrollView->setContent(std::move(multilineEditor));
 
         auto updateWindowCaption = [fileLabelPtr = fileLabel.get(), windowPtr, state]() {
