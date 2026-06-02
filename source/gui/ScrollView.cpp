@@ -4,7 +4,7 @@
 
 #include <fmt/format.h>
 
-#include "gui/layout/Grid.hpp"
+#include "gui/ScrollMetrics.hpp"
 #include "gui/scrollbar/Horizontal.hpp"
 #include "gui/scrollbar/Vertical.hpp"
 
@@ -13,34 +13,23 @@ namespace gui
 
 namespace
 {
-constexpr float EXTRA_VERTICAL_SCROLL_PADDING = 200.f;
-
-float calculateMaxScroll(const float contentExtent, const float viewportExtent)
-{
-    return std::max(0.f, contentExtent - viewportExtent);
+constexpr float SCROLLBAR_THICKNESS = 32.f;
+constexpr float SCROLLBAR_SPACING = 4.f;
 }
-
-float calculateScrollBarValue(const float scrollOffset, const float maxScroll, const bool invert)
-{
-    if (maxScroll <= 0.f)
-    {
-        return invert ? 1.f : 0.f;
-    }
-
-    const auto normalizedOffset = scrollOffset / maxScroll;
-    return invert ? 1.f - normalizedOffset : normalizedOffset;
-}
-}
-
-// TODO: Scrollbars ranges are not updated when bounds of the text are changing
 
 std::unique_ptr<ScrollView> ScrollView::create()
 {
-    return std::unique_ptr<ScrollView>{new ScrollView{}};   
+    return std::unique_ptr<ScrollView>{new ScrollView{}};
 }
 
 void ScrollView::setContent(std::unique_ptr<IScrollableWidget> content)
 {
+    if (content_ != nullptr)
+    {
+        removeChild(content_);
+        content_ = nullptr;
+    }
+
     content_ = content.get();
 
     content_->onViewChange([this]()
@@ -55,21 +44,21 @@ void ScrollView::setContent(std::unique_ptr<IScrollableWidget> content)
         ensureRectVisible(position);
     });
 
-    layout_->setElementAt(0, 0, std::move(content));
-
-    layout_->setSize(getSize());
+    addChild(std::move(content));
     updateScrollBars();
+}
+
+void ScrollView::setScrollPadding(const ScrollPadding& scrollPadding)
+{
+    scrollPadding_ = scrollPadding;
+    if (content_ != nullptr)
+    {
+        updateScrollBars();
+    }
 }
 
 ScrollView::ScrollView()
 {
-    auto layout = layout::Grid::create(2, 2);
-    layout->setVerticalPadding(4);
-    layout->setHorizontalPadding(4);
-
-    layout->setColumnSize(1, layout::Constraint::Pixels(32));
-    layout->setRowSize(1, layout::Constraint::Pixels(32));
-
     auto horizontalScrollBar = scrollbar::Horizontal::create();
     horizontalScrollBar_ = horizontalScrollBar.get();
     horizontalScrollBar->setValue(0.f);
@@ -79,22 +68,26 @@ ScrollView::ScrollView()
     verticalScrollBar->setValue(1.f);
 
     horizontalScrollBar->onValueChange([this](const float){
-        applyScroll();
+        if (not isUpdatingScrollBars_)
+        {
+            applyScroll();
+        }
     });
     verticalScrollBar->onValueChange([this](const float value){
         logger_.debug(fmt::format("Vertical scroll bar value changed, applying scroll {}", value));
-        applyScroll();
+        if (not isUpdatingScrollBars_)
+        {
+            applyScroll();
+        }
     });
 
-    horizontalScrollBar_->setThumbRatio(0.1f);
-    verticalScrollBar_->setThumbRatio(0.1f);
+    horizontalScrollBar_->setThumbRatio(1.f);
+    verticalScrollBar_->setThumbRatio(1.f);
+    horizontalScrollBar_->setVisibility(false);
+    verticalScrollBar_->setVisibility(false);
 
-    layout->setElementAt(0, 1, std::move(horizontalScrollBar));
-    layout->setElementAt(1, 0, std::move(verticalScrollBar));
-
-    layout_ = layout.get();
-    layout_->setSize(getSize());
-    addChild(std::move(layout));
+    addChild(std::move(horizontalScrollBar));
+    addChild(std::move(verticalScrollBar));
 }
 
 void ScrollView::onRender(sf::RenderTexture& renderTexture)
@@ -104,12 +97,51 @@ void ScrollView::onRender(sf::RenderTexture& renderTexture)
 
 void ScrollView::onSizeChange()
 {
-    layout_->setSize(getSize());
-
     if (content_ != nullptr)
     {
         updateScrollBars();
     }
+    else
+    {
+        applyLayout(false, false);
+    }
+}
+
+void ScrollView::applyLayout(const bool showHorizontalScrollBar, const bool showVerticalScrollBar)
+{
+    const auto viewportSize = calculateViewportSize(showHorizontalScrollBar, showVerticalScrollBar);
+
+    if (content_ != nullptr)
+    {
+        content_->setPosition({0.f, 0.f});
+        content_->setSize(viewportSize);
+    }
+
+    horizontalScrollBar_->setVisibility(showHorizontalScrollBar);
+    verticalScrollBar_->setVisibility(showVerticalScrollBar);
+
+    horizontalScrollBar_->setPosition({0.f, viewportSize.y + SCROLLBAR_SPACING});
+    horizontalScrollBar_->setSize({viewportSize.x, SCROLLBAR_THICKNESS});
+
+    verticalScrollBar_->setPosition({viewportSize.x + SCROLLBAR_SPACING, 0.f});
+    verticalScrollBar_->setSize({SCROLLBAR_THICKNESS, viewportSize.y});
+}
+
+sf::Vector2f ScrollView::calculateViewportSize(const bool showHorizontalScrollBar, const bool showVerticalScrollBar) const
+{
+    auto viewportSize = getSize();
+    if (showVerticalScrollBar)
+    {
+        viewportSize.x -= SCROLLBAR_THICKNESS + SCROLLBAR_SPACING;
+    }
+    if (showHorizontalScrollBar)
+    {
+        viewportSize.y -= SCROLLBAR_THICKNESS + SCROLLBAR_SPACING;
+    }
+
+    viewportSize.x = std::max(0.f, viewportSize.x);
+    viewportSize.y = std::max(0.f, viewportSize.y);
+    return viewportSize;
 }
 
 void ScrollView::applyScroll()
@@ -120,59 +152,98 @@ void ScrollView::applyScroll()
     }
 
     const auto contentSize = content_->getContentSize();
-    const auto viewableSize = content_->getViewportSize();
-    const auto effectiveContentSize = sf::Vector2f{contentSize.x, contentSize.y + EXTRA_VERTICAL_SCROLL_PADDING};
+    const auto viewportSize = content_->getSize();
+    const auto horizontalMetrics = calculateScrollAxisMetrics(
+        contentSize.x,
+        viewportSize.x,
+        scrollPadding_.left,
+        scrollPadding_.right);
+    const auto verticalMetrics = calculateScrollAxisMetrics(
+        contentSize.y,
+        viewportSize.y,
+        scrollPadding_.top,
+        scrollPadding_.bottom);
 
-    const auto maxScrollX = calculateMaxScroll(effectiveContentSize.x, viewableSize.x);
-    const auto maxScrollY = calculateMaxScroll(effectiveContentSize.y, viewableSize.y);
+    scrollOffset_.x = calculateScrollOffset(horizontalScrollBar_->getValue(), horizontalMetrics.maxOffset, false);
+    scrollOffset_.y = calculateScrollOffset(verticalScrollBar_->getValue(), verticalMetrics.maxOffset, true);
 
-    scrollOffset_.x = std::min(1.0f, horizontalScrollBar_->getValue()) * maxScrollX;
-    scrollOffset_.y = std::max(0.f, (1.f - verticalScrollBar_->getValue())) * maxScrollY;
-
-    content_->applyOffset(-scrollOffset_);
+    const sf::Vector2f contentOffset{
+        scrollPadding_.left - scrollOffset_.x,
+        scrollPadding_.top - scrollOffset_.y
+    };
+    content_->applyOffset(contentOffset);
 }
 
 void ScrollView::updateScrollBars()
 {
-    if (content_ == nullptr)
+    if (content_ == nullptr || isUpdatingScrollBars_)
     {
         return;
     }
-    
-    if (isUpdatingScrollBars_)
-    {
-        return;
-    }
-    
-    const auto contentSize = content_->getContentSize();
-    const auto viewableSize = content_->getViewportSize();
-    const auto effectiveContentSize = sf::Vector2f{contentSize.x, contentSize.y + EXTRA_VERTICAL_SCROLL_PADDING};
-    const auto canScrollHorizontally = effectiveContentSize.x > viewableSize.x;
-    const auto canScrollVertically = effectiveContentSize.y > viewableSize.y;
-
-    // Calculate ratios with proper handling of edge cases
-    float horizontalRatio = 1.f;
-    float verticalRatio = 1.f;
-    
-    if (canScrollHorizontally && effectiveContentSize.x > 0.f)
-    {
-        horizontalRatio = std::min(1.f, viewableSize.x / effectiveContentSize.x);
-    }
-    if (canScrollVertically && effectiveContentSize.y > 0.f)
-    {
-        verticalRatio = std::min(1.f, viewableSize.y / effectiveContentSize.y);
-    }
-    
-    logger_.debug(fmt::format("updateScrollBars: horizontalRatio={}, verticalRatio={}", horizontalRatio, verticalRatio));
 
     isUpdatingScrollBars_ = true;
-    horizontalScrollBar_->setVisibility(canScrollHorizontally);
-    verticalScrollBar_->setVisibility(canScrollVertically);
-    horizontalScrollBar_->setThumbRatio(horizontalRatio);
-    verticalScrollBar_->setThumbRatio(verticalRatio);
-    isUpdatingScrollBars_ = false;
-}
 
+    bool showHorizontalScrollBar = false;
+    bool showVerticalScrollBar = false;
+
+    for (int iteration = 0; iteration < 3; ++iteration)
+    {
+        applyLayout(showHorizontalScrollBar, showVerticalScrollBar);
+
+        const auto contentSize = content_->getContentSize();
+        const auto viewportSize = content_->getSize();
+        const auto horizontalMetrics = calculateScrollAxisMetrics(
+            contentSize.x,
+            viewportSize.x,
+            scrollPadding_.left,
+            scrollPadding_.right);
+        const auto verticalMetrics = calculateScrollAxisMetrics(
+            contentSize.y,
+            viewportSize.y,
+            scrollPadding_.top,
+            scrollPadding_.bottom);
+
+        if (horizontalMetrics.canScroll == showHorizontalScrollBar &&
+            verticalMetrics.canScroll == showVerticalScrollBar)
+        {
+            break;
+        }
+
+        showHorizontalScrollBar = horizontalMetrics.canScroll;
+        showVerticalScrollBar = verticalMetrics.canScroll;
+    }
+
+    applyLayout(showHorizontalScrollBar, showVerticalScrollBar);
+
+    const auto contentSize = content_->getContentSize();
+    const auto viewportSize = content_->getSize();
+    const auto horizontalMetrics = calculateScrollAxisMetrics(
+        contentSize.x,
+        viewportSize.x,
+        scrollPadding_.left,
+        scrollPadding_.right);
+    const auto verticalMetrics = calculateScrollAxisMetrics(
+        contentSize.y,
+        viewportSize.y,
+        scrollPadding_.top,
+        scrollPadding_.bottom);
+
+    scrollOffset_.x = std::clamp(scrollOffset_.x, 0.f, horizontalMetrics.maxOffset);
+    scrollOffset_.y = std::clamp(scrollOffset_.y, 0.f, verticalMetrics.maxOffset);
+
+    logger_.debug(fmt::format(
+        "updateScrollBars: horizontalRatio={}, verticalRatio={}",
+        horizontalMetrics.thumbRatio,
+        verticalMetrics.thumbRatio));
+
+    horizontalScrollBar_->setThumbRatio(horizontalMetrics.thumbRatio);
+    verticalScrollBar_->setThumbRatio(verticalMetrics.thumbRatio);
+    horizontalScrollBar_->setValue(calculateScrollBarValue(scrollOffset_.x, horizontalMetrics.maxOffset, false));
+    verticalScrollBar_->setValue(calculateScrollBarValue(scrollOffset_.y, verticalMetrics.maxOffset, true));
+
+    isUpdatingScrollBars_ = false;
+    applyScroll();
+}
 
 void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
 {
@@ -182,38 +253,52 @@ void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
     }
 
     const auto contentSize = content_->getContentSize();
-    const auto viewableSize = content_->getViewportSize();
-    const auto effectiveContentSize = sf::Vector2f{contentSize.x, contentSize.y + EXTRA_VERTICAL_SCROLL_PADDING};
+    const auto viewportSize = content_->getSize();
+    const auto horizontalMetrics = calculateScrollAxisMetrics(
+        contentSize.x,
+        viewportSize.x,
+        scrollPadding_.left,
+        scrollPadding_.right);
+    const auto verticalMetrics = calculateScrollAxisMetrics(
+        contentSize.y,
+        viewportSize.y,
+        scrollPadding_.top,
+        scrollPadding_.bottom);
 
-    const auto maxScrollX = calculateMaxScroll(effectiveContentSize.x, viewableSize.x);
-    const auto maxScrollY = calculateMaxScroll(effectiveContentSize.y, viewableSize.y);
+    const sf::FloatRect paddedRectBounds{
+        rectBounds.left + scrollPadding_.left,
+        rectBounds.top + scrollPadding_.top,
+        rectBounds.width,
+        rectBounds.height
+    };
 
-    // Calculate scroll offset to make the rectangle visible
     sf::Vector2f scrollOffset = scrollOffset_;
-    if (rectBounds.left < scrollOffset.x)
+    if (paddedRectBounds.left < scrollOffset.x)
     {
-        scrollOffset.x = rectBounds.left;
+        scrollOffset.x = paddedRectBounds.left;
     }
-    if (rectBounds.left + rectBounds.width > scrollOffset.x + viewableSize.x)
+    if (paddedRectBounds.left + paddedRectBounds.width > scrollOffset.x + viewportSize.x)
     {
-        scrollOffset.x = rectBounds.left + rectBounds.width - viewableSize.x;
+        scrollOffset.x = paddedRectBounds.left + paddedRectBounds.width - viewportSize.x;
     }
-    if (rectBounds.top < scrollOffset.y)
+    if (paddedRectBounds.top < scrollOffset.y)
     {
-        scrollOffset.y = rectBounds.top;
+        scrollOffset.y = paddedRectBounds.top;
     }
-    if (rectBounds.top + rectBounds.height > scrollOffset.y + viewableSize.y)
+    if (paddedRectBounds.top + paddedRectBounds.height > scrollOffset.y + viewportSize.y)
     {
-        scrollOffset.y = rectBounds.top + rectBounds.height - viewableSize.y;
+        scrollOffset.y = paddedRectBounds.top + paddedRectBounds.height - viewportSize.y;
     }
 
-    // Clamp the scroll offset to valid range
-    scrollOffset.x = std::clamp(scrollOffset.x, 0.f, maxScrollX);
-    scrollOffset.y = std::clamp(scrollOffset.y, 0.f, maxScrollY);
+    scrollOffset.x = std::clamp(scrollOffset.x, 0.f, horizontalMetrics.maxOffset);
+    scrollOffset.y = std::clamp(scrollOffset.y, 0.f, verticalMetrics.maxOffset);
 
-    // Update the scrollbar values
-    horizontalScrollBar_->setValue(calculateScrollBarValue(scrollOffset.x, maxScrollX, false));
-    verticalScrollBar_->setValue(calculateScrollBarValue(scrollOffset.y, maxScrollY, true));
+    isUpdatingScrollBars_ = true;
+    horizontalScrollBar_->setValue(calculateScrollBarValue(scrollOffset.x, horizontalMetrics.maxOffset, false));
+    verticalScrollBar_->setValue(calculateScrollBarValue(scrollOffset.y, verticalMetrics.maxOffset, true));
+    isUpdatingScrollBars_ = false;
+
+    applyScroll();
 }
 
 }  // namespace gui

@@ -25,7 +25,6 @@ public:
     void setText(const std::string_view text);
     void setAlignment(const gui::Alignment& alignment);
 
-    sf::Vector2f getViewportSize() override;
     sf::Vector2f getContentSize() override;
     void applyOffset(const sf::Vector2f& offset) override;
 

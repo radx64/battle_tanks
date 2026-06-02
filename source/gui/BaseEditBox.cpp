@@ -70,10 +70,6 @@ void BaseEditBox::setAlignment(const gui::Alignment& alignment)
     updateTextVisbleArea();
 }
 
-sf::Vector2f BaseEditBox::getViewportSize()
-{
-    return Widget::getSize();
-}
 sf::Vector2f BaseEditBox::getContentSize()
 {
     return text_.getTextBounds().getSize();
@@ -82,7 +78,6 @@ sf::Vector2f BaseEditBox::getContentSize()
 void BaseEditBox::applyOffset(const sf::Vector2f& offset)
 {
     text_.setOffset(offset);
-    updateTextVisbleArea();
 }
 
 void BaseEditBox::onRender(sf::RenderTexture& renderTexture)

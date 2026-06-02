@@ -5,6 +5,7 @@
 
 #include "gui/FontHeightCache.hpp"
 #include "gui/FontLibrary.hpp"
+#include "gui/ScrollMetrics.hpp"
 #include "gui/scrollbar/Vertical.hpp"
 #include "gui/style/StyleFactory.hpp"
 
@@ -293,7 +294,8 @@ void ListBox::updateScrollbar()
     const auto viewportHeight = std::max(0.f, getSize().y - INNER_PADDING * 2.f);
     const auto itemHeight = getItemHeight();
     const auto totalContentHeight = static_cast<float>(items_.size()) * itemHeight;
-    const auto canScroll = totalContentHeight > viewportHeight && viewportHeight > 0.f;
+    const auto verticalMetrics = calculateScrollAxisMetrics(totalContentHeight, viewportHeight);
+    const auto canScroll = verticalMetrics.canScroll;
 
     scrollbar_->setVisibility(canScroll);
 
@@ -301,10 +303,11 @@ void ListBox::updateScrollbar()
     {
         scrollbar_->setPosition({getSize().x - INNER_PADDING - SCROLLBAR_WIDTH, INNER_PADDING});
         scrollbar_->setSize({SCROLLBAR_WIDTH, viewportHeight});
-        scrollbar_->setThumbRatio(std::clamp(viewportHeight / totalContentHeight, 0.f, 1.f));
+        scrollbar_->setThumbRatio(verticalMetrics.thumbRatio);
 
-        const auto maxFirstVisibleIndex = getMaxFirstVisibleIndex();
-        const auto step = maxFirstVisibleIndex > 0 ? 1.f / static_cast<float>(maxFirstVisibleIndex) : 1.f;
+        const auto step = itemHeight > 0.f && verticalMetrics.maxOffset > 0.f
+            ? std::min(1.f, itemHeight / verticalMetrics.maxOffset)
+            : 1.f;
         scrollbar_->setStep(step);
         scrollbar_->setValue(scrollValue_);
     }
@@ -346,15 +349,19 @@ void ListBox::scrollSelectionIntoView()
         firstVisibleIndex = *selectedIndex_ - visibleSpan + 1;
     }
 
-    const auto maxFirstVisibleIndex = getMaxFirstVisibleIndex();
-    if (maxFirstVisibleIndex == 0)
+    const auto verticalMetrics = calculateScrollAxisMetrics(
+        static_cast<float>(items_.size()) * getItemHeight(),
+        getViewportHeight());
+    if (verticalMetrics.maxOffset <= 0.f)
     {
         scrollValue_ = 1.f;
     }
     else
     {
+        const auto maxFirstVisibleIndex = getMaxFirstVisibleIndex();
         firstVisibleIndex = std::min(firstVisibleIndex, maxFirstVisibleIndex);
-        scrollValue_ = 1.f - (static_cast<float>(firstVisibleIndex) / static_cast<float>(maxFirstVisibleIndex));
+        const auto targetOffset = std::min(static_cast<float>(firstVisibleIndex) * getItemHeight(), verticalMetrics.maxOffset);
+        scrollValue_ = calculateScrollBarValue(targetOffset, verticalMetrics.maxOffset, true);
     }
 
     updateScrollbar();
@@ -415,14 +422,18 @@ std::size_t ListBox::getMaxFirstVisibleIndex() const
 
 std::size_t ListBox::getFirstVisibleIndex() const
 {
-    const auto maxFirstVisibleIndex = getMaxFirstVisibleIndex();
-    if (maxFirstVisibleIndex == 0)
+    const auto itemHeight = getItemHeight();
+    const auto verticalMetrics = calculateScrollAxisMetrics(
+        static_cast<float>(items_.size()) * itemHeight,
+        getViewportHeight());
+    if (verticalMetrics.maxOffset <= 0.f || itemHeight <= 0.f)
     {
         return 0;
     }
 
-    const auto clampedScrollValue = std::clamp(scrollValue_, 0.f, 1.f);
-    return static_cast<std::size_t>(std::round((1.f - clampedScrollValue) * static_cast<float>(maxFirstVisibleIndex)));
+    const auto firstVisibleIndex = static_cast<std::size_t>(
+        std::round(calculateScrollOffset(scrollValue_, verticalMetrics.maxOffset, true) / itemHeight));
+    return std::min(firstVisibleIndex, getMaxFirstVisibleIndex());
 }
 
 std::optional<std::size_t> ListBox::getItemIndexAt(const sf::Vector2f& globalPosition) const
