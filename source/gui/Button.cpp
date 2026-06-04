@@ -107,6 +107,7 @@ EventStatus ButtonBase::on(const event::MouseEntered&)
 EventStatus ButtonBase::on(const event::MouseLeft&)
 {
     state_.hovered = false;
+    state_.pressed = false;
     updateTexture();
 
     return EventStatus::Consumed;
