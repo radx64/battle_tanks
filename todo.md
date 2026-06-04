@@ -54,8 +54,8 @@ Bunch of random ideas to randomly pick up and implement
 
 ## Lua API
 - [x] Try some lua binding library and create some basic example bindings
-- [ ] Explore LUA coroutines for scripting tank behaviour (yelding when turret moves, or sleeping for some time etc...)
-- [ ] Some movement basic API (rotate, driving) with lua bindings
+- [x] Explore LUA coroutines for scripting tank behaviour (yelding when turret moves, or sleeping for some time etc...)
+- [x] Some movement basic API (rotate, driving) with lua bindings
 - [ ] Scanner/radar to find other tanks and pickups
   
 
