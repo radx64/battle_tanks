@@ -6,7 +6,6 @@
 
 #include "engine/GameObject.hpp"
 #include "game/entity/tank/Cannon.hpp"
-#include "game/lua/ScriptContext.hpp"
 
 namespace game::entity {class TracksRenderer;}
 namespace game::entity 
@@ -34,16 +33,12 @@ public:
     std::unique_ptr<Cannon> cannon_;
     static bool DEBUG_;
 
-    void setupLuaScript();
-    lua::ScriptContext* getScript();
-
 protected:
     sf::Vector2f tank_middle_point_;
     float set_direction_{};
     float set_throttle_{};
     float lifetime_{};
     TracksRenderer* tracksRenderer_;
-    std::unique_ptr<lua::ScriptContext> script_;
 };
 
 }  // namespace game::entity

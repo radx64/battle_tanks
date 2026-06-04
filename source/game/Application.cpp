@@ -255,7 +255,7 @@ void Application::configureGUI()
     reloadLuaButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
     reloadLuaButton->setSize(sf::Vector2f(150.f, 30.f));
     reloadLuaButton->onClick([this](){
-        luaTankHandle_->getScript()->reload();
+        luaTankController_->reload();
     });
     gui().mainWindow().addChild(std::move(reloadLuaButton));
 
@@ -290,7 +290,7 @@ void Application::configureGUI()
     gui().mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
         auto menu = gui::ContextMenu::create(
             {
-                {"Reload Lua", [this]() { luaTankHandle_->getScript()->reload(); }},
+                {"Reload Lua", [this]() { luaTankController_->reload(); }},
                 {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; entity::Tank::setDebug(tankDebugMode_); }},
                 {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); camera_.resetZoom();}},
             }
@@ -316,14 +316,12 @@ void Application::spawnSomeTanks()
         navigators_.push_back(std::move(navigator));
     }
 
-    auto luaControlledTank =  entity::TankFactory::create(
+    auto luaControlledTank = entity::TankFactory::create(
         entity::TankFactory::TankType::Black, Config::WINDOW_WIDTH / 2.f, Config::WINDOW_HEIGHT/2.f, 180.f, &tracksRenderer_);
 
-    luaControlledTank->setupLuaScript();
-    scriptsScheduler_.add(luaControlledTank->getScript());
-    luaTankHandle_ = luaControlledTank.get();
+    luaTankController_ = std::make_unique<game::entity::TankController>(luaControlledTank.get(), waypoints_);
+    scriptsScheduler_.add(luaTankController_->getScript());
     scene_.spawnObject(std::move(luaControlledTank));
-
 }
 
 void Application::spawnSomeBarrelsAndCratesAndTress()

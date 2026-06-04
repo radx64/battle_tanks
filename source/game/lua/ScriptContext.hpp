@@ -2,6 +2,8 @@
 
 #include <sol/sol.hpp>
 
+#include <SFML/System.hpp>
+
 #include "engine/Logger.hpp"
 #include "game/lua/WaitCondition.hpp"
 
@@ -13,7 +15,7 @@ namespace game::lua
 class ScriptContext 
 {
 public:
-    ScriptContext(entity::Tank* tank);
+    ScriptContext(entity::Tank* tank, std::vector<sf::Vector2i>& waypoints_);
     ~ScriptContext() = default;
         
     ScriptContext(const ScriptContext& other) = delete;
@@ -27,6 +29,7 @@ public:
     sol::coroutine& coroutine();
     std::unique_ptr<WaitCondition>& waitCondition();
     entity::Tank* tank();
+    std::vector<sf::Vector2i>& waypoints();
     
     engine::Logger logger_;
 
@@ -34,6 +37,7 @@ protected:
     sol::state lua_state_;
     sol::coroutine coroutine_;
     entity::Tank* tank_;
+    std::vector<sf::Vector2i>& waypoints_;
     std::unique_ptr<WaitCondition> wait_;
 };
 

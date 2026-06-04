@@ -11,6 +11,7 @@
 #include "engine/RigidBody.hpp"
 
 #include "game/entity/tank/Tank.hpp"
+#include "game/entity/tank/TankController.hpp"
 #include "game/entity/TracksRenderer.hpp"
 #include "game/Navigator.hpp"
 #include "game/WaypointMouseController.hpp"
@@ -65,6 +66,7 @@ protected:
     std::vector<sf::Vector2i> waypoints_;
     std::vector<std::unique_ptr<Navigator>> navigators_;
     lua::ScriptsScheduler scriptsScheduler_;
+    std::unique_ptr<game::entity::TankController> luaTankController_;
 
     entity::TracksRenderer tracksRenderer_;
     engine::math::Average<float> fpsAverage_;
@@ -74,8 +76,6 @@ protected:
     engine::Profiler navProfiler_;
     engine::Profiler guiProfiler_;
     engine::Profiler luaProfiler_;
-
-    entity::Tank* luaTankHandle_;
 };
 
 }  // namespace game

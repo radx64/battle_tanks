@@ -113,18 +113,4 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     cannon_->fire();
 }
 
-void Tank::setupLuaScript()
-{
-    script_ = std::make_unique<lua::ScriptContext>(this);
-}
-
-lua::ScriptContext* Tank::getScript()
-{
-    if (!script_)
-    {
-        throw std::runtime_error("Tank does not have script attached");
-    }
-    return script_.get();
-}
-
 }  // namespace game::entity

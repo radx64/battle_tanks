@@ -50,7 +50,7 @@ void TankRenderer::drawDebugInfo(sf::RenderWindow& renderWindow)
     debug_text.setCharacterSize(15);
     debug_text.setFillColor(sf::Color::Black);
 
-    debug_text.setString("SPD: " + std::to_string(fabs(velocity.x + velocity.y)) + "\n" + 
+    debug_text.setString("SPD: " + std::to_string(fabs(velocity.x) + fabs(velocity.y)) + "\n" + 
         "ROT: " + std::to_string(tank_->current_direction_) + "\n" + 
         "THR: " + std::to_string(tank_->current_throttle_));
     renderWindow.draw(debug_text);

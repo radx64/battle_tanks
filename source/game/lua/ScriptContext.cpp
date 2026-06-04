@@ -10,7 +10,10 @@ namespace game::lua::bindings
 int lua_sleep(sol::this_state ts, double seconds);
 int lua_set_turrent_heading(sol::this_state ts, double angle);
 int lua_set_tank_heading(sol::this_state ts, double angle);
+int lua_set_throttle(sol::this_state ts, double throttle);
 int lua_print(sol::this_state ts);
+sol::table lua_get_waypoints(sol::this_state ts);
+sol::table lua_get_tank_position(sol::this_state ts);
 
 }  // namespace game::lua:bindings
 
@@ -46,9 +49,10 @@ ScriptContext* get_script_context(lua_State* L)
 }  // namespace
 
 
-ScriptContext::ScriptContext(entity::Tank* tank)
+ScriptContext::ScriptContext(entity::Tank* tank, std::vector<sf::Vector2i>& waypoints)
 : logger_{"ScriptContext"}
 , tank_{tank}
+, waypoints_{waypoints}
 {
     reload();
 }
@@ -62,16 +66,19 @@ void ScriptContext::reload()
     
     // Now clear and reinitialize the lua state
     lua_state_ = sol::state();
-    lua_state_.open_libraries(sol::lib::base, sol::lib::coroutine);
+    lua_state_.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table, sol::lib::string, sol::lib::coroutine);
     
     // Rebind functions
     lua_state_.set_function("sleep", game::lua::bindings::lua_sleep);
     lua_state_.set_function("set_turret_heading", game::lua::bindings::lua_set_turrent_heading);
     lua_state_.set_function("set_tank_heading", game::lua::bindings::lua_set_tank_heading);
+    lua_state_.set_function("set_throttle", game::lua::bindings::lua_set_throttle);
     lua_state_.set_function("print", game::lua::bindings::lua_print);
+    lua_state_.set_function("get_waypoints", game::lua::bindings::lua_get_waypoints);
+    lua_state_.set_function("get_tank_position", game::lua::bindings::lua_get_tank_position);
 
     // Reload the script
-    lua_state_.script_file("scripts/tank_demo.lua");
+    lua_state_.script_file("scripts/navigator.lua");
 
     // Create fresh coroutine
     sol::coroutine co(lua_state_["main"]);
@@ -95,6 +102,11 @@ std::unique_ptr<WaitCondition>& ScriptContext::waitCondition()
 entity::Tank* ScriptContext::tank()
 {
     return tank_;
+}
+
+std::vector<sf::Vector2i>& ScriptContext::waypoints()
+{
+    return waypoints_;
 }
 
 }  // namespace game::lua
@@ -126,6 +138,23 @@ int lua_set_tank_heading(sol::this_state ts, double angle)
     return 0;
 }
 
+int lua_set_throttle(sol::this_state ts, double throttle)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+    ctx->tank()->setThrottle(throttle);
+    return 0;
+}
+
+sol::table lua_get_tank_position(sol::this_state ts)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+    const auto& rb = ctx->tank()->getRigidBody();
+    sol::table pos = lua.create_table_with("x", rb.x_, "y", rb.y_);
+    return pos;
+}
+
 int lua_print(sol::this_state ts)
 {
     sol::state_view lua(ts);
@@ -149,6 +178,21 @@ int lua_print(sol::this_state ts)
     // Log using the script context's logger
     ctx->logger_.info(output);
     return 0;
+}
+
+sol::table lua_get_waypoints(sol::this_state ts)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+    
+    sol::table waypoints = lua.create_table();
+    const auto& wps = ctx->waypoints();
+    for (size_t i = 0; i < wps.size(); ++i) {
+        sol::table point = lua.create_table_with("x", wps[i].x, "y", wps[i].y);
+        waypoints[i + 1] = point;
+    }
+    
+    return waypoints;
 }
 
 }  // namespace game::lua::bindings
