@@ -13,6 +13,7 @@ public:
     void physics(float timeStep);
     void setRotation(float rotation);
     void fire();
+    bool canFire() const;
 
     float x_;
     float y_;
@@ -23,5 +24,3 @@ public:
 };
 
 }  // namespace game::entity
-
-

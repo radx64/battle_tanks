@@ -1,5 +1,7 @@
 #pragma once
 
+namespace game::entity { class Tank; }
+
 namespace game::lua
 {
 
@@ -17,7 +19,17 @@ public:
     bool update(float dt) override; 
 
 protected:
-float remaining_;
+    float remaining_;
+};
+
+class WaitFireCycle : public WaitCondition
+{
+public:
+    explicit WaitFireCycle(game::entity::Tank* tank);
+    bool update(float dt) override;
+
+protected:
+    game::entity::Tank* tank_;
 };
 
 

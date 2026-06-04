@@ -26,6 +26,9 @@ public:
     void setTurretHeading(float direction);
     static void setDebug(bool is_enabled); 
 
+    void fire();
+    bool canFire() const;
+
     float current_direction_{};
     float current_throttle_{};
     sf::Vector2f drivetrain_force_{};

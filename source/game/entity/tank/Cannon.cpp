@@ -81,5 +81,9 @@ void Cannon::fire()
         cooldown_ = 0.f;
     }
 }
+bool Cannon::canFire() const
+{
+    return cooldown_ > CANNON_COOLDOWN;
+}
 
 }  // namespace game::entity

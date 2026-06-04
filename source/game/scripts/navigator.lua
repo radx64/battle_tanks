@@ -29,6 +29,9 @@ function main()
                 end
                 set_throttle(0.0);
                 print("[LUA]> Waypoint reached, switching to waypoint " .. current_waypoint_idx);
+                fire_cannon();
+                fire_cannon(); -- checking if cannon cooldown works, should only fire once
+                fire_cannon();
             end
             sleep(0.02);
         else

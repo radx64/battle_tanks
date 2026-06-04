@@ -14,6 +14,7 @@ int lua_set_throttle(sol::this_state ts, double throttle);
 int lua_print(sol::this_state ts);
 sol::table lua_get_waypoints(sol::this_state ts);
 sol::table lua_get_tank_position(sol::this_state ts);
+int lua_fire_cannon(sol::this_state ts); // blocking if cannon is on cooldown, will yield until it can fire
 
 }  // namespace game::lua:bindings
 
@@ -76,7 +77,7 @@ void ScriptContext::reload()
     lua_state_.set_function("print", game::lua::bindings::lua_print);
     lua_state_.set_function("get_waypoints", game::lua::bindings::lua_get_waypoints);
     lua_state_.set_function("get_tank_position", game::lua::bindings::lua_get_tank_position);
-
+    lua_state_.set_function("fire_cannon", game::lua::bindings::lua_fire_cannon);
     // Reload the script
     lua_state_.script_file("scripts/navigator.lua");
 
@@ -193,6 +194,20 @@ sol::table lua_get_waypoints(sol::this_state ts)
     }
     
     return waypoints;
+}
+
+int lua_fire_cannon(sol::this_state ts)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    if (!ctx->tank()->canFire()) {
+        ctx->waitCondition() = std::make_unique<lua::WaitFireCycle>(ctx->tank());
+        return lua_yield(lua, 0);
+    }
+
+    ctx->tank()->fire();
+    return 0;
 }
 
 }  // namespace game::lua::bindings

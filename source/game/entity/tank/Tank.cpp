@@ -106,11 +106,16 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
         tracksRenderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
         tracksRenderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);
     }
+}
 
-    // Testing bullet shooting
-    // Cannon has some reload timer so trying to fire every update
-    // is fine 🤣
+void Tank::fire()
+{
     cannon_->fire();
+}
+
+bool Tank::canFire() const
+{
+    return cannon_->canFire();
 }
 
 }  // namespace game::entity
