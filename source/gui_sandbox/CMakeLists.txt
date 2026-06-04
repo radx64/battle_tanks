@@ -31,7 +31,11 @@ PRIVATE
     sfml-graphics)
 
 # Copy resources to build directory
-add_custom_command(TARGET gui_sandbox POST_BUILD
+file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_SOURCE_DIR}/resources/*")
+
+add_custom_target(copy_resources_gui_sandbox ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:gui_sandbox>/resources
+    DEPENDS ${RESOURCE_FILES}
 )
+add_dependencies(copy_resources_gui_sandbox gui_sandbox)

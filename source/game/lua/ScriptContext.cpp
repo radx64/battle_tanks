@@ -1,6 +1,13 @@
 #include "game/lua/ScriptContext.hpp"
 
 #include "game/entity/tank/Tank.hpp"
+#include "game/particle/Say.hpp"
+#include "engine/Context.hpp"
+#include "engine/ParticleSystem.hpp"
+#include <cmath>
+#include <algorithm>
+#include <string>
+#include "engine/math/Math.hpp"
 
 namespace game::entity { class Tank; }
 
@@ -15,8 +22,9 @@ int lua_print(sol::this_state ts);
 sol::table lua_get_waypoints(sol::this_state ts);
 sol::table lua_get_tank_position(sol::this_state ts);
 int lua_fire_cannon(sol::this_state ts); // blocking if cannon is on cooldown, will yield until it can fire
-
-}  // namespace game::lua:bindings
+int lua_move_to(sol::this_state ts, float x, float y); // blocking, drives to target then resumes
+int lua_say(sol::this_state ts, const std::string& text);
+}  // namespace game::lua::bindings
 
 
 namespace game::lua
@@ -50,10 +58,11 @@ ScriptContext* get_script_context(lua_State* L)
 }  // namespace
 
 
-ScriptContext::ScriptContext(entity::Tank* tank, std::vector<sf::Vector2i>& waypoints)
+ScriptContext::ScriptContext(const std::string_view scriptFile, entity::Tank* tank, std::vector<sf::Vector2i>& waypoints)
 : logger_{"ScriptContext"}
 , tank_{tank}
 , waypoints_{waypoints}
+, scriptFile_{scriptFile}
 {
     reload();
 }
@@ -78,8 +87,11 @@ void ScriptContext::reload()
     lua_state_.set_function("get_waypoints", game::lua::bindings::lua_get_waypoints);
     lua_state_.set_function("get_tank_position", game::lua::bindings::lua_get_tank_position);
     lua_state_.set_function("fire_cannon", game::lua::bindings::lua_fire_cannon);
+    lua_state_.set_function("move_to", game::lua::bindings::lua_move_to);
+    lua_state_.set_function("say", game::lua::bindings::lua_say);
+    lua_state_.set_function("Say", game::lua::bindings::lua_say);
     // Reload the script
-    lua_state_.script_file("scripts/navigator.lua");
+    lua_state_.script_file(std::string(scriptFile_));
 
     // Create fresh coroutine
     sol::coroutine co(lua_state_["main"]);
@@ -208,6 +220,47 @@ int lua_fire_cannon(sol::this_state ts)
 
     ctx->tank()->fire();
     return 0;
+}
+
+int lua_say(sol::this_state ts, const std::string& text)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    float x = 0.f;
+    float y = 0.f;
+    if (ctx && ctx->tank())
+    {
+        const auto& rb = ctx->tank()->getRigidBody();
+        x = rb.x_;
+        y = rb.y_;
+    }
+
+    auto say = std::make_unique<game::particle::Say>(text, x, y);
+    engine::Context::getParticleSystem().add(std::move(say));
+    return 0;
+}
+
+int lua_move_to(sol::this_state ts, float x, float y)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    if (!ctx->tank()) return 0;
+
+    const auto& rb = ctx->tank()->getRigidBody();
+    float dx = x - rb.x_;
+    float dy = y - rb.y_;
+    float distance = std::sqrt(dx * dx + dy * dy);
+    const float threshold = 30.0f;
+
+    if (distance <= threshold) {
+        ctx->tank()->setThrottle(0.0);
+        return 0;
+    }
+
+    ctx->waitCondition() = std::make_unique<lua::WaitMoveTo>(ctx->tank(), x, y, threshold);
+    return lua_yield(lua, 0);
 }
 
 }  // namespace game::lua::bindings

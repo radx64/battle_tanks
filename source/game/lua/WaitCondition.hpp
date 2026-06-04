@@ -32,6 +32,19 @@ protected:
     game::entity::Tank* tank_;
 };
 
+class WaitMoveTo : public WaitCondition
+{
+public:
+    explicit WaitMoveTo(game::entity::Tank* tank, float targetX, float targetY, float threshold = 30.0f);
+    bool update(float dt) override;
+
+protected:
+    game::entity::Tank* tank_;
+    float targetX_;
+    float targetY_;
+    float threshold_;
+};
+
 
 // TODO: implement rest of of below wait conditions (port from PoC)
 // class WaitTurretAligned : public WaitCondition 

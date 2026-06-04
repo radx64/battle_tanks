@@ -36,9 +36,14 @@ if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
 endif() #CMAKE_BUILD_TYPE STREQUAL "Coverage"
 
 # Copy resources to build directory
-add_custom_command(TARGET battle_tanks_testing_gui POST_BUILD
+file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_SOURCE_DIR}/resources/*")
+
+add_custom_target(copy_resources_gui_tests ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:battle_tanks_testing_gui>/resources)
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:battle_tanks_testing_gui>/resources
+    DEPENDS ${RESOURCE_FILES}
+)
+add_dependencies(copy_resources_gui_tests battle_tanks_testing_gui)
 
 add_test(NAME battle_tanks_testing_gui
          COMMAND battle_tanks_testing_gui)

@@ -35,8 +35,8 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/InstanceIdGenerator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/lua/ScriptContext.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/lua/ScriptsScheduler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lua/WaitCondition.cpp    
-    ${CMAKE_CURRENT_SOURCE_DIR}/Navigator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua/WaitCondition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/particle/Explosion.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/particle/Say.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/WaypointMouseController.cpp
 )

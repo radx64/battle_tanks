@@ -15,7 +15,10 @@ namespace game::lua
 class ScriptContext 
 {
 public:
-    ScriptContext(entity::Tank* tank, std::vector<sf::Vector2i>& waypoints_);
+
+    // TODO: waypoints should not be part of script context, 
+    // this is just a quick and dirty solution for PoC, refactor later
+    ScriptContext(std::string_view scriptFile, entity::Tank* tank, std::vector<sf::Vector2i>& waypoints_);
     ~ScriptContext() = default;
         
     ScriptContext(const ScriptContext& other) = delete;
@@ -39,6 +42,7 @@ protected:
     entity::Tank* tank_;
     std::vector<sf::Vector2i>& waypoints_;
     std::unique_ptr<WaitCondition> wait_;
+    const std::string_view scriptFile_;
 };
 
 }  // namespace game::lua

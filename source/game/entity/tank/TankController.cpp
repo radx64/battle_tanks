@@ -7,9 +7,9 @@
 namespace game::entity 
 {
 
-TankController::TankController(game::entity::Tank* tank, std::vector<sf::Vector2i>& waypoints)
+TankController::TankController(std::string_view scriptFile, game::entity::Tank* tank, std::vector<sf::Vector2i>& waypoints)
 {
-    script_ = std::make_unique<lua::ScriptContext>(tank, waypoints);
+    script_ = std::make_unique<lua::ScriptContext>(scriptFile, tank, waypoints);
 }
 
 lua::ScriptContext* TankController::getScript()

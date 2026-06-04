@@ -57,7 +57,6 @@ Application::Application()
 , fpsAverage_{NUMBER_OF_MEASUREMENTS}
 , drawProfiler_{"game::Application::DRAW", "ms"}
 , physicsProfiler_{"game::Application::PHYSICS", "ms"}
-, navProfiler_{"game::Application::NAV", "ms"}
 , guiProfiler_{"game::Application::GUI", "ms"}
 , luaProfiler_{"game::lua", "ms"}
 {}
@@ -130,13 +129,6 @@ void Application::onUpdate(float timeStep)
 {
     gui::Application::onUpdate(timeStep);
     clock_.restart();
-    PROFILE_SCOPE(navProfiler_,
-        for(auto& navigator : navigators_)
-        {
-            navigator->navigate();
-        }
-    );
-
     PROFILE_SCOPE(luaProfiler_,
         scriptsScheduler_.update(timeStep);
     );
@@ -251,11 +243,14 @@ void Application::configureGUI()
     });
     gui().mainWindow().addChild(std::move(button));
 
-    auto reloadLuaButton = gui::TextButton::create("Reload Lua script");
+    auto reloadLuaButton = gui::TextButton::create("Reload Lua scripts");
     reloadLuaButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
     reloadLuaButton->setSize(sf::Vector2f(150.f, 30.f));
     reloadLuaButton->onClick([this](){
-        luaTankController_->reload();
+        for (auto& controller : luaControllers_)
+        {
+            controller->reload();
+        }
     });
     gui().mainWindow().addChild(std::move(reloadLuaButton));
 
@@ -290,7 +285,7 @@ void Application::configureGUI()
     gui().mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
         auto menu = gui::ContextMenu::create(
             {
-                {"Reload Lua", [this]() { luaTankController_->reload(); }},
+                {"Reload Lua", [this]() { for (auto& controller : luaControllers_) { controller->reload(); } }},
                 {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; entity::Tank::setDebug(tankDebugMode_); }},
                 {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); camera_.resetZoom();}},
             }
@@ -311,17 +306,19 @@ void Application::spawnSomeTanks()
             static_cast<entity::TankFactory::TankType>(i),
             xSpawnPosition, ySpawnPosition, spawnRotation, &tracksRenderer_);
 
-        auto navigator = std::make_unique<Navigator>(*tank, waypoints_);
+        auto navigator = std::make_unique<game::entity::TankController>("scripts/navigator.lua", tank.get(), waypoints_);
         scene_.spawnObject(std::move(tank));
-        navigators_.push_back(std::move(navigator));
+        scriptsScheduler_.add(navigator->getScript());
+        luaControllers_.push_back(std::move(navigator));
     }
 
-    auto luaControlledTank = entity::TankFactory::create(
-        entity::TankFactory::TankType::Black, Config::WINDOW_WIDTH / 2.f, Config::WINDOW_HEIGHT/2.f, 180.f, &tracksRenderer_);
+    auto turtleTank = entity::TankFactory::create(
+        entity::TankFactory::TankType::Green, Config::WINDOW_WIDTH / 2.f + 100.f, Config::WINDOW_HEIGHT/2.f, 0.f, &tracksRenderer_);
 
-    luaTankController_ = std::make_unique<game::entity::TankController>(luaControlledTank.get(), waypoints_);
-    scriptsScheduler_.add(luaTankController_->getScript());
-    scene_.spawnObject(std::move(luaControlledTank));
+    auto luaTankController = std::make_unique<game::entity::TankController>("scripts/turtle.lua", turtleTank.get(), waypoints_);
+    scriptsScheduler_.add(luaTankController->getScript());
+    scene_.spawnObject(std::move(turtleTank));
+    luaControllers_.push_back(std::move(luaTankController));
 }
 
 void Application::spawnSomeBarrelsAndCratesAndTress()

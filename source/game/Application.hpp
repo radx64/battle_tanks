@@ -13,7 +13,6 @@
 #include "game/entity/tank/Tank.hpp"
 #include "game/entity/tank/TankController.hpp"
 #include "game/entity/TracksRenderer.hpp"
-#include "game/Navigator.hpp"
 #include "game/WaypointMouseController.hpp"
 
 #include "graphics/Tilemap.hpp"
@@ -64,16 +63,14 @@ protected:
     game::WaypointMouseController waypointMouseController_;
 
     std::vector<sf::Vector2i> waypoints_;
-    std::vector<std::unique_ptr<Navigator>> navigators_;
+    std::vector<std::unique_ptr<game::entity::TankController>> luaControllers_;
     lua::ScriptsScheduler scriptsScheduler_;
-    std::unique_ptr<game::entity::TankController> luaTankController_;
 
     entity::TracksRenderer tracksRenderer_;
     engine::math::Average<float> fpsAverage_;
 
     engine::Profiler drawProfiler_;
     engine::Profiler physicsProfiler_;
-    engine::Profiler navProfiler_;
     engine::Profiler guiProfiler_;
     engine::Profiler luaProfiler_;
 };

@@ -170,9 +170,20 @@ target_link_libraries (battle_tanks
 )
 
 # Copy fonts and scripts to build directory
-add_custom_command(TARGET battle_tanks POST_BUILD
+# Collect all Lua and resource files to track as dependencies
+file(GLOB_RECURSE SCRIPT_FILES "${CMAKE_SOURCE_DIR}/source/game/scripts/*.lua")
+file(GLOB_RECURSE RESOURCE_FILES 
+    "${CMAKE_SOURCE_DIR}/resources/*"
+)
+
+# Create a custom target that depends on all script/resource files
+add_custom_target(copy_resources ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:battle_tanks>/resources
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/source/game/scripts $<TARGET_FILE_DIR:battle_tanks>/scripts
+    DEPENDS ${SCRIPT_FILES} ${RESOURCE_FILES}
 )
+
+# Ensure copy_resources runs after battle_tanks is built
+add_dependencies(copy_resources battle_tanks)
