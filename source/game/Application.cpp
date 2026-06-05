@@ -48,9 +48,10 @@ constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
 : gui::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
-, cameraInitialPosition_{Config::WINDOW_WIDTH/2.f, Config::WINDOW_HEIGHT/2.f}
 , cameraInitialSize_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
-, camera_{cameraInitialPosition_, cameraInitialSize_}
+, cameraWorldSize_{Config::WINDOW_WIDTH * 4.f, Config::WINDOW_HEIGHT * 4.f}
+, cameraInitialPosition_{cameraWorldSize_ / 2.f}
+, camera_{cameraInitialPosition_, cameraInitialSize_, cameraWorldSize_}
 , cameraController_{&camera_}
 , cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
 , waypointMouseController_{waypoints_, window_, cameraView_}
@@ -72,7 +73,7 @@ void Application::onInit()
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
 
-    cameraView_.setCenter(Config::WINDOW_WIDTH/2.0, Config::WINDOW_HEIGHT/2.0);
+    cameraView_.setCenter(cameraInitialPosition_);
     configureGUI();
 
     keyboardHandler_.subscribe(std::vector<sf::Keyboard::Key>
@@ -358,8 +359,8 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
     {
         for (size_t i = 0; i < NUMBER_OF_TREES_OF_EACH_TYPE; ++i)
         {
-            const auto xPosition = rand() % Config::WINDOW_WIDTH;
-            const auto yPosition = rand() % Config::WINDOW_HEIGHT;
+            const auto xPosition = rand() % static_cast<int>(cameraWorldSize_.x);
+            const auto yPosition = rand() % static_cast<int>(cameraWorldSize_.y);
             scene_.spawnObject(game::entity::TreeFactory::create(
                 treeType, xPosition, yPosition));
         }

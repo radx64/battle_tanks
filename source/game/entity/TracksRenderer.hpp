@@ -15,6 +15,8 @@ public:
 
 protected:
     sf::RenderTexture target_;
+    sf::Sprite sprite_;
+    bool needsDisplay_{true};
 };
 
 } // namespace game::entity

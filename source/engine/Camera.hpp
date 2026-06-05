@@ -8,7 +8,7 @@ namespace engine
 class Camera
 {
 public:
-    Camera(const sf::Vector2f& position, const sf::Vector2f& size);
+    Camera(const sf::Vector2f& position, const sf::Vector2f& viewportSize, const sf::Vector2f& worldSize);
     void setPosition(const float x, const float y);
     void resetZoom();
     void moveX(const float xVelocity);
@@ -28,6 +28,7 @@ protected:
     sf::Vector2f targetPosition_;
     sf::Vector2f velocity_;
     const sf::Vector2f originalSize_;
+    const sf::Vector2f worldSize_;
     sf::Vector2f currentSize_;
     sf::Vector2f targetSize_;
     float zoomLevel_;

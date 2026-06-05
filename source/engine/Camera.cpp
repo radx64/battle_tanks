@@ -9,13 +9,14 @@ constexpr float ZOOM_FACTOR = 1.1;
 constexpr float MIN_ZOOM_LEVEL = 1;
 constexpr float MAX_ZOOM_LEVEL = 4;
 
-Camera::Camera(const sf::Vector2f& position, const sf::Vector2f& size)
+Camera::Camera(const sf::Vector2f& position, const sf::Vector2f& viewportSize, const sf::Vector2f& worldSize)
 : currentPosition_{position}
 , targetPosition_{position}
 , velocity_{0.f, 0.f}
-, originalSize_{size}
-, currentSize_{size}
-, targetSize_{size}
+, originalSize_{viewportSize}
+, worldSize_{worldSize}
+, currentSize_{viewportSize}
+, targetSize_{viewportSize}
 , zoomLevel_{MIN_ZOOM_LEVEL}
 {}
 
@@ -34,12 +35,27 @@ void Camera::resetZoom()
 
 void Camera::alignBoundaries()
 {
-    auto halfOfTargetSize = targetSize_/2.0f;
-    if (targetPosition_.x - halfOfTargetSize.x < 0) targetPosition_.x = halfOfTargetSize.x;
-    if (targetPosition_.y - halfOfTargetSize.y < 0) targetPosition_.y = halfOfTargetSize.y;
+    auto halfOfTargetSize = targetSize_ / 2.0f;
 
-    if (targetPosition_.x + halfOfTargetSize.x > originalSize_.x) targetPosition_.x = originalSize_.x - halfOfTargetSize.x;
-    if (targetPosition_.y + halfOfTargetSize.y > originalSize_.y) targetPosition_.y = originalSize_.y - halfOfTargetSize.y;
+    if (halfOfTargetSize.x >= worldSize_.x)
+    {
+        targetPosition_.x = worldSize_.x / 2.0f;
+    }
+    else
+    {
+        if (targetPosition_.x - halfOfTargetSize.x < 0) targetPosition_.x = halfOfTargetSize.x;
+        if (targetPosition_.x + halfOfTargetSize.x > worldSize_.x) targetPosition_.x = worldSize_.x - halfOfTargetSize.x;
+    }
+
+    if (halfOfTargetSize.y >= worldSize_.y)
+    {
+        targetPosition_.y = worldSize_.y / 2.0f;
+    }
+    else
+    {
+        if (targetPosition_.y - halfOfTargetSize.y < 0) targetPosition_.y = halfOfTargetSize.y;
+        if (targetPosition_.y + halfOfTargetSize.y > worldSize_.y) targetPosition_.y = worldSize_.y - halfOfTargetSize.y;
+    }
 }
 
 void Camera::moveX(const float xVelocity)

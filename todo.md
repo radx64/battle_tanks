@@ -42,8 +42,11 @@ Bunch of random ideas to randomly pick up and implement
 - [x] Checkbox
   - [x] Implement keyboard events support
 - [x] Radiobutton
-  - [ ] Radio button groups support 
+  - [x] Radio button groups support 
 - [x] Sliders
+- [x] Editbox
+  - [x] Multiline editbox
+- [x] Scrollable controlls (like listbox, editbox etc...)
 - [ ] Move render logic to some renderer subclasses (so that representation of gui elements can be reimplemented)
 
 ## Gameplay

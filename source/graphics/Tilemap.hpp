@@ -9,8 +9,8 @@
 
 namespace {
 
-constexpr auto WIDTH = 30;
-constexpr auto HEIGHT = 20;
+constexpr auto WIDTH = 120;
+constexpr auto HEIGHT = 80;
 
 enum class TileType
 {
@@ -166,14 +166,15 @@ public:
             }
         }
         tiles_.display();
+        sprite_.setTexture(tiles_.getTexture());
     }
     void draw(sf::RenderWindow& renderWindow)
     {
-        sf::Sprite texture(tiles_.getTexture());
-        renderWindow.draw(texture);
+        renderWindow.draw(sprite_);
     }
 
 private:
+    sf::Sprite sprite_;
     uint8_t tileIds_[HEIGHT][WIDTH] = 
     {
         { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1},
