@@ -97,7 +97,7 @@ T Average<T>::calculate(T new_value)
     measurements_[currentIndex_] = new_value;
     currentIndex_++;
     if (currentIndex_ >= windowSize_) currentIndex_ = 0;
-    return std::accumulate(measurements_.begin(), measurements_.end(), 0) / static_cast<T>(measurements_.size());
+    return std::accumulate(measurements_.begin(), measurements_.end(), T{0}) / static_cast<T>(measurements_.size());
 }
 
 template class Average<uint32_t>;

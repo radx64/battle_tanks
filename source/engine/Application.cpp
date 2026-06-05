@@ -22,6 +22,9 @@ Application::Application(const std::string_view windowName, const std::string_vi
 , eventsProfiler_{"engine::Application::process_events", "ms"}
 , updateProfiler_{"engine::Application::update", "ms"}
 , renderProfiler_{"engine::Application::render", "ms"}
+, clearProfiler_{"engine::window.clear", "ms"}
+, renderProfilingInfoProfiler_{"engine::renderProfilingInfo", "ms"}
+, displayProfiler_{"engine::window.display", "ms"}
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});
@@ -157,14 +160,21 @@ void Application::update()
 
 void Application::render()
 {
-    {
-        PROFILE_SCOPE(renderProfiler_,
-            window_.clear(sf::Color(0, 0, 0));
-            onRender();   
-        ); 
-    }
-    renderProfilingInfo();
-    window_.display();
+    PROFILE_SCOPE(clearProfiler_,
+        window_.clear(sf::Color(0, 0, 0));
+    );
+    
+    PROFILE_SCOPE(renderProfiler_,
+        onRender();   
+    );
+    
+    PROFILE_SCOPE(renderProfilingInfoProfiler_,
+        renderProfilingInfo();
+    );
+    
+    PROFILE_SCOPE(displayProfiler_,
+        window_.display();
+    );
 }
 
 void Application::renderProfilingInfo()

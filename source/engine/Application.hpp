@@ -70,6 +70,9 @@ protected:
     engine::Profiler eventsProfiler_;
     engine::Profiler updateProfiler_;
     engine::Profiler renderProfiler_;
+    engine::Profiler clearProfiler_;
+    engine::Profiler renderProfilingInfoProfiler_;
+    engine::Profiler displayProfiler_;
 };
 
 }  // namespace engine

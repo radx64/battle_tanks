@@ -60,6 +60,12 @@ Application::Application()
 , physicsProfiler_{"game::Application::PHYSICS", "ms"}
 , guiProfiler_{"game::Application::GUI", "ms"}
 , luaProfiler_{"game::lua", "ms"}
+, tilemapProfiler_{"game::Tilemap::draw", "ms"}
+, renderGameObjectsProfiler_{"game::renderGameObjects", "ms"}
+, tracksProfiler_{"game::TracksRenderer::draw", "ms"}
+, waypointsProfiler_{"game::drawWaypoints", "ms"}
+, particlesProfiler_{"game::ParticleSystem::draw", "ms"}
+, displayProfiler_{"engine::window.display", "ms"}
 {}
 
 void Application::onInit()
@@ -70,8 +76,8 @@ void Application::onInit()
     tilemap_ = std::make_unique<graphics::Tilemap>();
     mouseHandler_.subscribe(&waypointMouseController_);
 
-    //window_.setFramerateLimit(60);
-    window_.setVerticalSyncEnabled(true);
+    window_.setFramerateLimit(60);
+    window_.setVerticalSyncEnabled(false);
 
     cameraView_.setCenter(cameraInitialPosition_);
     configureGUI();
@@ -157,12 +163,25 @@ void Application::onRender()
     // otherwise values are wrong
     fpsCounter_.startMeasurement();
 
-    PROFILE_SCOPE(drawProfiler_,
-        window_.setView(cameraView_);
+    window_.setView(cameraView_);
+    
+    PROFILE_SCOPE(tilemapProfiler_,
         tilemap_->draw(window_);
+    );
+    
+    PROFILE_SCOPE(waypointsProfiler_,
         graphics::drawtools::drawWaypoints(window_, waypoints_);
+    );
+    
+    PROFILE_SCOPE(tracksProfiler_,
         tracksRenderer_.draw(window_);
+    );
+    
+    PROFILE_SCOPE(renderGameObjectsProfiler_,
         renderGameObjects();
+    );
+    
+    PROFILE_SCOPE(particlesProfiler_,
         particleSystem_.draw(window_);
     );
 

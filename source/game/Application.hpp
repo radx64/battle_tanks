@@ -74,6 +74,12 @@ protected:
     engine::Profiler physicsProfiler_;
     engine::Profiler guiProfiler_;
     engine::Profiler luaProfiler_;
+    engine::Profiler tilemapProfiler_;
+    engine::Profiler renderGameObjectsProfiler_;
+    engine::Profiler tracksProfiler_;
+    engine::Profiler waypointsProfiler_;
+    engine::Profiler particlesProfiler_;
+    engine::Profiler displayProfiler_;
 };
 
 }  // namespace game

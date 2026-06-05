@@ -231,4 +231,44 @@ TEST(Average, shouldThrowIfAverageWindowIsLessThen2)
     ASSERT_NO_THROW(Average(2));
 }
 
+TEST(Average, shouldCalculateFloatAverageCorrectly)
+{
+    engine::math::Average<float> average(4);
+    float result{};
+    for (const auto value : std::array<float, 4>{2.5f, 4.5f, 6.5f, 8.5f})
+    {
+        result = average.calculate(value);
+    }
+
+    float expected_result = 5.5f;
+    EXPECT_FLOAT_EQ(expected_result, result);
+}
+
+TEST(Average, shouldCalculateFloatAverageWithDecimalPrecision)
+{
+    engine::math::Average<float> average(3);
+    float result{};
+    for (const auto value : std::array<float, 3>{1.1f, 2.2f, 3.3f})
+    {
+        result = average.calculate(value);
+    }
+
+    float expected_result = 2.2f;
+    EXPECT_NEAR(expected_result, result, 1e-6f);
+}
+
+TEST(Average, shouldCalculateFloatAverageForMoreValuesThanWindow)
+{
+    engine::math::Average<float> average(2);
+    float result{};
+    for (const auto value : std::array<float, 4>{1.5f, 2.5f, 3.5f, 4.5f})
+    {
+        result = average.calculate(value);
+    }
+
+    // Last two values: 3.5f, 4.5f
+    float expected_result = 4.0f;
+    EXPECT_FLOAT_EQ(expected_result, result);
+}
+
 }  // namespace engine::math
