@@ -4,6 +4,9 @@
 
 #include <SFML/System.hpp>
 
+#include <string>
+#include <string_view>
+
 #include "engine/Logger.hpp"
 #include "game/lua/WaitCondition.hpp"
 
@@ -28,11 +31,14 @@ public:
     ScriptContext& operator=(ScriptContext&& other) = default;
 
     void reload();
+    void stop(std::string_view reason);
 
     sol::coroutine& coroutine();
     std::unique_ptr<WaitCondition>& waitCondition();
     entity::Tank* tank();
     std::vector<sf::Vector2i>& waypoints();
+    bool isStopped() const noexcept;
+    const std::string& stopReason() const noexcept;
     
     engine::Logger logger_;
 
@@ -43,6 +49,8 @@ protected:
     std::vector<sf::Vector2i>& waypoints_;
     std::unique_ptr<WaitCondition> wait_;
     const std::string_view scriptFile_;
+    bool stopped_ = true;
+    std::string stopReason_;
 };
 
 }  // namespace game::lua

@@ -6,7 +6,6 @@
 #include "engine/ParticleSystem.hpp"
 #include <cmath>
 #include <algorithm>
-#include <string>
 #include "engine/math/Math.hpp"
 
 namespace game::entity { class Tank; }
@@ -24,6 +23,11 @@ sol::table lua_get_tank_position(sol::this_state ts);
 int lua_fire_cannon(sol::this_state ts); // blocking if cannon is on cooldown, will yield until it can fire
 int lua_move_to(sol::this_state ts, float x, float y); // blocking, drives to target then resumes
 int lua_say(sol::this_state ts, const std::string& text);
+int lua_set_led_color(sol::this_state ts, int r, int g, int b);
+int lua_set_led_color_hex(sol::this_state ts, const std::string& hexColor);
+int lua_set_led_blinking(sol::this_state ts, float rate);
+int lua_set_led(sol::this_state ts, bool state);
+
 }  // namespace game::lua::bindings
 
 
@@ -70,9 +74,12 @@ ScriptContext::ScriptContext(const std::string_view scriptFile, entity::Tank* ta
 void ScriptContext::reload()
 {
     logger_.info("Reloading script...");
+    stopped_ = true;
+    stopReason_.clear();
     
     // Clear the old coroutine first
     coroutine_ = sol::coroutine();
+    wait_.reset();
     
     // Now clear and reinitialize the lua state
     lua_state_ = sol::state();
@@ -90,16 +97,50 @@ void ScriptContext::reload()
     lua_state_.set_function("move_to", game::lua::bindings::lua_move_to);
     lua_state_.set_function("say", game::lua::bindings::lua_say);
     lua_state_.set_function("Say", game::lua::bindings::lua_say);
+
+    lua_state_.set("set_led_color", game::lua::bindings::lua_set_led_color);
+    lua_state_.set("set_led_color_hex", game::lua::bindings::lua_set_led_color_hex);
+    lua_state_.set("set_led_blinking", game::lua::bindings::lua_set_led_blinking);
+    lua_state_.set("set_led", game::lua::bindings::lua_set_led);
+
     // Reload the script
-    lua_state_.script_file(std::string(scriptFile_));
+    try
+    {
+        lua_state_.script_file(std::string(scriptFile_));
+    }
+    catch (const sol::error& e)
+    {
+        stop(std::string("Failed to load script: ") + e.what());
+        return;
+    }
+    catch (const std::exception& e)
+    {
+        stop(std::string("Failed to load script: ") + e.what());
+        return;
+    }
 
     // Create fresh coroutine
     sol::coroutine co(lua_state_["main"]);
     coroutine_ = std::move(co);
-    wait_.reset();
+
+    if (!coroutine_.lua_state())
+    {
+        stop("Failed to load script: missing main coroutine");
+        return;
+    }
     
     // Store context pointer after everything is set up
     storeScriptContext(coroutine_.lua_state(), this);
+    stopped_ = false;
+    stopReason_.clear();
+}
+
+void ScriptContext::stop(std::string_view reason)
+{
+    stopped_ = true;
+    stopReason_ = reason;
+    wait_.reset();
+    logger_.error(stopReason_);
 }
 
 sol::coroutine& ScriptContext::coroutine()
@@ -120,6 +161,16 @@ entity::Tank* ScriptContext::tank()
 std::vector<sf::Vector2i>& ScriptContext::waypoints()
 {
     return waypoints_;
+}
+
+bool ScriptContext::isStopped() const noexcept
+{
+    return stopped_;
+}
+
+const std::string& ScriptContext::stopReason() const noexcept
+{
+    return stopReason_;
 }
 
 }  // namespace game::lua
@@ -261,6 +312,68 @@ int lua_move_to(sol::this_state ts, float x, float y)
 
     ctx->waitCondition() = std::make_unique<lua::WaitMoveTo>(ctx->tank(), x, y, threshold);
     return lua_yield(lua, 0);
+}
+
+int lua_set_led_color(sol::this_state ts, int r, int g, int b)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    if (!ctx->tank()) return 0;
+
+    ctx->tank()->led().setColor(sf::Color(r, g, b));
+    return 0;
+}
+
+int lua_set_led_color_hex(sol::this_state ts, const std::string& hexColor)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    if (!ctx->tank()) return 0;
+
+    std::string hex = hexColor;
+    if (hex[0] == '#') {
+        hex.erase(0, 1);
+    }
+
+    if (hex.length() != 6) {
+        ctx->logger_.error("Invalid hex color format: " + hexColor);
+        return 0;
+    }
+
+    try {
+        int r = std::stoi(hex.substr(0, 2), nullptr, 16);
+        int g = std::stoi(hex.substr(2, 2), nullptr, 16);
+        int b = std::stoi(hex.substr(4, 2), nullptr, 16);
+        ctx->tank()->led().setColor(sf::Color(r, g, b));
+    } catch (const std::exception& e) {
+        ctx->logger_.error("Error parsing hex color: " + std::string(e.what()));
+    }
+
+    return 0;
+}
+
+int lua_set_led_blinking(sol::this_state ts, float rate)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    if (!ctx->tank()) return 0;
+
+    ctx->tank()->led().setBlinkingRate(rate > 0 ? rate : 0.f); // default to 0.5s if invalid
+    return 0;
+}
+
+int lua_set_led(sol::this_state ts, bool state)
+{
+    sol::state_view lua(ts);
+    ScriptContext* ctx = get_script_context(lua.lua_state());
+
+    if (!ctx->tank()) return 0;
+
+    ctx->tank()->led().set(state);
+    return 0;
 }
 
 }  // namespace game::lua::bindings

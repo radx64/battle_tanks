@@ -121,4 +121,14 @@ bool Tank::canFire() const
     return cannon_->canFire();
 }
 
+Cannon& Tank::cannon()
+{
+    return *cannon_;
+}
+
+Led& Tank::led()
+{
+    return led_;
+}
+
 }  // namespace game::entity

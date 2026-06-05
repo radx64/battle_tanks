@@ -28,14 +28,14 @@ void TankRenderer::draw(sf::RenderWindow& renderWindow)
     tankSprite_.setColor(sf::Color(255, 255, 255, 255));
     tankSprite_.setPosition(tankRigidBody.x_, tankRigidBody.y_);
     renderWindow.draw(tankSprite_);
-    tank_->cannon_->x_ = tankRigidBody.x_;
-    tank_->cannon_->y_ = tankRigidBody.y_;
-    tank_->cannon_->draw(renderWindow);
+    tank_->cannon().x_ = tankRigidBody.x_;
+    tank_->cannon().y_ = tankRigidBody.y_;
+    tank_->cannon().draw(renderWindow);
 
-    tank_->led_.x_ = tankRigidBody.x_;
-    tank_->led_.y_ = tankRigidBody.y_;
-    tank_->led_.setRotation(tank_->current_direction_);
-    tank_->led_.draw(renderWindow);
+    tank_->led().x_ = tankRigidBody.x_;
+    tank_->led().y_ = tankRigidBody.y_;
+    tank_->led().setRotation(tank_->current_direction_);
+    tank_->led().draw(renderWindow);
 
     if (tank_->DEBUG_)
     {

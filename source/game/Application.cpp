@@ -270,6 +270,7 @@ void Application::configureGUI()
         for (auto& controller : luaControllers_)
         {
             controller->reload();
+            scriptsScheduler_.add(controller->getScript());
         }
     });
     gui().mainWindow().addChild(std::move(reloadLuaButton));
@@ -305,7 +306,7 @@ void Application::configureGUI()
     gui().mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
         auto menu = gui::ContextMenu::create(
             {
-                {"Reload Lua", [this]() { for (auto& controller : luaControllers_) { controller->reload(); } }},
+                {"Reload Lua", [this]() { for (auto& controller : luaControllers_) { controller->reload(); scriptsScheduler_.add(controller->getScript()); } }},
                 {"Toggle debug", [this]() { tankDebugMode_ = !tankDebugMode_; entity::Tank::setDebug(tankDebugMode_); }},
                 {"Reset camera", [this]() { camera_.setPosition(cameraInitialPosition_.x, cameraInitialPosition_.y); camera_.resetZoom();}},
             }
@@ -335,11 +336,20 @@ void Application::spawnSomeTanks()
     auto turtleTank = entity::TankFactory::create(
         entity::TankFactory::TankType::Green, Config::WINDOW_WIDTH / 2.f + 100.f, Config::WINDOW_HEIGHT/2.f, 0.f, &tracksRenderer_);
 
-    turtleTank->led_.setColor(sf::Color::Red);
-    auto luaTankController = std::make_unique<game::entity::TankController>("scripts/turtle.lua", turtleTank.get(), waypoints_);
-    scriptsScheduler_.add(luaTankController->getScript());
+    turtleTank->led().setColor(sf::Color::Red);
+    auto turtleTankController = std::make_unique<game::entity::TankController>("scripts/turtle.lua", turtleTank.get(), waypoints_);
+    scriptsScheduler_.add(turtleTankController->getScript());
     scene_.spawnObject(std::move(turtleTank));
-    luaControllers_.push_back(std::move(luaTankController));
+    luaControllers_.push_back(std::move(turtleTankController));
+
+    auto ledTank = entity::TankFactory::create(
+        entity::TankFactory::TankType::Red, Config::WINDOW_WIDTH / 2.f + 200.f, Config::WINDOW_HEIGHT/2.f, 0.f, &tracksRenderer_);
+
+    ledTank->led().setColor(sf::Color::Red);
+    auto ledTankController = std::make_unique<game::entity::TankController>("scripts/blink.lua", ledTank.get(), waypoints_);
+    scriptsScheduler_.add(ledTankController->getScript());
+    scene_.spawnObject(std::move(ledTank));
+    luaControllers_.push_back(std::move(ledTankController));
 }
 
 void Application::spawnSomeBarrelsAndCratesAndTress()

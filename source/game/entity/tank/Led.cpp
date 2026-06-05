@@ -10,7 +10,7 @@ namespace game::entity
 Led::Led(float x, float y, sf::Texture& texture)
 : x_{x},
 y_{y},
-timeToChangeState_{period_}
+timeToChangeState_{rate_}
 {
     sprite_.setTexture(texture);
     sf::Vector2u texture_size = texture.getSize();
@@ -43,17 +43,29 @@ void Led::draw(sf::RenderWindow& renderWindow)
 
 void Led::update(float timeStep)
 {
+    if (rate_ <= 0.01) return; // No blinking if rate is 0 or negative
+
     timeToChangeState_ -= timeStep;
     if (timeToChangeState_ <= 0)
     {
         isOn_ = !isOn_;
-        timeToChangeState_ = period_;
+        timeToChangeState_ = rate_;
     }
 }
 
 void Led::setColor(const sf::Color& color)
 {
     color_ = color;
+}
+
+void Led::setBlinkingRate(float rate)
+{
+    rate_ = rate;
+}
+
+void Led::set(bool state)
+{
+    isOn_ = state;
 }
 
 }  // namespace game::entity

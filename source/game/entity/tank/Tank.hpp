@@ -30,15 +30,18 @@ public:
     void fire();
     bool canFire() const;
 
+    Cannon& cannon();
+    Led& led();
+
     float current_direction_{};
     float current_throttle_{};
     sf::Vector2f drivetrain_force_{};
     sf::Vector2f braking_force_{};
+    static bool DEBUG_;
+    
+protected:
     std::unique_ptr<Cannon> cannon_;
     Led led_;
-    static bool DEBUG_;
-
-protected:
     sf::Vector2f tank_middle_point_;
     float set_direction_{};
     float set_throttle_{};
