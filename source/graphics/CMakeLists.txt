@@ -7,10 +7,12 @@ PUBLIC
 
 target_sources(graphics_lib
 PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.cpp   
+    ${CMAKE_CURRENT_SOURCE_DIR}/DrawTools.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Tilemap.cpp
 )
 
 target_link_libraries(graphics_lib
 PUBLIC
+    engine_lib
     sfml-graphics
 )

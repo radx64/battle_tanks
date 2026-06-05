@@ -15,6 +15,7 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/Application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CameraController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ChunkedRenderTextureLayer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp

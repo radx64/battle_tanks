@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/ChunkedRenderTextureLayer.hpp"
+
 namespace game::entity
 {
 
@@ -14,9 +16,7 @@ public:
     void clear();
 
 protected:
-    sf::RenderTexture target_;
-    sf::Sprite sprite_;
-    bool needsDisplay_{true};
+    engine::ChunkedRenderTextureLayer chunks_;
 };
 
 } // namespace game::entity
