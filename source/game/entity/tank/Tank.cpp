@@ -3,9 +3,10 @@
 #include <algorithm>
 #include <cmath>
 
+#include "engine/Scene.hpp"
 #include "engine/math/Math.hpp"
 #include "engine/ParticleSystem.hpp"
-#include "engine/Scene.hpp"
+
 #include "game/entity/tank/TankRenderer.hpp"
 #include "game/entity/TracksRenderer.hpp"
 #include "game/InstanceIdGenerator.hpp"
@@ -33,10 +34,11 @@ Tank::Tank(float x, float y, float rotation,
     std::unique_ptr<Cannon> cannon, 
     sf::Texture& tankBody,
     TracksRenderer* tracksRenderer)
-: current_direction_(rotation)
-, cannon_(std::move(cannon))
-, set_direction_(rotation)
-, tracksRenderer_(tracksRenderer)
+: current_direction_{rotation}
+, cannon_{std::move(cannon)}
+, led_{x , y, graphics::TextureLibrary::instance().get("led")}
+, set_direction_{rotation}
+, tracksRenderer_{tracksRenderer}
 {
     renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
@@ -95,6 +97,7 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     tank_rigid_body.applyForce(drivetrain_force_ + braking_force_);
 
     cannon_->physics(timeStep);
+    led_.update(timeStep);
 
     if ((std::fabs(tank_rigid_body.velocity_.x) > 0.01) or (std::fabs(tank_rigid_body.velocity_.y) > 0.01))
     {

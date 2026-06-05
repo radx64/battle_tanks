@@ -50,7 +50,7 @@ Application::Application()
 : gui::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
 , cameraInitialSize_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
 , cameraWorldSize_{Config::WINDOW_WIDTH * 4.f, Config::WINDOW_HEIGHT * 4.f}
-, cameraInitialPosition_{cameraWorldSize_ / 2.f}
+, cameraInitialPosition_{0.f + Config::WINDOW_WIDTH / 2.f, 0.f + Config::WINDOW_HEIGHT / 2.f}
 , camera_{cameraInitialPosition_, cameraInitialSize_, cameraWorldSize_}
 , cameraController_{&camera_}
 , cameraView_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
@@ -316,6 +316,7 @@ void Application::spawnSomeTanks()
     auto turtleTank = entity::TankFactory::create(
         entity::TankFactory::TankType::Green, Config::WINDOW_WIDTH / 2.f + 100.f, Config::WINDOW_HEIGHT/2.f, 0.f, &tracksRenderer_);
 
+    turtleTank->led_.setColor(sf::Color::Red);
     auto luaTankController = std::make_unique<game::entity::TankController>("scripts/turtle.lua", turtleTank.get(), waypoints_);
     scriptsScheduler_.add(luaTankController->getScript());
     scene_.spawnObject(std::move(turtleTank));
@@ -370,9 +371,6 @@ void Application::spawnSomeBarrelsAndCratesAndTress()
 void Application::generateProfiling()
 {
     //TODO: move fps counting to engine application part
-    std::string text;
-
-
     engine::ProfileResult result {
         .name = "FPS",
         .unit = "",

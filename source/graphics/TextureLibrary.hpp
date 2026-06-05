@@ -47,7 +47,10 @@ public:
             {"explosion_smoke_3",    concat(texturePath, "explosionSmoke3.png")},
             {"explosion_smoke_4",    concat(texturePath, "explosionSmoke4.png")},
             {"explosion_smoke_5",    concat(texturePath, "explosionSmoke5.png")},
-        
+
+            //      ELECTRONICS      //
+            {"led",    concat(texturePath, "led.png")},
+
             //      ROAD TEXTURES   //
             {"grass_1",                  concat(texturePath, "tileGrass1.png")},
             {"grass_2",                  concat(texturePath, "tileGrass2.png")},

@@ -32,6 +32,11 @@ void TankRenderer::draw(sf::RenderWindow& renderWindow)
     tank_->cannon_->y_ = tankRigidBody.y_;
     tank_->cannon_->draw(renderWindow);
 
+    tank_->led_.x_ = tankRigidBody.x_;
+    tank_->led_.y_ = tankRigidBody.y_;
+    tank_->led_.setRotation(tank_->current_direction_);
+    tank_->led_.draw(renderWindow);
+
     if (tank_->DEBUG_)
     {
         drawDebugInfo(renderWindow);

@@ -24,6 +24,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/crate/CrateFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/crate/CrateRenderer.cpp   
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Cannon.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Led.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/Tank.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/entity/tank/TankFactory.cpp

@@ -6,6 +6,7 @@
 
 #include "engine/GameObject.hpp"
 #include "game/entity/tank/Cannon.hpp"
+#include "game/entity/tank/Led.hpp"
 
 namespace game::entity {class TracksRenderer;}
 namespace game::entity 
@@ -34,6 +35,7 @@ public:
     sf::Vector2f drivetrain_force_{};
     sf::Vector2f braking_force_{};
     std::unique_ptr<Cannon> cannon_;
+    Led led_;
     static bool DEBUG_;
 
 protected:
