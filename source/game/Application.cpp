@@ -70,7 +70,7 @@ void Application::onInit()
     tilemap_ = std::make_unique<graphics::Tilemap>();
     mouseHandler_.subscribe(&waypointMouseController_);
 
-    window_.setFramerateLimit(60);
+    //window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(true);
 
     cameraView_.setCenter(cameraInitialPosition_);

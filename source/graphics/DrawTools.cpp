@@ -17,43 +17,54 @@ void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Colo
 
 void drawTarget(sf::RenderWindow& window, int x, int y)
 {
-    sf::CircleShape target(10);
-    target.setFillColor(sf::Color(255, 255, 255));
-    target.setOutlineThickness(2);
-    target.setOutlineColor(sf::Color(250, 10, 10));
-    target.setPosition(x, y);
-    target.setOrigin(10,10);
-    window.draw(target);
+    static sf::CircleShape outerTarget(10.f);
+    static sf::CircleShape innerTarget(2.f);
 
-    sf::CircleShape target2(2);
-    target2.setFillColor(sf::Color(250, 10, 10));
-    target2.setOutlineThickness(2);
-    target2.setOutlineColor(sf::Color(250, 10, 10));
-    target2.setPosition(x, y);
-    target2.setOrigin(2,2);
-    window.draw(target2);
+    outerTarget.setFillColor(sf::Color(255, 255, 255));
+    outerTarget.setOutlineThickness(2.f);
+    outerTarget.setOutlineColor(sf::Color(250, 10, 10));
+    outerTarget.setOrigin(10.f, 10.f);
+    outerTarget.setPosition(static_cast<float>(x), static_cast<float>(y));
+    window.draw(outerTarget);
+
+    innerTarget.setFillColor(sf::Color(250, 10, 10));
+    innerTarget.setOutlineThickness(2.f);
+    innerTarget.setOutlineColor(sf::Color(250, 10, 10));
+    innerTarget.setOrigin(2.f, 2.f);
+    innerTarget.setPosition(static_cast<float>(x), static_cast<float>(y));
+    window.draw(innerTarget);
 }
 
 void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoints)
 {
-    const sf::Vector2i* lastWaypoint = nullptr;
-    for(const auto& waypoint : waypoints)
+    static sf::VertexArray lines(sf::Lines);
+    lines.clear();
+    if (waypoints.size() > 1)
     {
-        drawTarget(window, waypoint.x, waypoint.y);
-        if(lastWaypoint)
+        const auto* lastWaypoint = &waypoints.front();
+        for (std::size_t i = 1; i < waypoints.size(); ++i)
         {
-            drawLine(window, lastWaypoint->x, lastWaypoint->y, waypoint.x, waypoint.y, sf::Color::White);
+            const auto& waypoint = waypoints[i];
+            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(lastWaypoint->x), static_cast<float>(lastWaypoint->y)), sf::Color::White));
+            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(waypoint.x), static_cast<float>(waypoint.y)), sf::Color::White));
+            lastWaypoint = &waypoint;
         }
-        lastWaypoint = &waypoint;
+
+        if (waypoints.size() > 2)
+        {
+            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(waypoints.front().x), static_cast<float>(waypoints.front().y)), sf::Color::Red));
+            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(waypoints.back().x), static_cast<float>(waypoints.back().y)), sf::Color::Red));
+        }
     }
 
-    if (waypoints.size() > 2) 
+    if (lines.getVertexCount() > 0)
     {
-        drawLine(window, waypoints.front().x, 
-            waypoints.front().y, 
-            waypoints.back().x, 
-            waypoints.back().y,
-            sf::Color::Red);
+        window.draw(lines);
+    }
+
+    for (const auto& waypoint : waypoints)
+    {
+        drawTarget(window, waypoint.x, waypoint.y);
     }
 }
 
