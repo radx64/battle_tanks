@@ -187,3 +187,27 @@ add_custom_target(copy_resources ALL
 
 # Ensure copy_resources runs after battle_tanks is built
 add_dependencies(copy_resources battle_tanks)
+
+# Every executable is emitted into the same build directory, so all of the
+# per-app copy targets run the identical "copy_directory resources -> build/resources"
+# command into the same destination. Left unordered, Ninja runs them in parallel
+# and two copies racing on the same files make copy_directory fail intermittently.
+# Chain them so exactly one runs at a time.
+set(_resource_copy_targets
+    copy_resources_gui_sandbox
+    copy_resources_calculator
+    copy_resources_bios
+    copy_resources
+)
+set(_previous_copy_target "")
+foreach(_copy_target IN LISTS _resource_copy_targets)
+    if (TARGET ${_copy_target} AND _previous_copy_target)
+        add_dependencies(${_copy_target} ${_previous_copy_target})
+    endif()
+    if (TARGET ${_copy_target})
+        set(_previous_copy_target ${_copy_target})
+    endif()
+endforeach()
+if (TARGET copy_resources_gui_tests AND _previous_copy_target)
+    add_dependencies(copy_resources_gui_tests ${_previous_copy_target})
+endif()
