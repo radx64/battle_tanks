@@ -32,6 +32,7 @@
 build/*
 build_tests/*
 build_windows/*
+sdk/*
 
 ### CMake ###
 CMakeLists.txt.user

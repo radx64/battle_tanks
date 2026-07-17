@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(FETCHCONTENT_BASE_DIR "${CMAKE_SOURCE_DIR}/sdk" CACHE PATH "Third-party dependencies base directory")
 include(FetchContent)
 
 set(FETCHCONTENT_QUIET FALSE)
