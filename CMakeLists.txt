@@ -30,6 +30,17 @@ if(BUILD_TESTS)
 endif()
 
 FetchContent_Declare(
+  box2d
+  GIT_REPOSITORY https://github.com/erincatto/box2d.git
+  GIT_TAG        v3.1.1
+  GIT_SHALLOW ON
+  GIT_PROGRESS TRUE
+  SYSTEM
+  OVERRIDE_FIND_PACKAGE
+)
+
+
+FetchContent_Declare(
   sfml
   GIT_REPOSITORY https://github.com/SFML/SFML.git
   GIT_TAG        2.6.2
@@ -74,9 +85,9 @@ FetchContent_Declare(
 )
 
 if(BUILD_TESTS)
-  FetchContent_MakeAvailable(googletest sfml fmt lua sol2)
+  FetchContent_MakeAvailable(googletest box2d sfml fmt lua sol2)
 else()
-  FetchContent_MakeAvailable(sfml fmt lua sol2)
+  FetchContent_MakeAvailable(box2d sfml fmt lua sol2)
 endif()
 
 # Lua does not provide CMake build scripts, so after fetching we have to
