@@ -2,8 +2,10 @@
 
 #include "engine/Application.hpp"
 #include "MouseController.hpp"
+#include "KeyboardController.hpp"
 
 #include <box2d/box2d.h>
+#include <SFML/Graphics.hpp>
 
 namespace sandbox
 {
@@ -21,10 +23,21 @@ protected:
     void onUpdate(float timeStep) override;
     void onRender() override; 
 
+    void drawBody(b2BodyId bodyId);
+
     MouseController mouseController_;
+    KeyboardController keyboardController_;
+
 
     b2WorldId worldId_;
     std::vector<b2BodyId> bodies_;
+
+    sf::Texture boxTexture_;
+    sf::Texture circleTexture_;
+
+    sf::Sprite boxSprite_;
+    sf::Sprite circleSprite_; 
+    bool debugDraw_ = false;
 };
 
 }  // namespace sandbox

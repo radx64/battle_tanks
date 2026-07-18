@@ -3,6 +3,7 @@
 #include "Config.hpp"
 
 #include "engine/RigidBodyDebugRenderer.hpp"
+#include "graphics/TextureLibrary.hpp"
 
 namespace sandbox
 {
@@ -12,6 +13,8 @@ Application::Application()
 , mouseController_{
     [this](float x, float y) { spawnCircle(x, y, 25); }, 
     [this](float x, float y) { spawnSquare(x, y, 50); }}
+, keyboardController_{
+    [this]() { debugDraw_ = !debugDraw_; }}
 , worldId_{}
 {}
 
@@ -59,6 +62,7 @@ void Application::spawnSquare(float x, float y, float side)
 void Application::onInit()
 {
     mouseHandler_.subscribe(&mouseController_);
+    keyboardHandler_.subscribe(&keyboardController_);
 
     b2WorldDef worldDef = b2DefaultWorldDef();
     worldDef.gravity = (b2Vec2){0.0f, 10.0f};
@@ -100,6 +104,12 @@ void Application::onInit()
     {
         spawnCircle(400 + 15 * idx, 40 * idx, 25);
     }
+
+    boxTexture_ = graphics::TextureLibrary::instance().get("crate_wood");
+    circleTexture_ = graphics::TextureLibrary::instance().get("barrel_red");
+
+    boxSprite_.setTexture(boxTexture_);
+    circleSprite_.setTexture(circleTexture_);
 }
 
 void Application::onClose()
@@ -120,24 +130,46 @@ void Application::onUpdate(float timeStep)
     b2World_Step(worldId_, timeStepConstant, subStepCount);
 }
 
-void drawBody(sf::RenderWindow& window, b2BodyId bodyId) {
+void Application::drawBody(b2BodyId bodyId) 
+{
     int shapeCount = b2Body_GetShapeCount(bodyId);
     if (shapeCount == 0) return;
 
     std::vector<b2ShapeId> shapes(shapeCount);
     b2Body_GetShapes(bodyId, shapes.data(), shapeCount);
 
-
     b2Transform transform = b2Body_GetTransform(bodyId);
-
 
     for (b2ShapeId shapeId : shapes) {
         b2ShapeType type = b2Shape_GetType(shapeId);
 
         if (type == b2ShapeType::b2_polygonShape) 
         {
-
             b2Polygon polygon = b2Shape_GetPolygon(shapeId);
+
+            if (polygon.count == 4) // render only boxes with textures
+            {
+                float targetWidthInPixels = ((polygon.vertices[1].x  - polygon.vertices[0].x)) * SCALE;
+                float targetHeightInPixels = ((polygon.vertices[2].y - polygon.vertices[1].y)) * SCALE;
+                
+                sf::FloatRect bounds = boxSprite_.getLocalBounds();
+                boxSprite_.setScale(
+                    targetWidthInPixels / bounds.width,
+                    targetHeightInPixels / bounds.height
+                );
+
+                b2Vec2 worldPos = b2TransformPoint(transform, polygon.vertices[0]);
+                boxSprite_.setPosition(worldPos.x * SCALE, worldPos.y * SCALE);
+                
+                b2Rot rotation = transform.q;
+                float angleInRadians = b2Rot_GetAngle(rotation);
+                
+                boxSprite_.setRotation(angleInRadians * 180.0f / 3.14159265f);
+                window_.draw(boxSprite_);
+            }
+
+            if (!debugDraw_) continue;
+
             sf::VertexArray lines(sf::LineStrip, polygon.count + 1);
 
             for (int i = 0; i < polygon.count; ++i) {
@@ -153,13 +185,33 @@ void drawBody(sf::RenderWindow& window, b2BodyId bodyId) {
                 }
             }
             lines[polygon.count] = lines[0]; // Close outline loop
-            window.draw(lines);
+            window_.draw(lines);
         }
         else if (type == b2ShapeType::b2_circleShape) 
         {
             b2Circle circle = b2Shape_GetCircle(shapeId);
 
-            b2Vec2 worldCenter = b2TransformPoint(transform, circle.center);
+            b2Vec2 worldPos = b2TransformPoint(transform, circle.center);
+            circleSprite_.setPosition(worldPos.x * SCALE, worldPos.y * SCALE);            
+
+            float targetWidthInPixels = ((circle.radius * 2) * SCALE);
+            float targetHeightInPixels = ((circle.radius * 2) * SCALE);
+
+            circleSprite_.setOrigin(circleTexture_.getSize().x / 2.0f, circleTexture_.getSize().y / 2.0f);
+
+            sf::FloatRect bounds = circleSprite_.getLocalBounds();
+            circleSprite_.setScale(
+                targetWidthInPixels / bounds.width,
+                targetHeightInPixels / bounds.height
+            );
+
+            b2Rot rotation = transform.q;
+            float angleInRadians = b2Rot_GetAngle(rotation);
+            circleSprite_.setRotation(angleInRadians * 180.0f / 3.14159265f);         
+            window_.draw(circleSprite_);
+
+            if (!debugDraw_) continue;
+
             float pixelRadius = circle.radius * SCALE;
 
             sf::CircleShape sfCircle(pixelRadius);
@@ -174,7 +226,7 @@ void drawBody(sf::RenderWindow& window, b2BodyId bodyId) {
             sfCircle.setFillColor(sf::Color::Transparent);
             
             sfCircle.setOrigin(pixelRadius, pixelRadius);
-            sfCircle.setPosition(worldCenter.x * SCALE, worldCenter.y * SCALE);
+            sfCircle.setPosition(worldPos.x * SCALE, worldPos.y * SCALE);
 
             sf::VertexArray radiusLine(sf::Lines, 2);
             radiusLine[0].position = sfCircle.getPosition();
@@ -184,8 +236,8 @@ void drawBody(sf::RenderWindow& window, b2BodyId bodyId) {
             radiusLine[1].position = sf::Vector2f(edgePoint.x * SCALE, edgePoint.y * SCALE);
             radiusLine[1].color = sf::Color::Green;
 
-            window.draw(sfCircle);
-            window.draw(radiusLine);
+            window_.draw(sfCircle);
+            window_.draw(radiusLine);
         }
     }
 }
@@ -194,7 +246,7 @@ void Application::onRender()
 {
     for (b2BodyId bodyId : bodies_) 
     {
-        drawBody(window_, bodyId);
+        drawBody(bodyId);
     }
 }
 

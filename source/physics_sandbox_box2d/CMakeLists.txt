@@ -17,6 +17,7 @@ PUBLIC
 target_link_libraries(physics_sandbox_box2d
 PUBLIC
     engine_lib
+    graphics_lib
     sfml-system
     sfml-window
     sfml-graphics
