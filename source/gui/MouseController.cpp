@@ -11,9 +11,9 @@ MouseController::MouseController(gui::EventReceiver* receiver, sf::RenderWindow&
 , view_(view)
 {}    
 
-gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& sfmlButton, bool doubleClick)
+gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& sfmlButton, bool double_click)
 {
-    const auto screenCoords = mapPixelToCoords(mousePostion);
+    const auto screen_coords = mapPixelToCoords(mouse_postion);
 
     const auto guiButton = [&]() {
         switch (sfmlButton)
@@ -27,25 +27,25 @@ gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mousePosti
         }
     }();
 
-    if (doubleClick)
+    if (double_click)
     {
         return receiver_->receive(
             gui::event::MouseButtonDoublePressed{
                 .button = guiButton,
-                .position = {.x = screenCoords.x, .y = screenCoords.y}
+                .position = {.x = screen_coords.x, .y = screen_coords.y}
             });
     }
 
     return receiver_->receive(
         gui::event::MouseButtonPressed{
             .button = guiButton,
-            .position = {.x = screenCoords.x, .y = screenCoords.y}
+            .position = {.x = screen_coords.x, .y = screen_coords.y}
         });
 }
 
-gui::EventStatus MouseController::onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& sfmlButton)
+gui::EventStatus MouseController::onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& sfmlButton)
 {
-    const auto screenCoords = mapPixelToCoords(mousePostion);
+    const auto screen_coords = mapPixelToCoords(mouse_postion);
 
     const auto guiButton = [&]() {
         switch (sfmlButton)
@@ -62,27 +62,27 @@ gui::EventStatus MouseController::onButtonReleased(const sf::Vector2f& mousePost
     return receiver_->receive(
         gui::event::MouseButtonReleased{
             .button = guiButton,
-            .position = {.x = screenCoords.x, .y = screenCoords.y}
+            .position = {.x = screen_coords.x, .y = screen_coords.y}
         });
 }
 
-gui::EventStatus MouseController::onMouseMoved(const sf::Vector2f& mousePostion)
+gui::EventStatus MouseController::onMouseMoved(const sf::Vector2f& mouse_postion)
 {   
-    const auto screenCoords = mapPixelToCoords(mousePostion);
+    const auto screen_coords = mapPixelToCoords(mouse_postion);
 
     const auto result = receiver_->receive(
         gui::event::MouseMoved{.position = gui::event::MousePosition{
-            .x = screenCoords.x, 
-            .y = screenCoords.y
+            .x = screen_coords.x, 
+            .y = screen_coords.y
         }});
     return result;
 }
 
-sf::Vector2f MouseController::mapPixelToCoords(const sf::Vector2f& mousePosition)
+sf::Vector2f MouseController::mapPixelToCoords(const sf::Vector2f& mouse_position)
 {
     return window_.mapPixelToCoords(sf::Vector2i{
-        static_cast<int>(mousePosition.x), 
-        static_cast<int>(mousePosition.y)}, 
+        static_cast<int>(mouse_position.x), 
+        static_cast<int>(mouse_position.y)}, 
         view_);
 }
 

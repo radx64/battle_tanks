@@ -89,9 +89,9 @@ GUI::GUI(const sf::Vector2f& mainWindowSize)
 
 GUI::~GUI() = default;
 
-void GUI::render(sf::RenderWindow& renderWindow)
+void GUI::render(sf::RenderWindow& render_window)
 {
-    windowManager_.render(renderWindow);
+    windowManager_.render(render_window);
 }
 
 void GUI::update()

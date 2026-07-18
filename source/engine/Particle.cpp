@@ -13,22 +13,22 @@ Particle::Particle()
 , isDead_{false}
 {}
 
-void Particle::draw(sf::RenderWindow& renderWindow)
+void Particle::draw(sf::RenderWindow& render_window)
 {
-    (void) renderWindow;
+    (void)render_window;
 }
 
-void Particle::update(float timeStep)
+void Particle::update(float time_step)
 {
-    onUpdate(timeStep);
-    position_ += velocity_ * timeStep;
-    rotation_ += angularVelocity_ * timeStep;
+    onUpdate(time_step);
+    position_ += velocity_ * time_step;
+    rotation_ += angularVelocity_ * time_step;
     rotation_ = std::fmod(rotation_, 360.f);
 }
 
-void Particle::onUpdate(float timeStep)
+void Particle::onUpdate(float time_step)
 {
-    (void) timeStep;
+    (void) time_step;
 }
 
 bool Particle::isDead()

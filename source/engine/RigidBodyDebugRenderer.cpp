@@ -7,12 +7,12 @@
 namespace engine
 {
 
-void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& renderWindow)
+void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& render_window)
 {
     for (const auto& gameObject : scene.objects())
     {
-        auto x = gameObject->getRigidBody().x_;
-        auto y = gameObject->getRigidBody().y_;
+        auto x = gameObject->getRigidBody().transform().position().x;
+        auto y = gameObject->getRigidBody().transform().position().y;
         float radius = gameObject->getRigidBody().radius_;
         auto velocity = gameObject->getRigidBody().velocity_;
 
@@ -30,7 +30,7 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
         }
         boundary.setOrigin(radius, radius);
         boundary.setPosition(x, y);
-        renderWindow.draw(boundary);
+       render_window.draw(boundary);
     
         // Velocity vectors
         sf::Vertex velocityVector[] =
@@ -38,7 +38,7 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
             sf::Vertex(sf::Vector2f(x, y)),
             sf::Vertex(sf::Vector2f(x, y)+ (velocity))
         };
-        renderWindow.draw(velocityVector, 2, sf::Lines);
+       render_window.draw(velocityVector, 2, sf::Lines);
 
         sf::Vertex velocityXvector[] =
         {
@@ -46,7 +46,7 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
             sf::Vertex(sf::Vector2f(x+velocity.x, y), sf::Color::Red)
         };
 
-        renderWindow.draw(velocityXvector, 2, sf::Lines);
+       render_window.draw(velocityXvector, 2, sf::Lines);
 
         sf::Vertex velocityYvector[] =
         {
@@ -54,7 +54,7 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
             sf::Vertex(sf::Vector2f(x, y+velocity.y), sf::Color::Green)
         };
 
-        renderWindow.draw(velocityYvector, 2, sf::Lines);
+       render_window.draw(velocityYvector, 2, sf::Lines);
     }
 }
 

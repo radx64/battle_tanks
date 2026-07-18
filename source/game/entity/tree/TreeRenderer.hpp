@@ -10,7 +10,7 @@ class TreeRenderer : public engine::Renderer
 {
 public:
     TreeRenderer(Tree* tree, sf::Texture& treeBody);
-    void draw(sf::RenderWindow& renderWindow);
+    void draw(sf::RenderWindow& render_window);
 
 protected:
     Tree* tree_;
@@ -19,4 +19,3 @@ protected:
 
 
 }  // namespace game::entity 
-

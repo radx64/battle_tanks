@@ -16,17 +16,17 @@ LoggerSink& LoggerSink::instance()
 
 void LoggerSink::processLogs()
 {
-    while (!stop_ || !logQueue_.empty())
+    while (!stop_ || !log_queue_.empty())
     {
         {
-            std::unique_lock<std::mutex> lock(logQueueMutex_);
-            while (!logQueue_.empty()) 
+            std::unique_lock<std::mutex> lock(log_queue_mutex_);
+            while (!log_queue_.empty()) 
             {
-                const auto logEvent = logQueue_.front();
-                logQueue_.pop();
+                const auto logEvent = log_queue_.front();
+                log_queue_.pop();
                 lock.unlock();
 
-                print(logEvent.color, logEvent.logType, logEvent.prefix, logEvent.text);
+                print(logEvent.color, logEvent.log_type, logEvent.prefix, logEvent.text);
 
                 // Reacquire the lock and check `stop_` again
                 lock.lock();
@@ -41,7 +41,7 @@ void LoggerSink::processLogs()
 
 LoggerSink::LoggerSink()
 : stop_{false}
-, logThread_{&LoggerSink::processLogs, this}
+, log_thread_{&LoggerSink::processLogs, this}
 {
 }
 
@@ -51,7 +51,7 @@ LoggerSink::~LoggerSink()
 }
 
 void LoggerSink::log(const fmt::v12::color& color, 
-    const std::string& logType,
+    const std::string& log_type,
     const std::string& prefix,
     const std::string& text)
 {
@@ -65,7 +65,7 @@ void LoggerSink::log(const fmt::v12::color& color,
 
     Log logEvent{
         .color = color,
-        .logType = logType,
+        .log_type = log_type,
         .prefix = prefix,
         .text = text,
         .date = date,
@@ -73,8 +73,8 @@ void LoggerSink::log(const fmt::v12::color& color,
     };
 
     {
-        std::lock_guard<std::mutex> lock(logQueueMutex_);
-        logQueue_.push(logEvent);
+        std::lock_guard<std::mutex> lock(log_queue_mutex_);
+        log_queue_.push(logEvent);
     }
 
 }
@@ -82,13 +82,13 @@ void LoggerSink::log(const fmt::v12::color& color,
 void LoggerSink::stop()
 {
     stop_ = true;
-    if (logThread_.joinable()) {
-        logThread_.join();  // Wait for the thread to finish
+    if (log_thread_.joinable()) {
+        log_thread_.join();  // Wait for the thread to finish
     }
 }
 
 void LoggerSink::print(const fmt::v12::color color, 
-    const std::string_view logType, 
+    const std::string_view log_type, 
     const std::string_view prefix,
     const std::string_view log)
 {
@@ -98,7 +98,7 @@ void LoggerSink::print(const fmt::v12::color color,
     const auto formatted = fmt::format("[{:%Y-%m-%d %H:%M:}{:%S}] [{:<5}] {}: {}\n",
         date,
         milis,
-        logType,
+        log_type,
         prefix,
         log);
 

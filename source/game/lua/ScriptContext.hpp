@@ -48,9 +48,9 @@ protected:
     entity::Tank* tank_;
     std::vector<sf::Vector2i>& waypoints_;
     std::unique_ptr<WaitCondition> wait_;
-    const std::string_view scriptFile_;
+    const std::string_view script_file_;
     bool stopped_ = true;
-    std::string stopReason_;
+    std::string stop_reason_;
 };
 
 }  // namespace game::lua

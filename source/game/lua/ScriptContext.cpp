@@ -66,7 +66,7 @@ ScriptContext::ScriptContext(const std::string_view scriptFile, entity::Tank* ta
 : logger_{"ScriptContext"}
 , tank_{tank}
 , waypoints_{waypoints}
-, scriptFile_{scriptFile}
+, script_file_{scriptFile}
 {
     reload();
 }
@@ -75,7 +75,7 @@ void ScriptContext::reload()
 {
     logger_.info("Reloading script...");
     stopped_ = true;
-    stopReason_.clear();
+    stop_reason_.clear();
     
     // Clear the old coroutine first
     coroutine_ = sol::coroutine();
@@ -106,7 +106,7 @@ void ScriptContext::reload()
     // Reload the script
     try
     {
-        lua_state_.script_file(std::string(scriptFile_));
+        lua_state_.script_file(std::string(script_file_));
     }
     catch (const sol::error& e)
     {
@@ -132,15 +132,15 @@ void ScriptContext::reload()
     // Store context pointer after everything is set up
     storeScriptContext(coroutine_.lua_state(), this);
     stopped_ = false;
-    stopReason_.clear();
+    stop_reason_.clear();
 }
 
 void ScriptContext::stop(std::string_view reason)
 {
     stopped_ = true;
-    stopReason_ = reason;
+    stop_reason_ = reason;
     wait_.reset();
-    logger_.error(stopReason_);
+    logger_.error(stop_reason_);
 }
 
 sol::coroutine& ScriptContext::coroutine()
@@ -170,7 +170,7 @@ bool ScriptContext::isStopped() const noexcept
 
 const std::string& ScriptContext::stopReason() const noexcept
 {
-    return stopReason_;
+    return stop_reason_;
 }
 
 }  // namespace game::lua
@@ -214,8 +214,8 @@ sol::table lua_get_tank_position(sol::this_state ts)
 {
     sol::state_view lua(ts);
     ScriptContext* ctx = get_script_context(lua.lua_state());
-    const auto& rb = ctx->tank()->getRigidBody();
-    sol::table pos = lua.create_table_with("x", rb.x_, "y", rb.y_);
+    const auto& rb = ctx->tank()->transform();
+    sol::table pos = lua.create_table_with("x", rb.position().x, "y", rb.position().y);
     return pos;
 }
 
@@ -282,9 +282,9 @@ int lua_say(sol::this_state ts, const std::string& text)
     float y = 0.f;
     if (ctx && ctx->tank())
     {
-        const auto& rb = ctx->tank()->getRigidBody();
-        x = rb.x_;
-        y = rb.y_;
+        const auto& rb = ctx->tank()->transform();
+        x = rb.position().x;
+        y = rb.position().y;
     }
 
     auto say = std::make_unique<game::particle::Say>(text, x, y);
@@ -299,9 +299,9 @@ int lua_move_to(sol::this_state ts, float x, float y)
 
     if (!ctx->tank()) return 0;
 
-    const auto& rb = ctx->tank()->getRigidBody();
-    float dx = x - rb.x_;
-    float dy = y - rb.y_;
+    const auto& rb = ctx->tank()->transform();
+    float dx = x - rb.position().x;
+    float dy = y - rb.position().y;
     float distance = std::sqrt(dx * dx + dy * dy);
     const float threshold = 30.0f;
 

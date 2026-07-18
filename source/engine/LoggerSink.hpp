@@ -14,7 +14,7 @@ namespace engine
 struct Log
 {
     fmt::v12::color color;
-    std::string logType;
+    std::string log_type;
     std::string prefix;
     std::string text;
     decltype(std::chrono::system_clock::now()) date;
@@ -45,9 +45,9 @@ public:
         const std::string_view log);
 
     std::atomic<bool> stop_;
-    std::thread logThread_;
-    std::queue<Log> logQueue_;
-    std::mutex logQueueMutex_;
+    std::thread log_thread_;
+    std::queue<Log> log_queue_;
+    std::mutex log_queue_mutex_;
 
 };
 

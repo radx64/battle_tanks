@@ -17,11 +17,14 @@ constexpr float TREE_MASS = 500.f;
 Tree::Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrunkRadius)
 : height_(height)
 { 
+    transform().position().x = x;
+    transform().position().y = y;
+
     renderer_ = std::make_unique<TreeRenderer>(this, treeBody);
 
-    rigidBody_ = std::make_unique<engine::RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
-        x, y, treeTrunkRadius, 
+        transform(), treeTrunkRadius, 
         TREE_MASS, 
         GROUND_DRAG_COEEF, 
         engine::RigidBody::Type::STATIC);

@@ -13,7 +13,7 @@ Box(uint32_t id, float x, float y, float width, float height, float mass,
 const engine::RigidBody::Type& type)
 {
     renderer_ = nullptr;
-    rigidBody_ = std::make_unique<engine::RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         id,
         x, y, radius,
         mass,

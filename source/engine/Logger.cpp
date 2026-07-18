@@ -39,9 +39,9 @@ void Logger::debug(const std::string_view log, std::source_location location) co
     return;
 #else
     std::string file = location.file_name();
-    size_t lastSlashPos = file.find_last_of("/\\");
-    if (lastSlashPos != std::string::npos)    {
-        file = file.substr(lastSlashPos + 1);
+    size_t last_slash_pos = file.find_last_of("/\\");
+    if (last_slash_pos != std::string::npos)    {
+        file = file.substr(last_slash_pos + 1);
     }
 
     LoggerSink::instance().log(fmt::color::cornflower_blue, "debug", "(" + file + ":" + std::to_string(location.line()) + ") " + prefix_, std::string(log));

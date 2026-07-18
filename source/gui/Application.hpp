@@ -18,7 +18,7 @@ public:
 
 protected:
     void onRender() override; 
-    void onUpdate(float timeStep) override;
+    void onUpdate(float time_step) override;
     gui::GUI& gui();
 
     gui::GUI gui_;

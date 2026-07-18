@@ -5,12 +5,12 @@
 namespace gui::slider
 {
 
-float HorizontalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& mousePosition, const sf::Vector2f& trackPosition,
+float HorizontalMousePolicy::translatePositionToThumbValue(const sf::Vector2f& mouse_position, const sf::Vector2f& trackPosition,
     const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float min, const float max, const float step)
 {
     auto availableTruckRun = trackSize.x - thumbSize.x;
 
-    auto thumbXPositionOffset = mousePosition.x  - trackPosition.x - thumbSize.x / 2.f;
+    auto thumbXPositionOffset = mouse_position.x  - trackPosition.x - thumbSize.x / 2.f;
 
     // Calculate screen step size
     float stepSize = availableTruckRun  / (max - min) * step;

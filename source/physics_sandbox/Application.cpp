@@ -74,7 +74,7 @@ void Application::onEvent(const sf::Event& event)
     (void) event;
 }
 
-void Application::onUpdate(float timeStep)
+void Application::onUpdate(float time_step)
 {
 
     for (auto& object : scene_.objects())
@@ -84,7 +84,7 @@ void Application::onUpdate(float timeStep)
         {
             object->getRigidBody().applyForce(sf::Vector2f{.0f, 10.5f});
         }
-        object->update(scene_, timeStep);
+        object->update(scene_, time_step);
     }
 
     collisionSolver_.evaluateCollisions();

@@ -19,22 +19,22 @@ Explosion::Explosion(float x, float y)
     sprite_.setOrigin(middle_point);   
 }
 
-void Explosion::draw(sf::RenderWindow& renderWindow)
+void Explosion::draw(sf::RenderWindow& render_window)
 {
     sprite_.setScale(sf::Vector2f{2.f,2.f} * lifetime_);
     sprite_.setRotation(rotation_);
     sprite_.setColor(sf::Color(10, 10, 10, 127 * (EXPLOSION_LIFETIME - lifetime_)));
     sprite_.setPosition(position_ + sf::Vector2f{4.f, 4.f});
-    renderWindow.draw(sprite_);
+   render_window.draw(sprite_);
 
     sprite_.setColor(sf::Color(255, 255, 255, 255 * (EXPLOSION_LIFETIME - lifetime_)));
     sprite_.setPosition(position_);
-    renderWindow.draw(sprite_);
+   render_window.draw(sprite_);
 }
 
-void Explosion::onUpdate(float timeStep)
+void Explosion::onUpdate(float time_step)
 {
-    lifetime_ += timeStep;
+    lifetime_ += time_step;
 
     if (lifetime_ > EXPLOSION_LIFETIME)
     {

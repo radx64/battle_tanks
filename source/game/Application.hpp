@@ -38,7 +38,7 @@ protected:
     void onInit() override;
     void onClose() override;
     void onEvent(const sf::Event& event) override;
-    void onUpdate(float timeStep) override;
+    void onUpdate(float time_step) override;
     void onRender() override;
 
     void configureGUI();
@@ -47,39 +47,39 @@ protected:
     void renderGameObjects();
     void generateProfiling();
 
-    engine::FpsCounter fpsCounter_;
+    engine::FpsCounter fps_counter_;
 
-    const sf::Vector2f cameraInitialSize_;
-    const sf::Vector2f cameraWorldSize_;
-    const sf::Vector2f cameraInitialPosition_;
+    const sf::Vector2f camera_initial_size_;
+    const sf::Vector2f camera_world_size_;
+    const sf::Vector2f camera_initial_position_;
     engine::Camera camera_;
-    engine::CameraController cameraController_;
-    sf::View cameraView_;
+    engine::CameraController camera_controller_;
+    sf::View camera_view_;
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
-    bool rigidBodyDebug_{false};
-    bool tankDebugMode_{false};
+    bool rigid_body_debug_{false};
+    bool tank_debug_mode_{false};
     
-    game::WaypointMouseController waypointMouseController_;
+    game::WaypointMouseController waypoint_mouse_controller_;
 
     std::vector<sf::Vector2i> waypoints_;
-    std::vector<std::unique_ptr<game::entity::TankController>> luaControllers_;
-    lua::ScriptsScheduler scriptsScheduler_;
+    std::vector<std::unique_ptr<game::entity::TankController>> lua_controllers_;
+    lua::ScriptsScheduler scripts_scheduler_;
 
-    entity::TracksRenderer tracksRenderer_;
-    engine::math::Average<float> fpsAverage_;
+    entity::TracksRenderer tracks_renderer_;
+    engine::math::Average<float> fps_average_;
 
-    engine::Profiler drawProfiler_;
-    engine::Profiler physicsProfiler_;
-    engine::Profiler guiProfiler_;
-    engine::Profiler luaProfiler_;
-    engine::Profiler tilemapProfiler_;
-    engine::Profiler renderGameObjectsProfiler_;
-    engine::Profiler tracksProfiler_;
-    engine::Profiler waypointsProfiler_;
-    engine::Profiler particlesProfiler_;
-    engine::Profiler displayProfiler_;
+    engine::Profiler draw_profiler_;
+    engine::Profiler physics_profiler_;
+    engine::Profiler gui_profiler_;
+    engine::Profiler lua_profiler_;
+    engine::Profiler tilemap_profiler_;
+    engine::Profiler render_game_objects_profiler_;
+    engine::Profiler tracks_profiler_;
+    engine::Profiler waypoints_profiler_;
+    engine::Profiler particles_profiler_;
+    engine::Profiler display_profiler_;
 };
 
 }  // namespace game

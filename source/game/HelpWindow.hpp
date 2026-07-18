@@ -27,9 +27,9 @@ public:
     {
         setSize(sf::Vector2f(300.0f, 300.0f));
         setPosition(position);
-        auto helpText = gui::Label::create(helpTextString.data());
-        helpText->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        addChild(std::move(helpText));
+        auto help_text = gui::Label::create(helpTextString.data());
+        help_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        addChild(std::move(help_text));
     }
 };
 

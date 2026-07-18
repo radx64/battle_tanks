@@ -13,7 +13,7 @@ public:
     Tilemap();
     ~Tilemap();
 
-    void draw(sf::RenderWindow& renderWindow);
+    void draw(sf::RenderWindow& render_window);
 
 private:
     struct Impl;

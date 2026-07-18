@@ -11,9 +11,9 @@ StatusBar::StatusBar()
     resize_gadget_.setTexture(resize_gadget_texture_);
 }
 
-void StatusBar::onRender(sf::RenderTexture& renderWindow)
+void StatusBar::onRender(sf::RenderTexture&render_window)
 {
-    renderWindow.draw(resize_gadget_);
+   render_window.draw(resize_gadget_);
 }
 
 void StatusBar::onSizeChange()

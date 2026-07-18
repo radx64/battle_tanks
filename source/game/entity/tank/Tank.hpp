@@ -17,11 +17,11 @@ class Tank : public engine::GameObject
 public:
     Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, 
-        sf::Texture& tankBody,
-        TracksRenderer* tracksRenderer);
+        sf::Texture& tank_body,
+        TracksRenderer* tracks_renderer);
     virtual ~Tank() = default;
 
-    void onUpdate(engine::Scene& scene, float timeStep) override;
+    void onUpdate(engine::Scene& scene, float time_step) override;
     void setThrottle(float throttle);
     void setHeading(float direction);
     void setTurretHeading(float direction);
@@ -46,7 +46,7 @@ protected:
     float set_direction_{};
     float set_throttle_{};
     float lifetime_{};
-    TracksRenderer* tracksRenderer_;
+    TracksRenderer* tracks_renderer_;
 };
 
 }  // namespace game::entity

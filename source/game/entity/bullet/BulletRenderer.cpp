@@ -13,18 +13,18 @@ BulletRenderer::BulletRenderer(Bullet* bullet, sf::Texture& bulletBody)
     bulletSprite_.setOrigin(middle_point);     
 }
 
-void BulletRenderer::draw(sf::RenderWindow& renderWindow)
+void BulletRenderer::draw(sf::RenderWindow& render_window)
 {
-    auto bulletRigidBody = bullet_->getRigidBody();
+    auto& bulletTransform = bullet_->transform();
 
-    bulletSprite_.setRotation(bulletRigidBody.rotation_);
+    bulletSprite_.setRotation(bulletTransform.rotation());
     bulletSprite_.setColor(sf::Color(10, 10, 10, 127));
-    bulletSprite_.setPosition(bulletRigidBody.x_ + 4, bulletRigidBody.y_+ 4);
-    renderWindow.draw(bulletSprite_);
+    bulletSprite_.setPosition(bulletTransform.position().x + 4, bulletTransform.position().y + 4);
+   render_window.draw(bulletSprite_);
 
     bulletSprite_.setColor(sf::Color(255, 255, 255, 255));
-    bulletSprite_.setPosition(bulletRigidBody.x_, bulletRigidBody.y_);
-    renderWindow.draw(bulletSprite_);
+    bulletSprite_.setPosition(bulletTransform.position().x, bulletTransform.position().y);
+   render_window.draw(bulletSprite_);
 }
 
 }  // namespace game::entity

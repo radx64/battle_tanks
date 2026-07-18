@@ -20,15 +20,18 @@ constexpr float BULLET_LIFETIME = 7.5f;
 Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBody)
 : lifetime_{}
 { 
+    transform().position().x = x;
+    transform().position().y = y;
     renderer_ = std::make_unique<BulletRenderer>(this, bulletBody);
-    rigidBody_ = std::make_unique<engine::RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
-        x, y, BULLET_RADIUS, 
+        transform(),
+        BULLET_RADIUS, 
         BULLET_MASS, 
         AIR_DRAG_COEEF, 
         engine::RigidBody::Type::DYNAMIC);
 
-    rigidBody_->rotation_ = angle;
+    transform().rotation() = angle;
 
     float angle_rad = engine::math::degreeToRadians(angle);
 
@@ -38,13 +41,13 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
     float vx = speed * std::sin(angle_rad);
     float vy = speed * -std::cos(angle_rad);
 
-    rigidBody_->applyForce(sf::Vector2f{vx, vy});
+    rigid_body_->applyForce(sf::Vector2f{vx, vy});
 }
 
-void Bullet::onUpdate(engine::Scene& scene, float timeStep)
+void Bullet::onUpdate(engine::Scene& scene, float time_step)
 {
     (void) scene;
-    lifetime_ += timeStep;
+    lifetime_ += time_step;
 
     if (lifetime_ > BULLET_LIFETIME)
     {

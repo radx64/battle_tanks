@@ -18,10 +18,10 @@ TreeRenderer::TreeRenderer(Tree* tree, sf::Texture& treeBody)
     treeSprite_.setOrigin(middle_point);     
 }
 
-void TreeRenderer::draw(sf::RenderWindow& renderWindow)
+void TreeRenderer::draw(sf::RenderWindow& render_window)
 {
-    auto tree_rigid_body = tree_->getRigidBody();
-    auto tree_position = sf::Vector2f{tree_rigid_body.x_, tree_rigid_body.y_};
+    auto treeTransform = tree_->transform();
+    auto tree_position = sf::Vector2f{treeTransform.position().x, treeTransform.position().y};
 
     auto camera_postion = engine::Context::getCamera().getPosition();
     auto camera_zoom_level = engine::Context::getCamera().getZoom();
@@ -39,14 +39,14 @@ void TreeRenderer::draw(sf::RenderWindow& renderWindow)
         auto current_layer_point = engine::math::lerp(tree_position, tree_top_point, t);
 
         treeSprite_.setScale(scale, scale);
-        treeSprite_.setRotation(tree_rigid_body.rotation_ + layer * 30.f);
+        treeSprite_.setRotation(treeTransform.rotation() + layer * 30.f);
         treeSprite_.setColor(sf::Color(10, 10, 10, 127));
         treeSprite_.setPosition(current_layer_point + sf::Vector2f{tree_->height_ * scale, tree_->height_ * scale});
-        renderWindow.draw(treeSprite_);
+       render_window.draw(treeSprite_);
 
         treeSprite_.setColor(sf::Color(255, 255, 255, 255));
         treeSprite_.setPosition(current_layer_point);
-        renderWindow.draw(treeSprite_);
+       render_window.draw(treeSprite_);
     }
 }
 

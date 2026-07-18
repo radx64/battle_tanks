@@ -26,7 +26,7 @@ public:
     void setMaximizeRestoreButtonState(const bool& state);
 
 protected:
-    void onRender(sf::RenderTexture& renderWindow) override;
+    void onRender(sf::RenderTexture&render_window) override;
     void onSizeChange() override;
     void onPositionChange() override;
     EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;

@@ -11,9 +11,7 @@ namespace engine
 class RigidBodyDebugRenderer
 {
 public:
-static void debug(engine::Scene& scene, sf::RenderWindow& renderWindow);
+static void debug(engine::Scene& scene, sf::RenderWindow& render_window);
 };
 
 }  // namespace game
-
-

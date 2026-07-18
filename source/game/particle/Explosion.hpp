@@ -13,14 +13,13 @@ public:
     Explosion(float x, float y);
     virtual ~Explosion() = default;
 
-    void draw(sf::RenderWindow& renderWindow) override;
+    void draw(sf::RenderWindow& render_window) override;
 
 protected:
-    void onUpdate(float timeStep) override;
+    void onUpdate(float time_step) override;
     float lifetime_;
 
     sf::Sprite sprite_;
 };
 
 }  // namespace game::particle
-

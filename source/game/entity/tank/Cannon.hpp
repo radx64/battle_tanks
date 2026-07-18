@@ -9,8 +9,8 @@ class Cannon
 {
 public:
     Cannon(float x, float y, float rotation, sf::Texture& texture);
-    void draw(sf::RenderWindow& renderWindow);
-    void physics(float timeStep);
+    void draw(sf::RenderWindow& render_window);
+    void physics(float time_step);
     void setRotation(float rotation);
     void fire();
     bool canFire() const;

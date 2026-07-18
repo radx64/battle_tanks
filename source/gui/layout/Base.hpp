@@ -10,7 +10,7 @@ namespace gui::layout
 class Base : public Widget
 {
 public:
-    void onRender(sf::RenderTexture& renderWindow) override;
+    void onRender(sf::RenderTexture&render_window) override;
 };
 
 }  // namespace gui::layout

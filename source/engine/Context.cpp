@@ -5,11 +5,11 @@ namespace engine
 
 engine::ParticleSystem& Context::getParticleSystem()
 {
-    return *particleSystem_;
+    return *particle_system_;
 }
 void Context::setParticleSystem(engine::ParticleSystem* particles)
 {
-    particleSystem_ = particles;
+    particle_system_ = particles;
 }
 
 engine::Scene& Context::getScene()
@@ -34,17 +34,17 @@ void Context::setCamera(engine::Camera* camera)
 
 engine::TimerService& Context::getTimerService()
 {
-    return *timerService_;
+    return *timer_service_;
 }
 
 void Context::setTimerService(engine::TimerService* timerService)
 {
-    timerService_ = timerService;
+    timer_service_ = timerService;
 }
 
-engine::ParticleSystem* Context::particleSystem_{nullptr};
+engine::ParticleSystem* Context::particle_system_{nullptr};
 engine::Scene* Context::scene_{nullptr};
 engine::Camera* Context::camera_{nullptr};
-engine::TimerService* Context::timerService_{nullptr};
+engine::TimerService* Context::timer_service_{nullptr};
 
 }  // namespace engine

@@ -17,36 +17,36 @@ TankRenderer::TankRenderer(Tank* tank, sf::Texture& tankBody)
     tankSprite_.setOrigin(tank_middle_point);     
 }
 
-void TankRenderer::draw(sf::RenderWindow& renderWindow)
+void TankRenderer::draw(sf::RenderWindow& render_window)
 {
-    auto tankRigidBody = tank_->getRigidBody();
+    auto& tank_transform = tank_->transform();
     tankSprite_.setColor(sf::Color(10, 10, 10, 127));
-    tankSprite_.setPosition(tankRigidBody.x_ + 8, tankRigidBody.y_+ 8);
+    tankSprite_.setPosition(tank_transform.position().x + 8, tank_transform.position().y + 8);
     tankSprite_.setRotation(tank_->current_direction_);
-    renderWindow.draw(tankSprite_);
+   render_window.draw(tankSprite_);
 
     tankSprite_.setColor(sf::Color(255, 255, 255, 255));
-    tankSprite_.setPosition(tankRigidBody.x_, tankRigidBody.y_);
-    renderWindow.draw(tankSprite_);
-    tank_->cannon().x_ = tankRigidBody.x_;
-    tank_->cannon().y_ = tankRigidBody.y_;
-    tank_->cannon().draw(renderWindow);
+    tankSprite_.setPosition(tank_transform.position().x, tank_transform.position().y);
+   render_window.draw(tankSprite_);
+    tank_->cannon().x_ = tank_transform.position().x;
+    tank_->cannon().y_ = tank_transform.position().y;
+    tank_->cannon().draw(render_window);
 
-    tank_->led().x_ = tankRigidBody.x_;
-    tank_->led().y_ = tankRigidBody.y_;
+    tank_->led().x_ = tank_transform.position().x;
+    tank_->led().y_ = tank_transform.position().y;
     tank_->led().setRotation(tank_->current_direction_);
-    tank_->led().draw(renderWindow);
+    tank_->led().draw(render_window);
 
     if (tank_->DEBUG_)
     {
-        drawDebugInfo(renderWindow);
+        drawDebugInfo(render_window);
     }
 }
 
-void TankRenderer::drawDebugInfo(sf::RenderWindow& renderWindow)
+void TankRenderer::drawDebugInfo(sf::RenderWindow& render_window)
 {
-    auto x = tank_->getRigidBody().x_;
-    auto y = tank_->getRigidBody().y_;
+    auto x = tank_->transform().position().x;
+    auto y = tank_->transform().position().y;
     auto velocity = tank_->getRigidBody().velocity_;
 
     sf::Text debug_text;
@@ -58,7 +58,7 @@ void TankRenderer::drawDebugInfo(sf::RenderWindow& renderWindow)
     debug_text.setString("SPD: " + std::to_string(fabs(velocity.x) + fabs(velocity.y)) + "\n" + 
         "ROT: " + std::to_string(tank_->current_direction_) + "\n" + 
         "THR: " + std::to_string(tank_->current_throttle_));
-    renderWindow.draw(debug_text);
+   render_window.draw(debug_text);
 }
 
 }  // namespace game::entity

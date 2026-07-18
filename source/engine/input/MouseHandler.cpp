@@ -58,13 +58,13 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
 
         if (leftDoubleClicked)
         {
-            eventStatus = receiver->onButtonPressed(mousePosition_, button, leftDoubleClicked);
+            eventStatus = receiver->onButtonPressed(mouse_position_, button, leftDoubleClicked);
         }
 
         if (eventStatus == gui::EventStatus::NotConsumed)
         {
             constexpr bool singleClicked = false;
-            eventStatus = receiver->onButtonPressed(mousePosition_, button, singleClicked);
+            eventStatus = receiver->onButtonPressed(mouse_position_, button, singleClicked);
         }
 
         if (eventStatus == gui::EventStatus::Consumed) break;
@@ -77,17 +77,17 @@ void MouseHandler::handleButtonReleased(const sf::Event::MouseButtonEvent& event
     buttonsStates_[button] = false;
     for (auto* receiver : receivers_)
     {
-        const auto eventStatus = receiver->onButtonReleased(mousePosition_, button);
+        const auto eventStatus = receiver->onButtonReleased(mouse_position_, button);
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }
 
 void MouseHandler::handleMouseMoved(const sf::Event::MouseMoveEvent& event)
 {
-    mousePosition_ = sf::Vector2f{static_cast<float>(event.x), static_cast<float>(event.y)};
+    mouse_position_ = sf::Vector2f{static_cast<float>(event.x), static_cast<float>(event.y)};
     for (auto& receiver : receivers_)
     {
-        const auto eventStatus = receiver->onMouseMoved(mousePosition_);
+        const auto eventStatus = receiver->onMouseMoved(mouse_position_);
         if (eventStatus == gui::EventStatus::Consumed) break;
     }
 }

@@ -41,7 +41,7 @@ void TracksRenderer::addTrackImprint(const int x, const int y, const float angle
         });
 }
 
-void TracksRenderer::draw(sf::RenderWindow& renderWindow)
+void TracksRenderer::draw(sf::RenderWindow& render_window)
 {
     auto& camera = engine::Context::getCamera();
     const auto& cameraPosition = camera.getPosition();
@@ -49,7 +49,7 @@ void TracksRenderer::draw(sf::RenderWindow& renderWindow)
 
     chunks_.forEachExistingChunkIntersecting(
         cameraFrustum,
-        [&renderWindow](const auto&, auto& chunk)
+        [&render_window](const auto&, auto& chunk)
         {
             if (chunk.needsDisplay)
             {
@@ -59,7 +59,7 @@ void TracksRenderer::draw(sf::RenderWindow& renderWindow)
             }
 
             chunk.sprite.setColor(sf::Color(0, 0, 0, PARTICLE_LAYER_OPACITY));
-            renderWindow.draw(chunk.sprite);
+           render_window.draw(chunk.sprite);
         });
 }
 

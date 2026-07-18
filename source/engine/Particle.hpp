@@ -11,14 +11,15 @@ public:
     Particle();
     virtual ~Particle() = default;
 
-    virtual void draw(sf::RenderWindow& renderWindow);
-    void update(float timeStep);
+    virtual void draw(sf::RenderWindow& render_window);
+    void update(float time_step);
     bool isDead();
     void kill();
 
 protected:
-    virtual void onUpdate(float timeStep); // This method is used to define custom particle behaviour
+    virtual void onUpdate(float time_step); // This method is used to define custom particle behaviour
 
+    // TODO: add Transform class here
     sf::Vector2f position_;
     sf::Vector2f velocity_;
     float rotation_;

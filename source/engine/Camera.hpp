@@ -19,7 +19,7 @@ public:
     void zoomOut();
     const sf::Vector2f& getPosition();
     const sf::Vector2f& getSize();
-    void update(float timeStep);
+    void update(float time_step);
     float getZoom();
 
 protected:

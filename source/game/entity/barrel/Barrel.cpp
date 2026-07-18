@@ -15,14 +15,16 @@ constexpr float GROUND_DRAG_COEEF = 0.93;
 
 Barrel::Barrel(float x, float y, sf::Texture& barrelBody)
 { 
+    transform_.position().x = x;
+    transform_.position().y = y;
     renderer_ = std::make_unique<BarrelRenderer>(this, barrelBody);
-    rigidBody_ = std::make_unique<engine::RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
-        x, y, BARREL_RADIUS, 
+        transform(),
+        BARREL_RADIUS, 
         BARREL_MASS, 
         GROUND_DRAG_COEEF, 
         engine::RigidBody::Type::DYNAMIC);
-
 }
 
 }  // namespace game::entity

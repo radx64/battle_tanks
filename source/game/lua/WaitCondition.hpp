@@ -40,8 +40,8 @@ public:
 
 protected:
     game::entity::Tank* tank_;
-    float targetX_;
-    float targetY_;
+    float target_x_;
+    float target_y_;
     float threshold_;
 };
 

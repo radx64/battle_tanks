@@ -270,7 +270,7 @@ ContextMenu* ContextMenu::getRootMenu()
 
 EventStatus ContextMenu::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    const auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    const auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
     bool isMouseInsideHierarchy = false;
 
@@ -278,7 +278,7 @@ EventStatus ContextMenu::on(const event::MouseButtonPressed& mouseButtonPressedE
 
     while(activeMenu)
     {
-        if (activeMenu->isInside(mousePosition))
+        if (activeMenu->isInside(mouse_position))
         {
             isMouseInsideHierarchy = true;
             break;

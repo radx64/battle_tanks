@@ -30,9 +30,9 @@ void Application::onRender()
     gui().render(window_);
 }
 
-void Application::onUpdate(float timeStep)
+void Application::onUpdate(float time_step)
 {
-    (void) timeStep;
+    (void) time_step;
     gui().update();
 }
 

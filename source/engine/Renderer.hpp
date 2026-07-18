@@ -9,8 +9,7 @@ class Renderer
 {
 public:
     virtual ~Renderer() = default;
-    virtual void draw(sf::RenderWindow& renderWindow) = 0;
+    virtual void draw(sf::RenderWindow& render_window) = 0;
 };
 
 }  // namespace engine
-

@@ -23,22 +23,22 @@ struct CollisionResult
     float ny_;                  // normal hit vector y coordinate
 };
 
-CollisionResult processObjectsCollsion(engine::RigidBody& object, engine::RigidBody& otherObject)
+CollisionResult processObjectsCollsion(engine::RigidBody& object, engine::RigidBody& other_object)
 {
-   float distanceBetweenObjects = engine::math::distance(object.x_, object.y_, 
-        otherObject.x_, otherObject.y_);
+   float distance_between_objects = engine::math::distance(object.transform().position().x, object.transform().position().y, 
+        other_object.transform().position().x, other_object.transform().position().y);
     // Collision detected here
     // Calculating hit vectors
-    float nx = (otherObject.x_ - object.x_) / distanceBetweenObjects;
-    float ny = (otherObject.y_ - object.y_) / distanceBetweenObjects;
+    float nx = (other_object.transform().position().x - object.transform().position().x) / distance_between_objects;
+    float ny = (other_object.transform().position().y - object.transform().position().y) / distance_between_objects;
     float impact = SPRING_COLLISION_COEEF * (
         engine::math::dotProduct(object.velocity_.x, object.velocity_.y, nx, ny)
-        - engine::math::dotProduct(otherObject.velocity_.x, otherObject.velocity_.y, nx, ny)) 
-        / (object.mass_ + otherObject.mass_);
+        - engine::math::dotProduct(other_object.velocity_.x, other_object.velocity_.y, nx, ny)) 
+        / (object.mass_ + other_object.mass_);
 
     // Additional angular velocity based on the point of collision
     // So objects rotate when hit
-    auto relativeVelocity = object.velocity_ - otherObject.velocity_;
+    auto relativeVelocity = object.velocity_ - other_object.velocity_;
     float velocityVectorLength = engine::math::normalizeVector(relativeVelocity);
     float dotProduct = engine::math::dotProduct(nx, ny, relativeVelocity.x, relativeVelocity.y);
     // TODO: Consider adding mass and impact momentum to this tangent velocity later
@@ -48,8 +48,8 @@ CollisionResult processObjectsCollsion(engine::RigidBody& object, engine::RigidB
     float crossProduct = engine::math::crossProduct(
         object.velocity_.x, 
         object.velocity_.y,
-        otherObject.velocity_.x, 
-        otherObject.velocity_.y);
+        other_object.velocity_.x, 
+        other_object.velocity_.y);
 
     if (crossProduct > 0) tangentVelocity = tangentVelocity * -1.f;
 
@@ -60,17 +60,17 @@ CollisionResult processObjectsCollsion(engine::RigidBody& object, engine::RigidB
         .ny_ = ny};
 }
 
-void processStaticAndDynamicObjectsCollsion(engine::RigidBody& staticObject, engine::RigidBody& dynamicObject)
+void processStaticAndDynamicObjectsCollsion(engine::RigidBody& staticObject, engine::RigidBody& dynamic_object)
 {
-    auto collisionResult = processObjectsCollsion(staticObject, dynamicObject);
+    auto collisionResult = processObjectsCollsion(staticObject, dynamic_object);
 
-    dynamicObject.angularVelocity_ -= collisionResult.tangentVelocity_ / dynamicObject.radius_;
+    dynamic_object.angularVelocity_ -= collisionResult.tangentVelocity_ / dynamic_object.radius_;
 
     sf::Vector2f normalVector{collisionResult.nx_,collisionResult.ny_};
     engine::math::normalizeVector(normalVector);
 
     float relativeSpeed = engine::math::dotProduct(
-        dynamicObject.velocity_.x, dynamicObject.velocity_.y,
+        dynamic_object.velocity_.x, dynamic_object.velocity_.y,
         normalVector.x, normalVector.y);
 
     float impulse = 2.0f * relativeSpeed;
@@ -78,80 +78,88 @@ void processStaticAndDynamicObjectsCollsion(engine::RigidBody& staticObject, eng
     // FIXME: There is some bug in above formula for small radiuses on low speeds
     // dynamic object can stick to static object instead of bounce off
     // I need to investigate it further.
-    dynamicObject.velocity_ = dynamicObject.velocity_ - normalVector * impulse ;
+    dynamic_object.velocity_ = dynamic_object.velocity_ - normalVector * impulse ;
 }
 
-void processDynamicObjectsCollsion(engine::RigidBody& dynamicObject, engine::RigidBody& otherDynamicObject)
+void processDynamicObjectsCollsion(engine::RigidBody& dynamic_object, engine::RigidBody& other_dynamic_object)
 { 
-    auto collisionResult = processObjectsCollsion(dynamicObject, otherDynamicObject);
+    auto collisionResult = processObjectsCollsion(dynamic_object, other_dynamic_object);
 
-    dynamicObject.angularVelocity_ += collisionResult.tangentVelocity_ / dynamicObject.radius_;
-    otherDynamicObject.angularVelocity_ -= collisionResult.tangentVelocity_  / otherDynamicObject.radius_;
+    dynamic_object.angularVelocity_ += collisionResult.tangentVelocity_ / dynamic_object.radius_;
+    other_dynamic_object.angularVelocity_ -= collisionResult.tangentVelocity_  / other_dynamic_object.radius_;
 
-    sf::Vector2f objectCollisionVelocity = sf::Vector2f(
-        (dynamicObject.velocity_.x - collisionResult.impact_ * otherDynamicObject.mass_ * collisionResult.nx_),
-        (dynamicObject.velocity_.y - collisionResult.impact_ * otherDynamicObject.mass_ * collisionResult.ny_));
+    sf::Vector2f object_collision_velocity = sf::Vector2f(
+        (dynamic_object.velocity_.x - collisionResult.impact_ * other_dynamic_object.mass_ * collisionResult.nx_),
+        (dynamic_object.velocity_.y - collisionResult.impact_ * other_dynamic_object.mass_ * collisionResult.ny_));
     
-    dynamicObject.velocity_ = objectCollisionVelocity;
+    dynamic_object.velocity_ = object_collision_velocity;
 
-    sf::Vector2f otherObjectCollisionVelocity = sf::Vector2f(
-        (otherDynamicObject.velocity_.x + collisionResult.impact_ * dynamicObject.mass_ * collisionResult.nx_),
-        (otherDynamicObject.velocity_.y + collisionResult.impact_ * dynamicObject.mass_ * collisionResult.ny_));
-    otherDynamicObject.velocity_ = otherObjectCollisionVelocity;
+    sf::Vector2f other_object_collision_velocity = sf::Vector2f(
+        (other_dynamic_object.velocity_.x + collisionResult.impact_ * dynamic_object.mass_ * collisionResult.nx_),
+        (other_dynamic_object.velocity_.y + collisionResult.impact_ * dynamic_object.mass_ * collisionResult.ny_));
+    other_dynamic_object.velocity_ = other_object_collision_velocity;
 }
 
-void solveCollsion(engine::GameObject& object, engine::GameObject& otherObject)
+void solveCollsion(engine::GameObject& object, engine::GameObject& other_object)
 {
-    auto& rigidBody = object.getRigidBody();
-    auto& otherRigidBody = otherObject.getRigidBody();
-    if (rigidBody.id_ == otherRigidBody.id_) return; // do not check collision with itself.
+    auto& rigid_body = object.getRigidBody();
+    auto& other_rigid_body = other_object.getRigidBody();
+    if (rigid_body.id_ == other_rigid_body.id_) return; // do not check collision with itself.
     
-    float distanceBetweenObjects = engine::math::distance(rigidBody.x_, rigidBody.y_,
-        otherRigidBody.x_, otherRigidBody.y_);
+    float distance_between_objects = engine::math::distance(rigid_body.transform().position().x, rigid_body.transform().position().y,
+        other_rigid_body.transform().position().x, other_rigid_body.transform().position().y);
 
-    float sumOfRadius = rigidBody.radius_ + otherRigidBody.radius_;
+    float sum_of_radius = rigid_body.radius_ + other_rigid_body.radius_;
 
-    if (distanceBetweenObjects >= sumOfRadius)
+    if (distance_between_objects >= sum_of_radius)
     {
         return;  // no collsion
     }
 
-    float objectsOverlap = (distanceBetweenObjects - rigidBody.radius_ - otherRigidBody.radius_);
+    float objects_overlap = (distance_between_objects - rigid_body.radius_ - other_rigid_body.radius_);
 
-    if (rigidBody.type_ == engine::RigidBody::Type::STATIC)
+    if (rigid_body.type_ == engine::RigidBody::Type::STATIC)
     {
-        if (otherRigidBody.type_ == engine::RigidBody::Type::STATIC)
+        if (other_rigid_body.type_ == engine::RigidBody::Type::STATIC)
         {
             // Collision of static objects should not do anything
             // TODO: call some onCollision handler on game objects
         } 
         else /* other object Type::Dynamic */
         {
-            processStaticAndDynamicObjectsCollsion(rigidBody, otherRigidBody);
+            processStaticAndDynamicObjectsCollsion(rigid_body, other_rigid_body);
 
-            otherRigidBody.x_ += objectsOverlap * (rigidBody.x_ - otherRigidBody.x_) / distanceBetweenObjects;
-            otherRigidBody.y_ += objectsOverlap * (rigidBody.y_ - otherRigidBody.y_) / distanceBetweenObjects;
+            auto& position = rigid_body.transform().position();
+            auto& other_position = other_rigid_body.transform().position();
+
+            other_position.x += objects_overlap * (position.x - other_position.x) / distance_between_objects;
+            other_position.y += objects_overlap * (position.y - other_position.y) / distance_between_objects;
         }
 
     } 
     else /* Type::Dynamic */
     {
-        if (otherRigidBody.type_ == engine::RigidBody::Type::STATIC)
+        if (other_rigid_body.type_ == engine::RigidBody::Type::STATIC)
         {
-            processStaticAndDynamicObjectsCollsion(otherRigidBody, rigidBody);
+            processStaticAndDynamicObjectsCollsion(other_rigid_body, rigid_body);
             
-            rigidBody.x_ -= objectsOverlap * (rigidBody.x_ - otherRigidBody.x_) / distanceBetweenObjects;
-            rigidBody.y_ -= objectsOverlap * (rigidBody.y_ - otherRigidBody.y_) / distanceBetweenObjects;
+            auto& position = rigid_body.transform().position();
+            auto& other_position = other_rigid_body.transform().position();
+            position.x -= objects_overlap * (position.x - other_position.x) / distance_between_objects;
+            position.y -= objects_overlap * (position.y - other_position.y) / distance_between_objects;
         } 
         else /* other object Type::Dynamic */
         {
-            processDynamicObjectsCollsion(rigidBody, otherRigidBody);
+            processDynamicObjectsCollsion(rigid_body, other_rigid_body);
 
-            rigidBody.x_ -= 0.5f * objectsOverlap * (rigidBody.x_ - otherRigidBody.x_) / distanceBetweenObjects;
-            rigidBody.y_ -= 0.5f * objectsOverlap * (rigidBody.y_ - otherRigidBody.y_) / distanceBetweenObjects;
+            auto& position = rigid_body.transform().position();
+            auto& other_position = other_rigid_body.transform().position();
 
-            otherRigidBody.x_ += 0.5f * objectsOverlap * (rigidBody.x_ - otherRigidBody.x_) / distanceBetweenObjects;
-            otherRigidBody.y_ += 0.5f * objectsOverlap * (rigidBody.y_ - otherRigidBody.y_) / distanceBetweenObjects;
+            position.x -= 0.5f * objects_overlap * (position.x - other_position.x) / distance_between_objects;
+            position.y -= 0.5f * objects_overlap * (position.y - other_position.y) / distance_between_objects;
+
+            other_position.x += 0.5f * objects_overlap * (position.x - other_position.x) / distance_between_objects;
+            other_position.y += 0.5f * objects_overlap * (position.y - other_position.y) / distance_between_objects;
         }
     }
 }
@@ -165,12 +173,12 @@ CollisionSolver::CollisionSolver(engine::Scene& scene)
 
 void CollisionSolver::evaluateCollisions()
 {
-    auto& gameObjects = scene_.objects();
-    for (size_t i = 0; i < gameObjects.size(); ++i)
+    auto& game_objects = scene_.objects();
+    for (size_t i = 0; i < game_objects.size(); ++i)
     {
-        for (size_t j = i + 1; j < gameObjects.size(); ++j) 
+        for (size_t j = i + 1; j < game_objects.size(); ++j) 
         {
-            solveCollsion(*gameObjects[i], *gameObjects[j]);
+            solveCollsion(*game_objects[i], *game_objects[j]);
         }
     }
 }

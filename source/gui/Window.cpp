@@ -206,13 +206,13 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     // so when event comes to window or iths descendants it should be already checked that event is inside of them
     
     logger_.debug("Mouse button pressed event received by window, id: " + std::to_string(getId()));
-    auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
 
     if (mouseButtonPressedEvent.button == gui::event::MouseButton::Right)
     {
-        if (contextMenuHandler_ and isInside(mousePosition))
+        if (contextMenuHandler_ and isInside(mouse_position))
         {
-            contextMenuHandler_(mousePosition);
+            contextMenuHandler_(mouse_position);
             return gui::EventStatus::Consumed;
         }
 
@@ -225,23 +225,23 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     }
 
     // If mouse clicked on top bar and was not yet dragging window
-    if (isInsideHeader(mousePosition) and isInState(State::Idle))
+    if (isInsideHeader(mouse_position) and isInState(State::Idle))
     {
         state_ = State::Dragging;
         gui().captureMouse(this);
         if (isMaximized_)
         {
-            auto x = mousePosition.x - windowSizeToRestore_.x / 2.f;
-            auto y = mousePosition.y - header_->getSize().y / 2.f;
+            auto x = mouse_position.x - windowSizeToRestore_.x / 2.f;
+            auto y = mouse_position.y - header_->getSize().y / 2.f;
             setPosition({x, y});
             setSize(windowSizeToRestore_);
             setMaximized(false);
         }
-        draggingOffset_ = getPosition() -  mousePosition;
+        draggingOffset_ = getPosition() -  mouse_position;
         return gui::EventStatus::Consumed;
     }
 
-    if (isInsideResizeGadget(mousePosition) and isInState(State::Idle))
+    if (isInsideResizeGadget(mouse_position) and isInState(State::Idle))
     {
         state_ = State::Resizing;
         gui().captureMouse(this);
@@ -265,18 +265,18 @@ EventStatus Window::on(const event::MouseButtonReleased&)
 
 EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 {
-    auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+    auto mouse_position = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
     if (isInState(State::Dragging))
     {
-        setPosition(mousePosition + draggingOffset_);
+        setPosition(mouse_position + draggingOffset_);
         return gui::EventStatus::Consumed;
     }
 
     if (isInState(State::Resizing))
     {
         auto windowTopLeftCorner = getGlobalPosition();
-        auto newWindowSize = mousePosition - windowTopLeftCorner
+        auto newWindowSize = mouse_position - windowTopLeftCorner
             + sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;
         newWindowSize.x = std::max(newWindowSize.x, MINIMUM_WINDOW_WIDTH);
         newWindowSize.y = std::max(newWindowSize.y, MINIMUM_WINDOW_HEIGHT);

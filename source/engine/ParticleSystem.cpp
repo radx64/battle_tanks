@@ -6,49 +6,49 @@ namespace engine
 {
 
 ParticleSystem::ParticleSystem()
-: activeParticles_{}
-, particlesToSpawn_{}
+: active_particles_{}
+, particles_to_spawn_{}
 {
 
 }
 
 void ParticleSystem::add(std::unique_ptr<Particle> particle)
 {
-    particlesToSpawn_.push_back(std::move(particle));
+    particles_to_spawn_.push_back(std::move(particle));
 }
 
-void ParticleSystem::draw(sf::RenderWindow& renderWindow)
+void ParticleSystem::draw(sf::RenderWindow& render_window)
 {
-    for (const auto& particle : activeParticles_)
+    for (const auto& particle : active_particles_)
     {
-        particle->draw(renderWindow);
+        particle->draw(render_window);
     }
 }
 
 void ParticleSystem::clear()
 {
-    particlesToSpawn_.clear();
-    activeParticles_.clear();
+    particles_to_spawn_.clear();
+    active_particles_.clear();
 }
 
 // TODO this update method is somewhat simmilar to scene game objects handling
 // Consider making this common
-void ParticleSystem::update(float timeStep)
+void ParticleSystem::update(float time_step)
 {
-    for (auto& particle : activeParticles_)
+    for (auto& particle : active_particles_)
     {
-        particle->update(timeStep);
+        particle->update(time_step);
     }
 
-    activeParticles_.erase(
-        std::remove_if(activeParticles_.begin(), activeParticles_.end(),
+    active_particles_.erase(
+        std::remove_if(active_particles_.begin(), active_particles_.end(),
             [](auto& particle){ return particle->isDead();}),
-        activeParticles_.end());
+        active_particles_.end());
 
-    if (not particlesToSpawn_.empty())
+    if (not particles_to_spawn_.empty())
     {
-        activeParticles_.insert(activeParticles_.end(), std::make_move_iterator(particlesToSpawn_.begin()), std::make_move_iterator(particlesToSpawn_.end()));
-        particlesToSpawn_.clear();
+        active_particles_.insert(active_particles_.end(), std::make_move_iterator(particles_to_spawn_.begin()), std::make_move_iterator(particles_to_spawn_.end()));
+        particles_to_spawn_.clear();
     }
 }
 

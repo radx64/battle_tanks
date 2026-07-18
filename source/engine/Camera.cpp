@@ -118,16 +118,16 @@ const sf::Vector2f& Camera::getSize()
     return currentSize_;
 }
 
-void Camera::update(float timeStep)
+void Camera::update(float time_step)
 {
-    targetPosition_ += velocity_ * timeStep;
+    targetPosition_ += velocity_ * time_step;
     alignBoundaries();
 
     const auto positionDiff = targetPosition_ - currentPosition_;
-    currentPosition_ += positionDiff  * MOVE_FACTOR  * timeStep;
+    currentPosition_ += positionDiff  * MOVE_FACTOR  * time_step;
 
     const auto zoomDiff = targetSize_ - currentSize_;
-    currentSize_ += zoomDiff  * ZOOM_FACTOR * timeStep;
+    currentSize_ += zoomDiff  * ZOOM_FACTOR * time_step;
 }
 
 float Camera::getZoom()

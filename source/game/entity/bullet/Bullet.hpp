@@ -14,10 +14,9 @@ public:
     virtual ~Bullet() = default;
 
 protected:
-    void onUpdate(engine::Scene& scene, float timeStep) override;
+    void onUpdate(engine::Scene& scene, float time_step) override;
 
     float lifetime_;
 };
 
 }  // namespace game::entity
-

@@ -19,7 +19,7 @@ protected:
     void onInit() override;
     void onClose() override;
     void onEvent(const sf::Event& event) override;
-    void onUpdate(float timeStep) override;
+    void onUpdate(float time_step) override;
     void onRender() override; 
 
     void generateBackground();

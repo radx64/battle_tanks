@@ -14,10 +14,10 @@ public:
     Say(const std::string_view text, float x, float y);
     virtual ~Say() = default;
 
-    void draw(sf::RenderWindow& renderWindow) override;
+    void draw(sf::RenderWindow& render_window) override;
 
 protected:
-    void onUpdate(float timeStep) override;
+    void onUpdate(float time_step) override;
 
 private:
     float lifetime_;

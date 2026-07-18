@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Transform.hpp"
+
 namespace engine
 {
 
@@ -18,20 +20,20 @@ public:
         DYNAMIC     // Collidable but can receive momentum (moveable) 
     };
 
-    RigidBody(uint32_t id, float x, float y, float radius, float mass, float groundDragCooef,
+    RigidBody(uint32_t id, Transform& transform, float radius, float mass, float groundDragCooef,
         Type type);
     virtual ~RigidBody() = default;
-    void update(float timeStep);
+    void update(float time_step);
     void applyForce(sf::Vector2f force);
+    Transform& transform();
+    const Transform& transform() const;
 
 public:
     sf::Vector2f velocity_;
-    float rotation_;
     float angularVelocity_;
 
     uint32_t id_;
-    float x_{};
-    float y_{};
+    Transform& transform_;
     float radius_;
     float mass_;
     float groundDragCooef_;

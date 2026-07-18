@@ -12,17 +12,17 @@ CrateRenderer::CrateRenderer(Crate* crate, sf::Texture& crateBody)
     crateSprite_.setOrigin(middle_point);
 }
 
-void CrateRenderer::draw(sf::RenderWindow& renderWindow)
+void CrateRenderer::draw(sf::RenderWindow& render_window)
 {
-    auto crateRigidBody = crate_->getRigidBody();
-    crateSprite_.setRotation(crateRigidBody.rotation_);
+    auto& crateTransform = crate_->transform();
+    crateSprite_.setRotation(crateTransform.rotation());
     crateSprite_.setColor(sf::Color(10, 10, 10, 127));
-    crateSprite_.setPosition(crateRigidBody.x_ + 4, crateRigidBody.y_+ 4);
-    renderWindow.draw(crateSprite_);
+    crateSprite_.setPosition(crateTransform.position().x + 4, crateTransform.position().y + 4);
+   render_window.draw(crateSprite_);
 
     crateSprite_.setColor(sf::Color(255, 255, 255, 255));
-    crateSprite_.setPosition(crateRigidBody.x_, crateRigidBody.y_);
-    renderWindow.draw(crateSprite_);
+    crateSprite_.setPosition(crateTransform.position().x, crateTransform.position().y);
+   render_window.draw(crateSprite_);
 }
 
 }  // namespace game::entity

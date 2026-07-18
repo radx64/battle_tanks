@@ -1077,11 +1077,11 @@ void Application::onEvent(const sf::Event& event)
     (void) event;
 }
 
-void Application::onUpdate(float timeStep)
+void Application::onUpdate(float time_step)
 {
     // TODO: I hate that user need do implement this manually,
     // maybe we can move some of the logic from main loop to Application class and make this automatic?
-    gui::Application::onUpdate(timeStep);
+    gui::Application::onUpdate(time_step);
 }
 
 void Application::generateBackground()

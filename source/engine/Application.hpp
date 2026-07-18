@@ -43,7 +43,7 @@ protected:
     virtual void onInit() = 0;
     virtual void onClose() = 0;
     virtual void onEvent(const sf::Event& event) = 0;
-    virtual void onUpdate(float timeStep) = 0;
+    virtual void onUpdate(float time_step) = 0;
     virtual void onRender() = 0;
 
     bool isRunning_{true};
@@ -53,15 +53,15 @@ protected:
     sf::Font font_;
     sf::Text profilingText_;
 
-    engine::ParticleSystem particleSystem_;
-    engine::TimerService timerService_;
+    engine::ParticleSystem particle_system_;
+    engine::TimerService timer_service_;
     Context context_;
 
     engine::input::KeyboardHandler keyboardHandler_;
     engine::input::MouseHandler mouseHandler_;
 
-    float constantTimeStep_{1.0f/30.f};
-    Clock::duration realTimeStep_;
+    float constanttime_step_{1.0f/30.f};
+    Clock::duration realtime_step_;
     engine::Scene scene_;
     engine::CollisionSolver collisionSolver_;
     engine::Logger logger_;
@@ -72,7 +72,7 @@ protected:
     engine::Profiler renderProfiler_;
     engine::Profiler clearProfiler_;
     engine::Profiler renderProfilingInfoProfiler_;
-    engine::Profiler displayProfiler_;
+    engine::Profiler display_profiler_;
 };
 
 }  // namespace engine

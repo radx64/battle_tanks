@@ -7,14 +7,12 @@
 namespace engine
 {
 
-RigidBody::RigidBody(uint32_t id, float x, float y,  float radius, float mass, float groundDragCooef,
+RigidBody::RigidBody(uint32_t id,  Transform& transform, float radius, float mass, float groundDragCooef,
     engine::RigidBody::Type type)
 : velocity_{}
-, rotation_(0.f)
 , angularVelocity_(0.f)
 , id_(id)
-, x_(x)
-, y_(y)
+, transform_(transform)
 , radius_(radius)
 , mass_(mass)
 , groundDragCooef_(groundDragCooef)
@@ -26,7 +24,17 @@ void RigidBody::applyForce(sf::Vector2f force)
     velocity_ += force;
 }
 
-void RigidBody::update(float timeStep)
+Transform& RigidBody::transform()
+{ 
+    return transform_;
+}
+
+const Transform& RigidBody::transform() const
+{
+    return transform_; 
+}
+
+void RigidBody::update(float time_step)
 {
     // Calculate current position based on calculated velocities
     velocity_ *= groundDragCooef_;
@@ -37,11 +45,11 @@ void RigidBody::update(float timeStep)
         angularVelocity_ = 0.0f; 
     }
 
-    rotation_ += angularVelocity_ * timeStep;
-    rotation_ = std::fmod(rotation_, 360.f);
+    transform_.rotation() += angularVelocity_ * time_step;
+    transform_.rotation() = std::fmod(transform_.rotation(), 360.f);
 
-    x_ += velocity_.x * timeStep;
-    y_ += velocity_.y * timeStep;   
+    transform_.position().x += velocity_.x * time_step;
+    transform_.position().y += velocity_.y * time_step;   
 }
 
 

@@ -12,7 +12,7 @@ class TracksRenderer
 public:
     TracksRenderer();
     void addTrackImprint(const int x, const int y, const float angle);
-    void draw(sf::RenderWindow& renderWindow);
+    void draw(sf::RenderWindow& render_window);
     void clear();
 
 protected:

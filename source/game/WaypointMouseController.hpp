@@ -13,11 +13,11 @@ public:
     WaypointMouseController(std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view);
 
 protected:
-    gui::EventStatus onButtonPressed(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button, bool doubleClick) override;
-    gui::EventStatus onButtonReleased(const sf::Vector2f& mousePostion, const sf::Mouse::Button& button) override;
-    gui::EventStatus onMouseMoved(const sf::Vector2f& mousePostion) override;
+    gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button, bool double_click) override;
+    gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
+    gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override;
 
-    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mousePosition);
+    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
 
     std::vector<sf::Vector2i>& waypoints_;
     sf::RenderWindow& window_;

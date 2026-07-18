@@ -19,7 +19,7 @@ public:
     bool isInsideResizeGadget(const sf::Vector2f point);
 
 protected:
-    void onRender(sf::RenderTexture& renderWindow) override;
+    void onRender(sf::RenderTexture&render_window) override;
     void onSizeChange() override;
     void onPositionChange() override;
 

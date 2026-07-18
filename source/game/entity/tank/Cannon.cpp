@@ -33,16 +33,16 @@ Cannon::Cannon(float x, float y, float rotation, sf::Texture& texture)
     sprite_.setOrigin(texture_middle_point);
 }
 
-void Cannon::draw(sf::RenderWindow& renderWindow)
+void Cannon::draw(sf::RenderWindow& render_window)
 {
     sprite_.setColor(sf::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 3, y_+ 3);
     sprite_.setRotation(current_rotation_);
-    renderWindow.draw(sprite_);
+   render_window.draw(sprite_);
 
     sprite_.setColor(sf::Color(255, 255, 255, 255));
     sprite_.setPosition(x_, y_);
-    renderWindow.draw(sprite_);
+   render_window.draw(sprite_);
 }
 
 void Cannon::setRotation(float rotation)
@@ -50,14 +50,14 @@ void Cannon::setRotation(float rotation)
     set_rotation_ = rotation;
 }
 
-void Cannon::physics(float timeStep)
+void Cannon::physics(float time_step)
 {
-    cooldown_ += timeStep;
+    cooldown_ += time_step;
     float delta = set_rotation_ - current_rotation_;
     delta = engine::math::signedFmod((delta + 180.0), 360.0) - 180.0;
 
-    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * timeStep, std::fabs(delta));
-    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * timeStep, std::fabs(delta));   
+    if (delta > 0.0) current_rotation_+= std::min(CANNON_ROTATION_SPEED * time_step, std::fabs(delta));
+    if (delta < 0.0) current_rotation_-= std::min(CANNON_ROTATION_SPEED * time_step, std::fabs(delta));   
 }
 
 void Cannon::fire()

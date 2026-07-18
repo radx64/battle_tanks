@@ -102,9 +102,9 @@ public:
         sprite_.setPosition(x, y);
     }
 
-    void draw(sf::RenderTexture& renderWindow)
+    void draw(sf::RenderTexture&render_window)
     {
-        renderWindow.draw(sprite_);
+       render_window.draw(sprite_);
     }
 
 private:
@@ -164,7 +164,7 @@ struct Tilemap::Impl
     : chunks{CHUNK_SIZE}
     {}
 
-    void draw(sf::RenderWindow& renderWindow)
+    void draw(sf::RenderWindow& render_window)
     {
         auto& camera = engine::Context::getCamera();
         const auto& cameraPosition = camera.getPosition();
@@ -174,9 +174,9 @@ struct Tilemap::Impl
             cameraFrustum,
             {0, 0},
             {getChunkCountX() - 1, getChunkCountY() - 1},
-            [this, &renderWindow](const auto& coordinates)
+            [this, &render_window](const auto& coordinates)
             {
-                renderWindow.draw(getOrCreateChunk(coordinates).sprite);
+               render_window.draw(getOrCreateChunk(coordinates).sprite);
             });
     }
 
@@ -249,9 +249,9 @@ Tilemap::Tilemap()
 
 Tilemap::~Tilemap() = default;
 
-void Tilemap::draw(sf::RenderWindow& renderWindow)
+void Tilemap::draw(sf::RenderWindow& render_window)
 {
-    impl_->draw(renderWindow);
+    impl_->draw(render_window);
 }
 
 } // namespace graphics

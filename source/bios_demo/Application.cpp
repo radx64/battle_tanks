@@ -92,7 +92,7 @@ void Application::onEvent(const sf::Event& event)
     }
 }
 
-void Application::onUpdate(float /*timeStep*/)
+void Application::onUpdate(float /*time_step*/)
 {
     elapsed_ = bootClock_.getElapsedTime().asSeconds();
     if (elapsed_ > BOOT_DURATION_)

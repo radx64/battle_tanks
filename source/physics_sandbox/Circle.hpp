@@ -12,10 +12,14 @@ public:
 Circle(uint32_t id, float x, float y, float radius, float mass,
 const engine::RigidBody::Type& type)
 {
+    transform().position().x = x;
+    transform().position().y = y;
+
     renderer_ = nullptr;
-    rigidBody_ = std::make_unique<engine::RigidBody>(
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         id,
-        x, y, radius,
+        transform(),
+        radius,
         mass,
         DRAG_COEEF,
         type

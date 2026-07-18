@@ -32,19 +32,24 @@ void Tank::setDebug(bool is_enabled)
 
 Tank::Tank(float x, float y, float rotation, 
     std::unique_ptr<Cannon> cannon, 
-    sf::Texture& tankBody,
-    TracksRenderer* tracksRenderer)
+    sf::Texture& tank_body,
+    TracksRenderer* tracks_renderer)
 : current_direction_{rotation}
 , cannon_{std::move(cannon)}
 , led_{x , y, graphics::TextureLibrary::instance().get("led")}
 , set_direction_{rotation}
-, tracksRenderer_{tracksRenderer}
+, tracks_renderer_{tracks_renderer}
 {
-    renderer_ = std::make_unique<TankRenderer>(this, tankBody);
 
-    rigidBody_ = std::make_unique<engine::RigidBody>(
+    transform().position().x = x;
+    transform().position().y = y;
+
+    renderer_ = std::make_unique<TankRenderer>(this, tank_body);
+
+    rigid_body_ = std::make_unique<engine::RigidBody>(
         InstanceIdGenerator::getId(), 
-        x, y, TANK_RADIUS,
+        transform(),
+        TANK_RADIUS,
         TANK_MASS, 
         GROUND_DRAG_COEEF, 
         engine::RigidBody::Type::DYNAMIC);
@@ -64,11 +69,11 @@ void Tank::setTurretHeading(float direction)
     cannon_->setRotation(direction);
 }
 
-void Tank::onUpdate(engine::Scene& scene, float timeStep)
+void Tank::onUpdate(engine::Scene& scene, float time_step)
 {
     (void) scene;
 
-    lifetime_ += timeStep;
+    lifetime_ += time_step;
 
     auto& tank_rigid_body = getRigidBody();
 
@@ -84,8 +89,8 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
     delta = engine::math::signedFmod((delta + 180.0), 360.0) - 180.0;
     // If current direction of movement is different(more than 15deg) than current one cut the throttle
     if (fabs(delta) > 15.0) current_throttle_ = 0.0; else current_throttle_ = set_throttle_;
-    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
-    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* timeStep, std::fabs(delta)) ;
+    if (delta > 0.0) current_direction_+= std::min(TANK_ROTATION_SPEED* time_step, std::fabs(delta)) ;
+    if (delta < 0.0) current_direction_-= std::min(TANK_ROTATION_SPEED* time_step, std::fabs(delta)) ;
 
     //TODO add some inertia calculation while accelerating
     drivetrain_force_.x = sin(engine::math::degreeToRadians(current_direction_)) * (current_throttle_ * TANK_ACCELERATION);
@@ -96,18 +101,20 @@ void Tank::onUpdate(engine::Scene& scene, float timeStep)
 
     tank_rigid_body.applyForce(drivetrain_force_ + braking_force_);
 
-    cannon_->physics(timeStep);
-    led_.update(timeStep);
+    cannon_->physics(time_step);
+    led_.update(time_step);
 
     if ((std::fabs(tank_rigid_body.velocity_.x) > 0.01) or (std::fabs(tank_rigid_body.velocity_.y) > 0.01))
     {
-        sf::Vector2f left_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_-15.0, tank_rigid_body.y_),
-            current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
-        sf::Vector2f right_track = engine::math::rotatePoint(sf::Vector2f(tank_rigid_body.x_+15.0, tank_rigid_body.y_),
-            current_direction_, sf::Vector2f(tank_rigid_body.x_, tank_rigid_body.y_));
+        auto& tankTransform = transform();
 
-        tracksRenderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
-        tracksRenderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);
+        sf::Vector2f left_track = engine::math::rotatePoint(sf::Vector2f(tankTransform.position().x-15.0, tankTransform.position().y),
+            current_direction_, sf::Vector2f(tankTransform.position().x, tankTransform.position().y));
+        sf::Vector2f right_track = engine::math::rotatePoint(sf::Vector2f(tankTransform.position().x+15.0, tankTransform.position().y),
+            current_direction_, sf::Vector2f(tankTransform.position().x, tankTransform.position().y));
+
+        tracks_renderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
+        tracks_renderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);
     }
 }
 

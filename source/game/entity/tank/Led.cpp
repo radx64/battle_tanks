@@ -24,7 +24,7 @@ void Led::setRotation(float rotation)
     rotation_ = rotation;
 }
 
-void Led::draw(sf::RenderWindow& renderWindow)
+void Led::draw(sf::RenderWindow& render_window)
 {
     sf::Vector2f rotatedOffset = engine::math::rotatePoint(offset_, rotation_, sf::Vector2f(0.0f, 0.0f));
     sf::Vector2f rotatedPosition = rotatedOffset + sf::Vector2f(x_, y_);
@@ -38,14 +38,14 @@ void Led::draw(sf::RenderWindow& renderWindow)
     {
         sprite_.setColor(sf::Color(10, 10, 10, 127));
     }
-    renderWindow.draw(sprite_);
+   render_window.draw(sprite_);
 }
 
-void Led::update(float timeStep)
+void Led::update(float time_step)
 {
     if (rate_ <= 0.01) return; // No blinking if rate is 0 or negative
 
-    timeToChangeState_ -= timeStep;
+    timeToChangeState_ -= time_step;
     if (timeToChangeState_ <= 0)
     {
         isOn_ = !isOn_;

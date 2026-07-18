@@ -10,7 +10,7 @@ class CrateRenderer : public engine::Renderer
 {
 public:
     CrateRenderer(Crate* crate, sf::Texture& crateBody);
-    void draw(sf::RenderWindow& renderWindow) override;
+    void draw(sf::RenderWindow& render_window) override;
 
 protected:
     Crate* crate_;
@@ -19,4 +19,3 @@ protected:
 
 
 }  // namespace game::entity 
-

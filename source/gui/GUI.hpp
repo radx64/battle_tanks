@@ -30,7 +30,7 @@ public:
     GUI(const sf::Vector2f& mainWindowSize);
     virtual ~GUI();
 
-    void render(sf::RenderWindow& renderWindow);
+    void render(sf::RenderWindow& render_window);
     void update();
     
     MainWindow& mainWindow();

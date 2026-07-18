@@ -9,17 +9,17 @@ WaypointMouseController::WaypointMouseController(std::vector<sf::Vector2i>& wayp
 , view_(view)
 {}
 
-gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mousePosition, const sf::Mouse::Button& button, bool)
+gui::EventStatus WaypointMouseController::onButtonPressed(const sf::Vector2f& mouse_position, const sf::Mouse::Button& button, bool)
 {
-    const auto screenCoords = mapPixelToCoords(mousePosition);
+    const auto screen_coords = mapPixelToCoords(mouse_position);
 
     if (button != sf::Mouse::Button::Left)
     {
         return gui::EventStatus::NotConsumed;
     }
 
-    auto waypointPosition  = screenCoords;
-    waypoints_.push_back(sf::Vector2i{waypointPosition});
+    auto waypoint_position  = screen_coords;
+    waypoints_.push_back(sf::Vector2i{waypoint_position});
     return gui::EventStatus::Consumed;
 }
 
@@ -33,9 +33,9 @@ gui::EventStatus WaypointMouseController::onMouseMoved(const sf::Vector2f&)
     return gui::EventStatus::NotConsumed;
 }
 
-sf::Vector2f WaypointMouseController::mapPixelToCoords(const sf::Vector2f& mousePosition)
+sf::Vector2f WaypointMouseController::mapPixelToCoords(const sf::Vector2f& mouse_position)
 {
-    return window_.mapPixelToCoords(sf::Vector2i{(int)mousePosition.x, (int)mousePosition.y}, view_);
+    return window_.mapPixelToCoords(sf::Vector2i{(int)mouse_position.x, (int)mouse_position.y}, view_);
 }
 
 }  // namespace game

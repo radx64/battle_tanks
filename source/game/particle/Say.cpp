@@ -30,7 +30,7 @@ Say::Say(const std::string_view text, float x, float y)
                      bounds.top + bounds.height * 0.5f);
 }
 
-void Say::draw(sf::RenderWindow& renderWindow)
+void Say::draw(sf::RenderWindow& render_window)
 {
     const float alphaValue = std::max(0.f, 1.f - lifetime_ / SAY_LIFETIME);
     sf::Color fillColor = text_.getFillColor();
@@ -42,12 +42,12 @@ void Say::draw(sf::RenderWindow& renderWindow)
     text_.setOutlineColor(outlineColor);
 
     text_.setPosition(position_);
-    renderWindow.draw(text_);
+   render_window.draw(text_);
 }
 
-void Say::onUpdate(float timeStep)
+void Say::onUpdate(float time_step)
 {
-    lifetime_ += timeStep;
+    lifetime_ += time_step;
     if (lifetime_ > SAY_LIFETIME)
     {
         kill();

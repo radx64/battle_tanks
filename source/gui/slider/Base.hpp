@@ -59,7 +59,7 @@ protected:
     EventStatus on(const event::FocusLost&) override;
     EventStatus on(const event::FocusGained&) override;
 
-    void processMovement(sf::Vector2f& mousePosition);
+    void processMovement(sf::Vector2f& mouse_position);
     void updateTexture();
 
     gui::FramedSprite track_;
@@ -220,14 +220,14 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::Keyboard
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    auto mousePosition = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
     bool isLeftPressed = mouseButtonPressedEvent.button == gui::event::MouseButton::Left;
 
-    if (isLeftPressed and isInside(mousePosition))
+    if (isLeftPressed and isInside(mouse_position))
     {
         state_ = State::Dragging;
         gui().captureMouse(this);
-        processMovement(mousePosition);
+        processMovement(mouse_position);
         return EventStatus::Consumed;
     }
     return EventStatus::NotConsumed;
@@ -236,16 +236,16 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseBut
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseMoved& mouseMovedEvent)
 {
-    auto mousePosition = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+    auto mouse_position = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
 
     if (state_ == State::Dragging)
     {
-        processMovement(mousePosition);
+        processMovement(mouse_position);
         return EventStatus::Consumed;
     }
     else
     {
-        bool isMouseInside = isInside(mousePosition);
+        bool isMouseInside = isInside(mouse_position);
         if (isMouseInside and state_ != State::Hover)
         {
             state_ = State::Hover;
@@ -266,23 +266,23 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseMov
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    auto mousePosition = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
+    auto mouse_position = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
     bool isLeftReleased = mouseButtonReleasedEvent.button == gui::event::MouseButton::Left;
 
     if (isLeftReleased and state_ == State::Dragging)
     {
         state_ = State::Idle;
         gui().releaseMouse();
-        processMovement(mousePosition);
+        processMovement(mouse_position);
         return EventStatus::Consumed;
     }
     return EventStatus::NotConsumed;
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(sf::Vector2f& mousePosition)
+void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(sf::Vector2f& mouse_position)
 {
-    setValue(MouseHandlingPolicy::translatePositionToThumbValue(mousePosition, track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_));
+    setValue(MouseHandlingPolicy::translatePositionToThumbValue(mouse_position, track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_));
 
     focus();
     updateTexture();

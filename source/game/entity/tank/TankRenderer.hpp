@@ -10,8 +10,8 @@ class TankRenderer : public engine::Renderer
 {
 public:
     TankRenderer(Tank* tank, sf::Texture& tankBody);
-    void draw(sf::RenderWindow& renderWindow);
-    void drawDebugInfo(sf::RenderWindow& renderWindow);
+    void draw(sf::RenderWindow& render_window);
+    void drawDebugInfo(sf::RenderWindow& render_window);
 
 protected:
     Tank* tank_;
@@ -19,4 +19,3 @@ protected:
 };
 
 }  // namespace game::entity 
-

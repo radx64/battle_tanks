@@ -6,7 +6,7 @@ namespace engine
 {
 
 ChunkedRenderTextureLayer::ChunkedRenderTextureLayer(const int chunkSize)
-: chunkSize_{chunkSize}
+: chunk_size_{chunkSize}
 {}
 
 void ChunkedRenderTextureLayer::clear()
@@ -33,32 +33,32 @@ ChunkedRenderTextureLayer::Chunk& ChunkedRenderTextureLayer::getOrCreateChunk(co
 ChunkedRenderTextureLayer::ChunkCoordinates ChunkedRenderTextureLayer::getChunkCoordinates(float x, float y) const
 {
     return {
-        static_cast<int>(std::floor(x / chunkSize_)),
-        static_cast<int>(std::floor(y / chunkSize_))};
+        static_cast<int>(std::floor(x / chunk_size_)),
+        static_cast<int>(std::floor(y / chunk_size_))};
 }
 
 sf::FloatRect ChunkedRenderTextureLayer::getChunkBounds(const ChunkCoordinates& coordinates) const
 {
     return sf::FloatRect(
-        static_cast<float>(coordinates.first * chunkSize_),
-        static_cast<float>(coordinates.second * chunkSize_),
-        static_cast<float>(chunkSize_),
-        static_cast<float>(chunkSize_));
+        static_cast<float>(coordinates.first * chunk_size_),
+        static_cast<float>(coordinates.second * chunk_size_),
+        static_cast<float>(chunk_size_),
+        static_cast<float>(chunk_size_));
 }
 
 int ChunkedRenderTextureLayer::getChunkSize() const
 {
-    return chunkSize_;
+    return chunk_size_;
 }
 
 ChunkedRenderTextureLayer::Chunk ChunkedRenderTextureLayer::createChunk(const ChunkCoordinates& coordinates)
 {
     Chunk chunk;
     chunk.position = sf::Vector2f(
-        static_cast<float>(coordinates.first * chunkSize_),
-        static_cast<float>(coordinates.second * chunkSize_));
+        static_cast<float>(coordinates.first * chunk_size_),
+        static_cast<float>(coordinates.second * chunk_size_));
     chunk.target = std::make_unique<sf::RenderTexture>();
-    chunk.target->create(chunkSize_, chunkSize_);
+    chunk.target->create(chunk_size_, chunk_size_);
     chunk.target->clear(sf::Color(255, 255, 255, 0));
     return chunk;
 }

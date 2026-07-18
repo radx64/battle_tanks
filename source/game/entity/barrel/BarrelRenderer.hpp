@@ -10,7 +10,7 @@ class BarrelRenderer : public engine::Renderer
 {
 public:
     BarrelRenderer(Barrel* barrel, sf::Texture& barrelBody);
-    void draw(sf::RenderWindow& renderWindow) override;
+    void draw(sf::RenderWindow& render_window) override;
 
 protected:
     Barrel* barrel_;
@@ -18,4 +18,3 @@ protected:
 };
 
 }  // namespace game::entity 
-

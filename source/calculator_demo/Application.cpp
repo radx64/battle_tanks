@@ -32,9 +32,9 @@ void Application::onClose()
 {
 }
 
-void Application::onUpdate(float timeStep)
+void Application::onUpdate(float time_step)
 {
-    (void) timeStep;
+    (void) time_step;
 }
 
 void Application::onRender()

@@ -9,8 +9,8 @@ class Led
 {
 public:
     Led(float x, float y, sf::Texture& texture);
-    void draw(sf::RenderWindow& renderWindow);
-    void update(float timeStep);
+    void draw(sf::RenderWindow& render_window);
+    void update(float time_step);
     void setRotation(float rotation);
     
     float x_;

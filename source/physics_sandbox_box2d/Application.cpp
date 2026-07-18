@@ -122,12 +122,12 @@ void Application::onEvent(const sf::Event& event)
     (void) event;
 }
 
-void Application::onUpdate(float timeStep)
+void Application::onUpdate(float time_step)
 {
-    (void) timeStep;
-    float timeStepConstant = 1.0f / 60.0f;
+    (void) time_step;
+    float time_stepConstant = 1.0f / 60.0f;
     float subStepCount = 4;
-    b2World_Step(worldId_, timeStepConstant, subStepCount);
+    b2World_Step(worldId_, time_stepConstant, subStepCount);
 }
 
 void Application::drawBody(b2BodyId bodyId) 

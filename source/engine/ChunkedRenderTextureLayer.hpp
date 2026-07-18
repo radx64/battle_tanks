@@ -68,9 +68,9 @@ public:
     template<typename VisitCoordinates>
     void forEachChunkCoordinateIntersecting(const sf::FloatRect& bounds, VisitCoordinates visitCoordinates) const
     {
-        const auto firstChunk = getChunkCoordinates(bounds.left, bounds.top);
-        const auto lastChunk = getChunkCoordinates(bounds.left + bounds.width, bounds.top + bounds.height);
-        forEachChunkCoordinateIntersecting(bounds, firstChunk, lastChunk, visitCoordinates);
+        const auto first_chunk = getChunkCoordinates(bounds.left, bounds.top);
+        const auto last_chunk = getChunkCoordinates(bounds.left + bounds.width, bounds.top + bounds.height);
+        forEachChunkCoordinateIntersecting(bounds, first_chunk, last_chunk, visitCoordinates);
     }
 
     template<typename VisitCoordinates>
@@ -80,19 +80,19 @@ public:
         const ChunkCoordinates& maxCoordinates,
         VisitCoordinates visitCoordinates) const
     {
-        const auto firstChunk = getChunkCoordinates(bounds.left, bounds.top);
-        const auto lastChunk = getChunkCoordinates(bounds.left + bounds.width, bounds.top + bounds.height);
+        const auto first_chunk = getChunkCoordinates(bounds.left, bounds.top);
+        const auto last_chunk = getChunkCoordinates(bounds.left + bounds.width, bounds.top + bounds.height);
 
-        const auto minChunkX = std::max(minCoordinates.first, firstChunk.first);
-        const auto minChunkY = std::max(minCoordinates.second, firstChunk.second);
-        const auto maxChunkX = std::min(maxCoordinates.first, lastChunk.first);
-        const auto maxChunkY = std::min(maxCoordinates.second, lastChunk.second);
+        const auto min_chunk_x = std::max(minCoordinates.first, first_chunk.first);
+        const auto min_chunk_y = std::max(minCoordinates.second, first_chunk.second);
+        const auto max_chunk_x = std::min(maxCoordinates.first, last_chunk.first);
+        const auto max_chunk_y = std::min(maxCoordinates.second, last_chunk.second);
 
-        for (auto chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY)
+        for (auto chunk_y = min_chunk_y; chunk_y <= max_chunk_y; ++chunk_y)
         {
-            for (auto chunkX = minChunkX; chunkX <= maxChunkX; ++chunkX)
+            for (auto chunk_x = min_chunk_x; chunk_x <= max_chunk_x; ++chunk_x)
             {
-                const ChunkCoordinates coordinates{chunkX, chunkY};
+                const ChunkCoordinates coordinates{chunk_x, chunk_y};
                 if (bounds.intersects(getChunkBounds(coordinates)))
                 {
                     visitCoordinates(coordinates);
@@ -104,7 +104,7 @@ public:
 private:
     Chunk createChunk(const ChunkCoordinates& coordinates);
 
-    int chunkSize_;
+    int chunk_size_;
     std::map<ChunkCoordinates, Chunk> chunks_;
 };
 

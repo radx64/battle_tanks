@@ -29,7 +29,7 @@ public:
     void openWindow(std::unique_ptr<Window> window);
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
 
-    void render(sf::RenderWindow& renderWindow);
+    void render(sf::RenderWindow& render_window);
     void update();
 
     MainWindow& mainWindow();

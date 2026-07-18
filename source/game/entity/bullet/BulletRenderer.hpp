@@ -10,7 +10,7 @@ class BulletRenderer : public engine::Renderer
 {
 public:
     BulletRenderer(Bullet* bullet, sf::Texture& bulletBody);
-    void draw(sf::RenderWindow& renderWindow) override;
+    void draw(sf::RenderWindow& render_window) override;
 
 protected:
     Bullet* bullet_;
@@ -18,4 +18,3 @@ protected:
 };
 
 }  // namespace game::entity 
-

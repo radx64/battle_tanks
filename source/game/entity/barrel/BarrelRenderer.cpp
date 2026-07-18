@@ -12,18 +12,18 @@ BarrelRenderer::BarrelRenderer(Barrel* barrel, sf::Texture& barrelBody)
     barrelSprite_.setOrigin(middle_point);     
 }
 
-void BarrelRenderer::draw(sf::RenderWindow& renderWindow)
+void BarrelRenderer::draw(sf::RenderWindow& render_window)
 {
-    auto barrelRigidBody = barrel_->getRigidBody();
+    auto& barrelTransform = barrel_->transform();
 
-    barrelSprite_.setRotation(barrelRigidBody.rotation_);
+    barrelSprite_.setRotation(barrelTransform.rotation());
     barrelSprite_.setColor(sf::Color(10, 10, 10, 127));
-    barrelSprite_.setPosition(barrelRigidBody.x_ + 4, barrelRigidBody.y_+ 4);
-    renderWindow.draw(barrelSprite_);
+    barrelSprite_.setPosition(barrelTransform.position().x + 4, barrelTransform.position().y + 4);
+   render_window.draw(barrelSprite_);
 
     barrelSprite_.setColor(sf::Color(255, 255, 255, 255));
-    barrelSprite_.setPosition(barrelRigidBody.x_, barrelRigidBody.y_);
-    renderWindow.draw(barrelSprite_);
+    barrelSprite_.setPosition(barrelTransform.position().x, barrelTransform.position().y);
+   render_window.draw(barrelSprite_);
 }
 
 }  // namespace game::entity

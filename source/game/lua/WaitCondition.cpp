@@ -48,15 +48,15 @@ static float compute_move_to_throttle(float distance)
 
 WaitMoveTo::WaitMoveTo(game::entity::Tank* tank, float targetX, float targetY, float threshold)
 : tank_{tank}
-, targetX_{targetX}
-, targetY_{targetY}
+, target_x_{targetX}
+, target_y_{targetY}
 , threshold_{threshold}
 {
     if (!tank_) return;
 
-    const auto& rb = tank_->getRigidBody();
-    float dx = targetX_ - rb.x_;
-    float dy = targetY_ - rb.y_;
+    const auto& rb = tank_->transform();
+    float dx = target_x_ - rb.position().x;
+    float dy = target_y_ - rb.position().y;
     float distance = std::sqrt(dx * dx + dy * dy);
 
     if (distance <= threshold_) {
@@ -77,9 +77,9 @@ bool WaitMoveTo::update(float)
 {
     if (!tank_) return true;
 
-    const auto& rb = tank_->getRigidBody();
-    float dx = targetX_ - rb.x_;
-    float dy = targetY_ - rb.y_;
+    const auto& rb = tank_->transform();
+    float dx = target_x_ - rb.position().x;
+    float dy = target_y_ - rb.position().y;
     float distance = std::sqrt(dx * dx + dy * dy);
 
     if (distance <= threshold_) {

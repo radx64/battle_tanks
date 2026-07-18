@@ -15,8 +15,8 @@ Application::Application(const std::string_view windowName, const std::string_vi
 : window_(sf::VideoMode(windowSize.x, windowSize.y, 32), windowName.data(),
     sf::Style::Default, sf::ContextSettings(0, 0, ANTI_ALIASING_LEVEL))
 , profilingText_{"", font_, 16}
-, mouseHandler_{&timerService_}
-, realTimeStep_{}
+, mouseHandler_{&timer_service_}
+, realtime_step_{}
 , collisionSolver_{scene_}
 , logger_{logPrefix}
 , eventsProfiler_{"engine::Application::process_events", "ms"}
@@ -24,14 +24,14 @@ Application::Application(const std::string_view windowName, const std::string_vi
 , renderProfiler_{"engine::Application::render", "ms"}
 , clearProfiler_{"engine::window.clear", "ms"}
 , renderProfilingInfoProfiler_{"engine::renderProfilingInfo", "ms"}
-, displayProfiler_{"engine::window.display", "ms"}
+, display_profiler_{"engine::window.display", "ms"}
 {
     window_.setKeyRepeatEnabled(false);
     window_.setPosition(sf::Vector2i{0, 0});
 
     context_.setScene(&scene_);
-    context_.setParticleSystem(&particleSystem_);
-    context_.setTimerService(&timerService_);
+    context_.setParticleSystem(&particle_system_);
+    context_.setTimerService(&timer_service_);
 
     font_.loadFromFile("./resources/fonts/Px437_IBM_VGA_8x16.ttf");
     profilingText_.setPosition({10.f, 10.f});
@@ -72,7 +72,7 @@ int Application::run()
         while (isRunning_)
         {
             profiling_.reset();
-            realTimeStep_ = std::chrono::milliseconds(clock_.restart().asMilliseconds());
+            realtime_step_ = std::chrono::milliseconds(clock_.restart().asMilliseconds());
             PROFILE_SCOPE(eventsProfiler_,
                 processEvents();
             );
@@ -152,10 +152,10 @@ void Application::processEvents()
 
 void Application::update()
 {
-    timerService_.update(realTimeStep_);
+    timer_service_.update(realtime_step_);
     scene_.update();
-    particleSystem_.update(constantTimeStep_);
-    onUpdate(constantTimeStep_);
+    particle_system_.update(constanttime_step_);
+    onUpdate(constanttime_step_);
 }
 
 void Application::render()
@@ -172,7 +172,7 @@ void Application::render()
         renderProfilingInfo();
     );
     
-    PROFILE_SCOPE(displayProfiler_,
+    PROFILE_SCOPE(display_profiler_,
         window_.display();
     );
 }

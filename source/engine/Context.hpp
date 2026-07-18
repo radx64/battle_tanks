@@ -24,10 +24,10 @@ public:
     static void setTimerService(engine::TimerService* timerService);
 
 protected:
-    static engine::ParticleSystem* particleSystem_;
+    static engine::ParticleSystem* particle_system_;
     static engine::Scene* scene_;
     static engine::Camera* camera_;
-    static engine::TimerService* timerService_;
+    static engine::TimerService* timer_service_;
 };
 
 }  // namespace engine
