@@ -15,18 +15,18 @@ void WidgetSpy::onRender(sf::RenderTexture&)
     render_mock();
 }
 
-gui::EventStatus WidgetSpy::on(const gui::event::FocusGained&)
+engine::gui::EventStatus WidgetSpy::on(const engine::gui::event::FocusGained&)
 {
     logger_.debug("Focus gained");
     focusGained();
-    return gui::EventStatus::Consumed;
+    return engine::gui::EventStatus::Consumed;
 }
 
-gui::EventStatus WidgetSpy::on(const gui::event::FocusLost&)
+engine::gui::EventStatus WidgetSpy::on(const engine::gui::event::FocusLost&)
 {
     logger_.debug("Focus lost");
     focusLost();
-    return gui::EventStatus::Consumed;
+    return engine::gui::EventStatus::Consumed;
 }  
  
 void WidgetSpy::makeSpyFocusable()

@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "gui/Widget.hpp"
+#include "engine/gui/Widget.hpp"
 
 namespace mocks
 {
 
-class WidgetSpy : public gui::Widget
+class WidgetSpy : public engine::gui::Widget
 {
 public:
     MOCK_METHOD(void, die, ());
@@ -18,8 +18,8 @@ public:
     ~WidgetSpy() override;
 
     void onRender(sf::RenderTexture&) override;
-    gui::EventStatus on(const gui::event::FocusGained&) override;
-    gui::EventStatus on(const gui::event::FocusLost&) override;
+    engine::gui::EventStatus on(const engine::gui::event::FocusGained&) override;
+    engine::gui::EventStatus on(const engine::gui::event::FocusLost&) override;
 
     void makeSpyFocusable();
 };

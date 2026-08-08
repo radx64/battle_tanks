@@ -61,13 +61,13 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
             eventStatus = receiver->onButtonPressed(mouse_position_, button, leftDoubleClicked);
         }
 
-        if (eventStatus == gui::EventStatus::NotConsumed)
+        if (eventStatus == engine::gui::EventStatus::NotConsumed)
         {
             constexpr bool singleClicked = false;
             eventStatus = receiver->onButtonPressed(mouse_position_, button, singleClicked);
         }
 
-        if (eventStatus == gui::EventStatus::Consumed) break;
+        if (eventStatus == engine::gui::EventStatus::Consumed) break;
     }
 }
 
@@ -78,7 +78,7 @@ void MouseHandler::handleButtonReleased(const sf::Event::MouseButtonEvent& event
     for (auto* receiver : receivers_)
     {
         const auto eventStatus = receiver->onButtonReleased(mouse_position_, button);
-        if (eventStatus == gui::EventStatus::Consumed) break;
+        if (eventStatus == engine::gui::EventStatus::Consumed) break;
     }
 }
 
@@ -88,7 +88,7 @@ void MouseHandler::handleMouseMoved(const sf::Event::MouseMoveEvent& event)
     for (auto& receiver : receivers_)
     {
         const auto eventStatus = receiver->onMouseMoved(mouse_position_);
-        if (eventStatus == gui::EventStatus::Consumed) break;
+        if (eventStatus == engine::gui::EventStatus::Consumed) break;
     }
 }
 

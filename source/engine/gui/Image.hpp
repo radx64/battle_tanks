@@ -1,0 +1,30 @@
+#pragma once
+
+#include <memory>
+
+#include <SFML/Graphics.hpp>
+
+#include "engine/gui/Widget.hpp"
+
+namespace engine::gui
+{
+
+class Image : public Widget
+{
+public:
+    static std::unique_ptr<Image> create(const sf::Texture& texture);
+
+    void onRender(sf::RenderTexture& renderTexture) override;
+    void setTexture(const sf::Texture& texture);
+
+protected:
+    Image(const sf::Texture& texture);
+
+    void onPositionChange() override;
+    void onSizeChange() override;
+
+    sf::Sprite sprite_;
+    const sf::Texture& texture_;
+};
+
+}  // namespace engine::gui

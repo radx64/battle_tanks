@@ -175,7 +175,6 @@ target_link_libraries (battle_tanks
     engine_lib
     game_lib
     graphics_lib
-    gui_lib
     sfml-system
     sfml-window
     sfml-graphics

@@ -4,7 +4,7 @@
 
 #include "engine/math/Math.hpp"
 #include "game/entity/tank/Tank.hpp"
-#include "gui/FontLibrary.hpp"
+#include "engine/gui/FontLibrary.hpp"
 
 namespace game::entity
 {
@@ -50,7 +50,7 @@ void TankRenderer::drawDebugInfo(sf::RenderWindow& render_window)
     auto velocity = tank_->getRigidBody().velocity_;
 
     sf::Text debug_text;
-    debug_text.setFont(gui::FontLibrary::get("armata"));
+    debug_text.setFont(engine::gui::FontLibrary::get("armata"));
     debug_text.setPosition(x + 40, y - 20);
     debug_text.setCharacterSize(15);
     debug_text.setFillColor(sf::Color::Black);

@@ -4,23 +4,23 @@
 #include "Config.hpp"
 
 
-#include "gui/Button.hpp"
-#include "gui/EditBox.hpp"
-#include "gui/FontLibrary.hpp"
-#include "gui/Label.hpp"
-#include "gui/layout/Constraint.hpp"
-#include "gui/layout/Grid.hpp"
-#include "gui/layout/Horizontal.hpp"
-#include "gui/layout/Inset.hpp"
-#include "gui/layout/Vertical.hpp"
-#include "gui/TextureLibrary.hpp"
+#include "engine/gui/Button.hpp"
+#include "engine/gui/EditBox.hpp"
+#include "engine/gui/FontLibrary.hpp"
+#include "engine/gui/Label.hpp"
+#include "engine/gui/layout/Constraint.hpp"
+#include "engine/gui/layout/Grid.hpp"
+#include "engine/gui/layout/Horizontal.hpp"
+#include "engine/gui/layout/Inset.hpp"
+#include "engine/gui/layout/Vertical.hpp"
+#include "engine/gui/TextureLibrary.hpp"
 
 #include "calculator_demo/Calculator.hpp"
 
 namespace calculator
 {
 Application::Application()
-: gui::Application{"Calculator", "Calculator", sf::Vector2f{600.f, 500.f}}
+: engine::gui::Application{"Calculator", "Calculator", sf::Vector2f{600.f, 500.f}}
 {}
 
 void Application::onInit()
@@ -40,7 +40,7 @@ void Application::onUpdate(float time_step)
 void Application::onRender()
 {
     window_.clear(sf::Color(192, 192, 192));
-    gui::Application::onRender();
+    engine::gui::Application::onRender();
 }
 
 void Application::onEvent(const sf::Event& event)

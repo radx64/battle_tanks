@@ -20,6 +20,68 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSolver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GameObject.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/debug/ComponentTree.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/keyboard/Utils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/Base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/Constraint.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/Grid.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/Inset.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/SizeConstraintResolver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/layout/Vertical.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/scrollbar/Base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/scrollbar/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/scrollbar/Vertical.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/Horizontal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/HorizontalMousePolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/HorizontalThick.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/HorizontalThickRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/HorizontalThinRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/LayoutBuilder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/Vertical.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/VerticalMousePolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/VerticalThick.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/VerticalThickRenderingPolicy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/slider/VerticalThinRenderingPolicy.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/style/StyleFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/window/Header.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/window/MenuBar.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/window/Panel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/window/StatusBar.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Alignment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Application.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/BaseEditBox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Button.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Checkbox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Clipboard.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ContextMenu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Debug.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/EditBox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/EventReceiver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/FontHeightCache.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/FontLibrary.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/FramedSprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/GroupBox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/GUI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Image.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/KeyboardController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Label.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListBox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/MouseController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/MultiLineEditBox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressBar.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/RadioButton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/RadioButtonGroup.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ScrollView.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Selection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Text.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/TextCursor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/TextEnteredController.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Widget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/WindowManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/math/Math.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardHandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/input/KeyboardReceiver.cpp
@@ -32,7 +94,6 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Profiler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProfilingStorage.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RigidBodyDebugRenderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Scene.cpp

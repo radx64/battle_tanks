@@ -15,28 +15,28 @@ MouseController (std::function<void(float, float)> actionLeft, std::function<voi
 {}
 
 protected:
-gui::EventStatus onButtonPressed(const sf::Vector2f&, const sf::Mouse::Button&, bool) override
+engine::gui::EventStatus onButtonPressed(const sf::Vector2f&, const sf::Mouse::Button&, bool) override
 {
-    return gui::EventStatus::NotConsumed;
+    return engine::gui::EventStatus::NotConsumed;
 }
-gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
+engine::gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override
 {    
     if (button == sf::Mouse::Button::Left)
     {
         actionLeft_(mouse_postion.x, mouse_postion.y);
-        return gui::EventStatus::Consumed;
+        return engine::gui::EventStatus::Consumed;
     }
     else if (button == sf::Mouse::Button::Right)
     {
         actionRight_(mouse_postion.x, mouse_postion.y);
-        return gui::EventStatus::Consumed;
+        return engine::gui::EventStatus::Consumed;
     }
-    return gui::EventStatus::NotConsumed;
+    return engine::gui::EventStatus::NotConsumed;
 }
 
-gui::EventStatus onMouseMoved(const sf::Vector2f&) override
+engine::gui::EventStatus onMouseMoved(const sf::Vector2f&) override
 {
-    return gui::EventStatus::NotConsumed;
+    return engine::gui::EventStatus::NotConsumed;
 }
 
 std::function<void(float, float)> actionLeft_;

@@ -1,14 +1,14 @@
 #pragma once
 
-#include "gui/Application.hpp"
-#include "gui/KeyboardController.hpp"
-#include "gui/MouseController.hpp"
-#include "gui/TextEnteredController.hpp"
-#include "gui/WindowManager.hpp"
+#include "engine/gui/Application.hpp"
+#include "engine/gui/KeyboardController.hpp"
+#include "engine/gui/MouseController.hpp"
+#include "engine/gui/TextEnteredController.hpp"
+#include "engine/gui/WindowManager.hpp"
 
 namespace calculator
 {
-class Application : public gui::Application
+class Application : public engine::gui::Application
 {
 public:
     Application();

@@ -7,7 +7,7 @@ PRIVATE
 
 target_link_libraries(testing_mocks
 PRIVATE
-    gui_lib
+    engine_lib
     gtest
     gmock
 )

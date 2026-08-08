@@ -30,10 +30,10 @@
 #include "graphics/DrawTools.hpp"
 #include "graphics/TextureLibrary.hpp"
 
-#include "gui/Button.hpp"
-#include "gui/Event.hpp"
-#include "gui/Window.hpp"
-#include "gui/ContextMenu.hpp"
+#include "engine/gui/Button.hpp"
+#include "engine/gui/Event.hpp"
+#include "engine/gui/Window.hpp"
+#include "engine/gui/ContextMenu.hpp"
 
 #include "Config.hpp"
 
@@ -47,7 +47,7 @@ constexpr size_t CRATES_COUNT = 10;
 constexpr int NUMBER_OF_MEASUREMENTS = 10;
 
 Application::Application()
-: gui::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
+: engine::gui::Application("Battle tanks", "Battle tanks", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT})
 , camera_initial_size_{Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}
 , camera_world_size_{Config::WINDOW_WIDTH * 4.f, Config::WINDOW_HEIGHT * 4.f}
 , camera_initial_position_{0.f + Config::WINDOW_WIDTH / 2.f, 0.f + Config::WINDOW_HEIGHT / 2.f}
@@ -134,7 +134,7 @@ void Application::onEvent(const sf::Event& event)
 
 void Application::onUpdate(float time_step)
 {
-    gui::Application::onUpdate(time_step);
+    engine::gui::Application::onUpdate(time_step);
     clock_.restart();
     PROFILE_SCOPE(lua_profiler_,
         scripts_scheduler_.update(time_step);
@@ -193,7 +193,7 @@ void Application::onRender()
     window_.setView(window_.getDefaultView());
 
     PROFILE_SCOPE(gui_profiler_,
-        gui::Application::onRender();
+        engine::gui::Application::onRender();
     );
 
     clock_.restart();
@@ -247,13 +247,13 @@ void Application::renderGameObjects()
 
 void Application::configureGUI()
 {
-    auto quit_button = gui::TextButton::create("Quit");
+    auto quit_button = engine::gui::TextButton::create("Quit");
     quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
     quit_button->setSize(sf::Vector2f(150.f, 30.f));
     quit_button->onClick([this](){logger_.info("Quitting..."); Application::close();});
     gui().mainWindow().addChild(std::move(quit_button));
 
-    auto button = gui::TextButton::create("Help");
+    auto button = engine::gui::TextButton::create("Help");
     button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
     button->setSize(sf::Vector2f(150.f, 30.f));
     button->onClick([this](){
@@ -263,7 +263,7 @@ void Application::configureGUI()
     });
     gui().mainWindow().addChild(std::move(button));
 
-    auto reload_lua_button = gui::TextButton::create("Reload Lua scripts");
+    auto reload_lua_button = engine::gui::TextButton::create("Reload Lua scripts");
     reload_lua_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
     reload_lua_button->setSize(sf::Vector2f(150.f, 30.f));
     reload_lua_button->onClick([this](){
@@ -275,13 +275,13 @@ void Application::configureGUI()
     });
     gui().mainWindow().addChild(std::move(reload_lua_button));
 
-    auto menu_button = gui::TextButton::create("Menu");
+    auto menu_button = engine::gui::TextButton::create("Menu");
     menu_button->setPosition(sf::Vector2f(20.f, 250.f));
     menu_button->setSize(sf::Vector2f(150.f, 30.f));
     auto* menu_button_ptr = menu_button.get();
     menu_button->onClick([this, menu_button_ptr]() {
         const auto menu_position = menu_button_ptr->getGlobalPosition() + sf::Vector2f{0.f, 32.f};
-        auto menu = gui::ContextMenu::create(
+        auto menu = engine::gui::ContextMenu::create(
             {
                 {"Reset camera", [this]() { camera_.setPosition(camera_initial_position_.x, camera_initial_position_.y); camera_.resetZoom();}},
                 {"Options >", {},
@@ -304,7 +304,7 @@ void Application::configureGUI()
     gui().mainWindow().addChild(std::move(menu_button));
 
     gui().mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
-        auto menu = gui::ContextMenu::create(
+        auto menu = engine::gui::ContextMenu::create(
             {
                 {"Reload Lua", [this]() { for (auto& controller : lua_controllers_) { controller->reload(); scripts_scheduler_.add(controller->getScript()); } }},
                 {"Toggle debug", [this]() { tank_debug_mode_ = !tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_); }},

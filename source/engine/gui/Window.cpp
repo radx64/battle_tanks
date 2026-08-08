@@ -1,0 +1,374 @@
+#include "engine/gui/Window.hpp"
+
+#include <memory>
+
+#include <SFML/Graphics.hpp>
+
+#include "engine/gui/Button.hpp"
+#include "engine/gui/GUI.hpp"
+#include "engine/gui/Label.hpp"
+#include "engine/gui/TextureLibrary.hpp"
+#include "engine/gui/Widget.hpp"
+#include "engine/gui/window/Header.hpp"
+#include "engine/gui/window/MenuBar.hpp"
+#include "engine/gui/window/Panel.hpp"
+#include "engine/gui/window/StatusBar.hpp"
+#include "engine/gui/WindowManager.hpp"
+
+constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
+constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
+
+
+namespace
+{
+    engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
+    {
+        engine::gui::FramedSprite::LayoutConfig layoutConfig{
+            .cornerSizes = 
+            {
+                .topLeft        = {cornerSizes.x, cornerSizes.y},
+                .bottomRight    = {cornerSizes.x, cornerSizes.y}
+            },
+            .uvs = uvs
+        };
+
+        return layoutConfig;
+    } 
+
+    engine::gui::FramedSprite::LayoutConfig::UVs buildUVsForWindowTexture()
+    {
+        return engine::gui::FramedSprite::LayoutConfig::UVs
+        {
+            .topLeft        = {0.0f,   0.0f,  2.0f, 2.0f},
+            .topRight       = {4.0f,   0.0f,  2.0f, 2.0f},
+            .bottomLeft     = {0.0f,   4.0f,  2.0f, 2.0f},
+            .bottomRight    = {4.0f,   4.0f,  2.0f, 2.0f},
+        };
+    }
+    engine::gui::FramedSprite::LayoutConfig buildLayoutConfigForWindowTexture()
+    {
+        static auto layout = buildLayoutConfig({4.f, 4.f}, buildUVsForWindowTexture());
+        return layout;
+    }
+
+}  // namespace
+
+namespace engine::gui
+{
+
+Window::Window()
+: isDead_{false}
+, isActive_{false}
+, isMaximized_{false}
+, state_{State::Idle}
+, draggingOffset_{0.f, 0.f}
+, header_{nullptr}
+, menuBar_{nullptr}
+, windowPanel_{nullptr}
+, statusBar_{nullptr}
+, windowManager_{nullptr}
+, windowSizeToRestore_{0.f, 0.f}
+, windowPositionToRestore_{0.f, 0.f}
+, activeTexture_{TextureLibrary::instance().get("window_active")}
+, inactiveTexture_{TextureLibrary::instance().get("window_inactive")}
+, background_ {buildLayoutConfigForWindowTexture()}
+{
+    background_.setTexture(inactiveTexture_);
+    auto header = std::make_unique<window::Header>();
+    header_ = header.get();
+    header_->closeButtonAction([window = this](){window->close();});
+    header_->maximizeRestoreButtonAction([window = this]()
+    {
+        window->maximizeRestoreAction();
+    });
+    header_->setSize({getSize().x, window::config::HEADER_HEIGHT});
+    Widget::addChild(std::move(header));
+
+    auto windowPanel = std::make_unique<engine::gui::window::Panel>();
+    windowPanel_ = windowPanel.get();
+    Widget::addChild(std::move(windowPanel));
+
+    auto statusBar = std::make_unique<engine::gui::window::StatusBar>();
+    statusBar_ = statusBar.get();
+    statusBar_->setSize(getSize());
+    Widget::addChild(std::move(statusBar));
+
+    header_->setPosition(window::config::WINDOW_BORDER_OFFSET);
+
+    auto menuBar = std::make_unique<engine::gui::window::MenuBar>();
+    menuBar_ = menuBar.get();
+    Widget::addChild(std::move(menuBar));
+
+    windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
+}
+
+void Window::addChild(std::unique_ptr<Widget> widget)
+{
+    windowPanel_->addChild(std::move(widget));
+}
+
+void Window::setTitle(const std::string_view& text)
+{
+    header_->setTitle(text);
+}
+
+void Window::setMenuItems(const std::vector<ContextMenu::Item>& items)
+{
+    menuBar_->setItems(items);
+    onSizeChange();
+}
+
+void Window::setContextMenuHandler(ContextMenuHandler handler)
+{
+    contextMenuHandler_ = std::move(handler);
+}
+
+void Window::setWindowCloseHandler(WindowCloseHandler handler)
+{
+    windowCloseHandler_ = std::move(handler);
+}
+
+bool Window::isInsideHeader(const sf::Vector2f& point)
+{
+    return header_->isInside(point);
+}
+
+bool Window::isInsideResizeGadget(const sf::Vector2f point)
+{
+    return statusBar_->isInsideResizeGadget(point);
+}
+
+void Window::onRender(sf::RenderTexture& renderTexture)
+{
+    renderTexture.draw(background_);
+}
+
+bool Window::isInState(const Window::State& state) const
+{
+    return state_ == state;
+}
+
+void Window::close()
+{
+    setVisibility(false);
+    isDead_ = true;
+    if (windowCloseHandler_)
+    {
+        windowCloseHandler_();
+    }
+}
+
+bool Window::isDead() const
+{
+    return isDead_;
+}
+
+void Window::enable()
+{
+    isActive_ = true;
+    header_->enable();
+    menuBar_->enable();
+    windowPanel_->enable();
+    statusBar_->enable();
+    background_.setTexture(activeTexture_);
+    focus();
+}
+void Window::disable()
+{
+    isActive_ = false;
+    header_->disable();
+    menuBar_->disable();
+    windowPanel_->disable();
+    statusBar_->disable();
+    background_.setTexture(inactiveTexture_);
+    defocusWithAllChildren();
+}
+
+bool Window::isActive() const
+{
+    return isActive_;
+}
+
+bool Window::isIdle() const
+{
+    return isInState(Window::State::Idle);
+}
+
+EventStatus Window::on(const event::MouseButtonDoublePressed&)
+{
+    return engine::gui::EventStatus::NotConsumed;
+}
+
+EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+{
+    // TODO: check all isInside checks if are needed after changes
+    // so now GUI controller makes hitbox testing
+    // so when event comes to window or iths descendants it should be already checked that event is inside of them
+    
+    logger_.debug("Mouse button pressed event received by window, id: " + std::to_string(getId()));
+    auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+
+    if (mouseButtonPressedEvent.button == engine::gui::event::MouseButton::Right)
+    {
+        if (contextMenuHandler_ and isInside(mouse_position))
+        {
+            contextMenuHandler_(mouse_position);
+            return engine::gui::EventStatus::Consumed;
+        }
+
+        return engine::gui::EventStatus::NotConsumed;
+    }
+
+    if (mouseButtonPressedEvent.button != engine::gui::event::MouseButton::Left)
+    {
+        return engine::gui::EventStatus::NotConsumed;
+    }
+
+    // If mouse clicked on top bar and was not yet dragging window
+    if (isInsideHeader(mouse_position) and isInState(State::Idle))
+    {
+        state_ = State::Dragging;
+        gui().captureMouse(this);
+        if (isMaximized_)
+        {
+            auto x = mouse_position.x - windowSizeToRestore_.x / 2.f;
+            auto y = mouse_position.y - header_->getSize().y / 2.f;
+            setPosition({x, y});
+            setSize(windowSizeToRestore_);
+            setMaximized(false);
+        }
+        draggingOffset_ = getPosition() -  mouse_position;
+        return engine::gui::EventStatus::Consumed;
+    }
+
+    if (isInsideResizeGadget(mouse_position) and isInState(State::Idle))
+    {
+        state_ = State::Resizing;
+        gui().captureMouse(this);
+        return engine::gui::EventStatus::Consumed;
+    }
+
+    return engine::gui::EventStatus::Consumed;
+}
+
+EventStatus Window::on(const event::MouseButtonReleased&)
+{
+    if (state_ != State::Idle)
+    {
+        state_ = State::Idle;
+        gui().releaseMouse();
+        return engine::gui::EventStatus::Consumed;
+    }
+
+    return engine::gui::EventStatus::NotConsumed;
+}
+
+EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
+{
+    auto mouse_position = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+
+    if (isInState(State::Dragging))
+    {
+        setPosition(mouse_position + draggingOffset_);
+        return engine::gui::EventStatus::Consumed;
+    }
+
+    if (isInState(State::Resizing))
+    {
+        auto windowTopLeftCorner = getGlobalPosition();
+        auto newWindowSize = mouse_position - windowTopLeftCorner
+            + sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;
+        newWindowSize.x = std::max(newWindowSize.x, MINIMUM_WINDOW_WIDTH);
+        newWindowSize.y = std::max(newWindowSize.y, MINIMUM_WINDOW_HEIGHT);
+        setSize(newWindowSize);
+        return engine::gui::EventStatus::Consumed;
+    }
+
+    return engine::gui::EventStatus::NotConsumed;
+}
+
+void Window::onPositionChange()
+{
+    background_.setPosition(Widget::getGlobalPosition());
+    setMaximized(false);
+}
+
+void Window::onSizeChange()
+{
+    auto size = getSize();
+    const auto menuBarHeight = menuBar_->hasItems() ? menuBar_->getPreferredHeight() : 0.f;
+
+    header_->setSize(sf::Vector2f{size.x, window::config::HEADER_HEIGHT} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    menuBar_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
+    menuBar_->setSize(sf::Vector2f{size.x, menuBarHeight} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+
+    windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT + menuBarHeight} + window::config::WINDOW_BORDER_OFFSET);
+    windowPanel_->setSize(sf::Vector2f{size.x, size.y - window::config::HEADER_HEIGHT - menuBarHeight - window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    
+    statusBar_->setSize(sf::Vector2f{size.x, window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    statusBar_->setPosition({0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});
+
+    background_.setSize(getSize());
+    setMaximized(false);
+}
+
+void Window::maximizeRestoreAction()
+{
+    if (not isMaximized_)
+    {
+        windowSizeToRestore_ = getSize();
+        windowPositionToRestore_ = getPosition();
+
+        setSize(windowManager_->mainWindow().getSize());
+        setPosition(windowManager_->mainWindow().getPosition());
+        setMaximized(true);
+    }
+    else
+    {
+        setSize(windowSizeToRestore_);
+        setPosition(windowPositionToRestore_);
+        setMaximized(false);
+    }
+}
+
+void Window::setManager(engine::gui::WindowManager* windowManager)
+{
+    windowManager_ = windowManager;
+}
+
+void Window::setMaximized(const bool state)
+{
+    isMaximized_ = state;
+    header_->setMaximizeRestoreButtonState(state);
+}
+
+void MainWindow::setContextMenuHandler(ContextMenuHandler handler)
+{
+    contextMenuHandler_ = std::move(handler);
+}
+
+EventStatus MainWindow::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+{
+    if (mouseButtonPressedEvent.button == engine::gui::event::MouseButton::Right)
+    {
+        if (contextMenuHandler_)
+        {
+            const auto pos = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+            contextMenuHandler_(pos);
+            return engine::gui::EventStatus::Consumed;
+        }
+    }
+
+    return engine::gui::EventStatus::NotConsumed;
+}
+
+ void Window::prepareWindow()
+ {
+    // TODO add other initialization elements if needed
+    // This is called when window is ready to be open
+    // So sizes of elements and Window itself should be 
+    // known at this poitn and can be used for preparations
+    windowPanel_->setSize(windowPanel_->getSize());
+ }
+
+}  // namespace engine::gui

@@ -17,18 +17,18 @@
 
 #include "graphics/Tilemap.hpp"
 
-#include "gui/Application.hpp"
-#include "gui/Label.hpp"
-#include "gui/Window.hpp"
-#include "gui/WindowManager.hpp"
-#include "gui/MouseController.hpp"
+#include "engine/gui/Application.hpp"
+#include "engine/gui/Label.hpp"
+#include "engine/gui/Window.hpp"
+#include "engine/gui/WindowManager.hpp"
+#include "engine/gui/MouseController.hpp"
 
 #include "lua/ScriptsScheduler.hpp"
 
 namespace game 
 {
 
-class Application : public gui::Application
+class Application : public engine::gui::Application
 {
 public:
     Application();

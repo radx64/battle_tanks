@@ -16,7 +16,7 @@ PUBLIC
 
 target_link_libraries(calculator
 PUBLIC
-    gui_lib
+    engine_lib
     sfml-system
     sfml-window
     sfml-graphics)

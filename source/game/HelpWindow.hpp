@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gui/Alignment.hpp"
-#include "gui/Label.hpp"
-#include "gui/Window.hpp"
+#include "engine/gui/Alignment.hpp"
+#include "engine/gui/Label.hpp"
+#include "engine/gui/Window.hpp"
 
 constexpr std::string_view helpTextString{
     "WASD - moves view\n"
@@ -20,15 +20,15 @@ constexpr std::string_view helpTextString{
 namespace game
 {
 
-class HelpWindow : public gui::Window
+class HelpWindow : public engine::gui::Window
 {
 public:
     HelpWindow(sf::Vector2f position)
     {
         setSize(sf::Vector2f(300.0f, 300.0f));
         setPosition(position);
-        auto help_text = gui::Label::create(helpTextString.data());
-        help_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto help_text = engine::gui::Label::create(helpTextString.data());
+        help_text->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         addChild(std::move(help_text));
     }
 };

@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "gui/FontLibrary.hpp"
+#include "engine/gui/FontLibrary.hpp"
 
 namespace game::particle
 {
@@ -17,7 +17,7 @@ Say::Say(const std::string_view text, float x, float y)
     position_.y = y;
     velocity_ = sf::Vector2f{0.f, SAY_VELOCITY_Y};
 
-    text_.setFont(gui::FontLibrary::get("armata"));
+    text_.setFont(engine::gui::FontLibrary::get("armata"));
     text_.setString(std::string{text});
     text_.setCharacterSize(SAY_CHARACTER_SIZE);
     text_.setFillColor(sf::Color::White);

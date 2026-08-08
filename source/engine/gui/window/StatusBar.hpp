@@ -1,0 +1,30 @@
+#pragma once
+
+#include <SFML/Graphics.hpp>
+
+#include "engine/gui/Widget.hpp"
+
+namespace engine::gui::window
+{
+
+//TODO: add statusbar inset texture
+
+class StatusBar : public Widget
+{
+public:
+    StatusBar();
+
+    void enable();
+    void disable();
+    bool isInsideResizeGadget(const sf::Vector2f point);
+
+protected:
+    void onRender(sf::RenderTexture&render_window) override;
+    void onSizeChange() override;
+    void onPositionChange() override;
+
+    sf::Sprite resize_gadget_;
+    const sf::Texture& resize_gadget_texture_;
+};
+
+}  // namespace engine::gui::window

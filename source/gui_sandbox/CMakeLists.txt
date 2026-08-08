@@ -24,8 +24,7 @@ PRIVATE
 
 target_link_libraries(gui_sandbox
 PRIVATE
-    engine_lib
-    gui_lib
+    engine_lib    
     sfml-system
     sfml-window
     sfml-graphics)

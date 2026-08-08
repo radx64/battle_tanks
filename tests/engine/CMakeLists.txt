@@ -5,6 +5,13 @@ add_executable(battle_tanks_testing_engine
     MathTests.cpp
     TimerServiceTests.cpp
     TimerTests.cpp
+    gui/layout/ConstraintTests.cpp
+    gui/layout/GridTests.cpp
+    gui/layout/HorizontalTests.cpp
+    gui/layout/InsetTests.cpp
+    gui/layout/SizeConstraintResolverTests.cpp
+    gui/layout/VerticalTests.cpp
+    
 )
 target_include_directories(battle_tanks_testing_engine
 PRIVATE
@@ -14,9 +21,10 @@ PRIVATE
 target_link_libraries(battle_tanks_testing_engine 
 PRIVATE
     engine_lib
-    
+
     gtest
     gmock
+    testing_mocks
 
     pthread
     fmt

@@ -1,0 +1,94 @@
+#pragma once
+
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+
+#include "engine/gui/Widget.hpp"
+#include "engine/gui/FramedSprite.hpp"
+
+namespace engine::gui {class TextButton;}
+
+namespace engine::gui
+{
+
+class Overlay : public Widget
+{
+public:
+    Overlay();
+    bool isDead() const;
+    virtual void close() =  0;
+
+protected:
+    void markAsDead();
+    bool isDead_ = false;
+};
+
+class ContextMenu : public Overlay
+{
+public:
+    struct Item
+    {
+        Item() = default;
+        Item(std::string text_, std::function<void()> action_ = {}, std::vector<Item> subItems_ = {})
+            : text(std::move(text_))
+            , action(std::move(action_))
+            , subItems(std::move(subItems_))
+        {
+        }
+
+        std::string text;
+        std::function<void()> action;
+        std::vector<Item> subItems;
+    };
+
+    // TODO: refactor Item and SubmenuEntity later, they might be used when implementing
+    // other menu types like dropdowns, toolbars, etc.
+    struct SubmenuEntity
+    {
+        ptrdiff_t index;
+        ContextMenu* ptr;
+    };
+
+    static std::unique_ptr<ContextMenu> create(const std::vector<Item>& items);
+    ~ContextMenu() override;
+    
+    void open(const sf::Vector2f& globalPosition);
+    void close() override;
+    
+    void setCloseCallback(std::function<void(ContextMenu*)> callback);
+    void setOnClose(std::function<void(ContextMenu*)> callback);
+    
+protected:
+    explicit ContextMenu(const std::vector<Item>& items, ContextMenu* parent = nullptr);
+    
+    void onRender(sf::RenderTexture& renderTexture) override;
+    
+    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+
+    void onPositionChange() override;
+    void onSizeChange() override;
+    void buildMenu();
+    void closeSubmenu();
+    void onSubmenuClosed(ContextMenu* submenu);
+    
+    ContextMenu* getDeepestOpenMenu();
+    ContextMenu* getRootMenu();
+
+    void updateSubmenu(engine::gui::TextButton* buttonPtr, const Item& item, ptrdiff_t index);
+
+    std::vector<Item> items_;
+    Widget* layout_ = nullptr;
+    ContextMenu* parentMenu_;
+    SubmenuEntity openSubmenu_;
+
+    std::function<void(ContextMenu*)> closeCallback_;
+    std::function<void(ContextMenu*)> onClose_;
+
+    engine::gui::FramedSprite background_;
+};
+
+}  // namespace engine::gui

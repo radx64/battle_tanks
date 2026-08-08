@@ -1,0 +1,60 @@
+#pragma once
+
+#include <SFML/Graphics.hpp>
+
+#include "engine/Timer.hpp"
+
+#include "engine/gui/TextDisplayModifier.hpp"
+
+
+namespace engine::gui {class Text;}
+
+namespace engine::gui
+{
+
+class TextCursor : public TextDisplayModifier
+{
+public:
+    TextCursor(engine::gui::Text& text);
+    void setCharacterSize(uint32_t characterSize);
+    void setFont(const sf::Font* font);
+
+    void moveLeft(const bool moveWholeWord);
+    void moveRight(const bool moveWholeWord);
+    void moveTo(float mouseX);
+
+    void render(sf::RenderTexture& renderTexture);
+    void update();
+    uint32_t getIndex() const;
+    void setIndex(const uint32_t index);
+    sf::Vector2f getPosition() const;
+    sf::FloatRect getBounds() const;
+
+    void disable();
+    void enable();
+
+protected:
+    float getGlyphOffset(const std::string& string, const size_t index);
+    void animateCursor();
+    void startBlinkAnimation();
+    void stopBlinkAnimation();
+    
+    // Helper methods for multiline text support
+    size_t getLineFromIndex(const std::string& text, size_t index) const;
+    size_t getColumnFromIndex(const std::string& text, size_t index) const;
+    float getLineHeight() const;
+
+    uint32_t characterSize_;
+    const sf::Font* font_;
+    engine::gui::Text& text_;
+
+    uint32_t textLength_;
+    uint32_t cursorIndex_;
+    sf::RectangleShape cursorImage_;
+    bool enabled_;
+    bool isCursorVisible_;
+
+    engine::Timer blinkTimer_;
+};
+
+}  // namespace engine::gui

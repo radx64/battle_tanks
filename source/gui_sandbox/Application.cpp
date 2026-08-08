@@ -16,40 +16,40 @@
 #include "engine/Timer.hpp"
 #include "engine/TimerService.hpp"
 
-#include "gui/Button.hpp"
-#include "gui/Checkbox.hpp"
-#include "gui/ContextMenu.hpp"
-#include "gui/Debug.hpp"
-#include "gui/EditBox.hpp"
-#include "gui/FontLibrary.hpp"
-#include "gui/FramedSprite.hpp"
-#include "gui/GroupBox.hpp"
-#include "gui/Label.hpp"
-#include "gui/ListBox.hpp"
-#include "gui/layout/Grid.hpp"
-#include "gui/layout/Horizontal.hpp"
-#include "gui/layout/Inset.hpp"
-#include "gui/layout/Vertical.hpp"
-#include "gui/MultiLineEditBox.hpp"
-#include "gui/ProgressBar.hpp"
-#include "gui/RadioButton.hpp"
-#include "gui/RadioButtonGroup.hpp"
-#include "gui/scrollbar/Horizontal.hpp"
-#include "gui/scrollbar/Vertical.hpp"
-#include "gui/ScrollView.hpp"
-#include "gui/slider/Horizontal.hpp"
-#include "gui/slider/HorizontalThick.hpp"
-#include "gui/slider/Vertical.hpp"
-#include "gui/slider/VerticalThick.hpp"
+#include "engine/gui/Button.hpp"
+#include "engine/gui/Checkbox.hpp"
+#include "engine/gui/ContextMenu.hpp"
+#include "engine/gui/Debug.hpp"
+#include "engine/gui/EditBox.hpp"
+#include "engine/gui/FontLibrary.hpp"
+#include "engine/gui/FramedSprite.hpp"
+#include "engine/gui/GroupBox.hpp"
+#include "engine/gui/Label.hpp"
+#include "engine/gui/ListBox.hpp"
+#include "engine/gui/layout/Grid.hpp"
+#include "engine/gui/layout/Horizontal.hpp"
+#include "engine/gui/layout/Inset.hpp"
+#include "engine/gui/layout/Vertical.hpp"
+#include "engine/gui/MultiLineEditBox.hpp"
+#include "engine/gui/ProgressBar.hpp"
+#include "engine/gui/RadioButton.hpp"
+#include "engine/gui/RadioButtonGroup.hpp"
+#include "engine/gui/scrollbar/Horizontal.hpp"
+#include "engine/gui/scrollbar/Vertical.hpp"
+#include "engine/gui/ScrollView.hpp"
+#include "engine/gui/slider/Horizontal.hpp"
+#include "engine/gui/slider/HorizontalThick.hpp"
+#include "engine/gui/slider/Vertical.hpp"
+#include "engine/gui/slider/VerticalThick.hpp"
 
-#include "gui/TextureLibrary.hpp"
-#include "gui/Window.hpp"
+#include "engine/gui/TextureLibrary.hpp"
+#include "engine/gui/Window.hpp"
 
 using namespace std::literals;
 namespace gui_sandbox
 {
 Application::Application()
-: gui::Application{"GUI sandbox", "Main application", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
+: engine::gui::Application{"GUI sandbox", "Main application", {Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}}
 , timer_{5s, [this](){logger_.info("5 seconds heartbeat ❤️ \n");}}
 {
     auto& timerService = engine::Context::getTimerService();
@@ -62,24 +62,24 @@ void Application::onInit()
     window_.setVerticalSyncEnabled(true);
     generateBackground();
 
-    auto quitButton = gui::TextButton::create("Quit");
+    auto quitButton = engine::gui::TextButton::create("Quit");
     quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
     quitButton->setSize(sf::Vector2f(250.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     gui().mainWindow().addChild(std::move(quitButton));
 
-    auto guiDebug = gui::TextButton::create("GUI DEBUG");
+    auto guiDebug = engine::gui::TextButton::create("GUI DEBUG");
     guiDebug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
     guiDebug->setSize(sf::Vector2f(250.f, 30.f));
-    guiDebug->onClick([](){gui::debug::toggle();});
+    guiDebug->onClick([](){engine::gui::debug::toggle();});
     gui().mainWindow().addChild(std::move(guiDebug));
 
-    auto createEmptyWindowButton = gui::TextButton::create("Empty Window");
+    auto createEmptyWindowButton = engine::gui::TextButton::create("Empty Window");
     createEmptyWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
     createEmptyWindowButton->setSize(sf::Vector2f(250.f, 30.f));
 
     createEmptyWindowButton->onClick([this](){
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(300.0f, 300.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Nothing here!");
@@ -110,15 +110,15 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createEmptyWindowButton));
 
-    auto createSimpleWindowButton = gui::TextButton::create("Simple Window");
+    auto createSimpleWindowButton = engine::gui::TextButton::create("Simple Window");
     createSimpleWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
     createSimpleWindowButton->setSize(sf::Vector2f(250.f, 30.f));
 
     createSimpleWindowButton->onClick([this](){
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
 
-        auto insetLayout = gui::layout::Inset::create(gui::layout::Constraint::Percent(75.f));
-        auto simpleButton = gui::TextButton::create("THIS IS BUTTON!");
+        auto insetLayout = engine::gui::layout::Inset::create(engine::gui::layout::Constraint::Percent(75.f));
+        auto simpleButton = engine::gui::TextButton::create("THIS IS BUTTON!");
         insetLayout->addChild(std::move(simpleButton));
         window->addChild(std::move(insetLayout));
 
@@ -131,19 +131,19 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createSimpleWindowButton));
 
-    auto createProgressWindowButton = gui::TextButton::create("ProgressBar Window");
+    auto createProgressWindowButton = engine::gui::TextButton::create("ProgressBar Window");
     createProgressWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
     createProgressWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createProgressWindowButton->onClick([this](){
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(300.0f, 300.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I see some progress :D");
 
-        auto verticalLayout = gui::layout::Vertical::create();
-        auto minusButton = gui::TextButton::create("-");
-        auto progressBar = gui::ProgressBar::create();
-        auto plusButton = gui::TextButton::create("+");
+        auto verticalLayout = engine::gui::layout::Vertical::create();
+        auto minusButton = engine::gui::TextButton::create("-");
+        auto progressBar = engine::gui::ProgressBar::create();
+        auto plusButton = engine::gui::TextButton::create("+");
 
 
         progressBar->setRange(0.f, 25.f);
@@ -168,22 +168,22 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createProgressWindowButton));
 
-    auto createEditboxWindowButton = gui::TextButton::create("Edit Box Window");
+    auto createEditboxWindowButton = engine::gui::TextButton::create("Edit Box Window");
     createEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
     createEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createEditboxWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(300.0f, 300.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I can now read text from keyboard :D");
 
-        auto verticalLayout = gui::layout::Vertical::create();
-        auto button = gui::TextButton::create("CLICK HERE");
-        auto editBox = gui::EditBox::create();
-        editBox->setAlignment(gui::Alignment::VerticallyCentered);
-        auto editBox2 = gui::EditBox::create();
-        editBox2->setAlignment(gui::Alignment::VerticallyCentered);
+        auto verticalLayout = engine::gui::layout::Vertical::create();
+        auto button = engine::gui::TextButton::create("CLICK HERE");
+        auto editBox = engine::gui::EditBox::create();
+        editBox->setAlignment(engine::gui::Alignment::VerticallyCentered);
+        auto editBox2 = engine::gui::EditBox::create();
+        editBox2->setAlignment(engine::gui::Alignment::VerticallyCentered);
         button->onClick([editBoxPtr = editBox.get(), editBox2Ptr = editBox2.get(), button_ptr = button.get()]{
             button_ptr->setText(editBoxPtr->getText() + " | " + editBox2Ptr->getText());
         });
@@ -200,23 +200,23 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createEditboxWindowButton));
 
-    auto createMultiLineEditboxWindowButton = gui::TextButton::create("MultiLine EditBox Window");
+    auto createMultiLineEditboxWindowButton = engine::gui::TextButton::create("MultiLine EditBox Window");
     createMultiLineEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
     createMultiLineEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createMultiLineEditboxWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(400.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 200.f, 200.0f));
         window->setTitle("MultiLine EditBox Test");
 
-        auto verticalLayout = gui::layout::Vertical::create();
-        auto label = gui::Label::create("Multiline text input:\n(Enter for newline, arrows move cursor)");
-        label->setAlignment(gui::Alignment::HorizontallyCentered);
-        auto multilineEditBox = gui::MultiLineEditBox::create();
-        multilineEditBox->setAlignment(gui::Alignment::Left);
+        auto verticalLayout = engine::gui::layout::Vertical::create();
+        auto label = engine::gui::Label::create("Multiline text input:\n(Enter for newline, arrows move cursor)");
+        label->setAlignment(engine::gui::Alignment::HorizontallyCentered);
+        auto multilineEditBox = engine::gui::MultiLineEditBox::create();
+        multilineEditBox->setAlignment(engine::gui::Alignment::Left);
         multilineEditBox->setText("Type here...\nYou can use Enter for new lines");
-        auto button = gui::TextButton::create("Show Text");
+        auto button = engine::gui::TextButton::create("Show Text");
         
         button->onClick([multilineEditBoxPtr = multilineEditBox.get(), buttonPtr = button.get()]{
             buttonPtr->setText("Text: " + multilineEditBoxPtr->getText());
@@ -234,65 +234,65 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createMultiLineEditboxWindowButton));
 
-    auto createLayoutWindowButton = gui::TextButton::create("Simple Layout Window");
+    auto createLayoutWindowButton = engine::gui::TextButton::create("Simple Layout Window");
     createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
 
     createLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createLayoutWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
 
-        auto horizontalLayout = gui::layout::Horizontal::create();
-        auto helloButton = gui::TextButton::create("HELLO");
-        auto worldButton = gui::TextButton::create("WORLD");
+        auto horizontalLayout = engine::gui::layout::Horizontal::create();
+        auto helloButton = engine::gui::TextButton::create("HELLO");
+        auto worldButton = engine::gui::TextButton::create("WORLD");
         helloButton->onClick([this](){logger_.info("Hello?");});
         worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
         horizontalLayout->addChild(std::move(helloButton));
         horizontalLayout->addChild(std::move(worldButton));
 
         
-        auto horizontalLayout2 = gui::layout::Horizontal::create();
-        auto checkbox = gui::Checkbox::create(false);
+        auto horizontalLayout2 = engine::gui::layout::Horizontal::create();
+        auto checkbox = engine::gui::Checkbox::create(false);
         checkbox->onStateChange([this](bool state)
         {
             logger_.info(fmt::format("Checkbox 1 state changed, new state: {}", state));
         });
-        auto checkbox_text = gui::Label::create("Checkbox 1");
-        checkbox_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto checkbox_text = engine::gui::Label::create("Checkbox 1");
+        checkbox_text->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         horizontalLayout2->addChild(std::move(checkbox));
         horizontalLayout2->addChild(std::move(checkbox_text));
 
-        auto horizontalLayout3 = gui::layout::Horizontal::create();
-        auto checkbox2 = gui::Checkbox::create(false);
+        auto horizontalLayout3 = engine::gui::layout::Horizontal::create();
+        auto checkbox2 = engine::gui::Checkbox::create(false);
         checkbox2->onStateChange([this](bool state)
         {
             logger_.info(fmt::format("Checkbox 2 state changed, new state: {}", state));
         });
 
-        auto checkbox_text2 = gui::Label::create("Checkbox 2");
-        checkbox_text2->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto checkbox_text2 = engine::gui::Label::create("Checkbox 2");
+        checkbox_text2->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         horizontalLayout3->addChild(std::move(checkbox2));
         horizontalLayout3->addChild(std::move(checkbox_text2));
         
-        auto horizontalLayout4 = gui::layout::Horizontal::create();
-        auto radiobutton = gui::RadioButton::create(true);
+        auto horizontalLayout4 = engine::gui::layout::Horizontal::create();
+        auto radiobutton = engine::gui::RadioButton::create(true);
         radiobutton->setState(false);
-        auto radiobutton_text = gui::Label::create("RadioButton 1");
-        radiobutton_text->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto radiobutton_text = engine::gui::Label::create("RadioButton 1");
+        radiobutton_text->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         
-        auto horizontalLayout5 = gui::layout::Horizontal::create();
-        auto radiobutton2 = gui::RadioButton::create(true);
+        auto horizontalLayout5 = engine::gui::layout::Horizontal::create();
+        auto radiobutton2 = engine::gui::RadioButton::create(true);
         radiobutton2->setState(false);
-        auto radiobutton_text2 = gui::Label::create("RadioButton 2");
-        radiobutton_text2->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto radiobutton_text2 = engine::gui::Label::create("RadioButton 2");
+        radiobutton_text2->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         
-        auto horizontalLayout6 = gui::layout::Horizontal::create();
-        auto radiobutton3 = gui::RadioButton::create(true);
+        auto horizontalLayout6 = engine::gui::layout::Horizontal::create();
+        auto radiobutton3 = engine::gui::RadioButton::create(true);
         radiobutton3->setState(false);
-        auto radiobutton_text3 = gui::Label::create("RadioButton 3");
-        radiobutton_text3->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto radiobutton_text3 = engine::gui::Label::create("RadioButton 3");
+        radiobutton_text3->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
 
-        auto radioButtonGroup = gui::RadioButtonGroup::create();
+        auto radioButtonGroup = engine::gui::RadioButtonGroup::create();
         radioButtonGroup->add(radiobutton.get());
         radioButtonGroup->add(radiobutton2.get());
         radioButtonGroup->add(radiobutton3.get());
@@ -321,7 +321,7 @@ void Application::onInit()
         horizontalLayout6->addChild(std::move(radiobutton3));
         horizontalLayout6->addChild(std::move(radiobutton_text3));   
 
-        auto verticalLayout = gui::layout::Vertical::create();
+        auto verticalLayout = engine::gui::layout::Vertical::create();
         verticalLayout->addChild(std::move(horizontalLayout));
         verticalLayout->addChild(std::move(horizontalLayout2));
         verticalLayout->addChild(std::move(horizontalLayout3));
@@ -329,8 +329,8 @@ void Application::onInit()
         verticalLayout->addChild(std::move(horizontalLayout5));  
         verticalLayout->addChild(std::move(horizontalLayout6));  
 
-        verticalLayout->setRowSize(0, gui::layout::Constraint::Pixels(30.f));
-        verticalLayout->setRowSize(1, gui::layout::Constraint::Auto());
+        verticalLayout->setRowSize(0, engine::gui::layout::Constraint::Pixels(30.f));
+        verticalLayout->setRowSize(1, engine::gui::layout::Constraint::Auto());
 
         window->addChild(std::move(verticalLayout));
 
@@ -343,40 +343,40 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createLayoutWindowButton));
 
-    auto createGroupBoxWindowButton = gui::TextButton::create("GroupBox Window");
+    auto createGroupBoxWindowButton = engine::gui::TextButton::create("GroupBox Window");
     createGroupBoxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
     createGroupBoxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createGroupBoxWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(420.f, 320.f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 210.f, 220.f));
         window->setTitle("GroupBox demo");
 
-        auto rootLayout = gui::layout::Vertical::create();
+        auto rootLayout = engine::gui::layout::Vertical::create();
         rootLayout->setPadding(12);
 
-        auto movementGroup = gui::GroupBox::create("Movement");
-        auto movementLayout = gui::layout::Vertical::create();
+        auto movementGroup = engine::gui::GroupBox::create("Movement");
+        auto movementLayout = engine::gui::layout::Vertical::create();
         movementLayout->setPadding(8);
 
-        auto keyboardLabel = gui::Label::create("Keyboard steering");
-        keyboardLabel->setAlignment(gui::Alignment::VerticallyCentered);
-        auto mouseLabel = gui::Label::create("Mouse aiming enabled");
-        mouseLabel->setAlignment(gui::Alignment::VerticallyCentered);
+        auto keyboardLabel = engine::gui::Label::create("Keyboard steering");
+        keyboardLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
+        auto mouseLabel = engine::gui::Label::create("Mouse aiming enabled");
+        mouseLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
 
         movementLayout->addChild(std::move(keyboardLabel));
         movementLayout->addChild(std::move(mouseLabel));
         movementGroup->addChild(std::move(movementLayout));
 
-        auto weaponGroup = gui::GroupBox::create("Weapons");
-        auto weaponLayout = gui::layout::Vertical::create();
+        auto weaponGroup = engine::gui::GroupBox::create("Weapons");
+        auto weaponLayout = engine::gui::layout::Vertical::create();
         weaponLayout->setPadding(8);
 
-        auto cannonLabel = gui::Label::create("Primary cannon");
-        cannonLabel->setAlignment(gui::Alignment::VerticallyCentered);
-        auto rocketsLabel = gui::Label::create("Rocket salvo");
-        rocketsLabel->setAlignment(gui::Alignment::VerticallyCentered);
+        auto cannonLabel = engine::gui::Label::create("Primary cannon");
+        cannonLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
+        auto rocketsLabel = engine::gui::Label::create("Rocket salvo");
+        rocketsLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
 
         weaponLayout->addChild(std::move(cannonLabel));
         weaponLayout->addChild(std::move(rocketsLabel));
@@ -390,24 +390,24 @@ void Application::onInit()
     });
     gui().mainWindow().addChild(std::move(createGroupBoxWindowButton));
 
-    auto createListBoxWindowButton = gui::TextButton::create("ListBox Window");
+    auto createListBoxWindowButton = engine::gui::TextButton::create("ListBox Window");
     createListBoxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
     createListBoxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createListBoxWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(420.f, 360.f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 210.f, 240.f));
         window->setTitle("ListBox demo");
 
-        auto rootLayout = gui::layout::Vertical::create();
+        auto rootLayout = engine::gui::layout::Vertical::create();
         rootLayout->setPadding(10);
 
-        auto selectedLabel = gui::Label::create("Selected: none");
-        selectedLabel->setAlignment(gui::Alignment::VerticallyCentered);
+        auto selectedLabel = engine::gui::Label::create("Selected: none");
+        selectedLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
 
-        auto listBox = gui::ListBox::create();
-        std::vector<gui::ListBox::Item> items;
+        auto listBox = engine::gui::ListBox::create();
+        std::vector<engine::gui::ListBox::Item> items;
         items.reserve(20);
 
         for (int index = 1; index <= 20; ++index)
@@ -439,7 +439,7 @@ void Application::onInit()
     });
     gui().mainWindow().addChild(std::move(createListBoxWindowButton));
 
-    auto createNotepadWindowButton = gui::TextButton::create("Notepad Window");
+    auto createNotepadWindowButton = engine::gui::TextButton::create("Notepad Window");
     createNotepadWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
     createNotepadWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createNotepadWindowButton->onClick([this](){
@@ -476,22 +476,22 @@ void Application::onInit()
             scratchOutput << "Start typing here...\n";
         }
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         auto* windowPtr = window.get();
         window->setSize(sf::Vector2f(720.f, 520.f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 360.f, 180.f));
 
-        auto rootLayout = gui::layout::Vertical::create();
+        auto rootLayout = engine::gui::layout::Vertical::create();
         rootLayout->setPadding(8);
 
-        auto fileLabel = gui::Label::create("");
-        fileLabel->setAlignment(gui::Alignment::VerticallyCentered);
+        auto fileLabel = engine::gui::Label::create("");
+        fileLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
 
-        auto editorScrollView = gui::ScrollView::create();
-        auto multilineEditor = gui::MultiLineEditBox::create();
+        auto editorScrollView = engine::gui::ScrollView::create();
+        auto multilineEditor = engine::gui::MultiLineEditBox::create();
         auto editorPtr = multilineEditor.get();
 
-        editorScrollView->setScrollPadding(gui::ScrollPadding{0.f, 0.f, 32.f, 32.f});
+        editorScrollView->setScrollPadding(engine::gui::ScrollPadding{0.f, 0.f, 32.f, 32.f});
         editorScrollView->setContent(std::move(multilineEditor));
 
         auto updateWindowCaption = [fileLabelPtr = fileLabel.get(), windowPtr, state]() {
@@ -533,7 +533,7 @@ void Application::onInit()
 
         rootLayout->addChild(std::move(fileLabel));
         rootLayout->addChild(std::move(editorScrollView));
-        rootLayout->setRowSize(0, gui::layout::Constraint::Pixels(24.f));
+        rootLayout->setRowSize(0, engine::gui::layout::Constraint::Pixels(24.f));
 
         window->addChild(std::move(rootLayout));
         window->setMenuItems({
@@ -563,42 +563,42 @@ void Application::onInit()
     });
     gui().mainWindow().addChild(std::move(createNotepadWindowButton));
 
-    auto createFocusTestWindowButton = gui::TextButton::create("Focus Test Window");
+    auto createFocusTestWindowButton = engine::gui::TextButton::create("Focus Test Window");
     createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
     createFocusTestWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createFocusTestWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
 
-        auto hl1 = gui::layout::Horizontal::create();
-        auto edit1 = gui::EditBox::create();
-        edit1->setAlignment(gui::Alignment::Left);
-        auto button1 = gui::TextButton::create("Button1");
+        auto hl1 = engine::gui::layout::Horizontal::create();
+        auto edit1 = engine::gui::EditBox::create();
+        edit1->setAlignment(engine::gui::Alignment::Left);
+        auto button1 = engine::gui::TextButton::create("Button1");
         hl1->addChild(std::move(edit1));
         hl1->addChild(std::move(button1));
 
-        auto hl2 = gui::layout::Horizontal::create();
-        auto edit2 = gui::EditBox::create();
-        edit2->setAlignment(gui::Alignment::HorizontallyCentered);
-        auto button2 = gui::TextButton::create("Button2");
+        auto hl2 = engine::gui::layout::Horizontal::create();
+        auto edit2 = engine::gui::EditBox::create();
+        edit2->setAlignment(engine::gui::Alignment::HorizontallyCentered);
+        auto button2 = engine::gui::TextButton::create("Button2");
         hl2->addChild(std::move(edit2));
         hl2->addChild(std::move(button2));
 
-        auto hl3 = gui::layout::Horizontal::create();
-        auto edit3 = gui::EditBox::create();
-        edit3->setAlignment(gui::Alignment::Right);
-        auto button3 = gui::TextButton::create("Button3");
+        auto hl3 = engine::gui::layout::Horizontal::create();
+        auto edit3 = engine::gui::EditBox::create();
+        edit3->setAlignment(engine::gui::Alignment::Right);
+        auto button3 = engine::gui::TextButton::create("Button3");
         hl3->addChild(std::move(edit3));
         hl3->addChild(std::move(button3));
 
-        auto hl4 = gui::layout::Horizontal::create();
-        auto edit4 = gui::EditBox::create();
-        auto button4 = gui::IconButton::create(
-            gui::TextureLibrary::instance().get("checkbox_checked"));
+        auto hl4 = engine::gui::layout::Horizontal::create();
+        auto edit4 = engine::gui::EditBox::create();
+        auto button4 = engine::gui::IconButton::create(
+            engine::gui::TextureLibrary::instance().get("checkbox_checked"));
         hl4->addChild(std::move(edit4));
         hl4->addChild(std::move(button4));
 
-        auto vl = gui::layout::Vertical::create();
+        auto vl = engine::gui::layout::Vertical::create();
         vl->addChild(std::move(hl1));
         vl->addChild(std::move(hl2));
         vl->addChild(std::move(hl3));
@@ -615,31 +615,31 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createFocusTestWindowButton));
 
-    auto createGridLayoutWindowButton = gui::TextButton::create("Grid Layout Window");
+    auto createGridLayoutWindowButton = engine::gui::TextButton::create("Grid Layout Window");
     createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 600.f));
     createGridLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createGridLayoutWindowButton->onClick([this](){
 
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
 
-        auto gridLayout = gui::layout::Grid::create(2, 3);
+        auto gridLayout = engine::gui::layout::Grid::create(2, 3);
 
-        auto verticalLayout = gui::layout::Vertical::create();
-        auto horizontalLayout = gui::layout::Horizontal::create();
+        auto verticalLayout = engine::gui::layout::Vertical::create();
+        auto horizontalLayout = engine::gui::layout::Horizontal::create();
 
-        auto positionBox = gui::layout::Vertical::create();
-        auto positionLabel = gui::Label::create("Position:");
-        positionLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        auto positionValue = gui::EditBox::create();
+        auto positionBox = engine::gui::layout::Vertical::create();
+        auto positionLabel = engine::gui::Label::create("Position:");
+        positionLabel->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
+        auto positionValue = engine::gui::EditBox::create();
         positionValue->setText("0");
-        positionValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        positionValue->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         auto* positionValuePtr = positionValue.get();
 
-        auto percentageLabel = gui::Label::create("Percentage:");
-        percentageLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
-        auto ratioValue = gui::EditBox::create();
+        auto percentageLabel = engine::gui::Label::create("Percentage:");
+        percentageLabel->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
+        auto ratioValue = engine::gui::EditBox::create();
         ratioValue->setText("20");
-        ratioValue->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        ratioValue->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
         auto* ratioValuePtr = ratioValue.get();
 
         positionBox->addChild(std::move(positionLabel));
@@ -647,8 +647,8 @@ void Application::onInit()
         positionBox->addChild(std::move(percentageLabel));
         positionBox->addChild(std::move(ratioValue));
 
-        auto gridStatusLabel = gui::Label::create("");
-        gridStatusLabel->setAlignment(gui::Alignment::HorizontallyCentered | gui::Alignment::VerticallyCentered);
+        auto gridStatusLabel = engine::gui::Label::create("");
+        gridStatusLabel->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);
 
         auto updateGridStatusLabel = [gridLayoutPtr = gridLayout.get(), gridStatusLabelPtr = gridStatusLabel.get()]()
         {
@@ -660,10 +660,10 @@ void Application::onInit()
 
         updateGridStatusLabel();
 
-        auto addNewColumnButton = gui::TextButton::create("Add Column");
-        auto removeLastColumnButton = gui::TextButton::create("Remove Column");
-        auto addNewRowButton = gui::TextButton::create("Add Row");
-        auto removeLastRowButton = gui::TextButton::create("Remove Row");
+        auto addNewColumnButton = engine::gui::TextButton::create("Add Column");
+        auto removeLastColumnButton = engine::gui::TextButton::create("Remove Column");
+        auto addNewRowButton = engine::gui::TextButton::create("Add Row");
+        auto removeLastRowButton = engine::gui::TextButton::create("Remove Row");
 
         auto getPositionValue = [positionValuePtr]()
         {
@@ -702,18 +702,18 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addColumn(position, gui::layout::Constraint::Percent(ratio.value()))) return;
+                if(not  gridLayoutPtr->addColumn(position, engine::gui::layout::Constraint::Percent(ratio.value()))) return;
             }
             else
             {
-                if(not gridLayoutPtr->addColumn(position, gui::layout::Constraint::Auto())) return;
+                if(not gridLayoutPtr->addColumn(position, engine::gui::layout::Constraint::Auto())) return;
             }
 
             updateGridStatusLabel();
 
             for (size_t i = 0; i < gridLayoutPtr->getHeight(); ++i)
             {
-                auto button = gui::TextButton::create("NEW BUTTON " + std::to_string(i));
+                auto button = engine::gui::TextButton::create("NEW BUTTON " + std::to_string(i));
                 gridLayoutPtr->addChild(std::move(button));
             }
         });
@@ -754,11 +754,11 @@ void Application::onInit()
 
             if (ratio.has_value()) 
             {
-                if(not  gridLayoutPtr->addRow(position, gui::layout::Constraint::Percent(ratio.value()))) return;
+                if(not  gridLayoutPtr->addRow(position, engine::gui::layout::Constraint::Percent(ratio.value()))) return;
             }
             else
             {
-                if(not gridLayoutPtr->addRow(position, gui::layout::Constraint::Auto())) return;
+                if(not gridLayoutPtr->addRow(position, engine::gui::layout::Constraint::Auto())) return;
             }
 
 
@@ -766,7 +766,7 @@ void Application::onInit()
 
             for (size_t i = 0; i < gridLayoutPtr->getWidth(); ++i)
             {
-                auto button = gui::TextButton::create("NEW BUTTON " + std::to_string(i));
+                auto button = engine::gui::TextButton::create("NEW BUTTON " + std::to_string(i));
                 gridLayoutPtr->addChild(std::move(button));
             }
         });
@@ -798,11 +798,11 @@ void Application::onInit()
 
         verticalLayout->addChild(std::move(horizontalLayout));
 
-        auto helloButton = gui::TextButton::create("HELLO");
-        auto worldButton = gui::TextButton::create("WORLD");
-        auto somethingButton = gui::TextButton::create("SOMETHING");
-        auto cookingButton = gui::TextButton::create("IS COOKING");
-        auto hardButton = gui::TextButton::create("HARD");
+        auto helloButton = engine::gui::TextButton::create("HELLO");
+        auto worldButton = engine::gui::TextButton::create("WORLD");
+        auto somethingButton = engine::gui::TextButton::create("SOMETHING");
+        auto cookingButton = engine::gui::TextButton::create("IS COOKING");
+        auto hardButton = engine::gui::TextButton::create("HARD");
 
         helloButton->onClick([this](){logger_.info("Hello?");});
         worldButton->onClick([this](){logger_.info("Is it me you looking for?");});
@@ -828,36 +828,36 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createGridLayoutWindowButton));
 
-    auto createSliderWindowButton = gui::TextButton::create("Slider Window");
+    auto createSliderWindowButton = engine::gui::TextButton::create("Slider Window");
     createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 650.f));
     createSliderWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createSliderWindowButton->onClick([this](){
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(300.0f, 300.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Slidinnn.....");
 
-        auto gridLayout = gui::layout::Grid::create(2,6);
-        auto hProgressBar = gui::ProgressBar::create();
+        auto gridLayout = engine::gui::layout::Grid::create(2,6);
+        auto hProgressBar = engine::gui::ProgressBar::create();
         hProgressBar->setRange(0.f, 1.f);
-        gui::ProgressBar* hProgressBarPtr = hProgressBar.get();
+        engine::gui::ProgressBar* hProgressBarPtr = hProgressBar.get();
 
         gridLayout->addChild(std::move(hProgressBar));
 
-        auto hSlider = gui::slider::Horizontal::create();
+        auto hSlider = engine::gui::slider::Horizontal::create();
         hSlider->onValueChange([hProgressBarPtr](float value)
         {
             hProgressBarPtr->setValue(value);
         });
         gridLayout->addChild(std::move(hSlider));
 
-        auto hProgressBar2 = gui::ProgressBar::create();
+        auto hProgressBar2 = engine::gui::ProgressBar::create();
         hProgressBar2->setRange(0.f, 100.f);
-        gui::ProgressBar* hProgressBarPtr2 = hProgressBar2.get();
+        engine::gui::ProgressBar* hProgressBarPtr2 = hProgressBar2.get();
 
         gridLayout->addChild(std::move(hProgressBar2));
 
-        auto hSlider2 = gui::slider::Horizontal::create();
+        auto hSlider2 = engine::gui::slider::Horizontal::create();
         hSlider2->setRange(25.f, 75.f);
         hSlider2->setStep(0.25f);
         hSlider2->onValueChange([hProgressBarPtr2](float value)
@@ -866,13 +866,13 @@ void Application::onInit()
         });
         gridLayout->addChild(std::move(hSlider2));
 
-        auto vProgressBar = gui::ProgressBar::create();
+        auto vProgressBar = engine::gui::ProgressBar::create();
         vProgressBar->setRange(0.f, 1.f);
-        gui::ProgressBar* vProgressBarPtr = vProgressBar.get();
+        engine::gui::ProgressBar* vProgressBarPtr = vProgressBar.get();
 
         gridLayout->addChild(std::move(vProgressBar));
 
-        auto vSlider = gui::slider::Vertical::create();
+        auto vSlider = engine::gui::slider::Vertical::create();
         vSlider->onValueChange([vProgressBarPtr](float value)
         {
             vProgressBarPtr->setValue(value);
@@ -880,13 +880,13 @@ void Application::onInit()
         gridLayout->addChild(std::move(vSlider));
 
 
-        auto vProgressBar2 = gui::ProgressBar::create();
+        auto vProgressBar2 = engine::gui::ProgressBar::create();
         vProgressBar2->setRange(0.f, 100.f);
-        gui::ProgressBar* vProgressBarPtr2 = vProgressBar2.get();
+        engine::gui::ProgressBar* vProgressBarPtr2 = vProgressBar2.get();
 
         gridLayout->addChild(std::move(vProgressBar2));
 
-        auto vSlider2 = gui::slider::Vertical::create();
+        auto vSlider2 = engine::gui::slider::Vertical::create();
         vSlider2->setRange(25.f, 75.f);
         vSlider2->setStep(0.25f);
         vSlider2->onValueChange([vProgressBarPtr2](float value)
@@ -896,26 +896,26 @@ void Application::onInit()
         gridLayout->addChild(std::move(vSlider2));
 
 
-        auto hProgressBar3 = gui::ProgressBar::create();
+        auto hProgressBar3 = engine::gui::ProgressBar::create();
         hProgressBar3->setRange(0.f, 1.f);
-        gui::ProgressBar* hProgressBar3Ptr = hProgressBar3.get();
+        engine::gui::ProgressBar* hProgressBar3Ptr = hProgressBar3.get();
 
         gridLayout->addChild(std::move(hProgressBar3));
 
-        auto hSlider3 = gui::slider::HorizontalThick::create();
+        auto hSlider3 = engine::gui::slider::HorizontalThick::create();
         hSlider3->onValueChange([hProgressBar3Ptr](float value)
         {
             hProgressBar3Ptr->setValue(value);
         });
         gridLayout->addChild(std::move(hSlider3));
 
-        auto vProgressBar3 = gui::ProgressBar::create();
+        auto vProgressBar3 = engine::gui::ProgressBar::create();
         vProgressBar3->setRange(0.f, 1.f);
-        gui::ProgressBar* vProgressBar3Ptr = vProgressBar3.get();
+        engine::gui::ProgressBar* vProgressBar3Ptr = vProgressBar3.get();
 
         gridLayout->addChild(std::move(vProgressBar3));
 
-        auto vSlider3 = gui::slider::VerticalThick::create();
+        auto vSlider3 = engine::gui::slider::VerticalThick::create();
         vSlider3->onValueChange([vProgressBar3Ptr](float value)
         {
             vProgressBar3Ptr->setValue(value);
@@ -928,32 +928,32 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createSliderWindowButton));
 
-    auto createScrollBarWindowButton = gui::TextButton::create("Scrollbars");
+    auto createScrollBarWindowButton = engine::gui::TextButton::create("Scrollbars");
     createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 700.f));
     createScrollBarWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createScrollBarWindowButton->onClick([this](){
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Scroll scroll scroll you boat...");
 
-        auto layout = gui::layout::Grid::create(2, 2);
+        auto layout = engine::gui::layout::Grid::create(2, 2);
 
         layout->setHorizontalPadding(10);
         layout->setVerticalPadding(10);
-        layout->setColumnSize(1, gui::layout::Constraint::Pixels(40.f));
-        layout->setRowSize(1, gui::layout::Constraint::Pixels(40.f));
+        layout->setColumnSize(1, engine::gui::layout::Constraint::Pixels(40.f));
+        layout->setRowSize(1, engine::gui::layout::Constraint::Pixels(40.f));
 
-        auto text = gui::Label::create("Text sample!");
+        auto text = engine::gui::Label::create("Text sample!");
 
-        auto verticalScrollBar = gui::scrollbar::Vertical::create();
+        auto verticalScrollBar = engine::gui::scrollbar::Vertical::create();
         verticalScrollBar->setThumbRatio(0.05f);
         verticalScrollBar->onValueChange([text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
             text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * (scroll_ptr->getSize().y -  text_ptr->getTextBounds().height)});
         });
         layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
-        auto horizontalScrollBar = gui::scrollbar::Horizontal::create();
+        auto horizontalScrollBar = engine::gui::scrollbar::Horizontal::create();
         horizontalScrollBar->setThumbRatio(0.2f);
         horizontalScrollBar->onValueChange([text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
             text_ptr->setPosition(sf::Vector2f{value * (scroll_ptr->getSize().x - text_ptr->getTextBounds().width), text_ptr->getPosition().y});
@@ -967,11 +967,11 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createScrollBarWindowButton));
 
-    auto createCalculatorWindowButton = gui::TextButton::create("Calculator");
+    auto createCalculatorWindowButton = engine::gui::TextButton::create("Calculator");
     createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 750.f));
     createCalculatorWindowButton->setSize(sf::Vector2f(250.f, 30.f));
     createCalculatorWindowButton->onClick([this](){
-        auto window = std::make_unique<gui::Window>();
+        auto window = std::make_unique<engine::gui::Window>();
         window->setSize(sf::Vector2f(500.0f, 400.0f));
         window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("calc.exe");
@@ -982,11 +982,11 @@ void Application::onInit()
 
     gui().mainWindow().addChild(std::move(createCalculatorWindowButton));
 
-    auto contextMenuTestButton = gui::TextButton::create("Context menu >");
+    auto contextMenuTestButton = engine::gui::TextButton::create("Context menu >");
     contextMenuTestButton->setPosition(sf::Vector2f(50.f, 200.f));
     contextMenuTestButton->setSize(sf::Vector2f(250.f, 30.f));
     contextMenuTestButton->onClick([this, contextMenuTestButtonPtr = contextMenuTestButton.get()](){
-        auto menu = gui::ContextMenu::create({
+        auto menu = engine::gui::ContextMenu::create({
             {"Test >", {}, {
                 {"Submenu 1 >", {}, {
                     {"Sub sub menu 1"},
@@ -1009,58 +1009,58 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(contextMenuTestButton));
 
 
-    auto leftLabel = gui::Label::create("Left aligned label");
+    auto leftLabel = engine::gui::Label::create("Left aligned label");
     leftLabel->setPosition({100.f, 20.f});
     leftLabel->setSize({400.f, 40.f});
-    leftLabel->setAlignment(gui::Alignment::Left);
+    leftLabel->setAlignment(engine::gui::Alignment::Left);
 
-    auto hcenterLabel = gui::Label::create("Horizontally centered label");
+    auto hcenterLabel = engine::gui::Label::create("Horizontally centered label");
     hcenterLabel->setPosition({100.f, 80.f});
     hcenterLabel->setSize({400.f, 40.f});
-    hcenterLabel->setAlignment(gui::Alignment::HorizontallyCentered);
+    hcenterLabel->setAlignment(engine::gui::Alignment::HorizontallyCentered);
 
-    auto rightLabel = gui::Label::create("Right aligned label");
+    auto rightLabel = engine::gui::Label::create("Right aligned label");
     rightLabel->setPosition({100.f, 140.f});
     rightLabel->setSize({400.f, 40.f});
-    rightLabel->setAlignment(gui::Alignment::Right);
+    rightLabel->setAlignment(engine::gui::Alignment::Right);
 
     gui().mainWindow().addChild(std::move(leftLabel));
     gui().mainWindow().addChild(std::move(hcenterLabel));
     gui().mainWindow().addChild(std::move(rightLabel));
 
-    auto topLabel = gui::Label::create("Top aligned label");
+    auto topLabel = engine::gui::Label::create("Top aligned label");
     topLabel->setPosition({700.f, 20.f});
     topLabel->setSize({400.f, 40.f});
-    topLabel->setAlignment(gui::Alignment::Top);
+    topLabel->setAlignment(engine::gui::Alignment::Top);
 
-    auto vcenterLabel = gui::Label::create("Vertically centered label");
+    auto vcenterLabel = engine::gui::Label::create("Vertically centered label");
     vcenterLabel->setPosition({700.f, 80.f});
     vcenterLabel->setSize({400.f, 40.f});
-    vcenterLabel->setAlignment(gui::Alignment::VerticallyCentered);
+    vcenterLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
 
-    auto bottomLabel = gui::Label::create("Bottom aligned label");
+    auto bottomLabel = engine::gui::Label::create("Bottom aligned label");
     bottomLabel->setPosition({700.f, 140.f});
     bottomLabel->setSize({400.f, 40.f});
-    bottomLabel->setAlignment(gui::Alignment::Bottom);
+    bottomLabel->setAlignment(engine::gui::Alignment::Bottom);
 
     gui().mainWindow().addChild(std::move(topLabel));
     gui().mainWindow().addChild(std::move(vcenterLabel));
     gui().mainWindow().addChild(std::move(bottomLabel));
 
-    auto multilineTopAlignedLabel = gui::Label::create("Top multiline\nlabel is here\nand a bit there");
+    auto multilineTopAlignedLabel = engine::gui::Label::create("Top multiline\nlabel is here\nand a bit there");
     multilineTopAlignedLabel->setPosition({100.f, 300.f});
     multilineTopAlignedLabel->setSize({400.f, 80.f});
-    multilineTopAlignedLabel->setAlignment(gui::Alignment::Top);
+    multilineTopAlignedLabel->setAlignment(engine::gui::Alignment::Top);
 
-    auto multilineCenterAlignedLabel = gui::Label::create("Centered multiline\nlabel is here\nand a bit there");
+    auto multilineCenterAlignedLabel = engine::gui::Label::create("Centered multiline\nlabel is here\nand a bit there");
     multilineCenterAlignedLabel->setPosition({100.f, 400.f});
     multilineCenterAlignedLabel->setSize({400.f, 80.f});
-    multilineCenterAlignedLabel->setAlignment(gui::Alignment::VerticallyCentered);
+    multilineCenterAlignedLabel->setAlignment(engine::gui::Alignment::VerticallyCentered);
 
-    auto multilineBottomAlignedLabel = gui::Label::create("Bottom multiline\nlabel is here\nand a bit there");
+    auto multilineBottomAlignedLabel = engine::gui::Label::create("Bottom multiline\nlabel is here\nand a bit there");
     multilineBottomAlignedLabel->setPosition({100.f, 500.f});
     multilineBottomAlignedLabel->setSize({400.f, 80.f});
-    multilineBottomAlignedLabel->setAlignment(gui::Alignment::Bottom);
+    multilineBottomAlignedLabel->setAlignment(engine::gui::Alignment::Bottom);
 
     gui().mainWindow().addChild(std::move(multilineTopAlignedLabel));
     gui().mainWindow().addChild(std::move(multilineCenterAlignedLabel));
@@ -1069,7 +1069,7 @@ void Application::onInit()
 
 void Application::onClose()
 {
-    gui::FontLibrary::destroy();
+    engine::gui::FontLibrary::destroy();
 }
 
 void Application::onEvent(const sf::Event& event)
@@ -1081,7 +1081,7 @@ void Application::onUpdate(float time_step)
 {
     // TODO: I hate that user need do implement this manually,
     // maybe we can move some of the logic from main loop to Application class and make this automatic?
-    gui::Application::onUpdate(time_step);
+    engine::gui::Application::onUpdate(time_step);
 }
 
 void Application::generateBackground()
@@ -1128,7 +1128,7 @@ void Application::onRender()
 {
     window_.clear(sf::Color(20, 110, 158));
     window_.draw(backgroundSprite_);
-    gui::Application::onRender();
+    engine::gui::Application::onRender();
 }
 
 }  // namespace gui_sandbox

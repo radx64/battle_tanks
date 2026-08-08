@@ -10,7 +10,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
 
-  PACKAGE_LIST: "cmake g++ ninja-build lcov gcovr valgrind libxrandr-dev libopenal-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev xvfb"
+  PACKAGE_LIST: "cmake g++ ninja-build lcov gcovr valgrind libx11-dev libxrandr-dev libopenal-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev xvfb"
 
 jobs:
   build:
@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-        packages: ${{env.PACKAGE_LIST}}
-        version: 1.0
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ${{ env.PACKAGE_LIST }}
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install cross-compilation dependencies
       run: |
         sudo apt-get update
@@ -59,11 +59,11 @@ jobs:
   test-UT:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: ${{env.PACKAGE_LIST}}
-          version: 1.0
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ env.PACKAGE_LIST }}
 
       - name: Configure CMake
         run: cmake -GNinja -DBUILD_TESTS=ON -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
@@ -82,11 +82,11 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: ${{env.PACKAGE_LIST}}
-          version: 1.0
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ env.PACKAGE_LIST }}
       - name: Coverage
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
@@ -95,11 +95,11 @@ jobs:
   valgrind:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: ${{env.PACKAGE_LIST}}
-          version: 1.0
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ env.PACKAGE_LIST }}
       - name: Valgrind
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
