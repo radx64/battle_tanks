@@ -66,7 +66,7 @@ void processStaticAndDynamicObjectsCollsion(engine::RigidBody& staticObject, eng
 
     dynamic_object.angularVelocity_ -= collisionResult.tangentVelocity_ / dynamic_object.radius_;
 
-    sf::Vector2f normalVector{collisionResult.nx_,collisionResult.ny_};
+    engine::Vector2f normalVector{collisionResult.nx_, collisionResult.ny_};
     engine::math::normalizeVector(normalVector);
 
     float relativeSpeed = engine::math::dotProduct(
@@ -88,15 +88,15 @@ void processDynamicObjectsCollsion(engine::RigidBody& dynamic_object, engine::Ri
     dynamic_object.angularVelocity_ += collisionResult.tangentVelocity_ / dynamic_object.radius_;
     other_dynamic_object.angularVelocity_ -= collisionResult.tangentVelocity_  / other_dynamic_object.radius_;
 
-    sf::Vector2f object_collision_velocity = sf::Vector2f(
+    auto object_collision_velocity = engine::Vector2f{
         (dynamic_object.velocity_.x - collisionResult.impact_ * other_dynamic_object.mass_ * collisionResult.nx_),
-        (dynamic_object.velocity_.y - collisionResult.impact_ * other_dynamic_object.mass_ * collisionResult.ny_));
+        (dynamic_object.velocity_.y - collisionResult.impact_ * other_dynamic_object.mass_ * collisionResult.ny_)};
     
     dynamic_object.velocity_ = object_collision_velocity;
 
-    sf::Vector2f other_object_collision_velocity = sf::Vector2f(
+    auto other_object_collision_velocity = engine::Vector2f{
         (other_dynamic_object.velocity_.x + collisionResult.impact_ * dynamic_object.mass_ * collisionResult.nx_),
-        (other_dynamic_object.velocity_.y + collisionResult.impact_ * dynamic_object.mass_ * collisionResult.ny_));
+        (other_dynamic_object.velocity_.y + collisionResult.impact_ * dynamic_object.mass_ * collisionResult.ny_)};
     other_dynamic_object.velocity_ = other_object_collision_velocity;
 }
 

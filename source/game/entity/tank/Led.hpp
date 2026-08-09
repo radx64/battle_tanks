@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Vector2.hpp"
+
 namespace game::entity 
 {
 
@@ -21,7 +23,7 @@ public:
     void set(bool state);
     
 protected:
-    const sf::Vector2f offset_{10.0f, 15.0f};  // Offset from tank center
+    const engine::Vector2f offset_{10.0f, 15.0f};  // Offset from tank center
     sf::Color color_{sf::Color::Green};
     bool isOn_{false};
     float rate_{}; 

@@ -3,21 +3,21 @@
 namespace engine
 {
 
-sf::Vector2f& Transform::position()
+engine::Vector2f& Transform::position()
 {
     return position_;
 }
 
-const sf::Vector2f& Transform::position() const 
+const engine::Vector2f& Transform::position() const 
 {
     return position_;
 }
 
-sf::Vector2f& Transform::scale()
+engine::Vector2f& Transform::scale()
 {
     return scale_;
 }
-const sf::Vector2f& Transform::scale() const 
+const engine::Vector2f& Transform::scale() const 
 {
     return scale_; 
 }

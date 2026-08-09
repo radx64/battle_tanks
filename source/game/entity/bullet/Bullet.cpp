@@ -7,6 +7,7 @@
 #include "game/entity/bullet/BulletRenderer.hpp"
 #include "game/InstanceIdGenerator.hpp"
 #include "engine/RigidBody.hpp"
+#include "engine/Vector2.hpp"
 
 namespace game::entity
 {
@@ -41,7 +42,7 @@ Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBo
     float vx = speed * std::sin(angle_rad);
     float vy = speed * -std::cos(angle_rad);
 
-    rigid_body_->applyForce(sf::Vector2f{vx, vy});
+    rigid_body_->applyForce(engine::Vector2f{vx, vy});
 }
 
 void Bullet::onUpdate(engine::Scene& scene, float time_step)

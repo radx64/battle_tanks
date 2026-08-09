@@ -39,7 +39,6 @@ FetchContent_Declare(
   OVERRIDE_FIND_PACKAGE
 )
 
-
 FetchContent_Declare(
   sfml
   GIT_REPOSITORY https://github.com/SFML/SFML.git

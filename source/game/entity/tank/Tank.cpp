@@ -108,10 +108,10 @@ void Tank::onUpdate(engine::Scene& scene, float time_step)
     {
         auto& tankTransform = transform();
 
-        sf::Vector2f left_track = engine::math::rotatePoint(sf::Vector2f(tankTransform.position().x-15.0, tankTransform.position().y),
-            current_direction_, sf::Vector2f(tankTransform.position().x, tankTransform.position().y));
-        sf::Vector2f right_track = engine::math::rotatePoint(sf::Vector2f(tankTransform.position().x+15.0, tankTransform.position().y),
-            current_direction_, sf::Vector2f(tankTransform.position().x, tankTransform.position().y));
+        engine::Vector2f left_track = engine::math::rotatePoint(engine::Vector2f(tankTransform.position().x-15.0, tankTransform.position().y),
+            current_direction_, engine::Vector2f(tankTransform.position().x, tankTransform.position().y));
+        engine::Vector2f right_track = engine::math::rotatePoint(engine::Vector2f(tankTransform.position().x+15.0, tankTransform.position().y),
+            current_direction_, engine::Vector2f(tankTransform.position().x, tankTransform.position().y));
 
         tracks_renderer_->addTrackImprint(left_track.x, left_track.y, current_direction_);
         tracks_renderer_->addTrackImprint(right_track.x, right_track.y, current_direction_);

@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "backends/sfml/ToSf.hpp"
+
 #include "engine/Scene.hpp"
 
 namespace engine
@@ -14,12 +16,11 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
         auto x = gameObject->getRigidBody().transform().position().x;
         auto y = gameObject->getRigidBody().transform().position().y;
         float radius = gameObject->getRigidBody().radius_;
-        auto velocity = gameObject->getRigidBody().velocity_;
-
+        
         sf::CircleShape boundary(radius, 12);
         boundary.setFillColor(sf::Color(0, 0, 0, 0));
         boundary.setOutlineThickness(1);
-
+        
         if(gameObject->getRigidBody().type_ == engine::RigidBody::Type::STATIC)
         {
             boundary.setOutlineColor(sf::Color(0, 0, 255));
@@ -30,9 +31,10 @@ void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& rende
         }
         boundary.setOrigin(radius, radius);
         boundary.setPosition(x, y);
-       render_window.draw(boundary);
-    
+        render_window.draw(boundary);
+        
         // Velocity vectors
+        auto velocity = engine::toSf(gameObject->getRigidBody().velocity_);
         sf::Vertex velocityVector[] =
         {
             sf::Vertex(sf::Vector2f(x, y)),

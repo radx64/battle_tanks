@@ -64,7 +64,7 @@ void Cannon::fire()
 {
     if (cooldown_ > CANNON_COOLDOWN)
     {
-        sf::Vector2f bullet_spawn_offset = engine::math::rotatePoint(sf::Vector2f{0.f, -CANNON_LENGTH}, current_rotation_, sf::Vector2f{0.f, 0.f});
+        engine::Vector2f bullet_spawn_offset = engine::math::rotatePoint(engine::Vector2f{0.f, -CANNON_LENGTH}, current_rotation_, engine::Vector2f{0.f, 0.f});
 
         auto bullet_x = x_ + bullet_spawn_offset.x;
         auto bullet_y = y_ + bullet_spawn_offset.y;

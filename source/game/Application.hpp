@@ -49,9 +49,9 @@ protected:
 
     engine::FpsCounter fps_counter_;
 
-    const sf::Vector2f camera_initial_size_;
-    const sf::Vector2f camera_world_size_;
-    const sf::Vector2f camera_initial_position_;
+    const engine::Vector2f camera_initial_size_;
+    const engine::Vector2f camera_world_size_;
+    const engine::Vector2f camera_initial_position_;
     engine::Camera camera_;
     engine::CameraController camera_controller_;
     sf::View camera_view_;

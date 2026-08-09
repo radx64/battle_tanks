@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "engine/Vector2.hpp"
 
 namespace engine 
 {
@@ -8,7 +8,7 @@ namespace engine
 class Camera
 {
 public:
-    Camera(const sf::Vector2f& position, const sf::Vector2f& viewportSize, const sf::Vector2f& worldSize);
+    Camera(const engine::Vector2f& position, const engine::Vector2f& viewportSize, const engine::Vector2f& worldSize);
     void setPosition(const float x, const float y);
     void resetZoom();
     void moveX(const float xVelocity);
@@ -17,20 +17,20 @@ public:
     void zoomIn();
     void zoomIn(const float x, const float y);
     void zoomOut();
-    const sf::Vector2f& getPosition();
-    const sf::Vector2f& getSize();
+    const engine::Vector2f& getPosition();
+    const engine::Vector2f& getSize();
     void update(float time_step);
     float getZoom();
 
 protected:
     void alignBoundaries();
-    sf::Vector2f currentPosition_;
-    sf::Vector2f targetPosition_;
-    sf::Vector2f velocity_;
-    const sf::Vector2f originalSize_;
-    const sf::Vector2f worldSize_;
-    sf::Vector2f currentSize_;
-    sf::Vector2f targetSize_;
+    engine::Vector2f currentPosition_;
+    engine::Vector2f targetPosition_;
+    engine::Vector2f velocity_;
+    const engine::Vector2f originalSize_;
+    const engine::Vector2f worldSize_;
+    engine::Vector2f currentSize_;
+    engine::Vector2f targetSize_;
     float zoomLevel_;
 };
 

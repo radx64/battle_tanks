@@ -9,7 +9,7 @@ constexpr float ZOOM_FACTOR = 1.1;
 constexpr float MIN_ZOOM_LEVEL = 1;
 constexpr float MAX_ZOOM_LEVEL = 4;
 
-Camera::Camera(const sf::Vector2f& position, const sf::Vector2f& viewportSize, const sf::Vector2f& worldSize)
+Camera::Camera(const engine::Vector2f& position, const engine::Vector2f& viewportSize, const engine::Vector2f& worldSize)
 : currentPosition_{position}
 , targetPosition_{position}
 , velocity_{0.f, 0.f}
@@ -108,12 +108,12 @@ void Camera::zoomOut()
     alignBoundaries();
 }
 
-const sf::Vector2f& Camera::getPosition()
+const engine::Vector2f& Camera::getPosition()
 {
     return currentPosition_;
 }
 
-const sf::Vector2f& Camera::getSize()
+const engine::Vector2f& Camera::getSize()
 {
     return currentSize_;
 }

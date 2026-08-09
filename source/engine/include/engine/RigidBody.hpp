@@ -3,9 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-
 #include "engine/Transform.hpp"
+#include "engine/Vector2.hpp"
 
 namespace engine
 {
@@ -24,12 +23,12 @@ public:
         Type type);
     virtual ~RigidBody() = default;
     void update(float time_step);
-    void applyForce(sf::Vector2f force);
+    void applyForce(engine::Vector2f force);
     Transform& transform();
     const Transform& transform() const;
 
 public:
-    sf::Vector2f velocity_;
+    engine::Vector2f velocity_;
     float angularVelocity_;
 
     uint32_t id_;

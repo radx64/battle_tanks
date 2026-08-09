@@ -5,6 +5,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/GameObject.hpp"
+#include "engine/Vector2.hpp"
+
 #include "game/entity/tank/Cannon.hpp"
 #include "game/entity/tank/Led.hpp"
 
@@ -35,8 +37,8 @@ public:
 
     float current_direction_{};
     float current_throttle_{};
-    sf::Vector2f drivetrain_force_{};
-    sf::Vector2f braking_force_{};
+    engine::Vector2f drivetrain_force_{};
+    engine::Vector2f braking_force_{};
     static bool DEBUG_;
     
 protected:

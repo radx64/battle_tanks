@@ -3,6 +3,10 @@
 #include "engine/Camera.hpp"
 #include "engine/Context.hpp"
 
+// TODO: Temporary hack while moving from public sfml to implementation detail
+// engine will cover all backend types later
+#include "engine/source/backends/sfml/ToSf.hpp"
+
 namespace game::entity
 {
 
@@ -45,7 +49,7 @@ void TracksRenderer::draw(sf::RenderWindow& render_window)
 {
     auto& camera = engine::Context::getCamera();
     const auto& cameraPosition = camera.getPosition();
-    const sf::FloatRect cameraFrustum{cameraPosition - camera.getSize() / 2.f, camera.getSize()};
+    const sf::FloatRect cameraFrustum{engine::toSf(cameraPosition - camera.getSize() / 2.f), engine::toSf(camera.getSize())};
 
     chunks_.forEachExistingChunkIntersecting(
         cameraFrustum,

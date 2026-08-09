@@ -10,6 +10,10 @@
 #include "engine/Context.hpp"
 #include "graphics/TextureLibrary.hpp"
 
+// TODO: Temporary hack while moving from public sfml to implementation detail
+// engine will cover all backend types later
+#include "engine/source/backends/sfml/ToSf.hpp"
+
 namespace
 {
 
@@ -168,7 +172,7 @@ struct Tilemap::Impl
     {
         auto& camera = engine::Context::getCamera();
         const auto& cameraPosition = camera.getPosition();
-        const sf::FloatRect cameraFrustum{cameraPosition - camera.getSize() / 2.f, camera.getSize()};
+        const sf::FloatRect cameraFrustum{engine::toSf(cameraPosition - camera.getSize() / 2.f), engine::toSf(camera.getSize())};
 
         chunks.forEachChunkCoordinateIntersecting(
             cameraFrustum,

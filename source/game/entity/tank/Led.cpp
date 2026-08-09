@@ -4,6 +4,8 @@
 
 #include "engine/math/Math.hpp"
 
+#include "engine/source/backends/sfml/ToSf.hpp"
+
 namespace game::entity 
 {
 
@@ -26,10 +28,10 @@ void Led::setRotation(float rotation)
 
 void Led::draw(sf::RenderWindow& render_window)
 {
-    sf::Vector2f rotatedOffset = engine::math::rotatePoint(offset_, rotation_, sf::Vector2f(0.0f, 0.0f));
-    sf::Vector2f rotatedPosition = rotatedOffset + sf::Vector2f(x_, y_);
+    auto rotatedOffset = engine::math::rotatePoint(offset_, rotation_, engine::Vector2f{0.0f, 0.0f});
+    auto rotatedPosition = rotatedOffset + engine::Vector2f(x_, y_);
     
-    sprite_.setPosition(rotatedPosition);
+    sprite_.setPosition(engine::toSf(rotatedPosition));
     if (isOn_)
     {
         sprite_.setColor(color_);

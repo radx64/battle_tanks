@@ -4,19 +4,20 @@
 
 #include <gtest/gtest.h>
 
-#include "source/engine/math/Math.hpp"
+#include "engine/Vector2.hpp"
+#include "engine/math/Math.hpp"
 
 
-namespace sf
+namespace engine
 {
 // If you can't declare the function in the class it's important that PrintTo()
 // is defined in the SAME namespace that defines Vector2f.  C++'s look-up rules
 // rely on that.
 void PrintTo(const Vector2f& point, std::ostream* os) 
 {
-    *os << "sf::Vector2f:(" << point.x << "," << point.y << ")";
+    *os << "engine::Vector2f:(" << point.x << "," << point.y << ")";
 }
-}  // namespace sf
+}  // namespace engine
 
 namespace engine::math
 {
@@ -73,15 +74,15 @@ TEST(CrossProduct, shouldCalculateForNegativeVectors)
 TEST(NormalizeVector, shouldReturnItsLengthBeforeNormalization)
 {
     float expected_length = 2.f * std::sqrt(2.f);
-    sf::Vector2f vector = {2.f, 2.f};
+    engine::Vector2f vector = {2.f, 2.f};
     float length =  engine::math::normalizeVector(vector);
     EXPECT_FLOAT_EQ(expected_length, length);
 }
 
 TEST(NormalizeVector, shouldNormalizeVectorWithPositiveValues)
 {
-    sf::Vector2f vector = {2.f, 2.f};
-    sf::Vector2f expected_vector = {0.707107f, 0.707107f};
+    engine::Vector2f vector = {2.f, 2.f};
+    engine::Vector2f expected_vector = {0.707107f, 0.707107f};
     engine::math::normalizeVector(vector);
     EXPECT_FLOAT_EQ(expected_vector.x, vector.x);
     EXPECT_FLOAT_EQ(expected_vector.y, vector.y);
@@ -89,8 +90,8 @@ TEST(NormalizeVector, shouldNormalizeVectorWithPositiveValues)
 
 TEST(NormalizeVector, shouldNormalizeVectorWithNegativeValues)
 {
-    sf::Vector2f vector = {2.f, -5.f};
-    sf::Vector2f expected_vector = {0.37139067f, -0.92847669f};
+    engine::Vector2f vector = {2.f, -5.f};
+    engine::Vector2f expected_vector = {0.37139067f, -0.92847669f};
     engine::math::normalizeVector(vector);
     EXPECT_FLOAT_EQ(expected_vector.x, vector.x);
     EXPECT_FLOAT_EQ(expected_vector.y, vector.y);
@@ -160,11 +161,11 @@ TEST(RadiansToDegree, shouldConvertNegativeRadian)
 
 TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
 {
-    sf::Vector2f point{1.0f, 1.0f};
+    engine::Vector2f point{1.0f, 1.0f};
     float angle{90.0};
-    sf::Vector2f pivot{1.0f, 1.0f};
+    engine::Vector2f pivot{1.0f, 1.0f};
 
-    sf::Vector2f expected_result{1.0f, 1.0f};
+    engine::Vector2f expected_result{1.0f, 1.0f};
     auto result = engine::math::rotatePoint(point, angle, pivot);
 
     EXPECT_EQ(expected_result, result);
@@ -172,11 +173,11 @@ TEST(RotatePoint, shouldNotMoveIfPivotIsInSamePlaceAsPoint)
 
 TEST(RotatePoint, shouldMovePointAroundPivotWithPositiveAngle)
 {
-    sf::Vector2f point{1.0f, 0.0f};
+    engine::Vector2f point{1.0f, 0.0f};
     float angle{90.0};
-    sf::Vector2f pivot{0.0f, 0.0f};
+    engine::Vector2f pivot{0.0f, 0.0f};
 
-    sf::Vector2f expected_result{0.0f, 1.0f};
+    engine::Vector2f expected_result{0.0f, 1.0f};
     auto result = engine::math::rotatePoint(point, angle, pivot);
 
     EXPECT_NEAR(expected_result.x, result.x, 1e-6f);
@@ -185,11 +186,11 @@ TEST(RotatePoint, shouldMovePointAroundPivotWithPositiveAngle)
 
 TEST(RotatePoint, shouldMovePointAroundPivotWithNegativeAngle)
 {
-    sf::Vector2f point{0.0f, 1.0f};
+    engine::Vector2f point{0.0f, 1.0f};
     float angle{-90.0};
-    sf::Vector2f pivot{0.0f, 0.0f};
+    engine::Vector2f pivot{0.0f, 0.0f};
 
-    sf::Vector2f expected_result{1.0f, 0.0f};
+    engine::Vector2f expected_result{1.0f, 0.0f};
     auto result = engine::math::rotatePoint(point, angle, pivot);
 
     EXPECT_NEAR(expected_result.x, result.x, 1e-6f);

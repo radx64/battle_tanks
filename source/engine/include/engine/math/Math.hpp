@@ -5,19 +5,19 @@
 #include <numeric>
 #include <vector>
 
-#include <SFML/System/Vector2.hpp>
+#include "engine/Vector2.hpp"
 
 namespace engine::math
 {
 float distance(float x1, float y1, float x2, float y2);
 float dotProduct(float x1, float y1, float x2, float y2);
 float crossProduct(float x1, float y1, float x2, float y2);
-float normalizeVector(sf::Vector2f& vector);
+float normalizeVector(engine::Vector2f& vector);
 float signedFmod(float a, float n);
 float degreeToRadians(float degree);
 float radiansToDegree(float radians);
-sf::Vector2f rotatePoint(sf::Vector2f pointToRotate, float angle, sf::Vector2f pivot);
-sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t);
+engine::Vector2f rotatePoint(engine::Vector2f pointToRotate, float angle, engine::Vector2f pivot);
+engine::Vector2f lerp(const engine::Vector2f& a, const engine::Vector2f& b, float t);
 float lerp(const float a, const float b, float t);
 
 template <typename T>

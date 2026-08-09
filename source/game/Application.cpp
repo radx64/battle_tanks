@@ -79,7 +79,7 @@ void Application::onInit()
     window_.setFramerateLimit(60);
     window_.setVerticalSyncEnabled(false);
 
-    camera_view_.setCenter(camera_initial_position_);
+    camera_view_.setCenter(sf::Vector2f(camera_initial_position_.x, camera_initial_position_.y));
     configureGUI();
 
     keyboardHandler_.subscribe(std::vector<sf::Keyboard::Key>
@@ -141,8 +141,8 @@ void Application::onUpdate(float time_step)
     );
 
     camera_.update(time_step);
-    camera_view_.setCenter(camera_.getPosition());
-    camera_view_.setSize(camera_.getSize());
+    camera_view_.setCenter(sf::Vector2f(camera_.getPosition().x, camera_.getPosition().y));
+    camera_view_.setSize(sf::Vector2f(camera_.getSize().x, camera_.getSize().y));
     
     PROFILE_SCOPE(physics_profiler_,
         for (auto& object : scene_.objects())
@@ -215,7 +215,9 @@ void Application::renderGameObjects()
     objectsToDraw.reserve(scene_.objects().size());
 
     const auto& cameraPosition = camera_.getPosition();
-    sf::Rect<float> cameraFrustum {cameraPosition - camera_.getSize()/2.f , camera_.getSize() };
+    // TODO temporary solution while moving towards hiding sfml2 to backend
+    sf::Rect<float> cameraFrustum {sf::Vector2f{cameraPosition.x, cameraPosition.y} - sf::Vector2f{camera_.getSize().x, camera_.getSize().y}/2.f , 
+        sf::Vector2f{camera_.getSize().x, camera_.getSize().y} };
 
     for (auto& object : scene_.objects())
     {

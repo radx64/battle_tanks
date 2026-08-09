@@ -19,7 +19,7 @@ RigidBody::RigidBody(uint32_t id,  Transform& transform, float radius, float mas
 , type_(type)
 {}
 
-void RigidBody::applyForce(sf::Vector2f force)
+void RigidBody::applyForce(engine::Vector2f force)
 {
     velocity_ += force;
 }

@@ -23,7 +23,7 @@ float crossProduct(float x1, float y1, float x2, float y2)
   return x1 * y2 - y1 * x2;
 }
 
-float normalizeVector(sf::Vector2f& vector)
+float normalizeVector(engine::Vector2f& vector)
 {
   float norm = std::sqrt(vector.x * vector.x + vector.y * vector.y); 
   if (norm != 0.f) vector /= norm;
@@ -45,7 +45,7 @@ float radiansToDegree(float radians)
   return radians * 180.0f / std::numbers::pi_v<float>;
 }
 
-sf::Vector2f rotatePoint(sf::Vector2f point_to_rotate, float angle, sf::Vector2f pivot)
+engine::Vector2f rotatePoint(engine::Vector2f point_to_rotate, float angle, engine::Vector2f pivot)
 {
   //Rotate point uses game coordinate system so some sin and cos are swapped around so that 0deg is -Y
   float radians = degreeToRadians(angle);
@@ -66,7 +66,7 @@ sf::Vector2f rotatePoint(sf::Vector2f point_to_rotate, float angle, sf::Vector2f
   return point_to_rotate;
 }
 
-sf::Vector2f lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t)
+engine::Vector2f lerp(const engine::Vector2f& a, const engine::Vector2f& b, float t)
 {
   return a + (b - a) * t; 
 }

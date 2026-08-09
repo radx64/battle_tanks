@@ -5,6 +5,7 @@
 #include "Config.hpp"
 
 #include "engine/RigidBodyDebugRenderer.hpp"
+#include "engine/Vector2.hpp"
 
 namespace sandbox
 {
@@ -82,7 +83,7 @@ void Application::onUpdate(float time_step)
         auto& rigidBody = object->getRigidBody();
         if (rigidBody.type_ == engine::RigidBody::Type::DYNAMIC)
         {
-            object->getRigidBody().applyForce(sf::Vector2f{.0f, 10.5f});
+            object->getRigidBody().applyForce(engine::Vector2f{.0f, 10.5f});
         }
         object->update(scene_, time_step);
     }
