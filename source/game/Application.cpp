@@ -13,6 +13,7 @@
 
 #include "engine/Logger.hpp"
 #include "engine/math/Math.hpp"
+#include "engine/Rect.hpp"
 #include "engine/RigidBodyDebugRenderer.hpp"
 
 #include "game/Application.hpp"
@@ -215,19 +216,19 @@ void Application::renderGameObjects()
     objectsToDraw.reserve(scene_.objects().size());
 
     const auto& cameraPosition = camera_.getPosition();
-    // TODO temporary solution while moving towards hiding sfml2 to backend
-    sf::Rect<float> cameraFrustum {sf::Vector2f{cameraPosition.x, cameraPosition.y} - sf::Vector2f{camera_.getSize().x, camera_.getSize().y}/2.f , 
-        sf::Vector2f{camera_.getSize().x, camera_.getSize().y} };
+    const auto& cameraSize = camera_.getSize();
+    
+    engine::FloatRect cameraFrustum{cameraPosition - camera_.getSize()/2.f, cameraSize };
 
     for (auto& object : scene_.objects())
     {
         const auto rb = object->transform();
-        if (not cameraFrustum.contains(rb.position().x, rb.position().y))
+        if (not cameraFrustum.contains(rb.position()))
         {
             continue;
         }
 
-        auto distanceFromCameraCenter = engine::math::distance(cameraPosition.x, cameraPosition.y, rb.position().x, rb.position().y);
+        auto distanceFromCameraCenter = engine::math::distance(cameraPosition, rb.position());
 
         objectsToDraw.emplace_back(GameObjectWithDistanceToCamera{object.get(), distanceFromCameraCenter});
     }

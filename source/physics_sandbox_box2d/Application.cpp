@@ -152,7 +152,7 @@ void Application::drawBody(b2BodyId bodyId)
                 float targetWidthInPixels = ((polygon.vertices[1].x  - polygon.vertices[0].x)) * SCALE;
                 float targetHeightInPixels = ((polygon.vertices[2].y - polygon.vertices[1].y)) * SCALE;
                 
-                sf::FloatRect bounds = boxSprite_.getLocalBounds();
+                auto bounds = boxSprite_.getLocalBounds();
                 boxSprite_.setScale(
                     targetWidthInPixels / bounds.width,
                     targetHeightInPixels / bounds.height
@@ -199,7 +199,7 @@ void Application::drawBody(b2BodyId bodyId)
 
             circleSprite_.setOrigin(circleTexture_.getSize().x / 2.0f, circleTexture_.getSize().y / 2.0f);
 
-            sf::FloatRect bounds = circleSprite_.getLocalBounds();
+            auto bounds = circleSprite_.getLocalBounds();
             circleSprite_.setScale(
                 targetWidthInPixels / bounds.width,
                 targetHeightInPixels / bounds.height

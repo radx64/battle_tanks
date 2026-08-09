@@ -7,6 +7,11 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Vector2.hpp"
+#include "engine/Rect.hpp"
+
+#include "engine/temporary/ToSf.hpp"
+
 namespace engine
 {
 
@@ -17,7 +22,7 @@ public:
 
     struct Chunk
     {
-        sf::Vector2f position;
+        engine::Vector2f position;
         std::unique_ptr<sf::RenderTexture> target;
         sf::Sprite sprite;
         bool needsDisplay{false};
@@ -41,7 +46,7 @@ public:
             initializeChunk(chunk);
             chunk.target->display();
             chunk.sprite.setTexture(chunk.target->getTexture(), true);
-            chunk.sprite.setPosition(chunk.position);
+            chunk.sprite.setPosition(engine::temporary::toSf(chunk.position));
         }
 
         return chunk;
@@ -49,12 +54,12 @@ public:
 
     ChunkCoordinates getChunkCoordinates(float x, float y) const;
 
-    sf::FloatRect getChunkBounds(const ChunkCoordinates& coordinates) const;
+    engine::FloatRect getChunkBounds(const ChunkCoordinates& coordinates) const;
 
     int getChunkSize() const;
 
     template<typename VisitChunk>
-    void forEachExistingChunkIntersecting(const sf::FloatRect& bounds, VisitChunk visitChunk)
+    void forEachExistingChunkIntersecting(const engine::FloatRect& bounds, VisitChunk visitChunk)
     {
         for (auto& [coordinates, chunk] : chunks_)
         {
@@ -66,7 +71,7 @@ public:
     }
 
     template<typename VisitCoordinates>
-    void forEachChunkCoordinateIntersecting(const sf::FloatRect& bounds, VisitCoordinates visitCoordinates) const
+    void forEachChunkCoordinateIntersecting(const engine::FloatRect& bounds, VisitCoordinates visitCoordinates) const
     {
         const auto first_chunk = getChunkCoordinates(bounds.left, bounds.top);
         const auto last_chunk = getChunkCoordinates(bounds.left + bounds.width, bounds.top + bounds.height);
@@ -75,7 +80,7 @@ public:
 
     template<typename VisitCoordinates>
     void forEachChunkCoordinateIntersecting(
-        const sf::FloatRect& bounds,
+        const engine::FloatRect& bounds,
         const ChunkCoordinates& minCoordinates,
         const ChunkCoordinates& maxCoordinates,
         VisitCoordinates visitCoordinates) const

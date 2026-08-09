@@ -3,9 +3,7 @@
 #include "engine/Camera.hpp"
 #include "engine/Context.hpp"
 
-// TODO: Temporary hack while moving from public sfml to implementation detail
-// engine will cover all backend types later
-#include "engine/source/backends/sfml/ToSf.hpp"
+#include "engine/Rect.hpp"
 
 namespace game::entity
 {
@@ -23,7 +21,7 @@ TracksRenderer::TracksRenderer()
 
 void TracksRenderer::addTrackImprint(const int x, const int y, const float angle)
 {
-    const auto imprintBounds = sf::FloatRect(
+    const auto imprintBounds = engine::FloatRect(
         static_cast<float>(x - TRACK_BOUNDING_RADIUS),
         static_cast<float>(y - TRACK_BOUNDING_RADIUS),
         static_cast<float>(TRACK_BOUNDING_RADIUS * 2),
@@ -36,7 +34,7 @@ void TracksRenderer::addTrackImprint(const int x, const int y, const float angle
             auto& chunk = chunks_.getOrCreateChunk(coordinates);
 
             sf::RectangleShape rectangle(sf::Vector2f(TRACK_HEIGHT, TRACK_WIDTH));
-            rectangle.setPosition(sf::Vector2f(x, y) - chunk.position);
+            rectangle.setPosition(engine::temporary::toSf(engine::Vector2f(x, y) - chunk.position));
             rectangle.setFillColor(sf::Color(0, 0, 0, TRACK_IMPRINT_OPACITY));
             rectangle.setRotation(angle);
 
@@ -48,8 +46,8 @@ void TracksRenderer::addTrackImprint(const int x, const int y, const float angle
 void TracksRenderer::draw(sf::RenderWindow& render_window)
 {
     auto& camera = engine::Context::getCamera();
-    const auto& cameraPosition = camera.getPosition();
-    const sf::FloatRect cameraFrustum{engine::toSf(cameraPosition - camera.getSize() / 2.f), engine::toSf(camera.getSize())};
+    const auto& camera_position = camera.getPosition();
+    const engine::FloatRect cameraFrustum{camera_position - camera.getSize() / 2.f, camera.getSize()};
 
     chunks_.forEachExistingChunkIntersecting(
         cameraFrustum,

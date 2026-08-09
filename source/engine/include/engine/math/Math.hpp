@@ -10,6 +10,7 @@
 namespace engine::math
 {
 float distance(float x1, float y1, float x2, float y2);
+float distance(const engine::Vector2f& a, const engine::Vector2f& b);
 float dotProduct(float x1, float y1, float x2, float y2);
 float crossProduct(float x1, float y1, float x2, float y2);
 float normalizeVector(engine::Vector2f& vector);

@@ -171,8 +171,8 @@ struct Tilemap::Impl
     void draw(sf::RenderWindow& render_window)
     {
         auto& camera = engine::Context::getCamera();
-        const auto& cameraPosition = camera.getPosition();
-        const sf::FloatRect cameraFrustum{engine::toSf(cameraPosition - camera.getSize() / 2.f), engine::toSf(camera.getSize())};
+        const auto& camera_position = camera.getPosition();
+        const engine::FloatRect cameraFrustum{camera_position - camera.getSize() / 2.f, camera.getSize()};
 
         chunks.forEachChunkCoordinateIntersecting(
             cameraFrustum,
