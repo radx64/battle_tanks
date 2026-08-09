@@ -1,7 +1,7 @@
 #include "engine/Logger.hpp"
 
-#include "engine/LoggerSink.hpp"
-#include "engine/Unused.hpp"
+#include "LoggerSink.hpp"
+#include "Unused.hpp"
 
 namespace engine
 {

@@ -1,4 +1,4 @@
-#include "FramedSprite.hpp"
+#include "engine/gui/FramedSprite.hpp"
 
 namespace
 {

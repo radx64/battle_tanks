@@ -1,6 +1,6 @@
 #include "engine/gui/slider/HorizontalThinRenderingPolicy.hpp"
 
-#include "engine/Unused.hpp"
+#include "Unused.hpp"
 
 #include "engine/gui/slider/Constants.hpp"
 

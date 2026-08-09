@@ -1,12 +1,15 @@
 #include "engine/input/MouseHandler.hpp"
 
-#include "Config.hpp"
-
 #include "engine/input/MouseReceiver.hpp"
 #include "engine/TimerService.hpp"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+
+namespace 
+{
+static constexpr auto DOUBLE_CLICK_RATE = std::chrono::milliseconds(200);
+}
 
 namespace engine::input
 {
@@ -42,7 +45,7 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
     {
         auto currentTimestamp = timerService_->getCurrentTime();
 
-        if (currentTimestamp - lastLeftClickTimestamp_ < Config::DOUBLE_CLICK_RATE)
+        if (currentTimestamp - lastLeftClickTimestamp_ < DOUBLE_CLICK_RATE)
         {
             leftDoubleClicked = true;
         }

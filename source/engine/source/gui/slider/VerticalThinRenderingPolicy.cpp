@@ -1,6 +1,6 @@
 #include "engine/gui/slider/VerticalThinRenderingPolicy.hpp"
 
-#include "engine/Unused.hpp"
+#include "Unused.hpp"
 #include "engine/gui/slider/Constants.hpp"
 
 namespace engine::gui::slider

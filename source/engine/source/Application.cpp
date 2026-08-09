@@ -2,9 +2,7 @@
 
 #include <fmt/format.h>
 
-#include "Config.hpp"
 #include "engine/Logger.hpp"
-#include "LoggerSink.hpp"
 
 constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
 
