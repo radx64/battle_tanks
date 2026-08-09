@@ -5,6 +5,7 @@ add_executable(battle_tanks_testing_engine
     MathTests.cpp
     TimerServiceTests.cpp
     TimerTests.cpp
+    RectTests.cpp
     Vector2Tests.cpp
     gui/layout/ConstraintTests.cpp
     gui/layout/GridTests.cpp
