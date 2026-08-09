@@ -1,5 +1,10 @@
 add_library(engine_lib STATIC)
 
+target_precompile_headers(engine_lib
+PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/PrecompiledHeaders.hpp
+)
+
 target_link_libraries(engine_lib
 PUBLIC
     sfml-graphics
