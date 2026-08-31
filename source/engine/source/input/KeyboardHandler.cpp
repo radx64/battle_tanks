@@ -11,7 +11,7 @@
 namespace engine::input
 {
 
-void KeyboardHandler::subscribe(const std::vector<sf::Keyboard::Key>& keys, KeyboardReceiver* receiver)
+void KeyboardHandler::subscribe(const std::vector<engine::core::KeyCode>& keys, KeyboardReceiver* receiver)
 {
     for (const auto key : keys)
     {
@@ -63,9 +63,9 @@ void KeyboardHandler::unsubscribe(TextEnteredReceiver* receiver)
         std::end(textEnteredReceivers_));
 }
 
-void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
+void KeyboardHandler::handleKeyPressed(const engine::events::KeyPressedEvent& event)
 {
-    const auto key = event.code;
+    const auto key = event.getKeyCode();
     keysStates_[key] = true;
 
     auto receivers_for_key = keysWithReceivers_.find(key);
@@ -85,9 +85,9 @@ void KeyboardHandler::handleKeyPressed(const sf::Event::KeyEvent& event)
 
 }
 
-void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
+void KeyboardHandler::handleKeyReleased(const engine::events::KeyReleasedEvent& event)
 {
-    const auto key = event.code;
+    const auto key = event.getKeyCode();
     keysStates_[key] = false;
 
     auto receivers_for_key = keysWithReceivers_.find(key);
@@ -106,15 +106,15 @@ void KeyboardHandler::handleKeyReleased(const sf::Event::KeyEvent& event)
     }
 }
 
-void KeyboardHandler::handleTextEntered(const sf::Event::TextEvent& event)
+void KeyboardHandler::handleTextEntered(const engine::events::TextEnteredEvent& event)
 {
     for (auto* receiver : textEnteredReceivers_)
     {
-        receiver->onTextEntered(event.unicode);
+        receiver->onTextEntered(event.getUnicode());
     }
 }
 
-bool KeyboardHandler::isKeyPressed(sf::Keyboard::Key key)
+bool KeyboardHandler::isKeyPressed(const engine::core::KeyCode key)
 {
     auto iter = keysStates_.find(key);
     if (iter != keysStates_.end())

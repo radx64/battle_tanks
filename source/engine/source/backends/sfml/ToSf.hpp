@@ -1,4 +1,4 @@
-
+#pragma once
 #include <SFML/System/Vector2.hpp>
 
 #include "engine/Vector2.hpp"

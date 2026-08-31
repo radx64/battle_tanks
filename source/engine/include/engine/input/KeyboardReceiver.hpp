@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Window/Event.hpp>
+#include "engine/events/KeyEvent.hpp"
 
 namespace engine::input {class KeyboardHandler;}
 
@@ -15,8 +15,8 @@ public:
 
 friend class KeyboardHandler;
 protected:
-    virtual void onKeyPressed(const sf::Event::KeyEvent& keyEvent) = 0;
-    virtual void onKeyReleased(const sf::Event::KeyEvent& keyEvent) = 0;
+    virtual void onKeyPressed(const engine::events::KeyPressedEvent& keyEvent) = 0;
+    virtual void onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent) = 0;
 
     // attach is used by keyboardhandler to properly setup destruction of receiver
     void attach(KeyboardHandler* handler);

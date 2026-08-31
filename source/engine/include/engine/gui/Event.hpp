@@ -4,8 +4,6 @@
 
 #include <cstdint>
 
-#include <bitset>
-
 #include <SFML/Window/Keyboard.hpp>
 
 namespace engine::gui::event
@@ -55,34 +53,6 @@ namespace engine::gui::event
 
     struct MouseLeft
     {
-    };
-
-    using Key = sf::Keyboard::Key;
-
-    struct KeyModifiers
-    {
-        bool alt;
-        bool shift;
-        bool control;
-        bool system;
-    };
-
-    /* Keyboard events */
-    struct KeyboardKeyPressed
-    {
-        Key key;
-        KeyModifiers modifiers;
-    };
-
-    struct KeyboardKeyReleased
-    {
-        Key key;
-        KeyModifiers modifiers;
-    };
-
-    struct TextEntered
-    {
-        uint32_t unicode;
     };
 
     struct FocusChange

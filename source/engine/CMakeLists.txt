@@ -28,6 +28,10 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/source/FpsCounter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/GameObject.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/core/MouseCode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/events/KeyEvent.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/source/gui/debug/ComponentTree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/gui/keyboard/Utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/gui/layout/Base.cpp

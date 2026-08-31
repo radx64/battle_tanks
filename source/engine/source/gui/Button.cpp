@@ -113,13 +113,13 @@ EventStatus ButtonBase::on(const event::MouseLeft&)
     return EventStatus::Consumed;
 }
 
-EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+EventStatus ButtonBase::on(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
-    auto& key = keyboardKeyPressedEvent.key;
+    const auto key = keyboardKeyPressedEvent.getKeyCode();
 
-    if (key == engine::gui::event::Key::Space || key == engine::gui::event::Key::Enter)
+    if (key == engine::core::KeyCode::Space || key == engine::core::KeyCode::Enter)
     {
         state_.pressed = true;
         updateTexture();
@@ -129,13 +129,13 @@ EventStatus ButtonBase::on(const event::KeyboardKeyPressed& keyboardKeyPressedEv
     return EventStatus::NotConsumed;
 }
 
-EventStatus ButtonBase::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus ButtonBase::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
 
-    auto& key = keyboardKeyReleasedEvent.key;
+    const auto key = keyboardKeyReleasedEvent.getKeyCode();
 
-    if (key == engine::gui::event::Key::Space || key == engine::gui::event::Key::Enter)
+    if (key == engine::core::KeyCode::Space || key == engine::core::KeyCode::Enter)
     {
         state_.pressed = false;
         updateTexture();

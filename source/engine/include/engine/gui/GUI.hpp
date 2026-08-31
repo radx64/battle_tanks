@@ -23,9 +23,9 @@ public:
     EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
     EventStatus receive(const event::FocusChange& focusChangeEvent) override;
-    EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent) override;
-    EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
-    EventStatus receive(const event::TextEntered& textEnteredEvent) override;
+    EventStatus receive(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent) override;
+    EventStatus receive(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
+    EventStatus receive(const engine::events::TextEnteredEvent& textEnteredEvent) override;
 
     GUI(const sf::Vector2f& mainWindowSize);
     virtual ~GUI();

@@ -12,7 +12,7 @@ public:
     TextEnteredController(engine::gui::EventReceiver* receiver);
 
 protected:
-    void onTextEntered(const uint32_t unicode) override;
+    void onTextEntered(const engine::events::TextEnteredEvent& event) override;
 
     engine::gui::EventReceiver* receiver_;
 };

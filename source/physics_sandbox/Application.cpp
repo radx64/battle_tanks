@@ -70,7 +70,7 @@ void Application::onClose()
 
 }
 
-void Application::onEvent(const sf::Event& event)
+void Application::onEvent(engine::events::Event& event)
 {
     (void) event;
 }
@@ -93,7 +93,7 @@ void Application::onUpdate(float time_step)
 
 void Application::onRender()
 {
-    engine::RigidBodyDebugRenderer::debug(scene_, window_);
+    engine::RigidBodyDebugRenderer::debug(scene_, window_.getNativeHandle());
 }
 
 }  // namespace sandbox

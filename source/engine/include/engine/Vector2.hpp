@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/format.h>
+
 namespace engine
 {
 
@@ -62,5 +64,12 @@ using Vector2u = engine::Vector2<unsigned int>;
 using Vec2u = Vector2u;
 using Vector2f = engine::Vector2<float>;
 using Vec2f = Vector2f;
+
+template <typename T>
+std::string toString(const engine::Vector2<T> vector)
+{
+    return fmt::format("[x={}, y={}]", vector.x, vector.y);
+}
+
 
 }  // namespace engine

@@ -129,17 +129,17 @@ EventStatus Widget::receive(const event::MouseLeft& mouseLeftEvent)
     return processEvent(mouseLeftEvent);
 }
 
-EventStatus Widget::receive(const event::KeyboardKeyPressed& keyboardKeyPressed)
+EventStatus Widget::receive(const engine::events::KeyPressedEvent& keyboardKeyPressed)
 {
     return processEvent(keyboardKeyPressed);
 }
 
-EventStatus Widget::receive(const event::KeyboardKeyReleased& keyboardKeyReleased)
+EventStatus Widget::receive(const engine::events::KeyReleasedEvent& keyboardKeyReleased)
 {
     return processEvent(keyboardKeyReleased);
 }
 
-EventStatus Widget::receive(const event::TextEntered& textEntered)
+EventStatus Widget::receive(const engine::events::TextEnteredEvent& textEntered)
 {
     return processEvent(textEntered);
 }
@@ -177,9 +177,9 @@ EMPTY_ON_METHOD(Widget, event::MouseButtonReleased);
 EMPTY_ON_METHOD(Widget, event::MouseEntered);
 EMPTY_ON_METHOD(Widget, event::MouseLeft);
 
-EMPTY_ON_METHOD(Widget, event::KeyboardKeyPressed);
-EMPTY_ON_METHOD(Widget, event::KeyboardKeyReleased);
-EMPTY_ON_METHOD(Widget, event::TextEntered);
+EMPTY_ON_METHOD(Widget, engine::events::KeyPressedEvent);
+EMPTY_ON_METHOD(Widget, engine::events::KeyReleasedEvent);
+EMPTY_ON_METHOD(Widget, engine::events::TextEnteredEvent);
 
 EMPTY_ON_METHOD(Widget, event::FocusLost);
 EMPTY_ON_METHOD(Widget, event::FocusGained);

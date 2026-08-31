@@ -22,7 +22,7 @@ protected:
 private:
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
+    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressed) override;
 };
 
 }  // namespace engine::gui

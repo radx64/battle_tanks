@@ -85,13 +85,13 @@ bool Checkbox::isChecked() const
     return isChecked_;
 }
 
-EventStatus Checkbox::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus Checkbox::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
 
-    auto& key = keyboardKeyReleasedEvent.key;
+    auto key = keyboardKeyReleasedEvent.getKeyCode();
 
-    if (key == engine::gui::event::Key::Space || key == engine::gui::event::Key::Enter)
+    if (key == engine::core::KeyCode::Space || key == engine::core::KeyCode::Enter)
     {
         setState(!isChecked());
         return EventStatus::Consumed;

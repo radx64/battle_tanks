@@ -269,7 +269,7 @@ EventStatus GUI::receive(const event::FocusChange& focusChangeEvent)
     return EventStatus::Consumed;
 }
 
-EventStatus GUI::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEvent)
+EventStatus GUI::receive(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent)
 {
     if (focused_)
     {
@@ -278,7 +278,7 @@ EventStatus GUI::receive(const event::KeyboardKeyPressed& keyboardKeyPressedEven
     return EventStatus::NotConsumed;
 }
 
-EventStatus GUI::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus GUI::receive(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
 {
     if (focused_)
     {
@@ -287,7 +287,7 @@ EventStatus GUI::receive(const event::KeyboardKeyReleased& keyboardKeyReleasedEv
     return EventStatus::NotConsumed;
 }
 
-EventStatus GUI::receive(const event::TextEntered& textEnteredEvent)
+EventStatus GUI::receive(const engine::events::TextEnteredEvent& textEnteredEvent)
 {
     if (focused_)
     {

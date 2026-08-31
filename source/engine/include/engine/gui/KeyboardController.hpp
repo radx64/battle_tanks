@@ -13,8 +13,8 @@ public:
     KeyboardController(engine::gui::EventReceiver* receiver);
 
 protected:
-    void onKeyPressed(const sf::Event::KeyEvent& keyEvent) override;
-    void onKeyReleased(const sf::Event::KeyEvent& keyEvent) override;
+    void onKeyPressed(const engine::events::KeyPressedEvent& keyEvent) override;
+    void onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent) override;
     
     engine::gui::EventReceiver* receiver_;
 };

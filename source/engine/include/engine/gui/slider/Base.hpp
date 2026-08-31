@@ -50,7 +50,7 @@ protected:
 
     float normalizeValue();
 
-    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
+    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
     
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
@@ -191,17 +191,17 @@ float Base<MouseHandlingPolicy, RenderingPolicy>::normalizeValue()
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
-    auto& key = keyboardKeyReleasedEvent.key;
+    const auto key = keyboardKeyReleasedEvent.getKeyCode();
 
-    if (key == engine::gui::event::Key::Left)
+    if (key == engine::core::KeyCode::Left)
     {
         setValue(getValue() - step_);
     }
-    else if (key == engine::gui::event::Key::Right)
+    else if (key == engine::core::KeyCode::Right)
     {
         setValue(getValue() + step_);
     }

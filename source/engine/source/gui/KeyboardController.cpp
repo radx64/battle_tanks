@@ -9,20 +9,13 @@ KeyboardController::KeyboardController(engine::gui::EventReceiver* receiver)
 : receiver_(receiver)
 {}
 
-void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
+void KeyboardController::onKeyPressed(const engine::events::KeyPressedEvent& keyEvent)
 {
-    receiver_->receive(engine::gui::event::KeyboardKeyPressed{
-        .key = keyEvent.code,
-        .modifiers = {
-            .alt = keyEvent.alt,
-            .shift = keyEvent.shift,
-            .control = keyEvent.control,
-            .system = keyEvent.system,
-        }});
+    receiver_->receive(keyEvent);
 
-    if (keyEvent.code == engine::gui::event::Key::Tab)
+    if (keyEvent.getKeyCode() == engine::core::KeyCode::Tab)
     {
-        if (keyEvent.shift)
+        if (keyEvent.getModifiers().shift)
         {
             receiver_->receive(engine::gui::event::FocusChange{
                 .type = engine::gui::event::FocusChange::Type::Previous});
@@ -35,21 +28,14 @@ void KeyboardController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
     }
 }
 
-void KeyboardController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
+void KeyboardController::onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent)
 {
-    if (keyEvent.code == engine::gui::event::Key::F12)
+    if (keyEvent.getKeyCode() == engine::core::KeyCode::F12)
     {
         engine::gui::debug::toggle();
     } 
 
-    receiver_->receive(engine::gui::event::KeyboardKeyReleased{
-        .key = keyEvent.code,
-        .modifiers = {
-            .alt = keyEvent.alt,
-            .shift = keyEvent.shift,
-            .control = keyEvent.control,
-            .system = keyEvent.system,
-        }});
+    receiver_->receive(keyEvent);
 }
 
 }  // namespace engine::gui

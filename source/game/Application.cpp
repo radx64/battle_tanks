@@ -55,7 +55,7 @@ Application::Application()
 , camera_{camera_initial_position_, camera_initial_size_, camera_world_size_}
 , camera_controller_{&camera_}
 , camera_view_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
-, waypoint_mouse_controller_{waypoints_, window_, camera_view_}
+, waypoint_mouse_controller_{waypoints_, window_.getNativeHandle(), camera_view_}
 , fps_average_{NUMBER_OF_MEASUREMENTS}
 , draw_profiler_{"game::Application::DRAW", "ms"}
 , physics_profiler_{"game::Application::PHYSICS", "ms"}
@@ -77,18 +77,18 @@ void Application::onInit()
     tilemap_ = std::make_unique<graphics::Tilemap>();
     mouseHandler_.subscribe(&waypoint_mouse_controller_);
 
-    window_.setFramerateLimit(60);
-    window_.setVerticalSyncEnabled(false);
+    window_.getNativeHandle().setFramerateLimit(60);
+    window_.getNativeHandle().setVerticalSyncEnabled(false);
 
     camera_view_.setCenter(sf::Vector2f(camera_initial_position_.x, camera_initial_position_.y));
     configureGUI();
 
-    keyboardHandler_.subscribe(std::vector<sf::Keyboard::Key>
+    keyboardHandler_.subscribe(std::vector<engine::core::KeyCode>
     {
-        sf::Keyboard::W,
-        sf::Keyboard::S,
-        sf::Keyboard::A,
-        sf::Keyboard::D
+        engine::core::KeyCode::W,
+        engine::core::KeyCode::S,
+        engine::core::KeyCode::A,
+        engine::core::KeyCode::D
     }, &camera_controller_);
 
     spawnSomeTanks();
@@ -100,37 +100,38 @@ void Application::onClose()
     logger_.info("Goodbye!");
 }
 
-void Application::onEvent(const sf::Event& event)
+void Application::onEvent(engine::events::Event& event)
 {
-    switch (event.type)
-    {
-        case sf::Event::KeyReleased :
-        {
-            switch (event.key.code)
-            {
-                case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
-                case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
-                case sf::Keyboard::C        :   waypoints_.clear(); break;
-                case sf::Keyboard::F8       :   {constanttime_step_ = 1.0f/300.f;} break;
-                case sf::Keyboard::F9       :   {constanttime_step_ = 1.0f/150.f;} break;
-                case sf::Keyboard::F10      :   {constanttime_step_ = 1.0f/30.f;} break;
-                case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
-                case sf::Keyboard::F12      :   {tank_debug_mode_=!tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_);} break;
-                case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
-                case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
-                case sf::Keyboard::Q        :   Application::close();
-                default                     :   {}
-            }
-            break;
-        }
+    (void) event;
+    // switch (event.type)
+    // {
+    //     case sf::Event::KeyReleased :
+    //     {
+    //         switch (event.key.code)
+    //         {
+    //             case sf::Keyboard::PageUp   :   camera_.zoomIn(); break;
+    //             case sf::Keyboard::PageDown :   camera_.zoomOut(); break;
+    //             case sf::Keyboard::C        :   waypoints_.clear(); break;
+    //             case sf::Keyboard::F8       :   {constanttime_step_ = 1.0f/300.f;} break;
+    //             case sf::Keyboard::F9       :   {constanttime_step_ = 1.0f/150.f;} break;
+    //             case sf::Keyboard::F10      :   {constanttime_step_ = 1.0f/30.f;} break;
+    //             case sf::Keyboard::F11      :   {rigid_body_debug_ = !rigid_body_debug_;} break;
+    //             case sf::Keyboard::F12      :   {tank_debug_mode_=!tank_debug_mode_; entity::Tank::setDebug(tank_debug_mode_);} break;
+    //             case sf::Keyboard::T        :   tracks_renderer_.clear(); break;
+    //             case sf::Keyboard::F        :   if(!waypoints_.empty()) waypoints_.pop_back(); break;
+    //             case sf::Keyboard::Q        :   Application::close();
+    //             default                     :   {}
+    //         }
+    //         break;
+    //     }
 
-        case sf::Event::MouseWheelMoved :
-        {
-            if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
-            if (event.mouseWheel.delta < 0) camera_.zoomOut();
-        }
-        default : {}
-    }
+    //     case sf::Event::MouseWheelMoved :
+    //     {
+    //         if (event.mouseWheel.delta > 0) camera_.zoomIn(event.mouseWheel.x, event.mouseWheel.y);
+    //         if (event.mouseWheel.delta < 0) camera_.zoomOut();
+    //     }
+    //     default : {}
+    // }
 }
 
 void Application::onUpdate(float time_step)
@@ -164,18 +165,18 @@ void Application::onRender()
     // otherwise values are wrong
     fps_counter_.startMeasurement();
 
-    window_.setView(camera_view_);
+    window_.getNativeHandle().setView(camera_view_);
     
     PROFILE_SCOPE(tilemap_profiler_,
-        tilemap_->draw(window_);
+        tilemap_->draw(window_.getNativeHandle());
     );
     
     PROFILE_SCOPE(waypoints_profiler_,
-        graphics::drawtools::drawWaypoints(window_, waypoints_);
+        graphics::drawtools::drawWaypoints(window_.getNativeHandle(), waypoints_);
     );
     
     PROFILE_SCOPE(tracks_profiler_,
-        tracks_renderer_.draw(window_);
+        tracks_renderer_.draw(window_.getNativeHandle());
     );
     
     PROFILE_SCOPE(render_game_objects_profiler_,
@@ -183,15 +184,15 @@ void Application::onRender()
     );
     
     PROFILE_SCOPE(particles_profiler_,
-        particle_system_.draw(window_);
+        particle_system_.draw(window_.getNativeHandle());
     );
 
     if (rigid_body_debug_)
     {
-        engine::RigidBodyDebugRenderer::debug(scene_, window_);
+        engine::RigidBodyDebugRenderer::debug(scene_, window_.getNativeHandle());
     }
 
-    window_.setView(window_.getDefaultView());
+    window_.getNativeHandle().setView(window_.getNativeHandle().getDefaultView());
 
     PROFILE_SCOPE(gui_profiler_,
         engine::gui::Application::onRender();
@@ -242,7 +243,7 @@ void Application::renderGameObjects()
 
     for (auto& e : objectsToDraw)
     {
-        e.object->draw(window_, constanttime_step_);
+        e.object->draw(window_.getNativeHandle(), constanttime_step_);
     }
 
     objectsToDraw.clear();

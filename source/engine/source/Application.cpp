@@ -1,8 +1,15 @@
 #include "engine/Application.hpp"
 
+#include <functional>
+
 #include <fmt/format.h>
 
 #include "engine/Logger.hpp"
+#include "engine/events/ApplicationEvent.hpp"
+#include "engine/events/Event.hpp"
+#include "engine/events/EventDispatcher.hpp"
+#include "engine/events/KeyEvent.hpp"
+#include "engine/events/MouseEvent.hpp"
 
 constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
 
@@ -10,8 +17,7 @@ namespace engine
 {
 
 Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
-: window_(sf::VideoMode(windowSize.x, windowSize.y, 32), windowName.data(),
-    sf::Style::Default, sf::ContextSettings(0, 0, ANTI_ALIASING_LEVEL))
+: window_(engine::WindowProperties{windowName.data(), {static_cast<int>(windowSize.x), static_cast<int>(windowSize.y)}})
 , profilingText_{"", font_, 16}
 , mouseHandler_{&timer_service_}
 , realtime_step_{}
@@ -25,7 +31,7 @@ Application::Application(const std::string_view windowName, const std::string_vi
 , display_profiler_{"engine::window.display", "ms"}
 {
     window_.setKeyRepeatEnabled(false);
-    window_.setPosition(sf::Vector2i{0, 0});
+    window_.setPosition(engine::Vector2i{0, 0});
 
     context_.setScene(&scene_);
     context_.setParticleSystem(&particle_system_);
@@ -65,6 +71,8 @@ void Application::init()
 int Application::run()
 {
     logger_.debug("Starting application.");
+    window_.setEventsCallback([this](auto& event) {processEvent(event);});
+
     try
     {
         while (isRunning_)
@@ -72,7 +80,7 @@ int Application::run()
             profiling_.reset();
             realtime_step_ = std::chrono::milliseconds(clock_.restart().asMilliseconds());
             PROFILE_SCOPE(eventsProfiler_,
-                processEvents();
+                window_.pollEvents();
             );
 
             PROFILE_SCOPE(updateProfiler_,
@@ -99,57 +107,94 @@ void Application::close()
     window_.close();
 }
 
-void Application::processEvents()
+void Application::processEvent(engine::events::Event& event)
 {
-    sf::Event event;
-    while (window_.pollEvent(event))
+    logger_.vip(fmt::format("Event {} received!", event.toString()));
+
+    events::EventDispatcher dispatcher(event);
+
+    bool was_consumed {false};
+
+    was_consumed |= dispatcher.dispatch<events::WindowClosedEvent>([this](const auto&) {close(); return true;});
+
+    was_consumed |= dispatcher.dispatch<events::KeyPressedEvent>([this] (const auto& event)
     {
-        switch (event.type)
-        {
-            case sf::Event::Closed : { close(); break; }
-            case sf::Event::KeyPressed :
-            {
-                keyboardHandler_.handleKeyPressed(event.key);
-                break;
-            }
-            case sf::Event::KeyReleased :
-            {
-                keyboardHandler_.handleKeyReleased(event.key);
-                break;
-            }
+        keyboardHandler_.handleKeyPressed(event); return false;
+    });
 
-            case sf::Event::TextEntered :
-            {
-                keyboardHandler_.handleTextEntered(event.text);
-                break;
-            }
+    was_consumed |= dispatcher.dispatch<events::KeyReleasedEvent>([this] (const auto& event)
+    {
+        keyboardHandler_.handleKeyReleased(event); return false;
+    });
 
-            case sf::Event::MouseButtonPressed :
-            {
-                mouseHandler_.handleButtonPressed(event.mouseButton);
-                break;
-            }
+    // was_consumed |= dispatcher.dispatch<events::MouseButtonPressedEvent>([this] (const auto& event)
+    // {
+    //     mouseHandler_.handleButtonPressed(event); return false;
+    // });
 
-            case sf::Event::MouseButtonReleased :
-            {
-                mouseHandler_.handleButtonReleased(event.mouseButton);
-                break;
-            }
 
-            case sf::Event::MouseMoved :
-            {
-                mouseHandler_.handleMouseMoved(event.mouseMove);
-                break;
-            }
-
-            default : {}
-        }
-    onEvent(event);
+    if (not was_consumed)
+    {
+        // Forward event to application specific handling
+        onEvent(event);
     }
 }
 
+
+// void Application::processEvents()
+// {
+
+
+    // sf::Event event;
+    // while (window_.getNativeHandle().pollEvent(event))
+    // {
+    //     switch (event.type)
+    //     {
+    //         case sf::Event::Closed : { close(); break; }
+    //         case sf::Event::KeyPressed :
+    //         {
+    //             keyboardHandler_.handleKeyPressed(event.key);
+    //             break;
+    //         }
+    //         case sf::Event::KeyReleased :
+    //         {
+    //             keyboardHandler_.handleKeyReleased(event.key);
+    //             break;
+    //         }
+
+    //         case engine::events::TextEnteredEvent :
+    //         {
+    //             keyboardHandler_.handleTextEntered(event.text);
+    //             break;
+    //         }
+
+    //         case sf::Event::MouseButtonPressed :
+    //         {
+    //             mouseHandler_.handleButtonPressed(event.mouseButton);
+    //             break;
+    //         }
+
+    //         case sf::Event::MouseButtonReleased :
+    //         {
+    //             mouseHandler_.handleButtonReleased(event.mouseButton);
+    //             break;
+    //         }
+
+    //         case sf::Event::MouseMoved :
+    //         {
+    //             mouseHandler_.handleMouseMoved(event.mouseMove);
+    //             break;
+    //         }
+
+    //         default : {}
+    //     }
+    // onEvent(event);
+    // }
+//}
+
 void Application::update()
 {
+    
     timer_service_.update(realtime_step_);
     scene_.update();
     particle_system_.update(constanttime_step_);
@@ -159,7 +204,7 @@ void Application::update()
 void Application::render()
 {
     PROFILE_SCOPE(clearProfiler_,
-        window_.clear(sf::Color(0, 0, 0));
+        window_.getNativeHandle().clear(sf::Color(0, 0, 0));
     );
     
     PROFILE_SCOPE(renderProfiler_,
@@ -171,7 +216,7 @@ void Application::render()
     );
     
     PROFILE_SCOPE(display_profiler_,
-        window_.display();
+        window_.getNativeHandle().display();
     );
 }
 
@@ -184,7 +229,7 @@ void Application::renderProfilingInfo()
     }
     
     profilingText_.setString(text);
-    window_.draw(profilingText_);
+    window_.getNativeHandle().draw(profilingText_);
 }
 
 }  // namespace engine

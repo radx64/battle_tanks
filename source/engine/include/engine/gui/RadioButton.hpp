@@ -22,7 +22,7 @@ protected:
 
     friend RadioButtonGroup;
     void connectGroupHandler(std::shared_ptr<RadioButtonGroup> handler);
-    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent) override;
+    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
 
     std::shared_ptr<RadioButtonGroup> groupHandler_;

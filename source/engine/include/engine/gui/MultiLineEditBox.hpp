@@ -32,8 +32,8 @@ protected:
     EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
     EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
-    EventStatus on(const event::TextEntered& textEntered) override;
+    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressed) override;
+    EventStatus on(const engine::events::TextEnteredEvent& textEntered) override;
 
 private:
     void ensureCursorVisible();

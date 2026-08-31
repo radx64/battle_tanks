@@ -245,24 +245,24 @@ void BaseEditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
     }
 }
 
-EventStatus BaseEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
+EventStatus BaseEditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPressed)
 {
     auto result = EventStatus::NotConsumed;
     if(not isFocused()) return result;
 
     std::string newText = text_.getText();
 
-    switch (keyboardKeyPressed.key)
+    switch (keyboardKeyPressed.getKeyCode())
     {
-        case sf::Keyboard::LShift :
-        case sf::Keyboard::RShift :
+        case engine::core::KeyCode::LShift :
+        case engine::core::KeyCode::RShift :
         {
             anyShiftHeldDown_ = true;
             startSelection();
             return EventStatus::Consumed;
         }
 
-        case sf::Keyboard::Backspace :
+        case engine::core::KeyCode::Backspace :
         {
             if (not selection_.isEmpty())
             {
@@ -288,27 +288,27 @@ EventStatus BaseEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             break;
         }
 
-        case sf::Keyboard::Left :
+        case engine::core::KeyCode::Left :
         {
-            textCursor_.moveLeft(keyboardKeyPressed.modifiers.control);
+            textCursor_.moveLeft(keyboardKeyPressed.getModifiers().control);
             constexpr bool AT_START_OF_SELECTION_ON_CANCEL = false;
             updateCursorAndSelection(AT_START_OF_SELECTION_ON_CANCEL);
             result = EventStatus::Consumed;
             break;
         }
 
-        case sf::Keyboard::Right :
+        case engine::core::KeyCode::Right :
         {
-            textCursor_.moveRight(keyboardKeyPressed.modifiers.control);
+            textCursor_.moveRight(keyboardKeyPressed.getModifiers().control);
             constexpr bool AT_END_OF_SELECTION_ON_CANCEL = true;
             updateCursorAndSelection(AT_END_OF_SELECTION_ON_CANCEL);
             result = EventStatus::Consumed;
             break;
         }
 
-        case sf::Keyboard::C :
+        case engine::core::KeyCode::C :
         {
-            if (keyboardKeyPressed.modifiers.control)
+            if (keyboardKeyPressed.getModifiers().control)
             {
                 copy();
                 result = EventStatus::Consumed;
@@ -316,9 +316,9 @@ EventStatus BaseEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             break;
         }
 
-        case sf::Keyboard::V :
+        case engine::core::KeyCode::V :
         {
-            if (keyboardKeyPressed.modifiers.control)
+            if (keyboardKeyPressed.getModifiers().control)
             {
                 paste();
                 result = EventStatus::Consumed;
@@ -326,9 +326,9 @@ EventStatus BaseEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             break;
         }
 
-        case sf::Keyboard::X :
+        case engine::core::KeyCode::X :
         {
-            if (keyboardKeyPressed.modifiers.control)
+            if (keyboardKeyPressed.getModifiers().control)
             {
                 cut();
                 result = EventStatus::Consumed;
@@ -336,9 +336,9 @@ EventStatus BaseEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
             break;
         }
 
-        case sf::Keyboard::A :
+        case engine::core::KeyCode::A :
         {
-            if (keyboardKeyPressed.modifiers.control)
+            if (keyboardKeyPressed.getModifiers().control)
             {
                 selection_.clear();
                 textCursor_.setIndex(0);
@@ -360,14 +360,14 @@ EventStatus BaseEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
     return result;
 }
 
-EventStatus BaseEditBox::on(const event::KeyboardKeyReleased& keyboardKeyReleased)
+EventStatus BaseEditBox::on(const engine::events::KeyReleasedEvent& keyboardKeyReleased)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
-    switch (keyboardKeyReleased.key)
+    switch (keyboardKeyReleased.getKeyCode())
     {
-        case sf::Keyboard::LShift :
-        case sf::Keyboard::RShift :
+        case engine::core::KeyCode::LShift :
+        case engine::core::KeyCode::RShift :
         {
             anyShiftHeldDown_ = false;
             break;
@@ -379,7 +379,7 @@ EventStatus BaseEditBox::on(const event::KeyboardKeyReleased& keyboardKeyRelease
     return EventStatus::NotConsumed;
 }
 
-EventStatus BaseEditBox::on(const event::TextEntered& textEntered)
+EventStatus BaseEditBox::on(const engine::events::TextEnteredEvent& textEntered)
 {
     if(not isFocused()) return EventStatus::NotConsumed;
 
@@ -388,18 +388,18 @@ EventStatus BaseEditBox::on(const event::TextEntered& textEntered)
     if (text.length() >= maxLength_) return EventStatus::NotConsumed;
 
     // FIXME: crude unicode conversion and check to for printable characters
-    if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
+    if (textEntered.getUnicode() >= 0x20 && textEntered.getUnicode() < 0x7F)
     {
 
         if (not selection_.isEmpty())
         {
-            text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
+            text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.getUnicode()));
             textCursor_.setIndex(selection_.startsAt());
             selection_.clear();
         }
         else
         {
-            text.insert(textCursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
+            text.insert(textCursor_.getIndex(), 1, static_cast<char>(textEntered.getUnicode()));
         }
 
         text_.setText(text);

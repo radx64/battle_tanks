@@ -77,19 +77,20 @@ void Application::onClose()
 {
 }
 
-void Application::onEvent(const sf::Event& event)
+void Application::onEvent(engine::events::Event& event)
 {
-    if (event.type == sf::Event::KeyPressed)
-    {
-        if (event.key.code == sf::Keyboard::Escape)
-        {
-            close();
-        }
-        else if (event.key.code == sf::Keyboard::R)
-        {
-            bootClock_.restart();
-        }
-    }
+    (void) event;
+    // if (event.type == sf::Event::KeyPressed)
+    // {
+    //     if (event.key.code == sf::Keyboard::Escape)
+    //     {
+    //         close();
+    //     }
+    //     else if (event.key.code == sf::Keyboard::R)
+    //     {
+    //         bootClock_.restart();
+    //     }
+    // }
 }
 
 void Application::onUpdate(float /*time_step*/)
@@ -111,11 +112,11 @@ void Application::onRender()
     if (crtAvailable_)
     {
         crtShader_.setUniform("time", elapsed_);
-        window_.draw(screenSprite_, &crtShader_);
+        window_.getNativeHandle().draw(screenSprite_, &crtShader_);
     }
     else
     {
-        window_.draw(screenSprite_);
+        window_.getNativeHandle().draw(screenSprite_);
     }
 }
 

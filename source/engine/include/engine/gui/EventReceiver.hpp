@@ -1,6 +1,8 @@
 #pragma once
 
+#include "engine/events/KeyEvent.hpp"
 #include "engine/gui/Event.hpp"
+
 
 namespace engine::gui
 {
@@ -23,9 +25,9 @@ public:
     virtual EventStatus receive(const event::MouseEntered& mouseEnteredEvent);
     virtual EventStatus receive(const event::MouseLeft& mouseLeftEvent);
 
-    virtual EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed);
-    virtual EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased);
-    virtual EventStatus receive(const event::TextEntered& textEntered);
+    virtual EventStatus receive(const engine::events::KeyPressedEvent& keyboardKeyPressed);
+    virtual EventStatus receive(const engine::events::KeyReleasedEvent& keyboardKeyReleased);
+    virtual EventStatus receive(const engine::events::TextEnteredEvent& textEntered);
 
     virtual EventStatus receive(const event::FocusChange& focusChangeEvent);
     virtual EventStatus receive(const event::FocusLost& focusLost);

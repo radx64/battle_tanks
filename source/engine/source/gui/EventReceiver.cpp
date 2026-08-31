@@ -24,9 +24,9 @@ EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseButtonReleased);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseEntered);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseLeft);
 
-EMPTY_RECEIVE_METHOD(EventReceiver, event::KeyboardKeyPressed);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::KeyboardKeyReleased);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::TextEntered);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::KeyPressedEvent);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::KeyReleasedEvent);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::TextEnteredEvent);
 
 EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusChange);
 EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusLost);

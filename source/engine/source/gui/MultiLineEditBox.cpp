@@ -402,16 +402,16 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseBut
     return EventStatus::Consumed;
 }
 
-EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
+EventStatus MultiLineEditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPressed)
 {
     auto result = EventStatus::NotConsumed;
     if(not isFocused()) return result;
 
     std::string newText = text_.getText();
 
-    switch (keyboardKeyPressed.key)
+    switch (keyboardKeyPressed.getKeyCode())
     {
-        case sf::Keyboard::Delete :
+        case engine::core::KeyCode::Delete :
         {
             if (not selection_.isEmpty())
             {
@@ -432,13 +432,13 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             break;
         }
 
-        case sf::Keyboard::Return :
+        case engine::core::KeyCode::Enter :
         {
             insertNewLine();
             return EventStatus::Consumed;
         }
 
-        case sf::Keyboard::Up :
+        case engine::core::KeyCode::Up :
         {
             moveCursorUp();
             constexpr bool AT_START_OF_SELECTION_ON_CANCEL = false;
@@ -447,7 +447,7 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             break;
         }
 
-        case sf::Keyboard::Down :
+        case engine::core::KeyCode::Down :
         {
             moveCursorDown();
             constexpr bool AT_END_OF_SELECTION_ON_CANCEL = true;
@@ -456,7 +456,7 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             break;
         }
 
-        case sf::Keyboard::Home :
+        case engine::core::KeyCode::Home :
         {
             moveCursorHome();
             constexpr bool AT_START_OF_SELECTION_ON_CANCEL = false;
@@ -465,7 +465,7 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             break;
         }
 
-        case sf::Keyboard::End :
+        case engine::core::KeyCode::End :
         {
             moveCursorEnd();
             constexpr bool AT_END_OF_SELECTION_ON_CANCEL = true;
@@ -480,7 +480,7 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
             result = BaseEditBox::on(keyboardKeyPressed);
             
             // Handle Backspace special case - need to rebuild line indices
-            if (keyboardKeyPressed.key == sf::Keyboard::Backspace && result == EventStatus::Consumed)
+            if (keyboardKeyPressed.getKeyCode() == engine::core::KeyCode::Backspace && result == EventStatus::Consumed)
             {
                 rebuildLineIndices();
             }
@@ -500,7 +500,7 @@ EventStatus MultiLineEditBox::on(const event::KeyboardKeyPressed& keyboardKeyPre
     return result;
 }
 
-EventStatus MultiLineEditBox::on(const event::TextEntered& textEntered)
+EventStatus MultiLineEditBox::on(const engine::events::TextEnteredEvent& textEntered)
 {
     if(not isFocused()) return EventStatus::NotConsumed;
 
@@ -509,18 +509,18 @@ EventStatus MultiLineEditBox::on(const event::TextEntered& textEntered)
     if (text.length() >= maxLength_) return EventStatus::NotConsumed;
 
     // FIXME: crude unicode conversion and check to for printable characters
-    if (textEntered.unicode >= 0x20 && textEntered.unicode < 0x7F)
+    if (textEntered.getUnicode() >= 0x20 && textEntered.getUnicode() < 0x7F)
     {
 
         if (not selection_.isEmpty())
         {
-            text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.unicode));
+            text.replace(selection_.startsAt(), selection_.length(), 1, static_cast<char>(textEntered.getUnicode()));
             textCursor_.setIndex(selection_.startsAt());
             selection_.clear();
         }
         else
         {
-            text.insert(textCursor_.getIndex(), 1, static_cast<char>(textEntered.unicode));
+            text.insert(textCursor_.getIndex(), 1, static_cast<char>(textEntered.getUnicode()));
         }
 
         text_.setText(text);

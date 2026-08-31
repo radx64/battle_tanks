@@ -9,9 +9,9 @@ TextEnteredController::TextEnteredController(engine::gui::EventReceiver* receive
 : receiver_(receiver)
 {}
 
-void TextEnteredController::onTextEntered(const uint32_t unicode)
+void TextEnteredController::onTextEntered(const engine::events::TextEnteredEvent& event)
 {
-    receiver_->receive(engine::gui::event::TextEntered{.unicode = unicode});
+    receiver_->receive(event);
 }
 
 }  // namespace engine::gui

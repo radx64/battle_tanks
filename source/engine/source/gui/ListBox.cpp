@@ -238,21 +238,23 @@ EventStatus ListBox::on(const event::MouseLeft&)
     return EventStatus::NotConsumed;
 }
 
-EventStatus ListBox::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus ListBox::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
 {
     if (not isFocused() || items_.empty())
     {
         return EventStatus::NotConsumed;
     }
 
-    if (keyboardKeyReleasedEvent.key == engine::gui::event::Key::Up)
+    auto keyCode = keyboardKeyReleasedEvent.getKeyCode();
+
+    if (keyCode == engine::core::KeyCode::Up)
     {
         const auto newIndex = selectedIndex_ ? std::max<std::size_t>(0, *selectedIndex_ - 1) : 0;
         setSelectedIndex(newIndex);
         return EventStatus::Consumed;
     }
 
-    if (keyboardKeyReleasedEvent.key == engine::gui::event::Key::Down)
+    if (keyCode == engine::core::KeyCode::Down)
     {
         const auto newIndex = selectedIndex_
             ? std::min(items_.size() - 1, *selectedIndex_ + 1)
@@ -261,7 +263,7 @@ EventStatus ListBox::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEve
         return EventStatus::Consumed;
     }
 
-    if (keyboardKeyReleasedEvent.key == engine::gui::event::Key::Enter && selectedIndex_)
+    if (keyCode == engine::core::KeyCode::Enter && selectedIndex_)
     {
         activateItem(*selectedIndex_);
         return EventStatus::Consumed;

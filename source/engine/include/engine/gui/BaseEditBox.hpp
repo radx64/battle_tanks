@@ -39,9 +39,9 @@ protected:
     EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
     EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
 
-    EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressed) override;
-    EventStatus on(const event::KeyboardKeyReleased& keyboardKeyReleased) override;
-    EventStatus on(const event::TextEntered& textEntered) override;
+    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressed) override;
+    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleased) override;
+    EventStatus on(const engine::events::TextEnteredEvent& textEntered) override;
 
     EventStatus on(const event::FocusLost&) override;
     EventStatus on(const event::FocusGained&) override;

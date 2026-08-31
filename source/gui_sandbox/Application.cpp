@@ -58,8 +58,8 @@ Application::Application()
 
 void Application::onInit()
 {
-    window_.setFramerateLimit(60);
-    window_.setVerticalSyncEnabled(true);
+    window_.getNativeHandle().setFramerateLimit(60);
+    window_.getNativeHandle().setVerticalSyncEnabled(true);
     generateBackground();
 
     auto quitButton = engine::gui::TextButton::create("Quit");
@@ -1072,7 +1072,7 @@ void Application::onClose()
     engine::gui::FontLibrary::destroy();
 }
 
-void Application::onEvent(const sf::Event& event)
+void Application::onEvent(engine::events::Event& event)
 {
     (void) event;
 }
@@ -1126,8 +1126,8 @@ void Application::generateBackground()
 
 void Application::onRender()
 {
-    window_.clear(sf::Color(20, 110, 158));
-    window_.draw(backgroundSprite_);
+    window_.getNativeHandle().clear(sf::Color(20, 110, 158));
+    window_.getNativeHandle().draw(backgroundSprite_);
     engine::gui::Application::onRender();
 }
 

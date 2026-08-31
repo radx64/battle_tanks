@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "engine/events/KeyEvent.hpp"
+
 namespace engine::input {class KeyboardHandler;}
 
 namespace engine::input
@@ -16,7 +18,7 @@ public:
 friend class KeyboardHandler;
 
 protected:
-    virtual void onTextEntered(const uint32_t unicode) = 0;
+    virtual void onTextEntered(const engine::events::TextEnteredEvent& event) = 0;
     void attach(KeyboardHandler* handler);
 
     KeyboardHandler* handler_;

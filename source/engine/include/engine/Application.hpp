@@ -5,6 +5,7 @@
 #include "engine/Clock.hpp"
 #include "engine/CollisionSolver.hpp"
 #include "engine/Context.hpp"
+#include "engine/events/Event.hpp"
 #include "engine/input/KeyboardHandler.hpp"
 #include "engine/input/MouseHandler.hpp"
 #include "engine/Logger.hpp"
@@ -12,6 +13,7 @@
 #include "engine/ProfilingStorage.hpp"
 #include "engine/Scene.hpp"
 #include "engine/TimerService.hpp"
+#include "engine/Window.hpp"
 
 namespace engine
 {
@@ -33,22 +35,22 @@ public:
     void close();
 
 protected:
-    void processEvents();
     void update();
     void render();
     void renderProfilingInfo();
+    void processEvent(engine::events::Event& event);
 
     // TODO those methods potentially should not use dynamic dispatching
     // consider adding some CRTP pattern to call methods from derived class
     virtual void onInit() = 0;
     virtual void onClose() = 0;
-    virtual void onEvent(const sf::Event& event) = 0;
+    virtual void onEvent(engine::events::Event& event) = 0;
     virtual void onUpdate(float time_step) = 0;
     virtual void onRender() = 0;
 
     bool isRunning_{true};
 
-    sf::RenderWindow window_;
+    engine::Window window_;
     sf::Clock clock_;
     sf::Font font_;
     sf::Text profilingText_;

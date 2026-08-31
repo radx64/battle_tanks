@@ -10,26 +10,26 @@ CameraController::CameraController (Camera* camera)
 : camera_{camera}
 {}
 
-void CameraController::onKeyPressed(const sf::Event::KeyEvent& keyEvent)
+void CameraController::onKeyPressed(const engine::events::KeyPressedEvent& keyEvent)
 {
-    switch(keyEvent.code)
+    switch(keyEvent.getKeyCode())
     {
-        case sf::Keyboard::W : camera_->moveY(-CAMERA_SPEED); break;
-        case sf::Keyboard::S : camera_->moveY(CAMERA_SPEED); break;
-        case sf::Keyboard::A : camera_->moveX(-CAMERA_SPEED); break;
-        case sf::Keyboard::D : camera_->moveX(CAMERA_SPEED); break;
+        case engine::core::KeyCode::W : camera_->moveY(-CAMERA_SPEED); break;
+        case engine::core::KeyCode::S : camera_->moveY(CAMERA_SPEED); break;
+        case engine::core::KeyCode::A : camera_->moveX(-CAMERA_SPEED); break;
+        case engine::core::KeyCode::D : camera_->moveX(CAMERA_SPEED); break;
         default : break;
     }
 }
 
-void CameraController::onKeyReleased(const sf::Event::KeyEvent& keyEvent)
+void CameraController::onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent)
 {
-    switch(keyEvent.code)
+    switch(keyEvent.getKeyCode())
     {
-        case sf::Keyboard::W : camera_->moveY(0.f); break;
-        case sf::Keyboard::S : camera_->moveY(0.f); break;
-        case sf::Keyboard::A : camera_->moveX(0.f); break;
-        case sf::Keyboard::D : camera_->moveX(0.f); break;
+        case engine::core::KeyCode::W : camera_->moveY(0.f); break;
+        case engine::core::KeyCode::S : camera_->moveY(0.f); break;
+        case engine::core::KeyCode::A : camera_->moveX(0.f); break;
+        case engine::core::KeyCode::D : camera_->moveX(0.f); break;
         default : break;
     }
 

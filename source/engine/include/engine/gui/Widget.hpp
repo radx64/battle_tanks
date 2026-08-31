@@ -84,9 +84,9 @@ public:
     EventStatus receive(const event::MouseLeft& mouseLeftEvent) override final;
 
     /* Keyboard events */
-    EventStatus receive(const event::KeyboardKeyPressed& keyboardKeyPressed) override final;
-    EventStatus receive(const event::KeyboardKeyReleased& keyboardKeyReleased) override final;
-    EventStatus receive(const event::TextEntered& textEntered) override final;
+    EventStatus receive(const engine::events::KeyPressedEvent& keyboardKeyPressed) override final;
+    EventStatus receive(const engine::events::KeyReleasedEvent& keyboardKeyReleased) override final;
+    EventStatus receive(const engine::events::TextEnteredEvent& textEntered) override final;
 
     /* Focus events */
     EventStatus receive(const event::FocusLost& focusLost) override final;
@@ -109,9 +109,9 @@ protected:
     virtual EventStatus on(const event::MouseEntered& mouseEnteredEvent);
     virtual EventStatus on(const event::MouseLeft& mouseLeftEvent);
 
-    virtual EventStatus on(const event::KeyboardKeyPressed& keyboardKeyPressedEvent);
-    virtual EventStatus on(const event::KeyboardKeyReleased& KeyboardKeyReleased);
-    virtual EventStatus on(const event::TextEntered& textEntered);
+    virtual EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent);
+    virtual EventStatus on(const engine::events::KeyReleasedEvent& KeyboardKeyReleased);
+    virtual EventStatus on(const engine::events::TextEnteredEvent& textEntered);
 
     virtual EventStatus on(const event::FocusLost& focusLost);
     virtual EventStatus on(const event::FocusGained& focusGained);

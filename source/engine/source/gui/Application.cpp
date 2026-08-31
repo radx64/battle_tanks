@@ -8,7 +8,7 @@ namespace engine::gui
 Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
 : engine::Application{windowName, logPrefix, windowSize}
 , gui_{windowSize}
-, mouseController_{&gui_, window_, window_.getDefaultView()}
+, mouseController_{&gui_, window_.getNativeHandle(), window_.getNativeHandle().getDefaultView()}
 , keyboardController_{&gui_}
 , textEnteredController_{&gui_}
 {
@@ -27,7 +27,7 @@ Application::~Application()
 
 void Application::onRender()
 {
-    gui().render(window_);
+    gui().render(window_.getNativeHandle());
 }
 
 void Application::onUpdate(float time_step)

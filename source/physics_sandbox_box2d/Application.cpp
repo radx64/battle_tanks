@@ -117,7 +117,7 @@ void Application::onClose()
     b2DestroyWorld(worldId_);
 }
 
-void Application::onEvent(const sf::Event& event)
+void Application::onEvent(engine::events::Event& event)
 {
     (void) event;
 }
@@ -165,7 +165,7 @@ void Application::drawBody(b2BodyId bodyId)
                 float angleInRadians = b2Rot_GetAngle(rotation);
                 
                 boxSprite_.setRotation(angleInRadians * 180.0f / 3.14159265f);
-                window_.draw(boxSprite_);
+                window_.getNativeHandle().draw(boxSprite_);
             }
 
             if (!debugDraw_) continue;
@@ -185,7 +185,7 @@ void Application::drawBody(b2BodyId bodyId)
                 }
             }
             lines[polygon.count] = lines[0]; // Close outline loop
-            window_.draw(lines);
+            window_.getNativeHandle().draw(lines);
         }
         else if (type == b2ShapeType::b2_circleShape) 
         {
@@ -208,7 +208,7 @@ void Application::drawBody(b2BodyId bodyId)
             b2Rot rotation = transform.q;
             float angleInRadians = b2Rot_GetAngle(rotation);
             circleSprite_.setRotation(angleInRadians * 180.0f / 3.14159265f);         
-            window_.draw(circleSprite_);
+            window_.getNativeHandle().draw(circleSprite_);
 
             if (!debugDraw_) continue;
 
@@ -236,8 +236,8 @@ void Application::drawBody(b2BodyId bodyId)
             radiusLine[1].position = sf::Vector2f(edgePoint.x * SCALE, edgePoint.y * SCALE);
             radiusLine[1].color = sf::Color::Green;
 
-            window_.draw(sfCircle);
-            window_.draw(radiusLine);
+            window_.getNativeHandle().draw(sfCircle);
+            window_.getNativeHandle().draw(radiusLine);
         }
     }
 }

@@ -90,10 +90,10 @@ EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
     return EventStatus::NotConsumed;
 }
 
-EventStatus EditBox::on(const event::KeyboardKeyPressed& keyboardKeyPressed)
+EventStatus EditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPressed)
 {
     // Handle Return key specific to single-line edit box
-    if (keyboardKeyPressed.key == sf::Keyboard::Return)
+    if (keyboardKeyPressed.getKeyCode() == engine::core::KeyCode::Enter)
     {
         defocusWithAllChildren();
         return EventStatus::Consumed;

@@ -30,13 +30,13 @@ std::unique_ptr<RadioButton> RadioButton::create(const bool isChecked)
     return std::unique_ptr<RadioButton>{new RadioButton{isChecked}};
 }
 
-EventStatus RadioButton::on(const event::KeyboardKeyReleased& keyboardKeyReleasedEvent)
+EventStatus RadioButton::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
 
-    auto& key = keyboardKeyReleasedEvent.key;
+    auto key = keyboardKeyReleasedEvent.getKeyCode();
 
-    if (key == engine::gui::event::Key::Space || key == engine::gui::event::Key::Enter)
+    if (key == engine::core::KeyCode::Space || key == engine::core::KeyCode::Enter)
     {
         setState(true);
         if (groupHandler_ && isChecked())
@@ -68,6 +68,5 @@ void RadioButton::connectGroupHandler(std::shared_ptr<RadioButtonGroup> handler)
 {
     groupHandler_ = handler;
 }
-
 
 }  // namespace engine::gui

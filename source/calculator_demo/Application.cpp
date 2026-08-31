@@ -39,11 +39,11 @@ void Application::onUpdate(float time_step)
 
 void Application::onRender()
 {
-    window_.clear(sf::Color(192, 192, 192));
+    window_.getNativeHandle().clear(sf::Color(192, 192, 192));
     engine::gui::Application::onRender();
 }
 
-void Application::onEvent(const sf::Event& event)
+void Application::onEvent(engine::events::Event& event)
 {
     (void) event;
 }
