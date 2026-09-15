@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <utility>
 
 #include "engine/gui/Text.hpp"
 #include "engine/gui/FontHeightCache.hpp"
@@ -62,6 +63,11 @@ void Selection::clear()
 
 void Selection::to(const uint32_t index, const sf::Vector2f& position)
 {
+    if (selectionEndIndex_ == index)
+    {
+        return;
+    }
+
     selectionEndIndex_ = index;
     selectionEndPosition_ = position;
     update();
@@ -70,6 +76,7 @@ void Selection::to(const uint32_t index, const sf::Vector2f& position)
 void Selection::update()
 {
     selectionRectangles_.clear();
+    text_.invalidateTexture();
 
     const std::string& fieldText = text_.getText();
     const sf::Font* font = text_.getFont();
@@ -85,22 +92,41 @@ void Selection::update()
     const sf::Vector2f startPos = selectionForward ? selectionStartPosition_ : selectionEndPosition_;
     const sf::Vector2f endPos = selectionForward ? selectionEndPosition_ : selectionStartPosition_;
 
-    const size_t startLineNum = getLineFromIndex(fieldText, actualStartIdx);
-    const size_t endLineNum = getLineFromIndex(fieldText, actualEndIdx);
+    const auto getLineInfo = [&fieldText](const size_t index)
+    {
+        size_t lineNumber = 0;
+        size_t lineStartIdx = 0;
+
+        for (size_t i = 0; i < index && i < fieldText.length(); ++i)
+        {
+            if (fieldText[i] == '\n')
+            {
+                ++lineNumber;
+                lineStartIdx = i + 1;
+            }
+        }
+
+        return std::pair{lineNumber, lineStartIdx};
+    };
+
+    const auto [startLineNum, firstLineStartIdx] = getLineInfo(actualStartIdx);
+    const auto [endLineNum, ignoredEndLineStartIdx] = getLineInfo(actualEndIdx);
+    (void)ignoredEndLineStartIdx;
 
     const uint32_t charSize = text_.getCharacterSize();
     const float lineHeight = getFontLineSpacing(*font, charSize);
 
-    const size_t firstLineStartIdx = getLineStartIndex(fieldText, startLineNum);
     const float lineBeginX = startPos.x - getLineXWidth(fieldText, firstLineStartIdx, actualStartIdx);
 
+    size_t fullLineStartIdx = firstLineStartIdx;
     for (size_t lineNum = startLineNum; lineNum <= endLineNum; ++lineNum)
     {
         const bool isFirstLine = lineNum == startLineNum;
         const bool isLastLine = lineNum == endLineNum;
 
-        const size_t lineStartIdx = isFirstLine ? actualStartIdx : getLineStartIndex(fieldText, lineNum);
-        const size_t lineEndIdx = isLastLine ? actualEndIdx : getLineEndIndex(fieldText, lineNum);
+        const size_t lineStartIdx = isFirstLine ? actualStartIdx : fullLineStartIdx;
+        const size_t fullLineEndIdx = fieldText.find('\n', fullLineStartIdx);
+        const size_t lineEndIdx = isLastLine ? actualEndIdx : fullLineEndIdx;
 
         const float lineYPos = startPos.y + ((lineNum - startLineNum) * lineHeight);
         const float rectX = isFirstLine ? startPos.x : lineBeginX;
@@ -113,9 +139,9 @@ void Selection::update()
         rect.setPosition({rectX, lineYPos});
         rect.setSize({rectWidth, lineHeight});
         selectionRectangles_.push_back(rect);
-    }
 
-    text_.updateTexture();
+        fullLineStartIdx = fullLineEndIdx + 1;
+    }
 }
 
 size_t Selection::getLineFromIndex(const std::string& text, size_t index) const

@@ -109,7 +109,6 @@ void Application::close()
 
 void Application::processEvent(engine::events::Event& event)
 {
-    logger_.vip(fmt::format("Event {} received!", event.toString()));
     events::EventDispatcher dispatcher(event);
 
     bool was_consumed {false};
@@ -126,6 +125,11 @@ void Application::processEvent(engine::events::Event& event)
         keyboardHandler_.handleKeyReleased(event); return false;
     });
 
+    was_consumed |= dispatcher.dispatch<events::TextEntered>([this] (const auto& event)
+    {
+        keyboardHandler_.handleTextEntered(event); return false;
+    });
+
     was_consumed |= dispatcher.dispatch<events::MouseButtonPressed>([this] (const auto& event)
     {
         mouseHandler_.handleButtonPressed(event); return false;
@@ -134,6 +138,16 @@ void Application::processEvent(engine::events::Event& event)
     was_consumed |= dispatcher.dispatch<events::MouseButtonReleased>([this] (const auto& event)
     {
         mouseHandler_.handleButtonReleased(event); return false;
+    });
+
+    was_consumed |= dispatcher.dispatch<events::MouseMoved>([this] (const auto& event)
+    {
+        mouseHandler_.handleMouseMoved(event); return false;
+    });
+
+    was_consumed |= dispatcher.dispatch<events::MouseScrolled>([this] (const auto& event)
+    {
+        mouseHandler_.handleMouseScrolled(event); return false;
     });
 
     if (not was_consumed)

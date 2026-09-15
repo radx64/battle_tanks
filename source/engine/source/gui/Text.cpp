@@ -29,6 +29,11 @@ Text::Text(const style::Text& style)
 
 void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    if (textureInvalidated_)
+    {
+        const_cast<Text*>(this)->updateTexture();
+    }
+
     target.draw(sprite_, states);
 
     debug::drawBox(target, getGlobalPosition(), getSize(), sf::Color::Red, -4.f);
@@ -148,6 +153,12 @@ void Text::updateTexture()
     }
 
     texture_.display();
+    textureInvalidated_ = false;
+}
+
+void Text::invalidateTexture()
+{
+    textureInvalidated_ = true;
 }
 
 void Text::updateSprite()

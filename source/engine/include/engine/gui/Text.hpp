@@ -49,6 +49,7 @@ public:
     void addModifier(TextDisplayModifier* modifier);
     void removeModifier(TextDisplayModifier* modifier);
     
+    void invalidateTexture();
     void updateTexture();
 
 protected:
@@ -61,6 +62,8 @@ protected:
     sf::Text text_;
 
     std::vector<TextDisplayModifier*> modifiers_;
+
+    bool textureInvalidated_{false};
 
     const style::Text& style_;
 };
