@@ -20,9 +20,9 @@ protected:
     void updateTextVisbleArea() override;
 
 private:
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressed) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::events::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const engine::events::KeyPressed& keyboardKeyPressed) override;
 };
 
 }  // namespace engine::gui

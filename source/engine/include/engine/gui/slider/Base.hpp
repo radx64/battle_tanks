@@ -11,6 +11,8 @@
 #include "engine/gui/TextureLibrary.hpp"
 #include "engine/gui/Widget.hpp"
 
+#include "engine/temporary/ToSfFromSf.hpp"
+
 namespace engine::gui::slider
 {
 
@@ -50,16 +52,16 @@ protected:
 
     float normalizeValue();
 
-    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
+    EventStatus on(const engine::events::KeyReleased& keyboardKeyReleasedEvent) override;
     
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::events::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent) override;
 
-    EventStatus on(const event::FocusLost&) override;
-    EventStatus on(const event::FocusGained&) override;
+    EventStatus on(const engine::gui::events::FocusLost&) override;
+    EventStatus on(const engine::gui::events::FocusGained&) override;
 
-    void processMovement(sf::Vector2f& mouse_position);
+    void processMovement(const engine::Vec2f& mouse_position);
     void updateTexture();
 
     engine::gui::FramedSprite track_;
@@ -144,8 +146,8 @@ template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::setStep(const float step)
 {
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
-    thumb_.setSize(thumbSize);
-    thumb_.setOrigin(thumbSize / 2.f);
+    thumb_.setSize(sf::Vector2f{thumbSize.x, thumbSize.y});
+    thumb_.setOrigin(sf::Vector2f{thumbSize.x, thumbSize.y} / 2.f);
     step_ = (step > 0.0f) ? step : 0.01f;
 }
 
@@ -164,11 +166,11 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::decrease()
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::onSizeChange()
 {
-    track_.setSize(RenderingPolicy::getTrackSize(getSize()));
+    track_.setSize(temporary::toSf(RenderingPolicy::getTrackSize(getSize())));
 
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
-    thumb_.setSize(thumbSize);
-    thumb_.setOrigin(thumbSize / 2.f);
+    thumb_.setSize(temporary::toSf(thumbSize));
+    thumb_.setOrigin(temporary::toSf(thumbSize) / 2.f);
     updateTexture();
 }
 
@@ -191,7 +193,7 @@ float Base<MouseHandlingPolicy, RenderingPolicy>::normalizeValue()
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events::KeyReleased& keyboardKeyReleasedEvent)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -218,10 +220,10 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events:
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
-    bool isLeftPressed = mouseButtonPressedEvent.button == engine::gui::event::MouseButton::Left;
+    auto mouse_position = mouseButtonPressedEvent.getPosition();
+    bool isLeftPressed = mouseButtonPressedEvent.getButton() == engine::core::MouseButton::Left;
 
     if (isLeftPressed and isInside(mouse_position))
     {
@@ -234,9 +236,9 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseBut
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseMoved& mouseMovedEvent)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events::MouseMoved& mouseMovedEvent)
 {
-    auto mouse_position = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+    auto mouse_position = mouseMovedEvent.getPosition();
 
     if (state_ == State::Dragging)
     {
@@ -264,10 +266,10 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseMov
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    auto mouse_position = sf::Vector2f{mouseButtonReleasedEvent.position.x, mouseButtonReleasedEvent.position.y};
-    bool isLeftReleased = mouseButtonReleasedEvent.button == engine::gui::event::MouseButton::Left;
+    auto mouse_position = mouseButtonReleasedEvent.getPosition();
+    bool isLeftReleased = mouseButtonReleasedEvent.getButton() == engine::core::MouseButton::Left;
 
     if (isLeftReleased and state_ == State::Dragging)
     {
@@ -280,7 +282,7 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::MouseBut
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(sf::Vector2f& mouse_position)
+void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(const engine::Vec2f& mouse_position)
 {
     setValue(MouseHandlingPolicy::translatePositionToThumbValue(mouse_position, track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_));
 
@@ -319,19 +321,23 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::updateTexture()
             break;
     }
 
-    track_.setPosition(RenderingPolicy::getTrackPosition(getGlobalPosition(), getSize()));
-    thumb_.setPosition(RenderingPolicy::getThumbPosition(getGlobalPosition(), getSize(), track_.getSize(), thumb_.getSize(), normalizeValue()));
+
+    const auto track_position = RenderingPolicy::getTrackPosition(getGlobalPosition(), getSize());
+    const auto thumb_position = RenderingPolicy::getThumbPosition(getGlobalPosition(), getSize(), temporary::fromSf(track_.getSize()), temporary::fromSf(thumb_.getSize()), normalizeValue());
+
+    track_.setPosition(sf::Vector2f{track_position.x, track_position.y});
+    thumb_.setPosition(sf::Vector2f{thumb_position.x, thumb_position.y});
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::FocusLost&)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::gui::events::FocusLost&)
 {
     updateTexture();
     return EventStatus::Consumed;
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const event::FocusGained&)
+EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::gui::events::FocusGained&)
 {
     updateTexture();
     return EventStatus::Consumed;
@@ -342,8 +348,8 @@ void  Base<MouseHandlingPolicy, RenderingPolicy>::setThumbRatio(const float rati
 {
     thumbRatio_ = ratio;
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
-    thumb_.setSize(thumbSize);
-    thumb_.setOrigin(thumbSize / 2.f);
+    thumb_.setSize(sf::Vector2f{thumbSize.x, thumbSize.y});
+    thumb_.setOrigin(sf::Vector2f{thumbSize.x, thumbSize.y} / 2.f);
     setValue(getValue());
 }
 

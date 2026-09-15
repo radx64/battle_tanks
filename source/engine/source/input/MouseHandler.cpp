@@ -3,9 +3,6 @@
 #include "engine/input/MouseReceiver.hpp"
 #include "engine/TimerService.hpp"
 
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Keyboard.hpp>
-
 namespace 
 {
 static constexpr auto DOUBLE_CLICK_RATE = std::chrono::milliseconds(200);
@@ -34,14 +31,15 @@ void MouseHandler::unsubscribe(MouseReceiver* receiver)
         std::end(receivers_));
 }
 
-void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
+void MouseHandler::handleButtonPressed(const engine::events::MouseButtonPressed& event)
 {
-    const auto button = event.button;
+    const auto button = event.getButton();
+    mouse_position_ = event.getPosition();
     buttonsStates_[button] = true;
 
     bool leftDoubleClicked{false};
 
-    if (button == sf::Mouse::Button::Left)
+    if (button == engine::core::MouseButton::Left)
     {
         auto currentTimestamp = timerService_->getCurrentTime();
 
@@ -74,9 +72,9 @@ void MouseHandler::handleButtonPressed(const sf::Event::MouseButtonEvent& event)
     }
 }
 
-void MouseHandler::handleButtonReleased(const sf::Event::MouseButtonEvent& event)
+void MouseHandler::handleButtonReleased(const engine::events::MouseButtonReleased& event)
 {
-    const auto button = event.button;
+    const auto button = event.getButton();
     buttonsStates_[button] = false;
     for (auto* receiver : receivers_)
     {
@@ -85,9 +83,9 @@ void MouseHandler::handleButtonReleased(const sf::Event::MouseButtonEvent& event
     }
 }
 
-void MouseHandler::handleMouseMoved(const sf::Event::MouseMoveEvent& event)
+void MouseHandler::handleMouseMoved(const engine::events::MouseMoved& event)
 {
-    mouse_position_ = sf::Vector2f{static_cast<float>(event.x), static_cast<float>(event.y)};
+    mouse_position_ = event.getPosition();
     for (auto& receiver : receivers_)
     {
         const auto eventStatus = receiver->onMouseMoved(mouse_position_);
@@ -95,7 +93,19 @@ void MouseHandler::handleMouseMoved(const sf::Event::MouseMoveEvent& event)
     }
 }
 
-bool MouseHandler::isButtonPressed(sf::Mouse::Button button)
+void MouseHandler::handleMouseScrolled(const engine::events::MouseScrolled& event)
+{
+    mouse_position_ = event.getPosition();
+    auto delta = event.getOffset();
+    auto wheel = event.getWheel();
+    for (auto& receiver : receivers_)
+    {
+        const auto eventStatus = receiver->onMouseScrolled(mouse_position_, wheel, delta);
+        if (eventStatus == engine::gui::EventStatus::Consumed) break;
+    }
+}
+
+bool MouseHandler::isButtonPressed(engine::core::MouseButton button)
 {
     auto iter = buttonsStates_.find(button);
     if (iter != buttonsStates_.end())

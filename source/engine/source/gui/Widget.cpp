@@ -8,17 +8,13 @@
 
 #include "engine/gui/Debug.hpp"
 
+#include "engine/temporary/ToSfFromSf.hpp"
+
 namespace engine::gui
 {
 
 namespace
 {
-
-sf::Vector2f toVector2f(const event::MousePosition& position)
-{
-    return sf::Vector2f{position.x, position.y};
-}
-
 class InstanceIdGenerator
 {
 public:
@@ -100,46 +96,46 @@ EventStatus Widget::processEvent(const T& event)
     return EventStatus::NotConsumed;
 }
 
-EventStatus Widget::receive(const event::MouseMoved& mouseMovedEvent)
+EventStatus Widget::receive(const engine::events::MouseMoved& mouseMovedEvent)
 {
     return processEvent(mouseMovedEvent);
 }
 
-EventStatus Widget::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus Widget::receive(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
     return processEvent(mouseButtonPressedEvent);
 }
 
-EventStatus Widget::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus Widget::receive(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
     return processEvent(mouseButtonDoublePressedEvent);
 }
 
-EventStatus Widget::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus Widget::receive(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     return processEvent(mouseButtonReleasedEvent);
 }
 
-EventStatus Widget::receive(const event::MouseEntered& mouseEnteredEvent)
+EventStatus Widget::receive(const engine::gui::events::MouseEntered& mouseEnteredEvent)
 {
     return processEvent(mouseEnteredEvent);
 }
-EventStatus Widget::receive(const event::MouseLeft& mouseLeftEvent)
+EventStatus Widget::receive(const engine::gui::events::MouseLeft& mouseLeftEvent)
 {
     return processEvent(mouseLeftEvent);
 }
 
-EventStatus Widget::receive(const engine::events::KeyPressedEvent& keyboardKeyPressed)
+EventStatus Widget::receive(const engine::events::KeyPressed& keyboardKeyPressed)
 {
     return processEvent(keyboardKeyPressed);
 }
 
-EventStatus Widget::receive(const engine::events::KeyReleasedEvent& keyboardKeyReleased)
+EventStatus Widget::receive(const engine::events::KeyReleased& keyboardKeyReleased)
 {
     return processEvent(keyboardKeyReleased);
 }
 
-EventStatus Widget::receive(const engine::events::TextEnteredEvent& textEntered)
+EventStatus Widget::receive(const engine::events::TextEntered& textEntered)
 {
     return processEvent(textEntered);
 }
@@ -159,34 +155,34 @@ void Widget::applyPendingOperations()
     pendingChildrenToAdd_.clear();
 }
 
-EventStatus Widget::receive(const event::FocusLost& focusLost)
+EventStatus Widget::receive(const engine::gui::events::FocusLost& focusLost)
 {
     logger_.debug("Widget received focus lost event");
     return this->on(focusLost);
 }
 
-EventStatus Widget::receive(const event::FocusGained& focusGained)
+EventStatus Widget::receive(const engine::gui::events::FocusGained& focusGained)
 {
     return this->on(focusGained);
 }
 
-EMPTY_ON_METHOD(Widget, event::MouseMoved);
-EMPTY_ON_METHOD(Widget, event::MouseButtonPressed);
-EMPTY_ON_METHOD(Widget, event::MouseButtonDoublePressed);
-EMPTY_ON_METHOD(Widget, event::MouseButtonReleased);
-EMPTY_ON_METHOD(Widget, event::MouseEntered);
-EMPTY_ON_METHOD(Widget, event::MouseLeft);
+EMPTY_ON_METHOD(Widget,  engine::events::MouseMoved);
+EMPTY_ON_METHOD(Widget, engine::events::MouseButtonPressed);
+EMPTY_ON_METHOD(Widget, engine::gui::events::MouseButtonDoublePressed);
+EMPTY_ON_METHOD(Widget, engine::events::MouseButtonReleased);
+EMPTY_ON_METHOD(Widget, engine::gui::events::MouseEntered);
+EMPTY_ON_METHOD(Widget, engine::gui::events::MouseLeft);
 
-EMPTY_ON_METHOD(Widget, engine::events::KeyPressedEvent);
-EMPTY_ON_METHOD(Widget, engine::events::KeyReleasedEvent);
-EMPTY_ON_METHOD(Widget, engine::events::TextEnteredEvent);
+EMPTY_ON_METHOD(Widget, engine::events::KeyPressed);
+EMPTY_ON_METHOD(Widget, engine::events::KeyReleased);
+EMPTY_ON_METHOD(Widget, engine::events::TextEntered);
 
-EMPTY_ON_METHOD(Widget, event::FocusLost);
-EMPTY_ON_METHOD(Widget, event::FocusGained);
+EMPTY_ON_METHOD(Widget, engine::gui::events::FocusLost);
+EMPTY_ON_METHOD(Widget, engine::gui::events::FocusGained);
 
 #undef EMPTY_ON_METHOD
 
-void Widget::setPosition(const sf::Vector2f& position)
+void Widget::setPosition(const engine::Vec2f& position)
 {
     localPosition_ = position;
     updateGlobalPosition();
@@ -197,12 +193,12 @@ void Widget::setPosition(const sf::Vector2f& position)
     }
 }
 
-sf::Vector2f Widget::getSize() const
+engine::Vec2f Widget::getSize() const
 {
-    return sf::Vector2f{bounds_.width, bounds_.height};
+    return engine::Vec2f{bounds_.width, bounds_.height};
 }
 
-void Widget::setSize(const sf::Vector2f& size)
+void Widget::setSize(const engine::Vec2f& size)
 {
     bounds_.width = size.x;
     bounds_.height = size.y;
@@ -224,7 +220,7 @@ bool Widget::isVisible() const
     return isVisible_;
 }
 
-const sf::Vector2f Widget::getPosition() const
+const engine::Vec2f Widget::getPosition() const
 {
     return localPosition_;
 }
@@ -238,14 +234,14 @@ bool Widget::isInside(sf::Vector2f point) const
     return bounds_.contains(point);
 }
 
-bool Widget::isInside(const event::MousePosition& position) const
+bool Widget::isInside(const engine::Vec2f& position) const
 {
-    return isInside(toVector2f(position));
+    return isInside(temporary::toSf(position));
 }
 
-const sf::Vector2f Widget::getGlobalPosition() const
+const engine::Vec2f Widget::getGlobalPosition() const
 {
-    return sf::Vector2f{bounds_.left, bounds_.top};
+    return engine::Vec2f{bounds_.left, bounds_.top};
 }
 
 void Widget::addChild(std::unique_ptr<Widget> child)
@@ -360,7 +356,7 @@ void Widget::disableFocus()
 
 void Widget::updateGlobalPosition()
 {
-    sf::Vector2f globalBoundsPosition {};
+    engine::Vec2f globalBoundsPosition {};
 
     if (parent_)
     {
@@ -395,13 +391,13 @@ size_t Widget::getChildrenCount() const
 void Widget::focus()
 {
     isFocused_ = true;
-    receive(engine::gui::event::FocusGained{});
+    receive(engine::gui::events::FocusGained{});
 }
 
 void Widget::defocus()
 {
     isFocused_ = false;
-    receive(engine::gui::event::FocusLost{});
+    receive(engine::gui::events::FocusLost{});
 }
 
 Widget* Widget::getNextChild(Widget* child)

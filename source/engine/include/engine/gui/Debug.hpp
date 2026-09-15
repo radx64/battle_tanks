@@ -13,6 +13,9 @@ namespace engine::gui::debug
     void drawBox(sf::RenderTarget& renderTarget, const sf::Vector2f position, 
         const sf::Vector2f size, const sf::Color color, const float thickness);
 
+    void drawBox(sf::RenderTarget& renderTarget, const engine::Vec2f position, 
+        const engine::Vec2f size, const sf::Color color, const float thickness);
+
     std::string getFunctionNameOnly(const std::source_location& location);
 
 }  // namespace engine::gui::debug

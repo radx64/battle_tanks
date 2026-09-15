@@ -34,17 +34,17 @@ protected:
     void onSizeChange() override;
     void onPositionChange() override;
 
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const engine::events::MouseMoved& mouseMovedEvent) override;
 
-    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressed) override;
-    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleased) override;
-    EventStatus on(const engine::events::TextEnteredEvent& textEntered) override;
+    EventStatus on(const engine::events::KeyPressed& keyboardKeyPressed) override;
+    EventStatus on(const engine::events::KeyReleased& keyboardKeyReleased) override;
+    EventStatus on(const engine::events::TextEntered& textEntered) override;
 
-    EventStatus on(const event::FocusLost&) override;
-    EventStatus on(const event::FocusGained&) override;
+    EventStatus on(const engine::gui::events::FocusLost&) override;
+    EventStatus on(const engine::gui::events::FocusGained&) override;
 
     // Virtual methods for subclasses to override
     virtual void updateTextVisbleArea() = 0;

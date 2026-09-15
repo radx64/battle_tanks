@@ -13,7 +13,7 @@ namespace engine::events
 class MouseEvent : public Event
 {
 public:
-    const engine::Vec2i& getPosition() const
+    const engine::Vec2f& getPosition() const
     {
         return position_;
     }
@@ -21,33 +21,33 @@ public:
     EVENT_CATEGORY(EventCategory::Mouse | EventCategory::Input);
 
 protected:
-    MouseEvent(const engine::Vec2i position)
+    MouseEvent(const engine::Vec2f position)
     : position_(position)
     {}
 
-    engine::Vec2i position_;
+    engine::Vec2f position_;
 };
 
 
-class MouseMovedEvent : public MouseEvent
+class MouseMoved : public MouseEvent
 {
 public:
-    MouseMovedEvent(const engine::Vec2i position)
+    MouseMoved(const engine::Vec2f position)
     : MouseEvent(position)
     {}
 
     std::string toString() const override
     {
-        return fmt::format("MouseMovedEvent: position={}", engine::toString(position_));
+        return fmt::format("MouseMoved: position={}", engine::toString(position_));
     }
 
     EVENT_TYPE(MouseMoved);
 };
 
-class MouseScrolledEvent : public MouseEvent
+class MouseScrolled : public MouseEvent
 {
 public:
-    MouseScrolledEvent(const engine::Vec2i& position, const engine::core::MouseWheel wheel, const float offset)
+    MouseScrolled(const engine::Vec2f& position, const engine::core::MouseWheel wheel, const float offset)
     : MouseEvent(position)
     , wheel_(wheel)
     , offset_(offset)
@@ -65,7 +65,7 @@ public:
 
     std::string toString() const override
     {
-        return fmt::format("MouseScrolledEvent: position={}, wheel={}, offset={}", engine::toString(position_), core::toString(wheel_), offset_);
+        return fmt::format("MouseScrolled: position={}, wheel={}, offset={}", engine::toString(position_), core::toString(wheel_), offset_);
     } 
 
     EVENT_TYPE(MouseScrolled);
@@ -91,7 +91,7 @@ public:
     EVENT_CATEGORY(EventCategory::Mouse | EventCategory::Input | EventCategory::MouseButton);
 
 protected:
-    MouseButtonEvent(const engine::Vec2i& position, const engine::core::MouseButton button)
+    MouseButtonEvent(const engine::Vec2f& position, const engine::core::MouseButton button)
     : MouseEvent(position)
     , button_(button)
     {}
@@ -99,20 +99,20 @@ protected:
     engine::core::MouseButton button_;
 };
 
-class MouseButtonPressedEvent : public MouseButtonEvent
+class MouseButtonPressed : public MouseButtonEvent
 {
 public: 
-    MouseButtonPressedEvent(const engine::Vec2i& position, const engine::core::MouseButton button)
+    MouseButtonPressed(const engine::Vec2f& position, const engine::core::MouseButton button)
     : MouseButtonEvent(position, button)
     {}
 
     EVENT_TYPE(MouseButtonPressed);
 };
 
-class MouseButtonReleasedEvent : public MouseButtonEvent
+class MouseButtonReleased : public MouseButtonEvent
 {
 public: 
-    MouseButtonReleasedEvent(const engine::Vec2i& position, const engine::core::MouseButton button)
+    MouseButtonReleased(const engine::Vec2f& position, const engine::core::MouseButton button)
     : MouseButtonEvent(position, button)
     {}
 

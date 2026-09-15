@@ -36,19 +36,19 @@ public:
 
     void render(sf::RenderTexture& renderTexture);
 
-    virtual sf::Vector2f getSize() const;
-    void setSize(const sf::Vector2f& size);
+    virtual engine::Vec2f getSize() const;
+    void setSize(const engine::Vec2f& size);
 
     void setVisibility(bool isVisible);
     bool isVisible() const;
 
-    const sf::Vector2f getPosition() const;
-    void setPosition(const sf::Vector2f& position);
+    const engine::Vec2f getPosition() const;
+    void setPosition(const engine::Vec2f& position);
 
     bool isInside(sf::Vector2f point) const;
-    bool isInside(const event::MousePosition& position) const;
+    bool isInside(const engine::Vec2f& position) const;
 
-    const sf::Vector2f getGlobalPosition() const;
+    const engine::Vec2f getGlobalPosition() const;
     virtual void addChild(std::unique_ptr<Widget> child);
     virtual void removeChild(const Widget* child);
     Widget* getParent() const;
@@ -76,21 +76,21 @@ public:
     void disableFocus();
 
     /* Mouse events */
-    EventStatus receive(const event::MouseMoved& mouseMovedEvent) override final;
-    EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override final;
-    EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override final;
-    EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override final;
-    EventStatus receive(const event::MouseEntered& mouseEnteredEvent) override final;
-    EventStatus receive(const event::MouseLeft& mouseLeftEvent) override final;
+    EventStatus receive(const engine::events::MouseMoved& mouseMovedEvent) override final;
+    EventStatus receive(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override final;
+    EventStatus receive(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override final;
+    EventStatus receive(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent) override final;
+    EventStatus receive(const engine::gui::events::MouseEntered& mouseEnteredEvent) override final;
+    EventStatus receive(const engine::gui::events::MouseLeft& mouseLeftEvent) override final;
 
     /* Keyboard events */
-    EventStatus receive(const engine::events::KeyPressedEvent& keyboardKeyPressed) override final;
-    EventStatus receive(const engine::events::KeyReleasedEvent& keyboardKeyReleased) override final;
-    EventStatus receive(const engine::events::TextEnteredEvent& textEntered) override final;
+    EventStatus receive(const engine::events::KeyPressed& keyboardKeyPressed) override final;
+    EventStatus receive(const engine::events::KeyReleased& keyboardKeyReleased) override final;
+    EventStatus receive(const engine::events::TextEntered& textEntered) override final;
 
     /* Focus events */
-    EventStatus receive(const event::FocusLost& focusLost) override final;
-    EventStatus receive(const event::FocusGained& focusGained) override final;
+    EventStatus receive(const engine::gui::events::FocusLost& focusLost) override final;
+    EventStatus receive(const engine::gui::events::FocusGained& focusGained) override final;
 protected:
 
     /*
@@ -102,19 +102,19 @@ protected:
         so this is some kind bubbling mechanism
     */
 
-    virtual EventStatus on(const event::MouseMoved& mouseMovedEvent);
-    virtual EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent);
-    virtual EventStatus on(const event::MouseButtonDoublePressed& mouseButtonPressedEvent);
-    virtual EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent);
-    virtual EventStatus on(const event::MouseEntered& mouseEnteredEvent);
-    virtual EventStatus on(const event::MouseLeft& mouseLeftEvent);
+    virtual EventStatus on(const engine::events::MouseMoved& mouseMovedEvent);
+    virtual EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent);
+    virtual EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent);
+    virtual EventStatus on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent);
+    virtual EventStatus on(const engine::gui::events::MouseEntered& mouseEnteredEvent);
+    virtual EventStatus on(const engine::gui::events::MouseLeft& mouseLeftEvent);
 
-    virtual EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent);
-    virtual EventStatus on(const engine::events::KeyReleasedEvent& KeyboardKeyReleased);
-    virtual EventStatus on(const engine::events::TextEnteredEvent& textEntered);
+    virtual EventStatus on(const engine::events::KeyPressed& keyboardKeyPressedEvent);
+    virtual EventStatus on(const engine::events::KeyReleased& KeyboardKeyReleased);
+    virtual EventStatus on(const engine::events::TextEntered& textEntered);
 
-    virtual EventStatus on(const event::FocusLost& focusLost);
-    virtual EventStatus on(const event::FocusGained& focusGained);
+    virtual EventStatus on(const engine::gui::events::FocusLost& focusLost);
+    virtual EventStatus on(const engine::gui::events::FocusGained& focusGained);
 
     virtual void onPositionChange();
     virtual void onSizeChange();
@@ -127,7 +127,7 @@ protected:
 
     void applyPendingOperations(); // TODO: probably is no longer needed as events are handled in different manner. Will check later when I will fix context menus.
 
-    sf::Vector2f localPosition_;   // offset from parent position
+    engine::Vec2f localPosition_;  // offset from parent position
     sf::FloatRect bounds_;         // bounds box in global space position
     Widget* parent_; 
     GUI* gui_;                     // pointer to gui handling this widget

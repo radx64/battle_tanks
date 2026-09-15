@@ -15,6 +15,8 @@
 #include "engine/gui/window/StatusBar.hpp"
 #include "engine/gui/WindowManager.hpp"
 
+#include "engine/temporary/ToSfFromSf.hpp"
+
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
 
@@ -99,7 +101,7 @@ Window::Window()
     menuBar_ = menuBar.get();
     Widget::addChild(std::move(menuBar));
 
-    windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
+    windowPanel_->setPosition(engine::Vec2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
 }
 
 void Window::addChild(std::unique_ptr<Widget> widget)
@@ -128,14 +130,14 @@ void Window::setWindowCloseHandler(WindowCloseHandler handler)
     windowCloseHandler_ = std::move(handler);
 }
 
-bool Window::isInsideHeader(const sf::Vector2f& point)
+bool Window::isInsideHeader(const engine::Vec2f& point)
 {
     return header_->isInside(point);
 }
 
-bool Window::isInsideResizeGadget(const sf::Vector2f point)
+bool Window::isInsideResizeGadget(const engine::Vec2f& point)
 {
-    return statusBar_->isInsideResizeGadget(point);
+    return statusBar_->isInsideResizeGadget(temporary::toSf(point));
 }
 
 void Window::onRender(sf::RenderTexture& renderTexture)
@@ -194,21 +196,21 @@ bool Window::isIdle() const
     return isInState(Window::State::Idle);
 }
 
-EventStatus Window::on(const event::MouseButtonDoublePressed&)
+EventStatus Window::on(const engine::gui::events::MouseButtonDoublePressed&)
 {
     return engine::gui::EventStatus::NotConsumed;
 }
 
-EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus Window::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
     // TODO: check all isInside checks if are needed after changes
     // so now GUI controller makes hitbox testing
     // so when event comes to window or iths descendants it should be already checked that event is inside of them
     
     logger_.debug("Mouse button pressed event received by window, id: " + std::to_string(getId()));
-    auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    auto mouse_position = mouseButtonPressedEvent.getPosition();
 
-    if (mouseButtonPressedEvent.button == engine::gui::event::MouseButton::Right)
+    if (mouseButtonPressedEvent.getButton() == engine::core::MouseButton::Right)
     {
         if (contextMenuHandler_ and isInside(mouse_position))
         {
@@ -219,7 +221,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
         return engine::gui::EventStatus::NotConsumed;
     }
 
-    if (mouseButtonPressedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonPressedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return engine::gui::EventStatus::NotConsumed;
     }
@@ -251,7 +253,7 @@ EventStatus Window::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
     return engine::gui::EventStatus::Consumed;
 }
 
-EventStatus Window::on(const event::MouseButtonReleased&)
+EventStatus Window::on(const engine::events::MouseButtonReleased&)
 {
     if (state_ != State::Idle)
     {
@@ -263,9 +265,9 @@ EventStatus Window::on(const event::MouseButtonReleased&)
     return engine::gui::EventStatus::NotConsumed;
 }
 
-EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
+EventStatus Window::on(const engine::events::MouseMoved& mouseMovedEvent)
 {
-    auto mouse_position = sf::Vector2f{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+    auto mouse_position = mouseMovedEvent.getPosition();
 
     if (isInState(State::Dragging))
     {
@@ -277,7 +279,7 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
     {
         auto windowTopLeftCorner = getGlobalPosition();
         auto newWindowSize = mouse_position - windowTopLeftCorner
-            + sf::Vector2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;
+            + engine::Vec2f{window::config::RESIZE_BOX_SIZE, window::config::RESIZE_BOX_SIZE}/2.f;
         newWindowSize.x = std::max(newWindowSize.x, MINIMUM_WINDOW_WIDTH);
         newWindowSize.y = std::max(newWindowSize.y, MINIMUM_WINDOW_HEIGHT);
         setSize(newWindowSize);
@@ -289,7 +291,7 @@ EventStatus Window::on(const event::MouseMoved& mouseMovedEvent)
 
 void Window::onPositionChange()
 {
-    background_.setPosition(Widget::getGlobalPosition());
+    background_.setPosition(temporary::toSf(getGlobalPosition()));
     setMaximized(false);
 }
 
@@ -298,17 +300,17 @@ void Window::onSizeChange()
     auto size = getSize();
     const auto menuBarHeight = menuBar_->hasItems() ? menuBar_->getPreferredHeight() : 0.f;
 
-    header_->setSize(sf::Vector2f{size.x, window::config::HEADER_HEIGHT} - window::config::WINDOW_BORDER_OFFSET * 2.f);
-    menuBar_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
-    menuBar_->setSize(sf::Vector2f{size.x, menuBarHeight} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    header_->setSize(engine::Vec2f{size.x, window::config::HEADER_HEIGHT} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    menuBar_->setPosition(engine::Vec2f{0.f, window::config::HEADER_HEIGHT} + window::config::WINDOW_BORDER_OFFSET);
+    menuBar_->setSize(engine::Vec2f{size.x, menuBarHeight} - window::config::WINDOW_BORDER_OFFSET * 2.f);
 
-    windowPanel_->setPosition(sf::Vector2f{0.f, window::config::HEADER_HEIGHT + menuBarHeight} + window::config::WINDOW_BORDER_OFFSET);
-    windowPanel_->setSize(sf::Vector2f{size.x, size.y - window::config::HEADER_HEIGHT - menuBarHeight - window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    windowPanel_->setPosition(engine::Vec2f{0.f, window::config::HEADER_HEIGHT + menuBarHeight} + window::config::WINDOW_BORDER_OFFSET);
+    windowPanel_->setSize(engine::Vec2f{size.x, size.y - window::config::HEADER_HEIGHT - menuBarHeight - window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
     
-    statusBar_->setSize(sf::Vector2f{size.x, window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
-    statusBar_->setPosition({0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});
+    statusBar_->setSize(engine::Vec2f{size.x, window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
+    statusBar_->setPosition(engine::Vec2f{0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});
 
-    background_.setSize(getSize());
+    background_.setSize(temporary::toSf(getSize()));
     setMaximized(false);
 }
 
@@ -347,14 +349,13 @@ void MainWindow::setContextMenuHandler(ContextMenuHandler handler)
     contextMenuHandler_ = std::move(handler);
 }
 
-EventStatus MainWindow::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus MainWindow::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (mouseButtonPressedEvent.button == engine::gui::event::MouseButton::Right)
+    if (mouseButtonPressedEvent.getButton() == engine::core::MouseButton::Right)
     {
         if (contextMenuHandler_)
         {
-            const auto pos = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
-            contextMenuHandler_(pos);
+            contextMenuHandler_(mouseButtonPressedEvent.getPosition());
             return engine::gui::EventStatus::Consumed;
         }
     }

@@ -123,7 +123,7 @@ void ScrollView::applyLayout(const bool showHorizontalScrollBar, const bool show
     verticalScrollBar_->setSize({SCROLLBAR_THICKNESS, viewportSize.y});
 }
 
-sf::Vector2f ScrollView::calculateViewportSize(const bool showHorizontalScrollBar, const bool showVerticalScrollBar) const
+engine::Vec2f ScrollView::calculateViewportSize(const bool showHorizontalScrollBar, const bool showVerticalScrollBar) const
 {
     auto viewportSize = getSize();
     if (showVerticalScrollBar)
@@ -268,7 +268,7 @@ void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
     const float visibleTop = scrollOffset_.y + EXTRA_MARGIN;
     const float visibleBottom = scrollOffset_.y + viewportSize.y - EXTRA_MARGIN;
 
-    sf::Vector2f scrollOffset = scrollOffset_;
+    engine::Vec2f scrollOffset = scrollOffset_;
     if (paddedRectBounds.left < visibleLeft)
     {
         scrollOffset.x = paddedRectBounds.left - EXTRA_MARGIN;

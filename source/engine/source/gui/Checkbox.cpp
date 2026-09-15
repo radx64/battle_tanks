@@ -85,7 +85,7 @@ bool Checkbox::isChecked() const
     return isChecked_;
 }
 
-EventStatus Checkbox::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
+EventStatus Checkbox::on(const engine::events::KeyReleased& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -100,9 +100,9 @@ EventStatus Checkbox::on(const engine::events::KeyReleasedEvent& keyboardKeyRele
 
 }
 
-EventStatus Checkbox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus Checkbox::on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    if (mouseButtonReleasedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonReleasedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
     }
@@ -111,14 +111,14 @@ EventStatus Checkbox::on(const event::MouseButtonReleased& mouseButtonReleasedEv
     return EventStatus::Consumed;
 }
 
-EventStatus Checkbox::on(const event::MouseEntered&)
+EventStatus Checkbox::on(const engine::gui::events::MouseEntered&)
 {
     state_ = State::Hover;
     updateTexture();
     return EventStatus::Consumed;
 }
 
-EventStatus Checkbox::on(const event::MouseLeft&)
+EventStatus Checkbox::on(const engine::gui::events::MouseLeft&)
 {
     state_ = State::Normal;
     updateTexture();
@@ -127,7 +127,7 @@ EventStatus Checkbox::on(const event::MouseLeft&)
 
 void Checkbox::recalculateSpritesPositions()
 {
-    auto position = getGlobalPosition() + (getSize()/2.f) - boundsToSize(background_.getLocalBounds()) / 2.f;
+    auto position = sf::Vector2f{getGlobalPosition().x, getGlobalPosition().y} + (sf::Vector2f{getSize().x, getSize().y}/2.f) - boundsToSize(background_.getLocalBounds()) / 2.f;
     background_.setPosition(position);
     tick_.setPosition(position);
 }
@@ -142,13 +142,13 @@ void Checkbox::onSizeChange()
     recalculateSpritesPositions();
 }
 
-EventStatus Checkbox::on(const event::FocusLost&)
+EventStatus Checkbox::on(const engine::gui::events::FocusLost&)
 {
     updateTexture();
     return EventStatus::Consumed;
 }
 
-EventStatus Checkbox::on(const event::FocusGained&)
+EventStatus Checkbox::on(const engine::gui::events::FocusGained&)
 {
     updateTexture();
     return EventStatus::Consumed;

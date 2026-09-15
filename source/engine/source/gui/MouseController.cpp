@@ -1,6 +1,9 @@
 #include "engine/gui/MouseController.hpp"
 
+#include "engine/gui/Events.hpp"
 #include "engine/gui/EventReceiver.hpp"
+
+#include "engine/temporary/ToSfFromSf.hpp"
 
 namespace engine::gui
 {
@@ -11,74 +14,45 @@ MouseController::MouseController(engine::gui::EventReceiver* receiver, sf::Rende
 , view_(view)
 {}    
 
-engine::gui::EventStatus MouseController::onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& sfmlButton, bool double_click)
+engine::gui::EventStatus MouseController::onButtonPressed(const engine::Vec2f& mouse_postion, const engine::core::MouseButton& button, bool double_click)
 {
     const auto screen_coords = mapPixelToCoords(mouse_postion);
-
-    const auto guiButton = [&]() {
-        switch (sfmlButton)
-        {
-            case sf::Mouse::Button::Left:   return engine::gui::event::MouseButton::Left;
-            case sf::Mouse::Button::Right:  return engine::gui::event::MouseButton::Right;
-            case sf::Mouse::Button::Middle: return engine::gui::event::MouseButton::Middle;
-            case sf::Mouse::Button::XButton1: return engine::gui::event::MouseButton::XButton1;
-            case sf::Mouse::Button::XButton2: return engine::gui::event::MouseButton::XButton2;
-            default: return engine::gui::event::MouseButton::Left;
-        }
-    }();
 
     if (double_click)
     {
-        return receiver_->receive(
-            engine::gui::event::MouseButtonDoublePressed{
-                .button = guiButton,
-                .position = {.x = screen_coords.x, .y = screen_coords.y}
-            });
+        return receiver_->receive(engine::gui::events::MouseButtonDoublePressed{mouse_postion, button});
     }
 
     return receiver_->receive(
-        engine::gui::event::MouseButtonPressed{
-            .button = guiButton,
-            .position = {.x = screen_coords.x, .y = screen_coords.y}
-        });
+        engine::events::MouseButtonPressed{engine::Vec2f{screen_coords.x, screen_coords.y}, button});
 }
 
-engine::gui::EventStatus MouseController::onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& sfmlButton)
+engine::gui::EventStatus MouseController::onButtonReleased(const engine::Vec2f& mouse_postion, const engine::core::MouseButton& button)
 {
     const auto screen_coords = mapPixelToCoords(mouse_postion);
 
-    const auto guiButton = [&]() {
-        switch (sfmlButton)
-        {
-            case sf::Mouse::Button::Left:   return engine::gui::event::MouseButton::Left;
-            case sf::Mouse::Button::Right:  return engine::gui::event::MouseButton::Right;
-            case sf::Mouse::Button::Middle: return engine::gui::event::MouseButton::Middle;
-            case sf::Mouse::Button::XButton1: return engine::gui::event::MouseButton::XButton1;
-            case sf::Mouse::Button::XButton2: return engine::gui::event::MouseButton::XButton2;
-            default: return engine::gui::event::MouseButton::Left;
-        }
-    }();
-
     return receiver_->receive(
-        engine::gui::event::MouseButtonReleased{
-            .button = guiButton,
-            .position = {.x = screen_coords.x, .y = screen_coords.y}
-        });
+        engine::events::MouseButtonReleased{engine::Vec2f{screen_coords.x, screen_coords.y}, button});
 }
 
-engine::gui::EventStatus MouseController::onMouseMoved(const sf::Vector2f& mouse_postion)
+engine::gui::EventStatus MouseController::onMouseMoved(const engine::Vec2f& mouse_postion)
 {   
     const auto screen_coords = mapPixelToCoords(mouse_postion);
 
     const auto result = receiver_->receive(
-        engine::gui::event::MouseMoved{.position = engine::gui::event::MousePosition{
-            .x = screen_coords.x, 
-            .y = screen_coords.y
-        }});
+        engine::events::MouseMoved{engine::Vec2f{screen_coords.x, screen_coords.y}});
+    return result;
+}
+engine::gui::EventStatus MouseController::onMouseScrolled(const engine::Vec2f& mouse_postion, const engine::core::MouseWheel& wheel, const float delta)
+{
+    const auto screen_coords = mapPixelToCoords(mouse_postion);
+
+    const auto result = receiver_->receive(
+        engine::events::MouseScrolled{engine::Vec2f{screen_coords.x, screen_coords.y}, wheel, delta});
     return result;
 }
 
-sf::Vector2f MouseController::mapPixelToCoords(const sf::Vector2f& mouse_position)
+sf::Vector2f MouseController::mapPixelToCoords(const engine::Vec2f& mouse_position)
 {
     return window_.mapPixelToCoords(sf::Vector2i{
         static_cast<int>(mouse_position.x), 

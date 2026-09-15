@@ -5,10 +5,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "engine/Logger.hpp"
-#include "engine/TasksQueue.hpp"
 #include "engine/gui/ContextMenu.hpp"
 #include "engine/gui/Window.hpp"
+#include "engine/Logger.hpp"
+#include "engine/TasksQueue.hpp"
+#include "engine/Vector2.hpp"
 
 namespace engine::gui { class Window; }
 namespace engine::gui { class MainWindow; }
@@ -23,11 +24,11 @@ public:
     using OverlayCloseHandler = std::function<void(Overlay*)>;
     using Overlays = std::list<std::unique_ptr<Overlay>>;
 
-    WindowManager(const sf::Vector2f& mainWindowSize);
+    WindowManager(const engine::Vec2f& mainWindowSize);
     virtual ~WindowManager();
 
     void openWindow(std::unique_ptr<Window> window);
-    void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
+    void openContextMenu(std::unique_ptr<ContextMenu> menu, const engine::Vec2f& globalPosition);
 
     void render(sf::RenderWindow& render_window);
     void update();
@@ -40,7 +41,7 @@ public:
     void setWindowCloseHandler(WindowCloseHandler handler);
     void setOverlayCloseHandler(OverlayCloseHandler handler);
 
-    Window* getTopWindowAtPosition(const event::MousePosition position) const;
+    Window* getTopWindowAtPosition(const engine::Vector2f& position) const;
     Overlays& getOverlays();
     bool hasOverlays() const;
 

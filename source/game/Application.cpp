@@ -32,7 +32,7 @@
 #include "graphics/TextureLibrary.hpp"
 
 #include "engine/gui/Button.hpp"
-#include "engine/gui/Event.hpp"
+#include "engine/gui/Events.hpp"
 #include "engine/gui/Window.hpp"
 #include "engine/gui/ContextMenu.hpp"
 
@@ -252,24 +252,24 @@ void Application::renderGameObjects()
 void Application::configureGUI()
 {
     auto quit_button = engine::gui::TextButton::create("Quit");
-    quit_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 100.f));
-    quit_button->setSize(sf::Vector2f(150.f, 30.f));
+    quit_button->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 200.f, 100.f));
+    quit_button->setSize(engine::Vec2f(150.f, 30.f));
     quit_button->onClick([this](){logger_.info("Quitting..."); Application::close();});
     gui().mainWindow().addChild(std::move(quit_button));
 
     auto button = engine::gui::TextButton::create("Help");
-    button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 150.f));
-    button->setSize(sf::Vector2f(150.f, 30.f));
+    button->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 200.f, 150.f));
+    button->setSize(engine::Vec2f(150.f, 30.f));
     button->onClick([this](){
-        auto help_window = std::make_unique<game::HelpWindow>(sf::Vector2f(300.f, 300.f));
+        auto help_window = std::make_unique<game::HelpWindow>(engine::Vec2f(300.f, 300.f));
         help_window->setTitle("Help");
         gui().openWindow(std::move(help_window));
     });
     gui().mainWindow().addChild(std::move(button));
 
     auto reload_lua_button = engine::gui::TextButton::create("Reload Lua scripts");
-    reload_lua_button->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 200.f, 200.f));
-    reload_lua_button->setSize(sf::Vector2f(150.f, 30.f));
+    reload_lua_button->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 200.f, 200.f));
+    reload_lua_button->setSize(engine::Vec2f(150.f, 30.f));
     reload_lua_button->onClick([this](){
         for (auto& controller : lua_controllers_)
         {
@@ -280,11 +280,11 @@ void Application::configureGUI()
     gui().mainWindow().addChild(std::move(reload_lua_button));
 
     auto menu_button = engine::gui::TextButton::create("Menu");
-    menu_button->setPosition(sf::Vector2f(20.f, 250.f));
-    menu_button->setSize(sf::Vector2f(150.f, 30.f));
+    menu_button->setPosition(engine::Vec2f(20.f, 250.f));
+    menu_button->setSize(engine::Vec2f(150.f, 30.f));
     auto* menu_button_ptr = menu_button.get();
     menu_button->onClick([this, menu_button_ptr]() {
-        const auto menu_position = menu_button_ptr->getGlobalPosition() + sf::Vector2f{0.f, 32.f};
+        const auto menu_position = menu_button_ptr->getGlobalPosition() + engine::Vec2f{0.f, 32.f};
         auto menu = engine::gui::ContextMenu::create(
             {
                 {"Reset camera", [this]() { camera_.setPosition(camera_initial_position_.x, camera_initial_position_.y); camera_.resetZoom();}},
@@ -307,7 +307,7 @@ void Application::configureGUI()
     
     gui().mainWindow().addChild(std::move(menu_button));
 
-    gui().mainWindow().setContextMenuHandler([this](const sf::Vector2f& pos) {
+    gui().mainWindow().setContextMenuHandler([this](const engine::Vec2f& pos) {
         auto menu = engine::gui::ContextMenu::create(
             {
                 {"Reload Lua", [this]() { for (auto& controller : lua_controllers_) { controller->reload(); scripts_scheduler_.add(controller->getScript()); } }},

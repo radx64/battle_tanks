@@ -1,5 +1,7 @@
 #pragma once
-#include <SFML/Window/Mouse.hpp>
+
+#include "engine/core/MouseCode.hpp"
+#include "engine/Vector2.hpp"
 
 #include "engine/gui/EventReceiver.hpp"
 
@@ -21,9 +23,10 @@ public:
 friend class MouseHandler;
 
 protected:
-    virtual engine::gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button, bool double_click) = 0;
-    virtual engine::gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) = 0;
-    virtual engine::gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) = 0;
+    virtual engine::gui::EventStatus onButtonPressed(const engine::Vec2f& mouse_position, const engine::core::MouseButton& button, bool double_click) = 0;
+    virtual engine::gui::EventStatus onButtonReleased(const engine::Vec2f& mouse_position, const engine::core::MouseButton& button) = 0;
+    virtual engine::gui::EventStatus onMouseMoved(const engine::Vec2f& mouse_position) = 0;
+    virtual engine::gui::EventStatus onMouseScrolled(const engine::Vec2f& mouse_position, const engine::core::MouseWheel& wheel, const float delta) = 0;
 
     // attach is used by mousehandler to properly setup destruction of receiver
     void attach(MouseHandler* handler);

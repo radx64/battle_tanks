@@ -15,8 +15,8 @@ public:
 
 friend class KeyboardHandler;
 protected:
-    virtual void onKeyPressed(const engine::events::KeyPressedEvent& keyEvent) = 0;
-    virtual void onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent) = 0;
+    virtual void onKeyPressed(const engine::events::KeyPressed& keyEvent) = 0;
+    virtual void onKeyReleased(const engine::events::KeyReleased& keyEvent) = 0;
 
     // attach is used by keyboardhandler to properly setup destruction of receiver
     void attach(KeyboardHandler* handler);

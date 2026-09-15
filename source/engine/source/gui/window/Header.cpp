@@ -94,7 +94,7 @@ void Header::onRender(sf::RenderTexture& renderTexture)
 void Header::onSizeChange()
 {
     auto header_size = getSize();
-    headerShape_.setSize(header_size);
+    headerShape_.setSize(sf::Vector2f{header_size.x, header_size.y});
 
     for (auto& child : children_)
     {
@@ -104,12 +104,12 @@ void Header::onSizeChange()
 
 void Header::onPositionChange()
 {
-    headerShape_.setPosition(getGlobalPosition());
+    headerShape_.setPosition(sf::Vector2f{getGlobalPosition().x, getGlobalPosition().y});
 }
 
-EventStatus Header::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus Header::on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
-    if (isInside(mouseButtonDoublePressedEvent.position))
+    if (isInside(mouseButtonDoublePressedEvent.getPosition()))
     {
         if (maximizeRestoreButtonAction_)
         {

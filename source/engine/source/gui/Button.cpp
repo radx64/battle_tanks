@@ -72,12 +72,14 @@ ButtonBase::ButtonBase(const style::Button& style)
 
 void ButtonBase::onSizeChange()
 {
-    background_.setSize(getSize());
+    const auto size = getSize(); 
+    background_.setSize(sf::Vector2f{size.x, size.y});
 }
 
 void ButtonBase::onPositionChange()
 {
-    background_.setPosition(getGlobalPosition());
+    const auto position = getGlobalPosition();
+    background_.setPosition(sf::Vector2f{position.x, position.y});
 }
 
 void ButtonBase::onRender(sf::RenderTexture& renderTexture)
@@ -95,7 +97,7 @@ void ButtonBase::onMouseEnter(std::function<void()> onMouseEnterCallback)
     onMouseEnter_ = onMouseEnterCallback;
 }
 
-EventStatus ButtonBase::on(const event::MouseEntered&)
+EventStatus ButtonBase::on(const engine::gui::events::MouseEntered&)
 {
     state_.hovered = true;
     updateTexture();
@@ -104,7 +106,7 @@ EventStatus ButtonBase::on(const event::MouseEntered&)
 
     return EventStatus::Consumed;
 }
-EventStatus ButtonBase::on(const event::MouseLeft&)
+EventStatus ButtonBase::on(const engine::gui::events::MouseLeft&)
 {
     state_.hovered = false;
     state_.pressed = false;
@@ -113,7 +115,7 @@ EventStatus ButtonBase::on(const event::MouseLeft&)
     return EventStatus::Consumed;
 }
 
-EventStatus ButtonBase::on(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent)
+EventStatus ButtonBase::on(const engine::events::KeyPressed& keyboardKeyPressedEvent)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -129,7 +131,7 @@ EventStatus ButtonBase::on(const engine::events::KeyPressedEvent& keyboardKeyPre
     return EventStatus::NotConsumed;
 }
 
-EventStatus ButtonBase::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
+EventStatus ButtonBase::on(const engine::events::KeyReleased& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -146,11 +148,11 @@ EventStatus ButtonBase::on(const engine::events::KeyReleasedEvent& keyboardKeyRe
     return EventStatus::NotConsumed;
 }
 
-EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus ButtonBase::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
     if (not isVisible_) return EventStatus::NotConsumed;
 
-    bool isLeftClicked = mouseButtonPressedEvent.button == engine::gui::event::MouseButton::Left;
+    bool isLeftClicked = mouseButtonPressedEvent.getButton() == engine::core::MouseButton::Left;
 
     if (isLeftClicked)
     {
@@ -162,11 +164,11 @@ EventStatus ButtonBase::on(const event::MouseButtonPressed& mouseButtonPressedEv
     return EventStatus::NotConsumed;
 }
 
-EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus ButtonBase::on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
     if (not state_.pressed) return EventStatus::NotConsumed;
 
-    bool isLeftReleased = mouseButtonReleasedEvent.button == engine::gui::event::MouseButton::Left;
+    bool isLeftReleased = mouseButtonReleasedEvent.getButton() == engine::core::MouseButton::Left;
     if (isLeftReleased)
     {
        return  processLeftMouseClick();               
@@ -174,11 +176,11 @@ EventStatus ButtonBase::on(const event::MouseButtonReleased& mouseButtonReleased
     return EventStatus::NotConsumed;
 }
 
-EventStatus ButtonBase::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus ButtonBase::on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
     if (not isVisible_) return EventStatus::NotConsumed;
     
-    bool isLeftDoubleClicked = mouseButtonDoublePressedEvent.button == engine::gui::event::MouseButton::Left;
+    bool isLeftDoubleClicked = mouseButtonDoublePressedEvent.getButton() == engine::core::MouseButton::Left;
     if (not isLeftDoubleClicked) return EventStatus::NotConsumed;
 
     return processLeftMouseClick();
@@ -196,14 +198,14 @@ EventStatus ButtonBase::processLeftMouseClick()
 
 }
 
-EventStatus ButtonBase::on(const event::FocusLost&)
+EventStatus ButtonBase::on(const engine::gui::events::FocusLost&)
 {
     logger_.debug("Button lost focus");
     updateTexture();
     return EventStatus::Consumed;
 }
 
-EventStatus ButtonBase::on(const event::FocusGained&)
+EventStatus ButtonBase::on(const engine::gui::events::FocusGained&)
 {
     logger_.debug("Button gained focus");
     updateTexture();

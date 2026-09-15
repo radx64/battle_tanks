@@ -35,8 +35,8 @@ TEST_F(ButtonShould, callOnClickWhenClickedInside)
     sut->setPosition(sf::Vector2f{0.f,0.f});
     sut->onClick([&receiver](){receiver.action();});
     EXPECT_CALL(receiver, action());
-    sut->receive(engine::gui::event::MouseButtonPressed{.button = engine::gui::event::MouseButton::Left, .position = {1.f, 1.f}});
-    sut->receive(engine::gui::event::MouseButtonReleased{.button = engine::gui::event::MouseButton::Left, .position = {1.f, 1.f}});
+    sut->receive(engine::engine::events::MouseButtonPressed{.button = engine::gui::events::MouseButton::Left, .position = {1.f, 1.f}});
+    sut->receive(engine::engine::events::MouseButtonReleased{.button = engine::gui::events::MouseButton::Left, .position = {1.f, 1.f}});
 }
 
 }  // namespace engine::gui

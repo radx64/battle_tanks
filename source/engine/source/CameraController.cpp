@@ -10,7 +10,7 @@ CameraController::CameraController (Camera* camera)
 : camera_{camera}
 {}
 
-void CameraController::onKeyPressed(const engine::events::KeyPressedEvent& keyEvent)
+void CameraController::onKeyPressed(const engine::events::KeyPressed& keyEvent)
 {
     switch(keyEvent.getKeyCode())
     {
@@ -22,7 +22,7 @@ void CameraController::onKeyPressed(const engine::events::KeyPressedEvent& keyEv
     }
 }
 
-void CameraController::onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent)
+void CameraController::onKeyReleased(const engine::events::KeyReleased& keyEvent)
 {
     switch(keyEvent.getKeyCode())
     {

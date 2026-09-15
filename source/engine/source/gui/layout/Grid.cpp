@@ -154,13 +154,13 @@ bool Grid::removeRow(const size_t index)
 
 void Grid::recalculateChildrenBounds()
 {
-    auto cellPosition = sf::Vector2f{(horizontalPadding_/2.f), (verticalPadding_/2.f)};
+    auto cellPosition = engine::Vec2f{(horizontalPadding_/2.f), (verticalPadding_/2.f)};
 
     for (size_t x = 0; x < width_; x++)
     {
         for (size_t y = 0; y < height_; y++)
         {
-            auto cellSize = sf::Vector2f{columnConstraintLayout_.getElementSize(x), rowConstraintLayout_.getElementSize(y)};
+            auto cellSize = engine::Vec2f{columnConstraintLayout_.getElementSize(x), rowConstraintLayout_.getElementSize(y)};
             if (grid_[x][y] != nullptr)
             {
                 grid_[x][y]->setPosition(cellPosition);

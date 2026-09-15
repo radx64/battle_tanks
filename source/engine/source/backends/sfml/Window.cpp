@@ -84,7 +84,7 @@ void Window::pollEvents()
                     .system = sfml_event.key.system
                 };
 
-                events::KeyPressedEvent event{static_cast<core::KeyCode>(sfml_event.key.code), modifiers};
+                events::KeyPressed event{static_cast<core::KeyCode>(sfml_event.key.code), modifiers};
                 event_callback_(event);
                 break;
             }
@@ -98,32 +98,32 @@ void Window::pollEvents()
                     .system = sfml_event.key.system
                 };
 
-                events::KeyReleasedEvent event{static_cast<core::KeyCode>(sfml_event.key.code), modifiers};
+                events::KeyReleased event{static_cast<core::KeyCode>(sfml_event.key.code), modifiers};
                 event_callback_(event);
                 break;
             }
 
             case sf::Event::TextEntered:
             {
-                events::TextEnteredEvent event{sfml_event.text.unicode};
+                events::TextEntered event{sfml_event.text.unicode};
                 event_callback_(event);
                 break;
             }
 
             case sf::Event::MouseMoved:
             {
-                events::MouseMovedEvent event{engine::Vec2i{sfml_event.mouseMove.x, sfml_event.mouseMove.y}};
+                events::MouseMoved event{engine::Vec2f{static_cast<float>(sfml_event.mouseMove.x), static_cast<float>(sfml_event.mouseMove.y)}};
                 event_callback_(event);
                 break;
             }
 
             case sf::Event::MouseWheelScrolled:
             {
-                const engine::Vec2i position {sfml_event.mouseWheelScroll.x, sfml_event.mouseWheelScroll.y};
+                const engine::Vec2f position {static_cast<float>(sfml_event.mouseWheelScroll.x), static_cast<float>(sfml_event.mouseWheelScroll.y)};
                 const float offset = sfml_event.mouseWheelScroll.delta;
                 
                 const engine::core::MouseWheel wheel = backends::fromSf(sfml_event.mouseWheelScroll.wheel);
-                events::MouseScrolledEvent event{position, wheel, offset};
+                events::MouseScrolled event{position, wheel, offset};
                 event_callback_(event);
                 break;
 
@@ -131,18 +131,18 @@ void Window::pollEvents()
 
             case sf::Event::MouseButtonPressed:
             {
-                const engine::Vec2i position {sfml_event.mouseButton.x, sfml_event.mouseButton.y};
+                const engine::Vec2f position {static_cast<float>(sfml_event.mouseButton.x), static_cast<float>(sfml_event.mouseButton.y)};
                 const engine::core::MouseButton button = backends::fromSf(sfml_event.mouseButton.button);
-                events::MouseButtonPressedEvent event{position, button};
+                events::MouseButtonPressed event{position, button};
                 event_callback_(event);
                 break;
             }
 
             case sf::Event::MouseButtonReleased:
             {
-                const engine::Vec2i position {sfml_event.mouseButton.x, sfml_event.mouseButton.y};
+                const engine::Vec2f position {static_cast<float>(sfml_event.mouseButton.x), static_cast<float>(sfml_event.mouseButton.y)};
                 const engine::core::MouseButton button = backends::fromSf(sfml_event.mouseButton.button);
-                events::MouseButtonReleasedEvent event{position, button};
+                events::MouseButtonReleased event{position, button};
                 event_callback_(event);
                 break;
             }

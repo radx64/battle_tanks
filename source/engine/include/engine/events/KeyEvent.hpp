@@ -31,30 +31,30 @@ protected:
     KeyModifiers modifiers_;
 };
 
-class KeyPressedEvent : public KeyEvent
+class KeyPressed : public KeyEvent
 {
 public:
-    KeyPressedEvent(const core::KeyCode key_code, const KeyModifiers& modifiers);
+    KeyPressed(const core::KeyCode key_code, const KeyModifiers& modifiers);
 
     std::string toString() const override;
 
     EVENT_TYPE(KeyPressed);
 };
 
-class KeyReleasedEvent : public KeyEvent
+class KeyReleased : public KeyEvent
 {
 public:
-    KeyReleasedEvent(const core::KeyCode key_code, const KeyModifiers& modifiers);
+    KeyReleased(const core::KeyCode key_code, const KeyModifiers& modifiers);
 
     std::string toString() const override;
 
     EVENT_TYPE(KeyReleased);
 };
 
-class TextEnteredEvent : public Event
+class TextEntered : public Event
 {
 public:
-    TextEnteredEvent(const uint32_t unicode);
+    TextEntered(const uint32_t unicode);
 
     uint32_t getUnicode() const;
 

@@ -8,14 +8,14 @@
 namespace engine::gui::slider
 {
 
-sf::Vector2f HorizontalThinRenderingPolicy::getTrackSize(const sf::Vector2f& silderSize)
+engine::Vec2f HorizontalThinRenderingPolicy::getTrackSize(const engine::Vec2f& silderSize)
 {
-    return sf::Vector2f{silderSize.x - BOUNDS_THICKNESS * 2.f, THIN_TRACK_THICKNESS};
+    return engine::Vec2f{silderSize.x - BOUNDS_THICKNESS * 2.f, THIN_TRACK_THICKNESS};
 }
 
-sf::Vector2f HorizontalThinRenderingPolicy::getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize)
+engine::Vec2f HorizontalThinRenderingPolicy::getTrackPosition(const engine::Vec2f& sliderPosition, const engine::Vec2f& sliderSize)
 {
-    auto trackPositionOffset = sf::Vector2f{BOUNDS_THICKNESS, sliderSize.y / 2.f - THIN_TRACK_THICKNESS / 2.f};
+    auto trackPositionOffset = engine::Vec2f{BOUNDS_THICKNESS, sliderSize.y / 2.f - THIN_TRACK_THICKNESS / 2.f};
     return sliderPosition + trackPositionOffset;
 }
 
@@ -24,19 +24,18 @@ std::string HorizontalThinRenderingPolicy::getTrackTextureName()
     return std::string{"slider_track"};
 }
 
-sf::Vector2f HorizontalThinRenderingPolicy::getThumbSize(const sf::Vector2f&, const float)
+engine::Vec2f HorizontalThinRenderingPolicy::getThumbSize(const engine::Vec2f&, const float)
 {
-    return sf::Vector2f{THUMB_THICKNESS, THUMB_THICKNESS};
+    return engine::Vec2f{THUMB_THICKNESS, THUMB_THICKNESS};
 }
 
-sf::Vector2f HorizontalThinRenderingPolicy::getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-    const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue)
+engine::Vec2f HorizontalThinRenderingPolicy::getThumbPosition(const engine::Vec2f& sliderPosition, const engine::Vec2f& sliderSize, 
+    const engine::Vec2f& trackSize, const engine::Vec2f& thumbSize, const float normalizedValue)
 {
     auto thumbXPositionOffset = normalizedValue * (trackSize.x - thumbSize.x) + thumbSize.x;
     auto thumbYPositionOffset = sliderSize.y / 2.f;
 
-    return sliderPosition + sf::Vector2f{thumbXPositionOffset, thumbYPositionOffset};
+    return sliderPosition + engine::Vec2f{thumbXPositionOffset, thumbYPositionOffset};
 }
-
 
 }  // namespace engine::gui::slider

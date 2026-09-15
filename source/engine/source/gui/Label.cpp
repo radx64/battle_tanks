@@ -66,11 +66,13 @@ void Label::onPositionChange()
 
 void Label::recalculatePositionAndSize()
 {
-    text_.setGlobalPosition(getGlobalPosition());
-    text_.setSize(getSize());
+    const auto position = getGlobalPosition();
+    const auto size = getSize();
+    text_.setGlobalPosition(sf::Vector2f{position.x, position.y});
+    text_.setSize(sf::Vector2f{size.x, size.y});
 
     text_.setOffset(calculateAlignmentOffset(
-        getSize(), boundsToSize(text_.getTextBounds()), alignment_));
+        sf::Vector2f{size.x, size.y}, boundsToSize(text_.getTextBounds()), alignment_));
 }
 
 void Label::setAlignment(const engine::gui::Alignment& alignment)

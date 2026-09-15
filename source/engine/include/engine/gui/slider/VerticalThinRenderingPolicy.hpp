@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <SFML/Graphics.hpp>
+#include "engine/Vector2.hpp"
 
 namespace engine::gui::slider
 {
@@ -10,13 +10,13 @@ namespace engine::gui::slider
 class VerticalThinRenderingPolicy
 {
 public:
-    static sf::Vector2f getTrackSize(const sf::Vector2f& silderSize);
-    static sf::Vector2f getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize);
+    static engine::Vector2f getTrackSize(const engine::Vector2f& sliderSize);
+    static engine::Vector2f getTrackPosition(const engine::Vector2f& sliderPosition, const engine::Vector2f& sliderSize);
     static std::string getTrackTextureName();
 
-    static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize, const float ratio);
-    static sf::Vector2f getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-        const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue);
+    static engine::Vector2f getThumbSize(const engine::Vector2f& sliderSize, const float ratio);
+    static engine::Vector2f getThumbPosition(const engine::Vector2f& sliderPosition, const engine::Vector2f& sliderSize, 
+        const engine::Vector2f& trackSize, const engine::Vector2f& thumbSize, const float normalizedValue);
 };
 
 }  // namespace engine::gui::slider

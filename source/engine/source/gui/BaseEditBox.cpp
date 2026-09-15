@@ -42,7 +42,8 @@ BaseEditBox::BaseEditBox()
     text_.addModifier(&selection_);
     text_.addModifier(&textCursor_);
 
-    text_.setGlobalPosition(Widget::getGlobalPosition());
+    const auto position = getGlobalPosition();
+    text_.setGlobalPosition(sf::Vector2f{position.x, position.y});
 
     textCursor_.setFont(text_.getFont());
     textCursor_.setCharacterSize(text_.getCharacterSize());
@@ -89,9 +90,12 @@ void BaseEditBox::onRender(sf::RenderTexture& renderTexture)
 
 void BaseEditBox::onSizeChange()
 {
-    text_.setSize(Widget::getSize() - EXTRA_END_OFFSET * 2.f);
-    text_.setGlobalPosition(Widget::getGlobalPosition() + EXTRA_END_OFFSET);
-    background_.setSize(Widget::getSize());
+    const auto size = Widget::getSize();
+    const auto position = Widget::getGlobalPosition();
+
+    text_.setSize(sf::Vector2f{size.x, size.y} - EXTRA_END_OFFSET * 2.f);
+    text_.setGlobalPosition(sf::Vector2f{position.x, position.y} + EXTRA_END_OFFSET);
+    background_.setSize(sf::Vector2f{size.x, size.y});
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -99,16 +103,18 @@ void BaseEditBox::onSizeChange()
 
 void BaseEditBox::onPositionChange()
 {
-    text_.setGlobalPosition(Widget::getGlobalPosition() + EXTRA_END_OFFSET);
-    background_.setPosition(getGlobalPosition());
+    const auto position = getGlobalPosition();
+
+    text_.setGlobalPosition(sf::Vector2f{position.x, position.y} + EXTRA_END_OFFSET);
+    background_.setPosition(sf::Vector2f{position.x, position.y});
 
     textCursor_.update();
     selection_.update();
 }
 
-EventStatus BaseEditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus BaseEditBox::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (mouseButtonPressedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonPressedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
     }
@@ -135,7 +141,7 @@ EventStatus BaseEditBox::on(const event::MouseButtonPressed& mouseButtonPressedE
     return EventStatus::NotConsumed;
 }
 
-EventStatus BaseEditBox::on(const event::MouseButtonDoublePressed&)
+EventStatus BaseEditBox::on(const engine::gui::events::MouseButtonDoublePressed&)
 {
     if (not isFocused())
     {
@@ -151,9 +157,9 @@ EventStatus BaseEditBox::on(const event::MouseButtonDoublePressed&)
     return EventStatus::Consumed;
 }
 
-EventStatus BaseEditBox::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus BaseEditBox::on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    if (mouseButtonReleasedEvent.button == engine::gui::event::MouseButton::Left)
+    if (mouseButtonReleasedEvent.getButton() == engine::core::MouseButton::Left)
     {
         mouseLeftButtonPressed_ = false;
     }
@@ -161,7 +167,7 @@ EventStatus BaseEditBox::on(const event::MouseButtonReleased& mouseButtonRelease
     return EventStatus::NotConsumed;
 }
 
-EventStatus BaseEditBox::on(const event::MouseMoved&)
+EventStatus BaseEditBox::on(const engine::events::MouseMoved&)
 {
     if(mouseLeftButtonPressed_)
     {
@@ -245,7 +251,7 @@ void BaseEditBox::updateCursorAndSelection(const bool atSelectionEndOnCancel)
     }
 }
 
-EventStatus BaseEditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPressed)
+EventStatus BaseEditBox::on(const engine::events::KeyPressed& keyboardKeyPressed)
 {
     auto result = EventStatus::NotConsumed;
     if(not isFocused()) return result;
@@ -360,7 +366,7 @@ EventStatus BaseEditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPr
     return result;
 }
 
-EventStatus BaseEditBox::on(const engine::events::KeyReleasedEvent& keyboardKeyReleased)
+EventStatus BaseEditBox::on(const engine::events::KeyReleased& keyboardKeyReleased)
 {
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -379,7 +385,7 @@ EventStatus BaseEditBox::on(const engine::events::KeyReleasedEvent& keyboardKeyR
     return EventStatus::NotConsumed;
 }
 
-EventStatus BaseEditBox::on(const engine::events::TextEnteredEvent& textEntered)
+EventStatus BaseEditBox::on(const engine::events::TextEntered& textEntered)
 {
     if(not isFocused()) return EventStatus::NotConsumed;
 
@@ -419,7 +425,7 @@ void BaseEditBox::enterEdit()
     textCursor_.enable();
 }
 
-EventStatus BaseEditBox::on(const engine::gui::event::FocusLost&)
+EventStatus BaseEditBox::on(const engine::gui::events::FocusLost&)
 {
     background_.setTexture(normalTexture_);
     background_.setColor(style_.backgroundColor);
@@ -429,7 +435,7 @@ EventStatus BaseEditBox::on(const engine::gui::event::FocusLost&)
     return EventStatus::Consumed;
 }
 
-EventStatus BaseEditBox::on(const engine::gui::event::FocusGained&)
+EventStatus BaseEditBox::on(const engine::gui::events::FocusGained&)
 {
     enterEdit();
     return EventStatus::Consumed;

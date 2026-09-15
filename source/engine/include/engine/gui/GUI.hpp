@@ -18,16 +18,16 @@ class GUI : public engine::gui::EventReceiver
 public:
     using EventReceiver::receive; // to unshadow EventReceiver not overloaded methods
 
-    EventStatus receive(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
-    EventStatus receive(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
-    EventStatus receive(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus receive(const event::FocusChange& focusChangeEvent) override;
-    EventStatus receive(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent) override;
-    EventStatus receive(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
-    EventStatus receive(const engine::events::TextEnteredEvent& textEnteredEvent) override;
+    EventStatus receive(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus receive(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
+    EventStatus receive(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus receive(const engine::events::MouseMoved& mouseMovedEvent) override;
+    EventStatus receive(const engine::gui::events::FocusChange& focusChangeEvent) override;
+    EventStatus receive(const engine::events::KeyPressed& keyboardKeyPressedEvent) override;
+    EventStatus receive(const engine::events::KeyReleased& keyboardKeyReleasedEvent) override;
+    EventStatus receive(const engine::events::TextEntered& textEnteredEvent) override;
 
-    GUI(const sf::Vector2f& mainWindowSize);
+    GUI(const engine::Vec2f& mainWindowSize);
     virtual ~GUI();
 
     void render(sf::RenderWindow& render_window);
@@ -35,19 +35,19 @@ public:
     
     MainWindow& mainWindow();
     void openWindow(std::unique_ptr<Window> window);
-    void openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition);
+    void openContextMenu(std::unique_ptr<ContextMenu> menu, const engine::Vec2f& globalPosition);
 
     void captureMouse(Widget* widget);
     void releaseMouse();
 
 protected:
-    Widget* hitTestWindowsOnly(const engine::gui::event::MousePosition position);
-    Widget* hitTestOverlaysOnly(const engine::gui::event::MousePosition position);
-    Widget* hitTest(const engine::gui::event::MousePosition position);
+    Widget* hitTestWindowsOnly(const engine::Vector2f& position);
+    Widget* hitTestOverlaysOnly(const engine::Vector2f& position);
+    Widget* hitTest(const engine::Vector2f& position);
     Widget* getNextFocusableWidget(Widget* root, Widget* current);
     Widget* getPreviousFocusableWidget(Widget* root, Widget* current);
     void setFocus(Widget* widget);
-    EventStatus updateHover(const engine::gui::event::MousePosition position);
+    EventStatus updateHover(const engine::Vector2f& position);
     void onActiveWindowChanged(Window* newActiveWindow);
     void onOverlayRemoval(Overlay* removedOverlay); 
 

@@ -30,17 +30,17 @@ protected:
     ButtonBase(const style::Button& style);
     void updateTexture();
     
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
-    EventStatus on(const event::MouseEntered& mouseEnteredEvent) override;
-    EventStatus on(const event::MouseLeft& mouseLeftEvent) override;
-    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const engine::gui::events::MouseEntered& mouseEnteredEvent) override;
+    EventStatus on(const engine::gui::events::MouseLeft& mouseLeftEvent) override;
+    EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
 
-    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent) override;
-    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
+    EventStatus on(const engine::events::KeyPressed& keyboardKeyPressedEvent) override;
+    EventStatus on(const engine::events::KeyReleased& keyboardKeyReleasedEvent) override;
     
-    EventStatus on(const event::FocusLost&) override;
-    EventStatus on(const event::FocusGained&) override;
+    EventStatus on(const engine::gui::events::FocusLost&) override;
+    EventStatus on(const engine::gui::events::FocusGained&) override;
 
     void onSizeChange() override;
     void onPositionChange() override;

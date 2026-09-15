@@ -56,7 +56,7 @@ public:
     static std::unique_ptr<ContextMenu> create(const std::vector<Item>& items);
     ~ContextMenu() override;
     
-    void open(const sf::Vector2f& globalPosition);
+    void open(const engine::Vec2f& globalPosition);
     void close() override;
     
     void setCloseCallback(std::function<void(ContextMenu*)> callback);
@@ -67,7 +67,7 @@ protected:
     
     void onRender(sf::RenderTexture& renderTexture) override;
     
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
 
     void onPositionChange() override;
     void onSizeChange() override;

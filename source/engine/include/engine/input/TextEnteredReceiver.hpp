@@ -18,7 +18,7 @@ public:
 friend class KeyboardHandler;
 
 protected:
-    virtual void onTextEntered(const engine::events::TextEnteredEvent& event) = 0;
+    virtual void onTextEntered(const engine::events::TextEntered& event) = 0;
     void attach(KeyboardHandler* handler);
 
     KeyboardHandler* handler_;

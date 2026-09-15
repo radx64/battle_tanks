@@ -63,7 +63,7 @@ void KeyboardHandler::unsubscribe(TextEnteredReceiver* receiver)
         std::end(textEnteredReceivers_));
 }
 
-void KeyboardHandler::handleKeyPressed(const engine::events::KeyPressedEvent& event)
+void KeyboardHandler::handleKeyPressed(const engine::events::KeyPressed& event)
 {
     const auto key = event.getKeyCode();
     keysStates_[key] = true;
@@ -85,7 +85,7 @@ void KeyboardHandler::handleKeyPressed(const engine::events::KeyPressedEvent& ev
 
 }
 
-void KeyboardHandler::handleKeyReleased(const engine::events::KeyReleasedEvent& event)
+void KeyboardHandler::handleKeyReleased(const engine::events::KeyReleased& event)
 {
     const auto key = event.getKeyCode();
     keysStates_[key] = false;
@@ -106,7 +106,7 @@ void KeyboardHandler::handleKeyReleased(const engine::events::KeyReleasedEvent& 
     }
 }
 
-void KeyboardHandler::handleTextEntered(const engine::events::TextEnteredEvent& event)
+void KeyboardHandler::handleTextEntered(const engine::events::TextEntered& event)
 {
     for (auto* receiver : textEnteredReceivers_)
     {

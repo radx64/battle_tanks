@@ -9,7 +9,7 @@ TextEnteredController::TextEnteredController(engine::gui::EventReceiver* receive
 : receiver_(receiver)
 {}
 
-void TextEnteredController::onTextEntered(const engine::events::TextEnteredEvent& event)
+void TextEnteredController::onTextEntered(const engine::events::TextEntered& event)
 {
     receiver_->receive(event);
 }

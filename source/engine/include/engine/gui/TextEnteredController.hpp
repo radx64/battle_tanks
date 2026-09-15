@@ -12,7 +12,7 @@ public:
     TextEnteredController(engine::gui::EventReceiver* receiver);
 
 protected:
-    void onTextEntered(const engine::events::TextEnteredEvent& event) override;
+    void onTextEntered(const engine::events::TextEntered& event) override;
 
     engine::gui::EventReceiver* receiver_;
 };

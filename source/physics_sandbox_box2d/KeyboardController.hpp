@@ -15,12 +15,12 @@ KeyboardController (std::function<void()> actionSpace)
 {}
 
 protected:
-void onKeyPressed(const engine::events::KeyPressedEvent& keyEvent) override
+void onKeyPressed(const engine::events::KeyPressed& keyEvent) override
 {
     (void) keyEvent;
     actionSpace_();
 }
-void onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent) override
+void onKeyReleased(const engine::events::KeyReleased& keyEvent) override
 {  
     (void) keyEvent;
 }

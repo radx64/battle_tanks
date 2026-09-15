@@ -88,7 +88,7 @@ void appendTextToEditBox(engine::gui::EditBox* editBox, const std::string& text)
     editBox->setText(currentText);
 }
 
-std::unique_ptr<engine::gui::Widget> createCalculator(const sf::Vector2f& initalSize)
+std::unique_ptr<engine::gui::Widget> createCalculator(const engine::Vec2f& initalSize)
 {
     auto verticalLayout = engine::gui::layout::Vertical::create();
     verticalLayout->setSize(initalSize);

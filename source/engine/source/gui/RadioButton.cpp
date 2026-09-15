@@ -30,7 +30,7 @@ std::unique_ptr<RadioButton> RadioButton::create(const bool isChecked)
     return std::unique_ptr<RadioButton>{new RadioButton{isChecked}};
 }
 
-EventStatus RadioButton::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
+EventStatus RadioButton::on(const engine::events::KeyReleased& keyboardKeyReleasedEvent)
 {    
     if (not isFocused()) return EventStatus::NotConsumed;
 
@@ -49,9 +49,12 @@ EventStatus RadioButton::on(const engine::events::KeyReleasedEvent& keyboardKeyR
 
 }
 
-EventStatus RadioButton::on(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus RadioButton::on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    if (mouseButtonReleasedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonReleasedEvent.getButton() != engine::core::MouseButton::Left)
+    {
+        return EventStatus::NotConsumed;
+    }
     {
         return EventStatus::NotConsumed;
     }

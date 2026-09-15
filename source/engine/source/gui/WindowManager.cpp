@@ -10,7 +10,7 @@
 namespace engine::gui
 {
 
-WindowManager::WindowManager(const sf::Vector2f& mainWindowSize)
+WindowManager::WindowManager(const engine::Vector2f& mainWindowSize)
 : activeWindow_{nullptr}
 , mainWindow_{}
 , logger_{"WindowManager"}
@@ -59,7 +59,7 @@ void WindowManager::openWindow(std::unique_ptr<Window> window)
     windows_.push_front(std::move(window));
 }
 
-void WindowManager::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition)
+void WindowManager::openContextMenu(std::unique_ptr<ContextMenu> menu, const engine::Vec2f& globalPosition)
 {
     if (!menu) return;
 
@@ -188,7 +188,7 @@ void WindowManager::setOverlayCloseHandler(OverlayCloseHandler handler)
     overlayCloseHandler_ = handler;
 }
 
-Window* WindowManager::getTopWindowAtPosition(const event::MousePosition position) const
+Window* WindowManager::getTopWindowAtPosition(const engine::Vector2f& position) const
 {
     for (auto& window : windows_)
     {

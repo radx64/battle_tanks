@@ -13,8 +13,8 @@ public:
     CameraController (Camera* camera);
 
 protected:
-    void onKeyPressed(const engine::events::KeyPressedEvent& keyEvent) override;
-    void onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent) override;
+    void onKeyPressed(const engine::events::KeyPressed& keyEvent) override;
+    void onKeyReleased(const engine::events::KeyReleased& keyEvent) override;
 
     Camera* camera_;
 };

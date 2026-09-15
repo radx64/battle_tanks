@@ -16,7 +16,7 @@ constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
 namespace engine
 {
 
-Application::Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize)
+Application::Application(const std::string_view windowName, const std::string_view logPrefix, const engine::Vec2f& windowSize)
 : window_(engine::WindowProperties{windowName.data(), {static_cast<int>(windowSize.x), static_cast<int>(windowSize.y)}})
 , profilingText_{"", font_, 16}
 , mouseHandler_{&timer_service_}
@@ -110,28 +110,31 @@ void Application::close()
 void Application::processEvent(engine::events::Event& event)
 {
     logger_.vip(fmt::format("Event {} received!", event.toString()));
-
     events::EventDispatcher dispatcher(event);
 
     bool was_consumed {false};
 
     was_consumed |= dispatcher.dispatch<events::WindowClosedEvent>([this](const auto&) {close(); return true;});
 
-    was_consumed |= dispatcher.dispatch<events::KeyPressedEvent>([this] (const auto& event)
+    was_consumed |= dispatcher.dispatch<events::KeyPressed>([this] (const auto& event)
     {
         keyboardHandler_.handleKeyPressed(event); return false;
     });
 
-    was_consumed |= dispatcher.dispatch<events::KeyReleasedEvent>([this] (const auto& event)
+    was_consumed |= dispatcher.dispatch<events::KeyReleased>([this] (const auto& event)
     {
         keyboardHandler_.handleKeyReleased(event); return false;
     });
 
-    // was_consumed |= dispatcher.dispatch<events::MouseButtonPressedEvent>([this] (const auto& event)
-    // {
-    //     mouseHandler_.handleButtonPressed(event); return false;
-    // });
+    was_consumed |= dispatcher.dispatch<events::MouseButtonPressed>([this] (const auto& event)
+    {
+        mouseHandler_.handleButtonPressed(event); return false;
+    });
 
+    was_consumed |= dispatcher.dispatch<events::MouseButtonReleased>([this] (const auto& event)
+    {
+        mouseHandler_.handleButtonReleased(event); return false;
+    });
 
     if (not was_consumed)
     {
@@ -168,13 +171,13 @@ void Application::processEvent(engine::events::Event& event)
     //             break;
     //         }
 
-    //         case sf::Event::MouseButtonPressed :
+    //         case sf::engine::events::MouseButtonPressed :
     //         {
     //             mouseHandler_.handleButtonPressed(event.mouseButton);
     //             break;
     //         }
 
-    //         case sf::Event::MouseButtonReleased :
+    //         case sf::engine::events::MouseButtonReleased :
     //         {
     //             mouseHandler_.handleButtonReleased(event.mouseButton);
     //             break;

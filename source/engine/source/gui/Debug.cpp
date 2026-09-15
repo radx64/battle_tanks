@@ -17,8 +17,12 @@ void drawBounds(sf::RenderTarget& renderTarget, const Widget* widget)
     if (not debug_enabled) return;
 
     sf::RectangleShape bound_rect;
-    bound_rect.setSize(widget->getSize());
-    bound_rect.setPosition(widget->getGlobalPosition());
+
+    const auto widget_size = widget->getSize();
+    const auto widget_position = widget->getGlobalPosition();
+
+    bound_rect.setSize(sf::Vector2f{widget_size.x, widget_size.y});
+    bound_rect.setPosition(sf::Vector2f{widget_position.x, widget_position.y});
     if (widget->isFocused())
     {
         bound_rect.setFillColor(sf::Color(255,255,0,127));
@@ -33,7 +37,6 @@ void drawBounds(sf::RenderTarget& renderTarget, const Widget* widget)
     }
     renderTarget.draw(bound_rect);
 }
-
 void drawBox(sf::RenderTarget& renderTarget, const sf::Vector2f position, 
     const sf::Vector2f size, const sf::Color color, const float thickness)
 {
@@ -47,6 +50,12 @@ void drawBox(sf::RenderTarget& renderTarget, const sf::Vector2f position,
     box.setOutlineThickness(thickness);
 
     renderTarget.draw(box);
+}
+
+void drawBox(sf::RenderTarget& renderTarget, const engine::Vec2f position, 
+    const engine::Vec2f size, const sf::Color color, const float thickness)
+{
+   drawBox(renderTarget, sf::Vector2f{position.x, position.y}, sf::Vector2f{size.x, size.y}, color, thickness); 
 }
 
 std::string getFunctionNameOnly(const std::source_location& location)

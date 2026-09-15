@@ -29,7 +29,7 @@ protected:
     void onRender(sf::RenderTexture&render_window) override;
     void onSizeChange() override;
     void onPositionChange() override;
-    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
+    EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
 
     engine::gui::Label* titleTextPtr_;
     sf::RectangleShape headerShape_;

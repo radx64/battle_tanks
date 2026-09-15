@@ -25,9 +25,9 @@ public:
 
     void unsubscribe(KeyboardReceiver* receiver);
     void unsubscribe(TextEnteredReceiver* receiver);
-    void handleKeyPressed(const engine::events::KeyPressedEvent& event);
-    void handleKeyReleased(const engine::events::KeyReleasedEvent& event);
-    void handleTextEntered(const engine::events::TextEnteredEvent& event);
+    void handleKeyPressed(const engine::events::KeyPressed& event);
+    void handleKeyReleased(const engine::events::KeyReleased& event);
+    void handleTextEntered(const engine::events::TextEntered& event);
     bool isKeyPressed(const engine::core::KeyCode key);
 
 protected:

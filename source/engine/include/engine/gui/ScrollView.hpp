@@ -27,12 +27,12 @@ protected:
     void applyScroll();
     void ensureRectVisible(const sf::FloatRect& rectBounds);
     void applyLayout(const bool showHorizontalScrollBar, const bool showVerticalScrollBar);
-    sf::Vector2f calculateViewportSize(const bool showHorizontalScrollBar, const bool showVerticalScrollBar) const;
+    engine::Vec2f calculateViewportSize(const bool showHorizontalScrollBar, const bool showVerticalScrollBar) const;
 
     IScrollableWidget* content_{nullptr};
     scrollbar::Horizontal* horizontalScrollBar_{nullptr};
     scrollbar::Vertical* verticalScrollBar_{nullptr};
-    sf::Vector2f scrollOffset_{0.f, 0.f};
+    engine::Vec2f scrollOffset_{0.f, 0.f};
     ScrollPadding scrollPadding_{};
 
     bool isUpdatingScrollBars_{false};

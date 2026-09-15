@@ -6,7 +6,7 @@ namespace engine::gui
 namespace 
 {
 
-sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const sf::Vector2f& objectSize)
+sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const engine::Vec2f& objectSize)
 {
     return {objectSize.x / textureSize.x, objectSize.y / textureSize.y};
 }
@@ -25,7 +25,10 @@ void Image::onRender(sf::RenderTexture& renderTexture)
 void Image::setTexture(const sf::Texture& texture)
 {
     sprite_.setTexture(texture);
-    sprite_.setPosition(getGlobalPosition());
+
+    const auto position = getGlobalPosition();
+
+    sprite_.setPosition(sf::Vector2f{position.x, position.y});
     sprite_.setScale(getSize().x / texture.getSize().x, getSize().y / texture.getSize().y);
 }
 
@@ -37,7 +40,8 @@ Image::Image(const sf::Texture& texture)
 
 void Image::onPositionChange()
 {
-    sprite_.setPosition(getGlobalPosition());
+    const auto position = getGlobalPosition();
+    sprite_.setPosition(sf::Vector2f{position.x, position.y});
 }
 
 void Image::onSizeChange()

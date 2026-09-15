@@ -23,9 +23,9 @@ namespace game
 class HelpWindow : public engine::gui::Window
 {
 public:
-    HelpWindow(sf::Vector2f position)
+    HelpWindow(engine::Vec2f position)
     {
-        setSize(sf::Vector2f(300.0f, 300.0f));
+        setSize(engine::Vec2f(300.0f, 300.0f));
         setPosition(position);
         auto help_text = engine::gui::Label::create(helpTextString.data());
         help_text->setAlignment(engine::gui::Alignment::HorizontallyCentered | engine::gui::Alignment::VerticallyCentered);

@@ -63,25 +63,25 @@ void Application::onInit()
     generateBackground();
 
     auto quitButton = engine::gui::TextButton::create("Quit");
-    quitButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 50.f));
-    quitButton->setSize(sf::Vector2f(250.f, 30.f));
+    quitButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 50.f));
+    quitButton->setSize(engine::Vec2f(250.f, 30.f));
     quitButton->onClick([this](){logger_.info("Quitting..."); Application::close();});
     gui().mainWindow().addChild(std::move(quitButton));
 
     auto guiDebug = engine::gui::TextButton::create("GUI DEBUG");
-    guiDebug->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
-    guiDebug->setSize(sf::Vector2f(250.f, 30.f));
+    guiDebug->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, Config::WINDOW_HEIGHT - 50.f));
+    guiDebug->setSize(engine::Vec2f(250.f, 30.f));
     guiDebug->onClick([](){engine::gui::debug::toggle();});
     gui().mainWindow().addChild(std::move(guiDebug));
 
     auto createEmptyWindowButton = engine::gui::TextButton::create("Empty Window");
-    createEmptyWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 100.f));
-    createEmptyWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createEmptyWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 100.f));
+    createEmptyWindowButton->setSize(engine::Vec2f(250.f, 30.f));
 
     createEmptyWindowButton->onClick([this](){
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(300.0f, 300.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(300.0f, 300.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Nothing here!");
         window->setMenuItems({
             {"File", {}, {
@@ -111,8 +111,8 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createEmptyWindowButton));
 
     auto createSimpleWindowButton = engine::gui::TextButton::create("Simple Window");
-    createSimpleWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 150.f));
-    createSimpleWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createSimpleWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 150.f));
+    createSimpleWindowButton->setSize(engine::Vec2f(250.f, 30.f));
 
     createSimpleWindowButton->onClick([this](){
         auto window = std::make_unique<engine::gui::Window>();
@@ -122,8 +122,8 @@ void Application::onInit()
         insetLayout->addChild(std::move(simpleButton));
         window->addChild(std::move(insetLayout));
 
-        window->setSize(sf::Vector2f(300.0f, 300.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(300.0f, 300.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("So simple!");
 
         gui().openWindow(std::move(window));
@@ -132,12 +132,12 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createSimpleWindowButton));
 
     auto createProgressWindowButton = engine::gui::TextButton::create("ProgressBar Window");
-    createProgressWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 200.f));
-    createProgressWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createProgressWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 200.f));
+    createProgressWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createProgressWindowButton->onClick([this](){
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(300.0f, 300.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(300.0f, 300.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I see some progress :D");
 
         auto verticalLayout = engine::gui::layout::Vertical::create();
@@ -169,13 +169,13 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createProgressWindowButton));
 
     auto createEditboxWindowButton = engine::gui::TextButton::create("Edit Box Window");
-    createEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 250.f));
-    createEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createEditboxWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 250.f));
+    createEditboxWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createEditboxWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(300.0f, 300.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(300.0f, 300.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I can now read text from keyboard :D");
 
         auto verticalLayout = engine::gui::layout::Vertical::create();
@@ -201,13 +201,13 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createEditboxWindowButton));
 
     auto createMultiLineEditboxWindowButton = engine::gui::TextButton::create("MultiLine EditBox Window");
-    createMultiLineEditboxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 300.f));
-    createMultiLineEditboxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createMultiLineEditboxWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 300.f));
+    createMultiLineEditboxWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createMultiLineEditboxWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(400.0f, 400.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 200.f, 200.0f));
+        window->setSize(engine::Vec2f(400.0f, 400.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 200.f, 200.0f));
         window->setTitle("MultiLine EditBox Test");
 
         auto verticalLayout = engine::gui::layout::Vertical::create();
@@ -235,9 +235,9 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createMultiLineEditboxWindowButton));
 
     auto createLayoutWindowButton = engine::gui::TextButton::create("Simple Layout Window");
-    createLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 350.f));
+    createLayoutWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 350.f));
 
-    createLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createLayoutWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createLayoutWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
@@ -334,8 +334,8 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        window->setSize(sf::Vector2f(700.0f, 400.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(700.0f, 400.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Oh my gosh");
 
         gui().openWindow(std::move(window));
@@ -344,13 +344,13 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createLayoutWindowButton));
 
     auto createGroupBoxWindowButton = engine::gui::TextButton::create("GroupBox Window");
-    createGroupBoxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 400.f));
-    createGroupBoxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createGroupBoxWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 400.f));
+    createGroupBoxWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createGroupBoxWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(420.f, 320.f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 210.f, 220.f));
+        window->setSize(engine::Vec2f(420.f, 320.f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH / 2.f - 210.f, 220.f));
         window->setTitle("GroupBox demo");
 
         auto rootLayout = engine::gui::layout::Vertical::create();
@@ -391,13 +391,13 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createGroupBoxWindowButton));
 
     auto createListBoxWindowButton = engine::gui::TextButton::create("ListBox Window");
-    createListBoxWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 450.f));
-    createListBoxWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createListBoxWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 450.f));
+    createListBoxWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createListBoxWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(420.f, 360.f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 210.f, 240.f));
+        window->setSize(engine::Vec2f(420.f, 360.f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH / 2.f - 210.f, 240.f));
         window->setTitle("ListBox demo");
 
         auto rootLayout = engine::gui::layout::Vertical::create();
@@ -440,8 +440,8 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createListBoxWindowButton));
 
     auto createNotepadWindowButton = engine::gui::TextButton::create("Notepad Window");
-    createNotepadWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 500.f));
-    createNotepadWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createNotepadWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 500.f));
+    createNotepadWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createNotepadWindowButton->onClick([this](){
 
         namespace fs = std::filesystem;
@@ -478,8 +478,8 @@ void Application::onInit()
 
         auto window = std::make_unique<engine::gui::Window>();
         auto* windowPtr = window.get();
-        window->setSize(sf::Vector2f(720.f, 520.f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH / 2.f - 360.f, 180.f));
+        window->setSize(engine::Vec2f(720.f, 520.f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH / 2.f - 360.f, 180.f));
 
         auto rootLayout = engine::gui::layout::Vertical::create();
         rootLayout->setPadding(8);
@@ -564,8 +564,8 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createNotepadWindowButton));
 
     auto createFocusTestWindowButton = engine::gui::TextButton::create("Focus Test Window");
-    createFocusTestWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 550.f));
-    createFocusTestWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createFocusTestWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 550.f));
+    createFocusTestWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createFocusTestWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
@@ -606,8 +606,8 @@ void Application::onInit()
 
         window->addChild(std::move(vl));
 
-        window->setSize(sf::Vector2f(700.0f, 400.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(700.0f, 400.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("I need to focus");
 
         gui().openWindow(std::move(window));
@@ -616,8 +616,8 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createFocusTestWindowButton));
 
     auto createGridLayoutWindowButton = engine::gui::TextButton::create("Grid Layout Window");
-    createGridLayoutWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 600.f));
-    createGridLayoutWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createGridLayoutWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 600.f));
+    createGridLayoutWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createGridLayoutWindowButton->onClick([this](){
 
         auto window = std::make_unique<engine::gui::Window>();
@@ -818,8 +818,8 @@ void Application::onInit()
 
         window->addChild(std::move(verticalLayout));
 
-        window->setSize(sf::Vector2f(700.0f, 400.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(700.0f, 400.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("The Grid, a digital frontier...");
 
         gui().openWindow(std::move(window));
@@ -829,12 +829,12 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createGridLayoutWindowButton));
 
     auto createSliderWindowButton = engine::gui::TextButton::create("Slider Window");
-    createSliderWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 650.f));
-    createSliderWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createSliderWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 650.f));
+    createSliderWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createSliderWindowButton->onClick([this](){
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(300.0f, 300.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(300.0f, 300.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Slidinnn.....");
 
         auto gridLayout = engine::gui::layout::Grid::create(2,6);
@@ -929,12 +929,12 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createSliderWindowButton));
 
     auto createScrollBarWindowButton = engine::gui::TextButton::create("Scrollbars");
-    createScrollBarWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 700.f));
-    createScrollBarWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createScrollBarWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 700.f));
+    createScrollBarWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createScrollBarWindowButton->onClick([this](){
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(500.0f, 400.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(500.0f, 400.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("Scroll scroll scroll you boat...");
 
         auto layout = engine::gui::layout::Grid::create(2, 2);
@@ -949,14 +949,14 @@ void Application::onInit()
         auto verticalScrollBar = engine::gui::scrollbar::Vertical::create();
         verticalScrollBar->setThumbRatio(0.05f);
         verticalScrollBar->onValueChange([text_ptr = text.get(), scroll_ptr = verticalScrollBar.get()](const float value){
-            text_ptr->setPosition(sf::Vector2f{text_ptr->getPosition().x, (1.0f - value) * (scroll_ptr->getSize().y -  text_ptr->getTextBounds().height)});
+            text_ptr->setPosition(engine::Vec2f{text_ptr->getPosition().x, (1.0f - value) * (scroll_ptr->getSize().y -  text_ptr->getTextBounds().height)});
         });
         layout->setElementAt(1, 0, std::move(verticalScrollBar));
 
         auto horizontalScrollBar = engine::gui::scrollbar::Horizontal::create();
         horizontalScrollBar->setThumbRatio(0.2f);
         horizontalScrollBar->onValueChange([text_ptr = text.get(), scroll_ptr = horizontalScrollBar.get()](const float value){
-            text_ptr->setPosition(sf::Vector2f{value * (scroll_ptr->getSize().x - text_ptr->getTextBounds().width), text_ptr->getPosition().y});
+            text_ptr->setPosition(engine::Vec2f{value * (scroll_ptr->getSize().x - text_ptr->getTextBounds().width), text_ptr->getPosition().y});
         });
         layout->setElementAt(0, 1, std::move(horizontalScrollBar));
 
@@ -968,12 +968,12 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createScrollBarWindowButton));
 
     auto createCalculatorWindowButton = engine::gui::TextButton::create("Calculator");
-    createCalculatorWindowButton->setPosition(sf::Vector2f(Config::WINDOW_WIDTH - 300.f, 750.f));
-    createCalculatorWindowButton->setSize(sf::Vector2f(250.f, 30.f));
+    createCalculatorWindowButton->setPosition(engine::Vec2f(Config::WINDOW_WIDTH - 300.f, 750.f));
+    createCalculatorWindowButton->setSize(engine::Vec2f(250.f, 30.f));
     createCalculatorWindowButton->onClick([this](){
         auto window = std::make_unique<engine::gui::Window>();
-        window->setSize(sf::Vector2f(500.0f, 400.0f));
-        window->setPosition(sf::Vector2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
+        window->setSize(engine::Vec2f(500.0f, 400.0f));
+        window->setPosition(engine::Vec2f(Config::WINDOW_WIDTH/2 - 150.f, 400.0f));
         window->setTitle("calc.exe");
 
         window->addChild(calculator::createCalculator({300.f, 300.f}));
@@ -983,8 +983,8 @@ void Application::onInit()
     gui().mainWindow().addChild(std::move(createCalculatorWindowButton));
 
     auto contextMenuTestButton = engine::gui::TextButton::create("Context menu >");
-    contextMenuTestButton->setPosition(sf::Vector2f(50.f, 200.f));
-    contextMenuTestButton->setSize(sf::Vector2f(250.f, 30.f));
+    contextMenuTestButton->setPosition(engine::Vec2f(50.f, 200.f));
+    contextMenuTestButton->setSize(engine::Vec2f(250.f, 30.f));
     contextMenuTestButton->onClick([this, contextMenuTestButtonPtr = contextMenuTestButton.get()](){
         auto menu = engine::gui::ContextMenu::create({
             {"Test >", {}, {
@@ -1003,7 +1003,7 @@ void Application::onInit()
                 }}
             }}
         });
-        gui().openContextMenu(std::move(menu), contextMenuTestButtonPtr->getGlobalPosition() + sf::Vector2f(200.f, 30.f));
+        gui().openContextMenu(std::move(menu), contextMenuTestButtonPtr->getGlobalPosition() + engine::Vec2f(200.f, 30.f));
     });
 
     gui().mainWindow().addChild(std::move(contextMenuTestButton));

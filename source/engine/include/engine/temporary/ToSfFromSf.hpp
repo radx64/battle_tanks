@@ -12,4 +12,11 @@ sf::Vector2<T> toSf(const engine::Vector2<T>& vector)
     return sf::Vector2<T>(static_cast<T>(vector.x), static_cast<T>(vector.y));
 }
 
+
+template <typename T>
+engine::Vector2<T> fromSf(const sf::Vector2<T>& vector)
+{
+    return engine::Vector2<T>(static_cast<T>(vector.x), static_cast<T>(vector.y));
+}
+
 }  // namespace engine::temporary

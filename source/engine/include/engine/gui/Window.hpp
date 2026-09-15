@@ -31,7 +31,7 @@ namespace engine::gui
 class MainWindow : public Widget
 {
 public:
-    using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
+    using ContextMenuHandler = std::function<void(const engine::Vec2f&)>;
 
     void setContextMenuHandler(ContextMenuHandler handler);
 
@@ -40,7 +40,7 @@ public:
     }
 
 protected:
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
 
 private:
     ContextMenuHandler contextMenuHandler_;
@@ -49,7 +49,7 @@ private:
 class Window : public Widget
 {
 public:
-    using ContextMenuHandler = std::function<void(const sf::Vector2f&)>;
+    using ContextMenuHandler = std::function<void(const engine::Vec2f&)>;
     using WindowCloseHandler = std::function<void()>;
 
     Window();
@@ -76,8 +76,8 @@ protected:
         Resizing
     };
     bool isInState(const Window::State& state) const;
-    bool isInsideHeader(const sf::Vector2f& point);
-    bool isInsideResizeGadget(const sf::Vector2f point);
+    bool isInsideHeader(const engine::Vec2f& point);
+    bool isInsideResizeGadget(const engine::Vec2f& point);
 
     void onRender(sf::RenderTexture& renderTexture) override;
     void onPositionChange() override;
@@ -85,10 +85,10 @@ protected:
     
     void maximizeRestoreAction();
     
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
-    EventStatus on(const event::MouseButtonReleased& mouseButtonReleasedEvent) override;
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
+    EventStatus on(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent) override;
+    EventStatus on(const engine::events::MouseMoved& mouseMovedEvent) override;
     
     void setManager(engine::gui::WindowManager* windowManager);
     friend class engine::gui::WindowManager;
@@ -100,7 +100,7 @@ protected:
     bool isActive_;
     bool isMaximized_;
     State state_;
-    sf::Vector2f draggingOffset_;
+    engine::Vec2f draggingOffset_;
 
     engine::gui::window::Header* header_;
     engine::gui::window::MenuBar* menuBar_;
@@ -110,8 +110,8 @@ protected:
     engine::gui::WindowManager* windowManager_;
     ContextMenuHandler contextMenuHandler_;
     WindowCloseHandler windowCloseHandler_;
-    sf::Vector2f windowSizeToRestore_;
-    sf::Vector2f windowPositionToRestore_;
+    engine::Vec2f windowSizeToRestore_;
+    engine::Vec2f windowPositionToRestore_;
 
     const sf::Texture& activeTexture_;
     const sf::Texture& inactiveTexture_;

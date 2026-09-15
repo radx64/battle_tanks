@@ -317,9 +317,9 @@ void MultiLineEditBox::deleteNewLine()
     }
 }
 
-EventStatus MultiLineEditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus MultiLineEditBox::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (mouseButtonPressedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonPressedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
     }
@@ -330,7 +330,7 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonPressed& mouseButtonPre
     enterEdit();
 
     // Convert 2D screen position to text index
-    sf::Vector2f screenPos{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    sf::Vector2f screenPos{static_cast<float>(mouseButtonPressedEvent.getPosition().x), static_cast<float>(mouseButtonPressedEvent.getPosition().y)};
     size_t textIndex = getIndexFromScreenPosition(screenPos);
     textCursor_.setIndex(textIndex);
     ensureCursorVisible();
@@ -354,12 +354,12 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonPressed& mouseButtonPre
     return EventStatus::NotConsumed;
 }
 
-EventStatus MultiLineEditBox::on(const event::MouseMoved& mouseMovedEvent)
+EventStatus MultiLineEditBox::on(const engine::events::MouseMoved& mouseMovedEvent)
 {
     if(mouseLeftButtonPressed_)
     {
         // Convert 2D screen position to text index
-        sf::Vector2f screenPos{mouseMovedEvent.position.x, mouseMovedEvent.position.y};
+        sf::Vector2f screenPos{static_cast<float>(mouseMovedEvent.getPosition().x), static_cast<float>(mouseMovedEvent.getPosition().y)};
         size_t textIndex = getIndexFromScreenPosition(screenPos);
         textCursor_.setIndex(textIndex);
         ensureCursorVisible();
@@ -371,9 +371,9 @@ EventStatus MultiLineEditBox::on(const event::MouseMoved& mouseMovedEvent)
     return EventStatus::NotConsumed;
 }
 
-EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus MultiLineEditBox::on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
-    if (mouseButtonDoublePressedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonDoublePressedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
     }
@@ -385,8 +385,8 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseBut
     }
 
     const sf::Vector2f screenPos{
-        mouseButtonDoublePressedEvent.position.x,
-        mouseButtonDoublePressedEvent.position.y
+        static_cast<float>(mouseButtonDoublePressedEvent.getPosition().x),
+        static_cast<float>(mouseButtonDoublePressedEvent.getPosition().y)
     };
     const size_t textIndex = getIndexFromScreenPosition(screenPos);
 
@@ -402,7 +402,7 @@ EventStatus MultiLineEditBox::on(const event::MouseButtonDoublePressed& mouseBut
     return EventStatus::Consumed;
 }
 
-EventStatus MultiLineEditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPressed)
+EventStatus MultiLineEditBox::on(const engine::events::KeyPressed& keyboardKeyPressed)
 {
     auto result = EventStatus::NotConsumed;
     if(not isFocused()) return result;
@@ -500,7 +500,7 @@ EventStatus MultiLineEditBox::on(const engine::events::KeyPressedEvent& keyboard
     return result;
 }
 
-EventStatus MultiLineEditBox::on(const engine::events::TextEnteredEvent& textEntered)
+EventStatus MultiLineEditBox::on(const engine::events::TextEntered& textEntered)
 {
     if(not isFocused()) return EventStatus::NotConsumed;
 

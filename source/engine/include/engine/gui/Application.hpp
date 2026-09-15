@@ -13,7 +13,7 @@ namespace engine::gui
 class Application : public engine::Application
 {
 public:
-    Application(const std::string_view windowName, const std::string_view logPrefix, const sf::Vector2f& windowSize);
+    Application(const std::string_view windowName, const std::string_view logPrefix, const engine::Vec2f& windowSize);
     ~Application();
 
 protected:

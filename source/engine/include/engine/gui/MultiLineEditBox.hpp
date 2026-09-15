@@ -29,11 +29,11 @@ protected:
     void updateTextVisbleArea() override;
     void onTextChanged() override;
 
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const engine::events::KeyPressedEvent& keyboardKeyPressed) override;
-    EventStatus on(const engine::events::TextEnteredEvent& textEntered) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
+    EventStatus on(const engine::events::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const engine::events::KeyPressed& keyboardKeyPressed) override;
+    EventStatus on(const engine::events::TextEntered& textEntered) override;
 
 private:
     void ensureCursorVisible();

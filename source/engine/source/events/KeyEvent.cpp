@@ -28,34 +28,34 @@ KeyEvent::KeyEvent(const core::KeyCode key_code, const KeyModifiers& modifiers)
 : key_code_(key_code), modifiers_(modifiers)
 {}
 
-KeyPressedEvent::KeyPressedEvent(const core::KeyCode key_code, const KeyModifiers& modifiers)
+KeyPressed::KeyPressed(const core::KeyCode key_code, const KeyModifiers& modifiers)
 : KeyEvent(key_code, modifiers)
 {}
 
-std::string KeyPressedEvent::toString() const
+std::string KeyPressed::toString() const
 {
     return fmt::format("KeyPressedEvent: {} {}", static_cast<int>(key_code_), keymodifiers::toString(modifiers_));
 }
 
-KeyReleasedEvent::KeyReleasedEvent(const core::KeyCode key_code, const KeyModifiers& modifiers)
+KeyReleased::KeyReleased(const core::KeyCode key_code, const KeyModifiers& modifiers)
 : KeyEvent(key_code, modifiers)
 {}
 
-std::string KeyReleasedEvent::toString() const
+std::string KeyReleased::toString() const
 {
     return fmt::format("KeyReleasedEvent: {}", static_cast<int>(key_code_), keymodifiers::toString(modifiers_));
 }
 
-TextEnteredEvent::TextEnteredEvent(const uint32_t unicode)
+TextEntered::TextEntered(const uint32_t unicode)
 : unicode_(unicode)
 {}
 
-uint32_t TextEnteredEvent::getUnicode() const
+uint32_t TextEntered::getUnicode() const
 {
     return unicode_;
 }
 
-std::string TextEnteredEvent::toString() const
+std::string TextEntered::toString() const
 {
     return fmt::format("TextEnteredEvent: {}", unicode_);
 }

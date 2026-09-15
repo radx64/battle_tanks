@@ -20,7 +20,7 @@
 namespace calculator
 {
 Application::Application()
-: engine::gui::Application{"Calculator", "Calculator", sf::Vector2f{600.f, 500.f}}
+: engine::gui::Application{"Calculator", "Calculator", engine::Vec2f{600.f, 500.f}}
 {}
 
 void Application::onInit()

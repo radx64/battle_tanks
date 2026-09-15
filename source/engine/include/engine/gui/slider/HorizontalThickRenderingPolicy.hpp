@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "engine/Vector2.hpp"
 
 namespace engine::gui::slider
 {
@@ -8,13 +8,13 @@ namespace engine::gui::slider
 class HorizontalThickRenderingPolicy
 {
 public:
-    static sf::Vector2f getTrackSize(const sf::Vector2f& silderSize);
-    static sf::Vector2f getTrackPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize);
+    static engine::Vec2f getTrackSize(const engine::Vec2f& sliderSize);
+    static engine::Vec2f getTrackPosition(const engine::Vec2f& sliderPosition, const engine::Vec2f& sliderSize);
     static std::string getTrackTextureName();
 
-    static sf::Vector2f getThumbSize(const sf::Vector2f& sliderSize, const float ratio);
-    static sf::Vector2f getThumbPosition(const sf::Vector2f& sliderPosition, const sf::Vector2f& sliderSize, 
-        const sf::Vector2f& trackSize, const sf::Vector2f& thumbSize, const float normalizedValue);
+    static engine::Vec2f getThumbSize(const engine::Vec2f& sliderSize, const float ratio);
+    static engine::Vec2f getThumbPosition(const engine::Vec2f& sliderPosition, const engine::Vec2f& sliderSize, 
+        const  engine::Vec2f& trackSize, const engine::Vec2f& thumbSize, const float normalizedValue);
 };
 
 }  // engine::gui::slider

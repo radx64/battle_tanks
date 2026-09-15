@@ -3,6 +3,7 @@
 #include "engine/gui/window/Config.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 
+#include "engine/temporary/ToSfFromSf.hpp"
 namespace engine::gui::window
 {
 StatusBar::StatusBar()
@@ -21,8 +22,9 @@ void StatusBar::onSizeChange()
     auto statusBarHeight = getSize().y;
     
     resize_gadget_.setPosition(
+        engine::temporary::toSf(
         Widget::getGlobalPosition() + Widget::getSize()
-        - sf::Vector2f{window::config::RESIZE_BOX_SIZE, statusBarHeight}); 
+        - engine::Vec2f{window::config::RESIZE_BOX_SIZE, statusBarHeight})); 
 }
 
 void StatusBar::onPositionChange()
@@ -30,8 +32,9 @@ void StatusBar::onPositionChange()
     auto statusBarHeight = getSize().y;
 
     resize_gadget_.setPosition(
+        engine::temporary::toSf(
         Widget::getGlobalPosition() + Widget::getSize()
-        - sf::Vector2f{window::config::RESIZE_BOX_SIZE, statusBarHeight});
+        - engine::Vec2f{window::config::RESIZE_BOX_SIZE, statusBarHeight}));
 }
 
 void StatusBar::enable()

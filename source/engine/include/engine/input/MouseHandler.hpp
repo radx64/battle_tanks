@@ -3,8 +3,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include "engine/events/MouseEvent.hpp"
 
 #include "engine/Clock.hpp"
 
@@ -23,15 +22,16 @@ public:
     MouseHandler(TimerService* timerService);
     void subscribe(MouseReceiver* receiver);
     void unsubscribe(MouseReceiver* receiver);
-    void handleButtonPressed(const sf::Event::MouseButtonEvent& event);
-    void handleButtonReleased(const sf::Event::MouseButtonEvent& event);
-    void handleMouseMoved(const sf::Event::MouseMoveEvent& event);
-    bool isButtonPressed(sf::Mouse::Button button);
+    void handleButtonPressed(const engine::events::MouseButtonPressed& event);
+    void handleButtonReleased(const engine::events::MouseButtonReleased& event);
+    void handleMouseMoved(const engine::events::MouseMoved& event);
+    void handleMouseScrolled(const engine::events::MouseScrolled& event);
+    bool isButtonPressed(engine::core::MouseButton button);
 
 protected:
     std::vector<MouseReceiver*> receivers_;
-    std::unordered_map<sf::Mouse::Button, bool> buttonsStates_;
-    sf::Vector2f mouse_position_;
+    std::unordered_map<engine::core::MouseButton, bool> buttonsStates_;
+    engine::Vec2f mouse_position_;
 
     Clock::time_point lastLeftClickTimestamp_;
     TimerService* timerService_;

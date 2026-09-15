@@ -14,11 +14,13 @@ public:
     MouseController(engine::gui::EventReceiver* receiver, sf::RenderWindow& window, const sf::View& view);
 
 protected:
-    engine::gui::EventStatus onButtonPressed(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button, bool double_click) override;
-    engine::gui::EventStatus onButtonReleased(const sf::Vector2f& mouse_postion, const sf::Mouse::Button& button) override;
-    engine::gui::EventStatus onMouseMoved(const sf::Vector2f& mouse_postion) override;
+    engine::gui::EventStatus onButtonPressed(const engine::Vec2f& mouse_postion, const engine::core::MouseButton& button, bool double_click) override;
+    engine::gui::EventStatus onButtonReleased(const engine::Vec2f& mouse_postion, const engine::core::MouseButton& button) override;
+    engine::gui::EventStatus onMouseMoved(const engine::Vec2f& mouse_postion) override;
 
-    sf::Vector2f mapPixelToCoords(const sf::Vector2f& mouse_position);
+    engine::gui::EventStatus onMouseScrolled(const engine::Vec2f& mouse_postion, const engine::core::MouseWheel& wheel, const float delta) override;
+
+    sf::Vector2f mapPixelToCoords(const engine::Vec2f& mouse_position);
 
     engine::gui::EventReceiver* receiver_;
     sf::RenderWindow& window_;

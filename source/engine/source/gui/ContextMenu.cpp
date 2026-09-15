@@ -61,7 +61,7 @@ namespace
         return std::max(needed, MENU_ENTRY_MIN_WIDTH);
     }
 
-    sf::Vector2f globalToLocal(const Widget* widget, const sf::Vector2f& globalPosition)
+    engine::Vec2f globalToLocal(const Widget* widget, const engine::Vec2f& globalPosition)
     {
         if (widget == nullptr) return globalPosition;
         const auto parentGlobal = widget->getGlobalPosition();
@@ -117,7 +117,7 @@ void ContextMenu::setOnClose(std::function<void(ContextMenu*)> callback)
     onClose_ = std::move(callback);
 }
 
-void ContextMenu::open(const sf::Vector2f& globalPosition)
+void ContextMenu::open(const engine::Vec2f& globalPosition)
 {
     setPosition(globalToLocal(getParent(), globalPosition));
     setVisibility(true);
@@ -233,7 +233,7 @@ void ContextMenu::updateSubmenu(engine::gui::TextButton* buttonPtr, const Item& 
 {
     if (openSubmenu_.ptr &&  openSubmenu_.index == index) return;   // Do not respawn the same submenu if already spawned
     const auto itemGlobalPosition = buttonPtr->getGlobalPosition();
-    const auto submenuPosition = sf::Vector2f{itemGlobalPosition.x + getSize().x - MENU_BORDER_SPACING * 2.f, itemGlobalPosition.y};
+    const auto submenuPosition = engine::Vec2f{itemGlobalPosition.x + getSize().x - MENU_BORDER_SPACING * 2.f, itemGlobalPosition.y};
     closeSubmenu();
     auto submenu = ContextMenu::create(item.subItems);
     openSubmenu_.index = index;
@@ -268,9 +268,9 @@ ContextMenu* ContextMenu::getRootMenu()
     return root;
 }
 
-EventStatus ContextMenu::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus ContextMenu::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    const auto mouse_position = sf::Vector2f{mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y};
+    const auto mouse_position = mouseButtonPressedEvent.getPosition();
 
     bool isMouseInsideHierarchy = false;
 
@@ -296,16 +296,18 @@ EventStatus ContextMenu::on(const event::MouseButtonPressed& mouseButtonPressedE
 
 void ContextMenu::onPositionChange()
 {
-    background_.setPosition(getGlobalPosition());
+    const auto position = getGlobalPosition();
+    background_.setPosition(sf::Vector2f{position.x, position.y});
 }
 
 void ContextMenu::onSizeChange()
 {
-    background_.setSize(getSize());
+    const auto size = getSize(); 
+    background_.setSize(sf::Vector2f{size.x, size.y});
 
     if (layout_)
     {
-        layout_->setSize(getSize());
+        layout_->setSize(size);
     }
 }
 

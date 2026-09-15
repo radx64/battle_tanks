@@ -22,7 +22,7 @@ Inset::Inset(const Constraint& constraint)
 void Inset::onSizeChange()
 {
     auto size = getSize();
-    sf::Vector2f positionOffset{0.0f, 0.0f};
+    engine::Vec2f positionOffset{0.0f, 0.0f};
 
     if (constraint_.getType() == Constraint::Type::Fixed)
     {

@@ -150,15 +150,17 @@ void GroupBox::updateLayout()
     contentBounds_.width = std::max(0.f, size.x - outerPadding_ * 2.f - padding_ * 2.f);
     contentBounds_.height = std::max(0.f, size.y - contentTop - outerPadding_ - padding_);
 
-    titleText_.setGlobalPosition(getGlobalPosition() + sf::Vector2f{outerPadding_ + padding_ + titlePadding_, outerPadding_});
+    const auto titlePosition = getGlobalPosition() + engine::Vec2f{outerPadding_ + padding_ + titlePadding_, outerPadding_};
+
+    titleText_.setGlobalPosition(sf::Vector2f{titlePosition.x, titlePosition.y});
     titleText_.setSize({std::ceil(titleBounds.x), std::ceil(titleBounds.y)});
     updateChildrenLayout();
 }
 
 void GroupBox::updateChildrenLayout()
 {
-    const auto childPosition = sf::Vector2f{contentBounds_.left, contentBounds_.top};
-    const auto childSize = sf::Vector2f{contentBounds_.width, contentBounds_.height};
+    const auto childPosition = engine::Vec2f{contentBounds_.left, contentBounds_.top};
+    const auto childSize = engine::Vec2f{contentBounds_.width, contentBounds_.height};
 
     for (auto& child : children_)
     {
@@ -175,7 +177,10 @@ void GroupBox::drawFrameSegment(sf::RenderTexture& renderTexture, const sf::Floa
     }
 
     sf::RectangleShape segment{{rect.width, rect.height}};
-    segment.setPosition(getGlobalPosition() + sf::Vector2f{rect.left, rect.top});
+
+    const auto position = getGlobalPosition() + engine::Vec2f{rect.left, rect.top};
+
+    segment.setPosition(sf::Vector2f{position.x, position.y});
     segment.setFillColor(borderColor_);
     renderTexture.draw(segment);
 }

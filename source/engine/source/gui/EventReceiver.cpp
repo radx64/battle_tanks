@@ -17,20 +17,21 @@ const std::string_view toString(const EventStatus eventStatus)
     EventStatus Class::receive(const Event&)\
     { return EventStatus::NotConsumed; }
 
-EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseMoved);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseButtonPressed);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseButtonDoublePressed);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseButtonReleased);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseEntered);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::MouseLeft);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::MouseMoved);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::MouseButtonPressed);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::gui::events::MouseButtonDoublePressed);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::MouseButtonReleased);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::gui::events::MouseEntered);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::gui::events::MouseLeft);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::MouseScrolled);
 
-EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::KeyPressedEvent);
-EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::KeyReleasedEvent);
-EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::TextEnteredEvent);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::KeyPressed);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::KeyReleased);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::events::TextEntered);
 
-EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusChange);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusLost);
-EMPTY_RECEIVE_METHOD(EventReceiver, event::FocusGained);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::gui::events::FocusChange);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::gui::events::FocusLost);
+EMPTY_RECEIVE_METHOD(EventReceiver, engine::gui::events::FocusGained);
 
 #undef EMPTY_ON_METHOD
 

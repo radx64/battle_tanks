@@ -151,7 +151,7 @@ void ListBox::onRender(sf::RenderTexture& renderTexture)
     const auto firstVisibleIndex = getFirstVisibleIndex();
     const auto visibleSpan = getVisibleItemSpan();
     const auto lastVisibleIndex = std::min(items_.size(), firstVisibleIndex + visibleSpan);
-    const auto viewportPosition = getGlobalPosition() + sf::Vector2f{INNER_PADDING, INNER_PADDING};
+    const auto viewportPosition = getGlobalPosition() + engine::Vec2f{INNER_PADDING, INNER_PADDING};
 
     for (std::size_t index = firstVisibleIndex; index < lastVisibleIndex; ++index)
     {
@@ -187,7 +187,7 @@ void ListBox::onRender(sf::RenderTexture& renderTexture)
     }
 
     contentTexture_.display();
-    contentSprite_.setPosition(viewportPosition);
+    contentSprite_.setPosition(sf::Vector2f{viewportPosition.x, viewportPosition.y});
     renderTexture.draw(contentSprite_);
 }
 
@@ -201,22 +201,22 @@ void ListBox::onPositionChange()
     updateLayout();
 }
 
-EventStatus ListBox::on(const event::MouseMoved& mouseMovedEvent)
+EventStatus ListBox::on(const engine::events::MouseMoved& mouseMovedEvent)
 {
-    hoveredIndex_ = getItemIndexAt({mouseMovedEvent.position.x, mouseMovedEvent.position.y});
+    hoveredIndex_ = getItemIndexAt(mouseMovedEvent.getPosition());
     return hoveredIndex_ ? EventStatus::Consumed : EventStatus::NotConsumed;
 }
 
-EventStatus ListBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus ListBox::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (mouseButtonPressedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonPressedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
     }
 
     focus();
 
-    const auto itemIndex = getItemIndexAt({mouseButtonPressedEvent.position.x, mouseButtonPressedEvent.position.y});
+    const auto itemIndex = getItemIndexAt(mouseButtonPressedEvent.getPosition());
     if (not itemIndex)
     {
         return EventStatus::Consumed;
@@ -232,13 +232,13 @@ EventStatus ListBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
     return EventStatus::Consumed;
 }
 
-EventStatus ListBox::on(const event::MouseLeft&)
+EventStatus ListBox::on(const engine::gui::events::MouseLeft&)
 {
     hoveredIndex_.reset();
     return EventStatus::NotConsumed;
 }
 
-EventStatus ListBox::on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
+EventStatus ListBox::on(const engine::events::KeyReleased& keyboardKeyReleasedEvent)
 {
     if (not isFocused() || items_.empty())
     {
@@ -272,13 +272,13 @@ EventStatus ListBox::on(const engine::events::KeyReleasedEvent& keyboardKeyRelea
     return EventStatus::NotConsumed;
 }
 
-EventStatus ListBox::on(const event::FocusLost&)
+EventStatus ListBox::on(const engine::gui::events::FocusLost&)
 {
     background_.setTexture(normalTexture_);
     return EventStatus::Consumed;
 }
 
-EventStatus ListBox::on(const event::FocusGained&)
+EventStatus ListBox::on(const engine::gui::events::FocusGained&)
 {
     background_.setTexture(focusTexture_);
     return EventStatus::Consumed;
@@ -286,8 +286,10 @@ EventStatus ListBox::on(const event::FocusGained&)
 
 void ListBox::updateLayout()
 {
-    background_.setPosition(getGlobalPosition());
-    background_.setSize(getSize());
+    const auto position = getGlobalPosition();
+    const auto size = getSize();
+    background_.setPosition(sf::Vector2f{position.x, position.y});
+    background_.setSize(sf::Vector2f{size.x, size.y});
     updateScrollbar();
 }
 
@@ -438,9 +440,10 @@ std::size_t ListBox::getFirstVisibleIndex() const
     return std::min(firstVisibleIndex, getMaxFirstVisibleIndex());
 }
 
-std::optional<std::size_t> ListBox::getItemIndexAt(const sf::Vector2f& globalPosition) const
+std::optional<std::size_t> ListBox::getItemIndexAt(const engine::Vec2f& mousePosition) const
 {
-    const auto viewportPosition = getGlobalPosition() + sf::Vector2f{INNER_PADDING, INNER_PADDING};
+    sf::Vector2f globalPosition {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)};
+    const auto viewportPosition = getGlobalPosition() + engine::Vec2f{INNER_PADDING, INNER_PADDING};
     const auto viewportWidth = getViewportWidth();
     const auto viewportHeight = getViewportHeight();
 

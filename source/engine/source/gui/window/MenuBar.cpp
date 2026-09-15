@@ -82,13 +82,13 @@ void MenuBar::onRender(sf::RenderTexture& renderTexture)
 
 void MenuBar::onSizeChange()
 {
-    background_.setSize(getSize());
+    background_.setSize(sf::Vector2f{getSize().x, getSize().y});
     layoutButtons();
 }
 
 void MenuBar::onPositionChange()
 {
-    background_.setPosition(getGlobalPosition());
+    background_.setPosition(sf::Vector2f{getGlobalPosition().x, getGlobalPosition().y});
 }
 
 void MenuBar::rebuild()
@@ -181,7 +181,7 @@ void MenuBar::openMenuForEntry(ptrdiff_t index)
         }
     });
 
-    const auto menuPosition = entry.button->getGlobalPosition() + sf::Vector2f{0.f, entry.button->getSize().y};
+    const auto menuPosition = entry.button->getGlobalPosition() + engine::Vec2f{0.f, entry.button->getSize().y};
     gui().openContextMenu(std::move(menu), menuPosition);
 }
 

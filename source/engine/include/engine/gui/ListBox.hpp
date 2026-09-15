@@ -57,12 +57,12 @@ protected:
     void onSizeChange() override;
     void onPositionChange() override;
 
-    EventStatus on(const event::MouseMoved& mouseMovedEvent) override;
-    EventStatus on(const event::MouseButtonPressed& mouseButtonPressedEvent) override;
-    EventStatus on(const event::MouseLeft&) override;
-    EventStatus on(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent) override;
-    EventStatus on(const event::FocusLost&) override;
-    EventStatus on(const event::FocusGained&) override;
+    EventStatus on(const engine::events::MouseMoved& mouseMovedEvent) override;
+    EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
+    EventStatus on(const engine::gui::events::MouseLeft&) override;
+    EventStatus on(const engine::events::KeyReleased& keyboardKeyReleasedEvent) override;
+    EventStatus on(const engine::gui::events::FocusLost&) override;
+    EventStatus on(const engine::gui::events::FocusGained&) override;
 
 private:
     void updateLayout();
@@ -77,7 +77,7 @@ private:
     std::size_t getVisibleItemSpan() const;
     std::size_t getMaxFirstVisibleIndex() const;
     std::size_t getFirstVisibleIndex() const;
-    std::optional<std::size_t> getItemIndexAt(const sf::Vector2f& globalPosition) const;
+    std::optional<std::size_t> getItemIndexAt(const engine::Vec2f& mousePosition) const;
 
     void notifySelectionChange();
     void activateItem(std::size_t index);

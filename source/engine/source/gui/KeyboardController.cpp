@@ -9,7 +9,7 @@ KeyboardController::KeyboardController(engine::gui::EventReceiver* receiver)
 : receiver_(receiver)
 {}
 
-void KeyboardController::onKeyPressed(const engine::events::KeyPressedEvent& keyEvent)
+void KeyboardController::onKeyPressed(const engine::events::KeyPressed& keyEvent)
 {
     receiver_->receive(keyEvent);
 
@@ -17,18 +17,18 @@ void KeyboardController::onKeyPressed(const engine::events::KeyPressedEvent& key
     {
         if (keyEvent.getModifiers().shift)
         {
-            receiver_->receive(engine::gui::event::FocusChange{
-                .type = engine::gui::event::FocusChange::Type::Previous});
+            receiver_->receive(engine::gui::events::FocusChange{
+                .type = engine::gui::events::FocusChange::Type::Previous});
         }
         else
         {
-            receiver_->receive(engine::gui::event::FocusChange{
-                .type = engine::gui::event::FocusChange::Type::Next});
+            receiver_->receive(engine::gui::events::FocusChange{
+                .type = engine::gui::events::FocusChange::Type::Next});
         }
     }
 }
 
-void KeyboardController::onKeyReleased(const engine::events::KeyReleasedEvent& keyEvent)
+void KeyboardController::onKeyReleased(const engine::events::KeyReleased& keyEvent)
 {
     if (keyEvent.getKeyCode() == engine::core::KeyCode::F12)
     {

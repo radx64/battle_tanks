@@ -48,9 +48,9 @@ void EditBox::updateTextVisbleArea()
     }
 }
 
-EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus EditBox::on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
-    if (mouseButtonPressedEvent.button != engine::gui::event::MouseButton::Left)
+    if (mouseButtonPressedEvent.getButton() != engine::core::MouseButton::Left)
     {
         return EventStatus::NotConsumed;
     }
@@ -60,7 +60,7 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
     focus();
     enterEdit();
 
-    textCursor_.moveTo(mouseButtonPressedEvent.position.x);
+    textCursor_.moveTo(mouseButtonPressedEvent.getPosition().x);
 
     if (anyShiftHeldDown_)
     {
@@ -79,18 +79,18 @@ EventStatus EditBox::on(const event::MouseButtonPressed& mouseButtonPressedEvent
     return EventStatus::NotConsumed;
 }
 
-EventStatus EditBox::on(const event::MouseMoved& mouseMovedEvent)
+EventStatus EditBox::on(const engine::events::MouseMoved& mouseMovedEvent)
 {
     if(mouseLeftButtonPressed_)
     {
-        textCursor_.moveTo(mouseMovedEvent.position.x);
+        textCursor_.moveTo(mouseMovedEvent.getPosition().x);
         selection_.to(textCursor_.getIndex(), textCursor_.getPosition());
     }
 
     return EventStatus::NotConsumed;
 }
 
-EventStatus EditBox::on(const engine::events::KeyPressedEvent& keyboardKeyPressed)
+EventStatus EditBox::on(const engine::events::KeyPressed& keyboardKeyPressed)
 {
     // Handle Return key specific to single-line edit box
     if (keyboardKeyPressed.getKeyCode() == engine::core::KeyCode::Enter)

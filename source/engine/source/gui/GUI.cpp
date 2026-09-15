@@ -3,7 +3,7 @@
 namespace engine::gui
 {
 
-Widget* hitTestRecursive(Widget* widget, const engine::gui::event::MousePosition position)
+Widget* hitTestRecursive(Widget* widget, const engine::Vector2f& position)
 {
     if (!widget->isVisible())
         return nullptr;
@@ -72,7 +72,7 @@ Widget* getNext(Widget* node)
 }
 
 
-GUI::GUI(const sf::Vector2f& mainWindowSize)
+GUI::GUI(const engine::Vec2f& mainWindowSize)
 : windowManager_{mainWindowSize}
 , logger_{"GUI"}
 {
@@ -110,7 +110,7 @@ void GUI::openWindow(std::unique_ptr<Window> window)
     setFocus(windowManager_.getActiveWindow());
 }
 
-void GUI::openContextMenu(std::unique_ptr<ContextMenu> menu, const sf::Vector2f& globalPosition)
+void GUI::openContextMenu(std::unique_ptr<ContextMenu> menu, const engine::Vec2f& globalPosition)
 {
     menu->setGui(this);
     windowManager_.openContextMenu(std::move(menu), globalPosition);
@@ -130,7 +130,7 @@ void GUI::releaseMouse()
     mouseCapture_ = nullptr;
 }
 
-EventStatus GUI::receive(const event::MouseButtonPressed& mouseButtonPressedEvent)
+EventStatus GUI::receive(const engine::events::MouseButtonPressed& mouseButtonPressedEvent)
 {
     if (mouseCapture_)
     {
@@ -139,13 +139,13 @@ EventStatus GUI::receive(const event::MouseButtonPressed& mouseButtonPressedEven
 
     if (windowManager_.hasOverlays())
     {
-        auto* pressed = hitTestOverlaysOnly(mouseButtonPressedEvent.position);
+        auto* pressed = hitTestOverlaysOnly(mouseButtonPressedEvent.getPosition());
         if (pressed)
         {
             pressed_ = pressed;
             setFocus(pressed_);
             auto eventStatus = pressed_->receive(mouseButtonPressedEvent);
-            updateHover(mouseButtonPressedEvent.position);
+            updateHover(mouseButtonPressedEvent.getPosition());
             return eventStatus;
         }
         else
@@ -160,7 +160,7 @@ EventStatus GUI::receive(const event::MouseButtonPressed& mouseButtonPressedEven
         }
     }
 
-    Window* clickedWindow = windowManager_.getTopWindowAtPosition(mouseButtonPressedEvent.position);
+    Window* clickedWindow = windowManager_.getTopWindowAtPosition(mouseButtonPressedEvent.getPosition());
     Window* oldWindow = windowManager_.getActiveWindow();
     if (clickedWindow and clickedWindow != oldWindow)
     {
@@ -170,7 +170,7 @@ EventStatus GUI::receive(const event::MouseButtonPressed& mouseButtonPressedEven
         onActiveWindowChanged(clickedWindow);
     }
     
-    auto* pressed = hitTestWindowsOnly(mouseButtonPressedEvent.position);
+    auto* pressed = hitTestWindowsOnly(mouseButtonPressedEvent.getPosition());
 
     if (not pressed)
     {
@@ -181,18 +181,18 @@ EventStatus GUI::receive(const event::MouseButtonPressed& mouseButtonPressedEven
     setFocus(pressed_);
     
     auto eventStatus = pressed_->receive(mouseButtonPressedEvent);
-    updateHover(mouseButtonPressedEvent.position);
+    updateHover(mouseButtonPressedEvent.getPosition());
     return eventStatus;
 }
 
-EventStatus GUI::receive(const event::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
+EventStatus GUI::receive(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)
 {
     if (mouseCapture_)
     {
         return mouseCapture_->receive(mouseButtonDoublePressedEvent);
     }
 
-    auto* pressed = hitTestWindowsOnly(mouseButtonDoublePressedEvent.position);
+    auto* pressed = hitTestWindowsOnly(mouseButtonDoublePressedEvent.getPosition());
 
     if (not pressed)
     {
@@ -202,13 +202,13 @@ EventStatus GUI::receive(const event::MouseButtonDoublePressed& mouseButtonDoubl
     setFocus(pressed);
     
     auto eventStatus = pressed->receive(mouseButtonDoublePressedEvent);
-    updateHover(mouseButtonDoublePressedEvent.position);
+    updateHover(mouseButtonDoublePressedEvent.getPosition());
     return eventStatus;
 }
 
-EventStatus GUI::receive(const event::MouseButtonReleased& mouseButtonReleasedEvent)
+EventStatus GUI::receive(const engine::events::MouseButtonReleased& mouseButtonReleasedEvent)
 {
-    updateHover(mouseButtonReleasedEvent.position);
+    updateHover(mouseButtonReleasedEvent.getPosition());
 
     if (mouseCapture_)
     {
@@ -226,17 +226,17 @@ EventStatus GUI::receive(const event::MouseButtonReleased& mouseButtonReleasedEv
     return EventStatus::NotConsumed;
 }
 
-EventStatus GUI::receive(const event::MouseMoved& mouseMovedEvent)
+EventStatus GUI::receive(const engine::events::MouseMoved& mouseMovedEvent)
 {
     if (mouseCapture_)
     {
         return mouseCapture_->receive(mouseMovedEvent);
     }
 
-    return updateHover(mouseMovedEvent.position);
+    return updateHover(mouseMovedEvent.getPosition());
 }
 
-EventStatus GUI::receive(const event::FocusChange& focusChangeEvent)
+EventStatus GUI::receive(const engine::gui::events::FocusChange& focusChangeEvent)
 {
     Widget* activeRoot{nullptr};
 
@@ -255,7 +255,7 @@ EventStatus GUI::receive(const event::FocusChange& focusChangeEvent)
         activeRoot = &windowManager_.mainWindow();
     }
 
-    if (focusChangeEvent.type == event::FocusChange::Type::Next)
+    if (focusChangeEvent.type == engine::gui::events::FocusChange::Type::Next)
     {
         auto* next = getNextFocusableWidget(activeRoot, focused_);
         setFocus(next);
@@ -269,7 +269,7 @@ EventStatus GUI::receive(const event::FocusChange& focusChangeEvent)
     return EventStatus::Consumed;
 }
 
-EventStatus GUI::receive(const engine::events::KeyPressedEvent& keyboardKeyPressedEvent)
+EventStatus GUI::receive(const engine::events::KeyPressed& keyboardKeyPressedEvent)
 {
     if (focused_)
     {
@@ -278,7 +278,7 @@ EventStatus GUI::receive(const engine::events::KeyPressedEvent& keyboardKeyPress
     return EventStatus::NotConsumed;
 }
 
-EventStatus GUI::receive(const engine::events::KeyReleasedEvent& keyboardKeyReleasedEvent)
+EventStatus GUI::receive(const engine::events::KeyReleased& keyboardKeyReleasedEvent)
 {
     if (focused_)
     {
@@ -287,7 +287,7 @@ EventStatus GUI::receive(const engine::events::KeyReleasedEvent& keyboardKeyRele
     return EventStatus::NotConsumed;
 }
 
-EventStatus GUI::receive(const engine::events::TextEnteredEvent& textEnteredEvent)
+EventStatus GUI::receive(const engine::events::TextEntered& textEnteredEvent)
 {
     if (focused_)
     {
@@ -296,7 +296,7 @@ EventStatus GUI::receive(const engine::events::TextEnteredEvent& textEnteredEven
     return EventStatus::NotConsumed;
 }
 
-Widget* GUI::hitTestWindowsOnly(const engine::gui::event::MousePosition position)
+Widget* GUI::hitTestWindowsOnly(const engine::Vector2f& position)
 {
     Widget* hit = nullptr;
 
@@ -324,7 +324,7 @@ Widget* GUI::hitTestWindowsOnly(const engine::gui::event::MousePosition position
     return hit;
 }
 
-Widget* GUI::hitTestOverlaysOnly(const engine::gui::event::MousePosition position)
+Widget* GUI::hitTestOverlaysOnly(const engine::Vector2f& position)
 {
     Widget* hit = nullptr;
 
@@ -346,7 +346,7 @@ Widget* GUI::hitTestOverlaysOnly(const engine::gui::event::MousePosition positio
     return nullptr;
 }
 
-Widget* GUI::hitTest(const engine::gui::event::MousePosition position)
+Widget* GUI::hitTest(const engine::Vector2f& position)
 {
     if (windowManager_.hasOverlays())
     {
@@ -406,13 +406,13 @@ void GUI::setFocus(Widget* widget)
     if (focused_) focused_->focus();
 }
 
-EventStatus GUI::updateHover(const engine::gui::event::MousePosition position)
+EventStatus GUI::updateHover(const engine::Vector2f& position)
 {
     auto* newHovered = hitTest(position);
 
     if (newHovered)
     {
-        newHovered->receive(event::MouseMoved{position});
+        newHovered->receive(engine::events::MouseMoved{position});
     }
 
     if (newHovered == hovered_)
@@ -422,14 +422,14 @@ EventStatus GUI::updateHover(const engine::gui::event::MousePosition position)
 
     if (hovered_)
     {
-        hovered_->receive(event::MouseLeft{});
+        hovered_->receive(engine::gui::events::MouseLeft{});
     }
 
     hovered_ = newHovered;
 
     if (hovered_)
     {
-        hovered_->receive(event::MouseEntered{});
+        hovered_->receive(engine::gui::events::MouseEntered{});
     }
     return EventStatus::NotConsumed;
 }
