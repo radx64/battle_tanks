@@ -19,11 +19,11 @@ void BarrelRenderer::draw(sf::RenderWindow& render_window)
     barrelSprite_.setRotation(barrelTransform.rotation());
     barrelSprite_.setColor(sf::Color(10, 10, 10, 127));
     barrelSprite_.setPosition(barrelTransform.position().x + 4, barrelTransform.position().y + 4);
-   render_window.draw(barrelSprite_);
+    render_window.draw(barrelSprite_);
 
     barrelSprite_.setColor(sf::Color(255, 255, 255, 255));
     barrelSprite_.setPosition(barrelTransform.position().x, barrelTransform.position().y);
-   render_window.draw(barrelSprite_);
+    render_window.draw(barrelSprite_);
 }
 
 }  // namespace game::entity

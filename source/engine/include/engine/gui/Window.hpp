@@ -35,7 +35,7 @@ public:
 
     void setContextMenuHandler(ContextMenuHandler handler);
 
-    void onRender(sf::RenderTexture&) override
+    void onRender(engine::gfx::RenderTarget&) override
     {
     }
 
@@ -79,7 +79,7 @@ protected:
     bool isInsideHeader(const engine::Vec2f& point);
     bool isInsideResizeGadget(const engine::Vec2f& point);
 
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onPositionChange() override;
     void onSizeChange() override;
     

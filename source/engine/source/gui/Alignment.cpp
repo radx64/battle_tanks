@@ -20,9 +20,9 @@ bool isBitSet(const Alignment& alignment, const Alignment& bit)
     return ((alignment & bit) == bit);
 }
 
-sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& parentSize, const sf::Vector2f& childSize, const Alignment& alignment)
+engine::Vec2f calculateAlignmentOffset(const engine::Vec2f& parentSize, const engine::Vec2f& childSize, const Alignment& alignment)
 {
-    sf::Vector2f offset {0.0f, 0.0f};
+    engine::Vec2f offset {0.0f, 0.0f};
 
     if (isBitSet(alignment, Alignment::Left))
     {
@@ -53,9 +53,9 @@ sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& parentSize, const sf::
     return offset;
 }
 
-sf::Vector2f boundsToSize(const sf::FloatRect& bounds)
+engine::Vec2f boundsToSize(const engine::FloatRect& bounds)
 {
-    return sf::Vector2f{bounds.width, bounds.height};
+    return engine::Vec2f{bounds.width, bounds.height};
 }
 
 }  // namespace engine::gui

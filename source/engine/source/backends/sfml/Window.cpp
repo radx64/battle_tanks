@@ -6,26 +6,12 @@
 #include "engine/events/KeyEvent.hpp"
 #include "engine/events/MouseEvent.hpp"
 
-#include "fromSf.hpp"
+#include "WindowImpl.hpp"
 
-constexpr unsigned int ANTI_ALIASING_LEVEL = 4;
+#include "fromSf.hpp"
 
 namespace engine
 {
-
-class Window::Impl
-{
-public:
-    Impl(const WindowProperties& properties)
-    : window_(sf::VideoMode(properties.size.x, properties.size.y, 32), properties.title,
-        sf::Style::Default, sf::ContextSettings(0, 0, ANTI_ALIASING_LEVEL))
-    {
-        window_.setKeyRepeatEnabled(false);
-        window_.setPosition(sf::Vector2i{0, 0});
-    }
-
-    sf::RenderWindow window_;
-};
 
 Window::Window(const WindowProperties& properties)
 : impl_(std::make_unique<Impl>(properties))
@@ -35,27 +21,27 @@ Window::~Window() = default;
 
 void Window::setTitle(const std::string& title)
 {
-    impl_->window_.setTitle(title);
+    impl_->renderWindow_.setTitle(title);
 }
 
 void Window::setSize(const engine::Vector2i& size)
 {
-    impl_->window_.setSize(sf::Vector2u(size.x, size.y));
+    impl_->renderWindow_.setSize(sf::Vector2u(size.x, size.y));
 }
 
 void Window::setPosition(const engine::Vector2i& position)
 {
-    impl_->window_.setPosition(sf::Vector2i(position.x, position.y));
+    impl_->renderWindow_.setPosition(sf::Vector2i(position.x, position.y));
 }
 
 void Window::setKeyRepeatEnabled(bool enabled)
 {
-    impl_->window_.setKeyRepeatEnabled(enabled);
+    impl_->renderWindow_.setKeyRepeatEnabled(enabled);
 }
 
 void Window::close()
 {
-    impl_->window_.close();
+    impl_->renderWindow_.close();
 }
 
 void Window::pollEvents()
@@ -64,7 +50,7 @@ void Window::pollEvents()
 
     sf::Event sfml_event;
 
-    while(impl_->window_.pollEvent(sfml_event))
+    while(impl_->renderWindow_.pollEvent(sfml_event))
     {
         switch (sfml_event.type)
         {
@@ -159,7 +145,7 @@ void Window::pollEvents()
 // TODO temporary solution while moving towards hiding sfml2 to backend
 sf::RenderWindow& Window::getNativeHandle() const
 {
-    return impl_->window_;
+    return impl_->renderWindow_;
 };
 
 }  // namespace engine

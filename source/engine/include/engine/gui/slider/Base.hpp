@@ -5,6 +5,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+#include "engine/gfx/Texture.hpp"
+
 #include "engine/gui/FramedSprite.hpp"
 #include "engine/gui/GUI.hpp"
 #include "engine/gui/slider/LayoutBuilder.hpp"
@@ -44,7 +47,7 @@ protected:
         Hover   // TODO add disabled in the future
     };
 
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTexture) override;
     Base();
 
     void onSizeChange() override;
@@ -67,10 +70,10 @@ protected:
     engine::gui::FramedSprite track_;
     engine::gui::FramedSprite thumb_;
 
-    const sf::Texture& hoverTexture_;
-    const sf::Texture& focusTexture_;
-    const sf::Texture& normalTexture_;
-    const sf::Texture& pressedTexture_;
+    const engine::gfx::Texture& hoverTexture_;
+    const engine::gfx::Texture& focusTexture_;
+    const engine::gfx::Texture& normalTexture_;
+    const engine::gfx::Texture& pressedTexture_;
 
     float value_;
     float step_;
@@ -106,10 +109,10 @@ Base<MouseHandlingPolicy, RenderingPolicy>::Base()
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
-void Base<MouseHandlingPolicy, RenderingPolicy>::onRender(sf::RenderTexture& renderTexture)
+void Base<MouseHandlingPolicy, RenderingPolicy>::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(track_);
-    renderTexture.draw(thumb_);
+    renderTarget.draw(track_);
+    renderTarget.draw(thumb_);
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
@@ -146,8 +149,8 @@ template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::setStep(const float step)
 {
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
-    thumb_.setSize(sf::Vector2f{thumbSize.x, thumbSize.y});
-    thumb_.setOrigin(sf::Vector2f{thumbSize.x, thumbSize.y} / 2.f);
+    thumb_.setSize(thumbSize);
+    thumb_.setOrigin(thumbSize / 2.f);
     step_ = (step > 0.0f) ? step : 0.01f;
 }
 
@@ -166,11 +169,11 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::decrease()
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::onSizeChange()
 {
-    track_.setSize(temporary::toSf(RenderingPolicy::getTrackSize(getSize())));
+    track_.setSize(RenderingPolicy::getTrackSize(getSize()));
 
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
-    thumb_.setSize(temporary::toSf(thumbSize));
-    thumb_.setOrigin(temporary::toSf(thumbSize) / 2.f);
+    thumb_.setSize(thumbSize);
+    thumb_.setOrigin(thumbSize / 2.f);
     updateTexture();
 }
 
@@ -284,7 +287,8 @@ EventStatus Base<MouseHandlingPolicy, RenderingPolicy>::on(const engine::events:
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(const engine::Vec2f& mouse_position)
 {
-    setValue(MouseHandlingPolicy::translatePositionToThumbValue(mouse_position, track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_));
+    setValue(MouseHandlingPolicy::translatePositionToThumbValue(mouse_position,
+        temporary::toSf(track_.getPosition()), temporary::toSf(track_.getSize()), temporary::toSf(thumb_.getSize()), min_, max_, step_));
 
     focus();
     updateTexture();
@@ -323,10 +327,10 @@ void Base<MouseHandlingPolicy, RenderingPolicy>::updateTexture()
 
 
     const auto track_position = RenderingPolicy::getTrackPosition(getGlobalPosition(), getSize());
-    const auto thumb_position = RenderingPolicy::getThumbPosition(getGlobalPosition(), getSize(), temporary::fromSf(track_.getSize()), temporary::fromSf(thumb_.getSize()), normalizeValue());
+    const auto thumb_position = RenderingPolicy::getThumbPosition(getGlobalPosition(), getSize(), track_.getSize(), thumb_.getSize(), normalizeValue());
 
-    track_.setPosition(sf::Vector2f{track_position.x, track_position.y});
-    thumb_.setPosition(sf::Vector2f{thumb_position.x, thumb_position.y});
+    track_.setPosition(track_position);
+    thumb_.setPosition(thumb_position);
 }
 
 template <typename MouseHandlingPolicy, typename RenderingPolicy>
@@ -348,8 +352,8 @@ void  Base<MouseHandlingPolicy, RenderingPolicy>::setThumbRatio(const float rati
 {
     thumbRatio_ = ratio;
     auto thumbSize = RenderingPolicy::getThumbSize(getSize(), thumbRatio_);
-    thumb_.setSize(sf::Vector2f{thumbSize.x, thumbSize.y});
-    thumb_.setOrigin(sf::Vector2f{thumbSize.x, thumbSize.y} / 2.f);
+    thumb_.setSize(thumbSize);
+    thumb_.setOrigin(thumbSize / 2.f);
     setValue(getValue());
 }
 

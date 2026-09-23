@@ -152,7 +152,7 @@ void Application::processEvent(engine::events::Event& event)
 
     if (not was_consumed)
     {
-        // Forward event to application specific handling
+        // Forward event to application specific handling if none of dispatchers consumed it
         onEvent(event);
     }
 }

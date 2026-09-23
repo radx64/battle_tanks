@@ -4,6 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Rect.hpp"
+
+
 namespace engine::gui
 {
 enum class Alignment
@@ -20,7 +23,7 @@ Alignment operator|(Alignment lhs, Alignment rhs);
 Alignment operator&(Alignment lhs, Alignment rhs);
 bool isBitSet(const Alignment& alignment, const Alignment& bit);
 
-sf::Vector2f calculateAlignmentOffset(const sf::Vector2f& parentSize, const sf::Vector2f& childSize, const Alignment& alignment);
-sf::Vector2f boundsToSize(const sf::FloatRect& bounds);
+engine::Vec2f calculateAlignmentOffset(const engine::Vec2f& parentSize, const engine::Vec2f& childSize, const Alignment& alignment);
+engine::Vec2f boundsToSize(const engine::FloatRect& bounds);
 
 }  // namespace engine::gui

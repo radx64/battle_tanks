@@ -2,11 +2,11 @@
 
 #include <memory>
 
-#include <SFML/Graphics.hpp>
-
+#include "engine/gfx/Color.hpp"
 #include "engine/gui/Alignment.hpp"
 #include "engine/gui/Widget.hpp"
 #include "engine/gui/Text.hpp"
+#include "engine/Rect.hpp"
 
 namespace engine::gui::style { class Text; }
 
@@ -21,13 +21,13 @@ public:
 
     void setText(const std::string_view& text);
     void setAlignment(const engine::gui::Alignment& alignment);
-    void setFontColor(const sf::Color& color);
-    sf::FloatRect getTextBounds() const;
+    void setFontColor(const engine::gfx::Color& color);
+    engine::FloatRect getTextBounds() const;
 
 protected:
     Label(const std::string_view& text);
     Label(const std::string_view& text, const style::Text& style);
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
     void recalculatePositionAndSize();

@@ -4,13 +4,15 @@
 
 #include "engine/gui/Widget.hpp"
 
+#include "engine/gfx/RenderTarget.hpp"
+
 namespace engine::gui::layout
 {
 
 class Base : public Widget
 {
 public:
-    void onRender(sf::RenderTexture&render_window) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
 };
 
 }  // namespace engine::gui::layout

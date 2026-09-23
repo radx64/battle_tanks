@@ -1,7 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics/Color.hpp>
-
+#include "engine/gfx/Color.hpp"
 #include "engine/gui/style/Text.hpp"
 
 namespace engine::gui::style
@@ -9,14 +8,14 @@ namespace engine::gui::style
 
 struct Window
 {
-    sf::Color background;
-    sf::Color inactiveBackground;
+    engine::gfx::Color background;
+    engine::gfx::Color inactiveBackground;
 
-    sf::Color header;
-    sf::Color inactiveHeader;
+    engine::gfx::Color header;
+    engine::gfx::Color inactiveHeader;
 
     float borderThickness = 1.f;
-    sf::Color borderColor = sf::Color::Black;
+    engine::gfx::Color borderColor = engine::gfx::Color::Black;
 
     Text titleText;
 };

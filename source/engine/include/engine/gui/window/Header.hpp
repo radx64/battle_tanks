@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/gui/Widget.hpp"
+#include "engine/gfx/Shape.hpp"
 
 namespace engine::gui { class IconButton; }
 namespace engine::gui { class Label; }
@@ -26,13 +27,13 @@ public:
     void setMaximizeRestoreButtonState(const bool& state);
 
 protected:
-    void onRender(sf::RenderTexture&render_window) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
     EventStatus on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent) override;
 
     engine::gui::Label* titleTextPtr_;
-    sf::RectangleShape headerShape_;
+    engine::gfx::RectangleShape headerShape_;
     engine::gui::IconButton* closeButtonPtr_;
     engine::gui::IconButton* maximizeRestoreButtonPtr_;
     std::function<void()> closeButtonAction_;

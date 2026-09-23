@@ -6,33 +6,33 @@ namespace engine::gui
 namespace 
 {
 
-sf::Vector2f getScalingFactor(const sf::Vector2u& textureSize, const engine::Vec2f& objectSize)
+engine::Vec2f getScalingFactor(const engine::Vec2u& textureSize, const engine::Vec2f& objectSize)
 {
     return {objectSize.x / textureSize.x, objectSize.y / textureSize.y};
 }
 
 }  // namespace
 
-std::unique_ptr<Image> Image::create(const sf::Texture& texture)
+std::unique_ptr<Image> Image::create(const engine::gfx::Texture& texture)
 {
     return std::unique_ptr<Image>(new Image(texture));
 }
 
-void Image::onRender(sf::RenderTexture& renderTexture)
+void Image::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(sprite_);
+    renderTarget.draw(sprite_);
 }
-void Image::setTexture(const sf::Texture& texture)
+void Image::setTexture(const engine::gfx::Texture& texture)
 {
     sprite_.setTexture(texture);
 
     const auto position = getGlobalPosition();
 
-    sprite_.setPosition(sf::Vector2f{position.x, position.y});
+    sprite_.setPosition(position);
     sprite_.setScale(getSize().x / texture.getSize().x, getSize().y / texture.getSize().y);
 }
 
-Image::Image(const sf::Texture& texture)
+Image::Image(const engine::gfx::Texture& texture)
 : texture_(texture)
 {
     setTexture(texture);
@@ -41,7 +41,7 @@ Image::Image(const sf::Texture& texture)
 void Image::onPositionChange()
 {
     const auto position = getGlobalPosition();
-    sprite_.setPosition(sf::Vector2f{position.x, position.y});
+    sprite_.setPosition(position);
 }
 
 void Image::onSizeChange()

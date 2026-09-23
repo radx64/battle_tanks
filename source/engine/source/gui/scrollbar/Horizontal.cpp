@@ -68,9 +68,9 @@ void Horizontal::onPositionChange()
 
 }
 
-void Horizontal::onRender(sf::RenderTexture& renderTexture)
+void Horizontal::onRender(engine::gfx::RenderTarget&)
 {
-    (void)renderTexture;
+    
 }
 
 } // namespace engine::gui::scrollbar

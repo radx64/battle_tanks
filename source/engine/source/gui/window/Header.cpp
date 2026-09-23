@@ -44,7 +44,7 @@ Header::Header()
     titleText->setAlignment(engine::gui::Alignment::Left | engine::gui::Alignment::VerticallyCentered);
     titleTextPtr_ = titleText.get();
     titleTextPtr_->setSize(getSize());
-    titleTextPtr_->setFontColor(sf::Color::White);
+    titleTextPtr_->setFontColor(engine::gfx::Color::White);
 
         /*
     +-------------------------------+
@@ -86,15 +86,15 @@ void Header::setTitle(const std::string_view& text)
     titleTextPtr_->setText(text.data());
 }
 
-void Header::onRender(sf::RenderTexture& renderTexture)
+void Header::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(headerShape_);
+    renderTarget.draw(headerShape_);
 }
 
 void Header::onSizeChange()
 {
     auto header_size = getSize();
-    headerShape_.setSize(sf::Vector2f{header_size.x, header_size.y});
+    headerShape_.setSize(header_size);
 
     for (auto& child : children_)
     {
@@ -104,7 +104,7 @@ void Header::onSizeChange()
 
 void Header::onPositionChange()
 {
-    headerShape_.setPosition(sf::Vector2f{getGlobalPosition().x, getGlobalPosition().y});
+    headerShape_.setPosition(getGlobalPosition());
 }
 
 EventStatus Header::on(const engine::gui::events::MouseButtonDoublePressed& mouseButtonDoublePressedEvent)

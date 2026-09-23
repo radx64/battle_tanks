@@ -77,10 +77,9 @@ void Vertical::onPositionChange()
 
 }
 
-void Vertical::onRender(sf::RenderTexture& renderTexture)
+void Vertical::onRender(engine::gfx::RenderTarget&)
 {
-    (void)renderTexture;
+    
 }
-
 
 } // namespace engine::gui::scrollbar

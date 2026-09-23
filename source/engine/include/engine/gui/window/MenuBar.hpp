@@ -2,10 +2,11 @@
 
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-
 #include "engine/gui/ContextMenu.hpp"
 #include "engine/gui/Widget.hpp"
+
+#include "engine/gfx/Color.hpp"
+#include "engine/gfx/Shape.hpp"
 
 namespace engine::gui { class TextButton; }
 
@@ -24,7 +25,7 @@ public:
     void disable();
 
 protected:
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
 
@@ -44,9 +45,9 @@ private:
     std::vector<Entry> entries_;
     engine::gui::ContextMenu* openMenu_ = nullptr;
     ptrdiff_t openMenuIndex_ = -1;
-    sf::RectangleShape background_;
-    sf::Color enabledColor_;
-    sf::Color disabledColor_;
+    engine::gfx::RectangleShape background_;
+    engine::gfx::Color enabledColor_;
+    engine::gfx::Color disabledColor_;
 };
 
 }  // namespace engine::gui::window

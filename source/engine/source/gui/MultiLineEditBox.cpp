@@ -36,7 +36,7 @@ MultiLineEditBox::MultiLineEditBox()
     rebuildLineIndices();
 }
 
-sf::Vector2f MultiLineEditBox::getContentSize()
+engine::Vec2f MultiLineEditBox::getContentSize()
 {
     const auto textBounds = text_.getTextBounds();
     const auto* font = text_.getFont();

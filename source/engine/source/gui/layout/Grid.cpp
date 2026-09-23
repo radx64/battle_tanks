@@ -232,9 +232,9 @@ void Grid::removeElementAt(const size_t x, const size_t y)
     setElementAt(x, y, nullptr);
 }
 
-void Grid::onRender(sf::RenderTexture& renderTexture)
+void Grid::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    debug::drawBox(renderTexture, getGlobalPosition(), getSize(), sf::Color::Red, 1.f);
+    debug::drawBox(renderTarget, getGlobalPosition(), getSize(), engine::gfx::Color::Red, 1.f);
 
     for (size_t x = 0; x < width_; x++)
     {
@@ -242,7 +242,7 @@ void Grid::onRender(sf::RenderTexture& renderTexture)
         {
             if (grid_[x][y] != nullptr)
             {
-                debug::drawBox(renderTexture, grid_[x][y]->getGlobalPosition(), grid_[x][y]->getSize(), sf::Color::Green, 1.f);
+                debug::drawBox(renderTarget, grid_[x][y]->getGlobalPosition(), grid_[x][y]->getSize(), engine::gfx::Color::Green, 1.f);
             }
         }
     }

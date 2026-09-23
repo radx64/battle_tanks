@@ -1,5 +1,7 @@
 #include "engine/gui/ProgressBar.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include "engine/gui/Label.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 #include "engine/gui/style/StyleFactory.hpp"
@@ -107,7 +109,7 @@ void ProgressBar::setTextLabel(const float value)
 void ProgressBar::onPositionChange()
 {
     const auto position = getGlobalPosition();
-    background_.setPosition(sf::Vector2f{position.x, position.y});
+    background_.setPosition(position);
     bar_.setPosition(sf::Vector2f{position.x, position.y} + sf::Vector2f{BORDER_OFFSET.x, BORDER_OFFSET.y});
 }
 
@@ -116,16 +118,16 @@ void ProgressBar::onSizeChange()
     recalculateSize();
 }
 
-void ProgressBar::onRender(sf::RenderTexture& renderTexture)
+void ProgressBar::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
-    renderTexture.draw(bar_);
+    renderTarget.draw(background_);
+    renderTarget.draw(bar_);
 }
 
 void ProgressBar::recalculateSize()
 {
     const auto widgetSize = getSize();
-    background_.setSize(sf::Vector2f{widgetSize.x, widgetSize.y});
+    background_.setSize(widgetSize);
 
     auto widgetSizeWithOffset = widgetSize - BORDER_OFFSET * 2.f;
     bar_.setSize(sf::Vector2f{widgetSizeWithOffset.x * progress_, widgetSizeWithOffset.y});

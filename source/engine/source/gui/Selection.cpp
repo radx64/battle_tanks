@@ -14,7 +14,7 @@ constexpr float CURSOR_EXTRA_HEIGHT = 6.f;
 namespace engine::gui
 {
 
-Selection::Selection(engine::gui::Text& text, const sf::Color& selectionColor)
+Selection::Selection(engine::gui::Text& text, const engine::gfx::Color& selectionColor)
 : text_{text}
 , selectionStartIndex_{}
 , selectionEndIndex_{}
@@ -29,7 +29,7 @@ bool Selection::isEmpty() const
     return selectionStartIndex_ == selectionEndIndex_;
 }
 
-void Selection::start(const uint32_t index, const sf::Vector2f& position)
+void Selection::start(const uint32_t index, const engine::Vec2f& position)
 {
     selectionStartIndex_ = index;
     selectionStartPosition_ = position;
@@ -61,7 +61,7 @@ void Selection::clear()
     update();
 }
 
-void Selection::to(const uint32_t index, const sf::Vector2f& position)
+void Selection::to(const uint32_t index, const engine::Vec2f& position)
 {
     if (selectionEndIndex_ == index)
     {
@@ -86,11 +86,11 @@ void Selection::update()
         return;
     }
 
-    const bool selectionForward = selectionStartIndex_ < selectionEndIndex_;
-    const size_t actualStartIdx = startsAt();
-    const size_t actualEndIdx = endsAt();
-    const sf::Vector2f startPos = selectionForward ? selectionStartPosition_ : selectionEndPosition_;
-    const sf::Vector2f endPos = selectionForward ? selectionEndPosition_ : selectionStartPosition_;
+    const auto selectionForward = selectionStartIndex_ < selectionEndIndex_;
+    const auto actualStartIdx = startsAt();
+    const auto actualEndIdx = endsAt();
+    const auto startPos = selectionForward ? selectionStartPosition_ : selectionEndPosition_;
+    const auto endPos = selectionForward ? selectionEndPosition_ : selectionStartPosition_;
 
     const auto getLineInfo = [&fieldText](const size_t index)
     {
@@ -134,7 +134,7 @@ void Selection::update()
             ? endPos.x - startPos.x
             : getLineXWidth(fieldText, lineStartIdx, lineEndIdx);
 
-        sf::RectangleShape rect;
+        engine::gfx::RectangleShape rect;
         rect.setFillColor(selectionColor_);
         rect.setPosition({rectX, lineYPos});
         rect.setSize({rectWidth, lineHeight});
@@ -157,12 +157,12 @@ size_t Selection::getLineFromIndex(const std::string& text, size_t index) const
     return lineNumber;
 }
 
-void Selection::render(sf::RenderTexture& renderTexture)
+void Selection::render(engine::gfx::RenderTarget& renderTarget)
 {
     for (size_t i = 0; i < selectionRectangles_.size(); ++i)
     {
         auto& rect = selectionRectangles_[i];
-        renderTexture.draw(rect);
+        renderTarget.draw(rect);
     }
 }
 

@@ -2,7 +2,7 @@
 
 namespace 
 {
-const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
+const engine::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
 
 }  // namespace
 
@@ -23,7 +23,7 @@ void EditBox::updateTextVisbleArea()
 {
     float textXoffset = text_.getSize().x - text_.getTextBounds().width;
 
-    sf::Vector2f textBounds
+    engine::Vec2f textBounds
     {
         text_.getTextBounds().width,
         text_.getTextSingleLineHeight()
@@ -40,7 +40,7 @@ void EditBox::updateTextVisbleArea()
 
     if (textXoffset < 0)
     {
-        text_.setOffset(sf::Vector2f{textXoffset, 0.f} + alignmentOffset);
+        text_.setOffset(engine::Vec2f{textXoffset, 0.f} + alignmentOffset);
     }
     else
     {

@@ -1,5 +1,7 @@
 #include "engine/gui/Window.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include <memory>
 
 #include <SFML/Graphics.hpp>
@@ -142,7 +144,7 @@ bool Window::isInsideResizeGadget(const engine::Vec2f& point)
 
 void Window::onRender(sf::RenderTexture& renderTexture)
 {
-    renderTexture.draw(background_);
+    engine::backends::sfml::FramedSpriteRenderer::draw(renderTexture, background_);
 }
 
 bool Window::isInState(const Window::State& state) const
@@ -291,7 +293,7 @@ EventStatus Window::on(const engine::events::MouseMoved& mouseMovedEvent)
 
 void Window::onPositionChange()
 {
-    background_.setPosition(temporary::toSf(getGlobalPosition()));
+    background_.setPosition(getGlobalPosition());
     setMaximized(false);
 }
 
@@ -310,7 +312,7 @@ void Window::onSizeChange()
     statusBar_->setSize(engine::Vec2f{size.x, window::config::RESIZE_BOX_SIZE} - window::config::WINDOW_BORDER_OFFSET * 2.f);
     statusBar_->setPosition(engine::Vec2f{0.f + window::config::WINDOW_BORDER_OFFSET.x, getSize().y - window::config::RESIZE_BOX_SIZE - window::config::WINDOW_BORDER_OFFSET.y});
 
-    background_.setSize(temporary::toSf(getSize()));
+    background_.setSize(getSize());
     setMaximized(false);
 }
 

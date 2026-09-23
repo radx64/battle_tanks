@@ -3,7 +3,7 @@
 namespace engine::gui::layout
 {
 
-void Base::onRender(sf::RenderTexture&)
+void Base::onRender(engine::gfx::RenderTarget&)
 {
 }
 

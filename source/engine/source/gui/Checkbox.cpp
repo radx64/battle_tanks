@@ -8,14 +8,14 @@ namespace engine::gui
 
 
 Checkbox::Checkbox(const bool isChecked,
-    const sf::Texture& normalTexture,
-    const sf::Texture& hoverTexture,
-    const sf::Texture& focusTexture,
-    const sf::Texture& checkedTexture)
+    const engine::gfx::Texture& normalTexture,
+    const engine::gfx::Texture& hoverTexture,
+    const engine::gfx::Texture& focusTexture,
+    const engine::gfx::Texture& checkedTexture)
 : isChecked_{isChecked}
 , state_{State::Normal}
-, background_(sf::Sprite())
-, tick_(sf::Sprite())
+, background_(engine::gfx::Sprite())
+, tick_(engine::gfx::Sprite())
 , hoverTexture_(hoverTexture)
 , focusTexture_(focusTexture)
 , normalTexture_(normalTexture)
@@ -39,10 +39,10 @@ std::unique_ptr<Checkbox> Checkbox::create(const bool isChecked)
     return std::unique_ptr<Checkbox>{new Checkbox{isChecked}};
 }
 
-void Checkbox::onRender(sf::RenderTexture& renderTexture)
+void Checkbox::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
-    if (isChecked_) renderTexture.draw(tick_);
+    renderTarget.draw(background_);
+    if (isChecked_) renderTarget.draw(tick_);
 }
 
 void Checkbox::onStateChange(std::function<void(bool)> onClickCallback)
@@ -127,7 +127,7 @@ EventStatus Checkbox::on(const engine::gui::events::MouseLeft&)
 
 void Checkbox::recalculateSpritesPositions()
 {
-    auto position = sf::Vector2f{getGlobalPosition().x, getGlobalPosition().y} + (sf::Vector2f{getSize().x, getSize().y}/2.f) - boundsToSize(background_.getLocalBounds()) / 2.f;
+    auto position = getGlobalPosition() + (getSize()/2.f) - boundsToSize(background_.getLocalBounds()) / 2.f;
     background_.setPosition(position);
     tick_.setPosition(position);
 }

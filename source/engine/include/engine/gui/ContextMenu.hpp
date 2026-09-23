@@ -65,7 +65,7 @@ public:
 protected:
     explicit ContextMenu(const std::vector<Item>& items, ContextMenu* parent = nullptr);
     
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     
     EventStatus on(const engine::events::MouseButtonPressed& mouseButtonPressedEvent) override;
 

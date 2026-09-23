@@ -1,5 +1,7 @@
 #include "engine/gui/ListBox.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include <algorithm>
 #include <cmath>
 
@@ -126,9 +128,9 @@ void ListBox::onSelectionChange(std::function<void(std::optional<std::size_t>)> 
     onSelectionChange_ = std::move(callback);
 }
 
-void ListBox::onRender(sf::RenderTexture& renderTexture)
+void ListBox::onRender(engine:gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
+    renderTarget.draw(background_);
 
     const auto viewportWidth = getViewportWidth();
     const auto viewportHeight = getViewportHeight();
@@ -288,8 +290,8 @@ void ListBox::updateLayout()
 {
     const auto position = getGlobalPosition();
     const auto size = getSize();
-    background_.setPosition(sf::Vector2f{position.x, position.y});
-    background_.setSize(sf::Vector2f{size.x, size.y});
+    background_.setPosition(position);
+    background_.setSize(size);
     updateScrollbar();
 }
 

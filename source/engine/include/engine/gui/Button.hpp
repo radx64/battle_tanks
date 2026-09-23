@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/gfx/Texture.hpp"
+
 #include "engine/gui/FramedSprite.hpp"
 #include "engine/gui/Image.hpp"
 #include "engine/gui/Widget.hpp"
@@ -21,7 +23,7 @@ namespace engine::gui
 class ButtonBase : public Widget
 {
 public:
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onClick(std::function<void()> onClickCallback);
     void onMouseEnter(std::function<void()> onMouseEnterCallback);
     
@@ -49,7 +51,7 @@ protected:
 
     engine::gui::FramedSprite background_;
     const style::Button& style_;
-    const sf::Texture& focusTexture_;
+    const engine::gfx::Texture& focusTexture_;
 
     WidgetState state_;
 
@@ -75,14 +77,14 @@ protected:
 class IconButton : public ButtonBase
 {  
 public:
-    static std::unique_ptr<IconButton> create(const sf::Texture& icon);
-    static std::unique_ptr<IconButton> create(const sf::Texture& icon, const style::Button& style);
+    static std::unique_ptr<IconButton> create(const engine::gfx::Texture& icon);
+    static std::unique_ptr<IconButton> create(const engine::gfx::Texture& icon, const style::Button& style);
 
-    void setIcon(const sf::Texture& icon);
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void setIcon(const engine::gfx::Texture& icon);
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
 
 protected:
-    IconButton(const sf::Texture& texture, const style::Button& style);
+    IconButton(const engine::gfx::Texture& texture, const style::Button& style);
     void onSizeChange() override;
     void onPositionChange() override;
 

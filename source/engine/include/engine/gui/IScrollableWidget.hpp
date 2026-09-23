@@ -3,6 +3,7 @@
 #include <functional>
 
 #include "engine/gui/Widget.hpp"
+#include "engine/Vector2.hpp"
 
 namespace engine::gui
 {
@@ -22,8 +23,8 @@ public:
         onFocusRectChangeCallback_ = std::move(callback);
     }
 
-    virtual sf::Vector2f getContentSize() = 0;
-    virtual void applyOffset(const sf::Vector2f& offset) = 0;
+    virtual engine::Vec2f getContentSize() = 0;
+    virtual void applyOffset(const engine::Vec2f& offset) = 0;
 
 protected:
     void notifyViewChange()

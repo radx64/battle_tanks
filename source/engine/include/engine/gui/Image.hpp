@@ -4,6 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/gfx/Texture.hpp"
+#include "engine/gfx/Sprite.hpp"
+
 #include "engine/gui/Widget.hpp"
 
 namespace engine::gui
@@ -12,19 +15,19 @@ namespace engine::gui
 class Image : public Widget
 {
 public:
-    static std::unique_ptr<Image> create(const sf::Texture& texture);
+    static std::unique_ptr<Image> create(const engine::gfx::Texture& texture);
 
-    void onRender(sf::RenderTexture& renderTexture) override;
-    void setTexture(const sf::Texture& texture);
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
+    void setTexture(const engine::gfx::Texture& texture);
 
 protected:
-    Image(const sf::Texture& texture);
+    Image(const engine::gfx::Texture& texture);
 
     void onPositionChange() override;
     void onSizeChange() override;
 
-    sf::Sprite sprite_;
-    const sf::Texture& texture_;
+    engine::gfx::Sprite sprite_;
+    const engine::gfx::Texture& texture_;
 };
 
 }  // namespace engine::gui

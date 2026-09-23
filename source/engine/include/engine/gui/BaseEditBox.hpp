@@ -4,6 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/Vector2.hpp"
+#include "engine/gfx/Texture.hpp"
+
 #include "engine/gui/Alignment.hpp"
 #include "engine/gui/FramedSprite.hpp"
 #include "engine/gui/IScrollableWidget.hpp"
@@ -25,12 +28,12 @@ public:
     void setText(const std::string_view text);
     void setAlignment(const engine::gui::Alignment& alignment);
 
-    sf::Vector2f getContentSize() override;
-    void applyOffset(const sf::Vector2f& offset) override;
+    engine::Vec2f getContentSize() override;
+    void applyOffset(const engine::Vec2f& offset) override;
 
 protected:
     BaseEditBox();
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
 
@@ -59,8 +62,8 @@ protected:
 
     style::EditBox style_;
     FramedSprite background_;
-    const sf::Texture& focusTexture_;
-    const sf::Texture& normalTexture_;
+    const engine::gfx::Texture& focusTexture_;
+    const engine::gfx::Texture& normalTexture_;
     Text text_;
     TextCursor textCursor_;
     Selection selection_;
@@ -68,7 +71,6 @@ protected:
     bool anyShiftHeldDown_;
     bool mouseLeftButtonPressed_;
     Alignment alignment_;
-
 };
 
 }  // namespace engine::gui

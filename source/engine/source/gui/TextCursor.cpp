@@ -145,22 +145,21 @@ float TextCursor::getLineHeight() const
     return getFontLineSpacing(*font_, characterSize_);
 }
 
-sf::Vector2f TextCursor::getPosition() const
+engine::Vec2f TextCursor::getPosition() const
 {
     return cursorImage_.getPosition();
 }
 
- sf::FloatRect TextCursor::getBounds() const
- {
-    return cursorImage_.getGlobalBounds();
- }
+engine::FloatRect TextCursor::getBounds() const
+{
+return cursorImage_.getGlobalBounds();
+}
 
-
-void TextCursor::render(sf::RenderTexture& renderTexture)
+void TextCursor::render(engine::gfx::RenderTarget& renderTarget)
 {
     if (isCursorVisible_)
     {
-        renderTexture.draw(cursorImage_);
+        renderTarget.draw(cursorImage_);
     }
 }
 

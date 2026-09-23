@@ -3,6 +3,8 @@
 #include <memory>
 #include <functional>
 
+#include "engine/gfx/Texture.hpp"
+#include "engine/gfx/Sprite.hpp"
 #include "engine/gui/Widget.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -15,17 +17,17 @@ class Checkbox : public Widget
 public:
     static std::unique_ptr<Checkbox> create(const bool isChecked);
 
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onStateChange(std::function<void(bool)> onClickCallback);
     void setState(const bool checked);
     bool isChecked() const;
     
 protected:
     Checkbox(const bool isChecked,
-        const sf::Texture& normalTexture,
-        const sf::Texture& hoverTexture,
-        const sf::Texture& focusTexture,
-        const sf::Texture& checkedTexture);
+        const engine::gfx::Texture& normalTexture,
+        const engine::gfx::Texture& hoverTexture,
+        const engine::gfx::Texture& focusTexture,
+        const engine::gfx::Texture& checkedTexture);
 
     Checkbox(const bool isChecked);
     
@@ -52,12 +54,12 @@ protected:
     bool isChecked_ = false;
     std::function<void(bool)> onClick_;
     State state_;
-    sf::Sprite background_;
-    sf::Sprite tick_;
-    const sf::Texture& hoverTexture_;
-    const sf::Texture& focusTexture_;
-    const sf::Texture& normalTexture_;
-    const sf::Texture& checkedTexture_;
+    engine::gfx::Sprite background_;
+    engine::gfx::Sprite tick_;
+    const engine::gfx::Texture& hoverTexture_;
+    const engine::gfx::Texture& focusTexture_;
+    const engine::gfx::Texture& normalTexture_;
+    const engine::gfx::Texture& checkedTexture_;
 };
 
 }  // namespace engine::gui

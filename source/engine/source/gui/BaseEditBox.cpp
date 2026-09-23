@@ -1,15 +1,18 @@
 #include "engine/gui/BaseEditBox.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include <fmt/format.h>
 
 #include "engine/gui/Clipboard.hpp"
 #include "engine/gui/Debug.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 #include "engine/gui/style/StyleFactory.hpp"
+#include "engine/Vector2.hpp"
 
 namespace 
 {
-const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
+const engine::Vec2f EXTRA_END_OFFSET{6.f, 4.f};
 }  // namespace
 
 namespace engine::gui
@@ -43,7 +46,7 @@ BaseEditBox::BaseEditBox()
     text_.addModifier(&textCursor_);
 
     const auto position = getGlobalPosition();
-    text_.setGlobalPosition(sf::Vector2f{position.x, position.y});
+    text_.setGlobalPosition(position);
 
     textCursor_.setFont(text_.getFont());
     textCursor_.setCharacterSize(text_.getCharacterSize());
@@ -71,21 +74,21 @@ void BaseEditBox::setAlignment(const engine::gui::Alignment& alignment)
     updateTextVisbleArea();
 }
 
-sf::Vector2f BaseEditBox::getContentSize()
+engine::Vec2f BaseEditBox::getContentSize()
 {
     const auto contentSize = text_.getTextBounds().getSize();
     return {contentSize.x + EXTRA_END_OFFSET.x, contentSize.y};
 }
 
-void BaseEditBox::applyOffset(const sf::Vector2f& offset)
+void BaseEditBox::applyOffset(const engine::Vec2f& offset)
 {
     text_.setOffset(offset);
 }
 
-void BaseEditBox::onRender(sf::RenderTexture& renderTexture)
+void BaseEditBox::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
-    renderTexture.draw(text_);
+    renderTarget.draw(background_);
+    renderTarget.draw(text_);
 }
 
 void BaseEditBox::onSizeChange()
@@ -93,9 +96,9 @@ void BaseEditBox::onSizeChange()
     const auto size = Widget::getSize();
     const auto position = Widget::getGlobalPosition();
 
-    text_.setSize(sf::Vector2f{size.x, size.y} - EXTRA_END_OFFSET * 2.f);
-    text_.setGlobalPosition(sf::Vector2f{position.x, position.y} + EXTRA_END_OFFSET);
-    background_.setSize(sf::Vector2f{size.x, size.y});
+    text_.setSize(engine::Vec2f{size.x, size.y} - EXTRA_END_OFFSET * 2.f);
+    text_.setGlobalPosition(engine::Vec2f{position.x, position.y} + EXTRA_END_OFFSET);
+    background_.setSize(size);
     updateTextVisbleArea();
     textCursor_.update();
     selection_.update();
@@ -105,8 +108,8 @@ void BaseEditBox::onPositionChange()
 {
     const auto position = getGlobalPosition();
 
-    text_.setGlobalPosition(sf::Vector2f{position.x, position.y} + EXTRA_END_OFFSET);
-    background_.setPosition(sf::Vector2f{position.x, position.y});
+    text_.setGlobalPosition(position + EXTRA_END_OFFSET);
+    background_.setPosition(position);
 
     textCursor_.update();
     selection_.update();

@@ -1,5 +1,7 @@
 #include "engine/gui/Button.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include "engine/gui/Label.hpp"
 #include "engine/gui/layout/Inset.hpp"
 #include "engine/gui/style/Sheet.hpp"
@@ -42,7 +44,7 @@ engine::gui::FramedSprite::LayoutConfig buildLayoutConfigForButtonTexture()
 
 }  // namespace
 
-inline sf::Texture& getTexture(const std::string_view& name)
+inline engine::gfx::Texture& getTexture(const std::string_view& name)
 {
     return engine::gui::TextureLibrary::instance().get(name);
 }
@@ -73,18 +75,18 @@ ButtonBase::ButtonBase(const style::Button& style)
 void ButtonBase::onSizeChange()
 {
     const auto size = getSize(); 
-    background_.setSize(sf::Vector2f{size.x, size.y});
+    background_.setSize(size);
 }
 
 void ButtonBase::onPositionChange()
 {
     const auto position = getGlobalPosition();
-    background_.setPosition(sf::Vector2f{position.x, position.y});
+    background_.setPosition(position);
 }
 
-void ButtonBase::onRender(sf::RenderTexture& renderTexture)
+void ButtonBase::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
+    renderTarget.draw(background_);
 }
 
 void ButtonBase::onClick(std::function<void()> onClickCallback)
@@ -255,17 +257,17 @@ void TextButton::onSizeChange()
     text_->setSize(getSize());
 }
 
-std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon)
+std::unique_ptr<IconButton> IconButton::create(const engine::gfx::Texture& icon)
 {
     return std::unique_ptr<IconButton>{new IconButton{icon, style::StyleFactory::instance().button}};
 }
 
-std::unique_ptr<IconButton> IconButton::create(const sf::Texture& icon, const style::Button& style)
+std::unique_ptr<IconButton> IconButton::create(const engine::gfx::Texture& icon, const style::Button& style)
 {
     return std::unique_ptr<IconButton>{new IconButton{icon, style}};
 }
 
-IconButton::IconButton(const sf::Texture& texture, const style::Button& style)
+IconButton::IconButton(const engine::gfx::Texture& texture, const style::Button& style)
 : ButtonBase{style}
 {
     auto icon  = engine::gui::Image::create(texture);
@@ -278,14 +280,14 @@ IconButton::IconButton(const sf::Texture& texture, const style::Button& style)
     addChild(std::move(layout));
 }
 
-void IconButton::setIcon(const sf::Texture& icon)
+void IconButton::setIcon(const engine::gfx::Texture& icon)
 {
     icon_->setTexture(icon);
 }
 
-void IconButton::onRender(sf::RenderTexture& renderTexture)
+void IconButton::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    ButtonBase::onRender(renderTexture);
+    ButtonBase::onRender(renderTarget);
 }
 
 void IconButton::onSizeChange()

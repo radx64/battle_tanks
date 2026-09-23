@@ -36,7 +36,7 @@ protected:
 
     void recalculateChildrenBounds();
 
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
 
     size_t width_;
     size_t height_;

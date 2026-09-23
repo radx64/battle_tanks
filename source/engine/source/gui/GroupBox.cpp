@@ -3,13 +3,14 @@
 #include <algorithm>
 #include <cmath>
 
+#include "engine/gfx/Color.hpp"
 #include "engine/gui/Alignment.hpp"
 #include "engine/gui/style/StyleFactory.hpp"
 
 namespace
 {
 
-const auto DEFAULT_BORDER_COLOR = sf::Color::Black;
+const auto DEFAULT_BORDER_COLOR = engine::gfx::Color::Black;
 constexpr auto DEFAULT_BORDER_THICKNESS = 1.f;
 constexpr auto DEFAULT_OUTER_PADDING = 8.f;
 constexpr auto DEFAULT_PADDING = 8.f;
@@ -79,7 +80,7 @@ float GroupBox::getOuterPadding() const
     return outerPadding_;
 }
 
-void GroupBox::setBorderColor(const sf::Color& color)
+void GroupBox::setBorderColor(const engine::gfx::Color& color)
 {
     borderColor_ = color;
 }
@@ -90,12 +91,12 @@ void GroupBox::setBorderThickness(float thickness)
     updateLayout();
 }
 
-sf::FloatRect GroupBox::getContentBounds() const
+engine::FloatRect GroupBox::getContentBounds() const
 {
     return contentBounds_;
 }
 
-void GroupBox::onRender(sf::RenderTexture& renderTexture)
+void GroupBox::onRender(engine::gfx::RenderTarget& renderTarget)
 {
     const auto size = getSize();
     if (size.x <= 0.f || size.y <= 0.f)
@@ -113,19 +114,20 @@ void GroupBox::onRender(sf::RenderTexture& renderTexture)
 
     if (titleBounds.x > 0.f)
     {
-        drawFrameSegment(renderTexture, {frameLeft, frameTop, std::max(0.f, titleStart - titlePadding_ - frameLeft), borderThickness_});
-        drawFrameSegment(renderTexture, {titleEnd, frameTop, std::max(0.f, frameRight - titleEnd), borderThickness_});
+        drawFrameSegment(renderTarget, {frameLeft, frameTop, std::max(0.f, titleStart - titlePadding_ - frameLeft), borderThickness_});
+        drawFrameSegment(renderTarget, {titleEnd, frameTop, std::max(0.f, frameRight - titleEnd), borderThickness_});
     }
     else
     {
-        drawFrameSegment(renderTexture, {frameLeft, frameTop, std::max(0.f, frameRight - frameLeft), borderThickness_});
+        drawFrameSegment(renderTarget, {frameLeft, frameTop, std::max(0.f, frameRight - frameLeft), borderThickness_});
     }
 
-    drawFrameSegment(renderTexture, {frameLeft, frameTop, borderThickness_, std::max(0.f, frameBottom - frameTop)});
-    drawFrameSegment(renderTexture, {std::max(frameLeft, frameRight - borderThickness_), frameTop, borderThickness_, std::max(0.f, frameBottom - frameTop)});
-    drawFrameSegment(renderTexture, {frameLeft, std::max(frameTop, frameBottom - borderThickness_), std::max(0.f, frameRight - frameLeft), borderThickness_});
+    drawFrameSegment(renderTarget, {frameLeft, frameTop, borderThickness_, std::max(0.f, frameBottom - frameTop)});
+    drawFrameSegment(renderTarget, {std::max(frameLeft, frameRight - borderThickness_), frameTop, borderThickness_, std::max(0.f, frameBottom - frameTop)});
+    drawFrameSegment(renderTarget, {frameLeft, std::max(frameTop, frameBottom - borderThickness_), std::max(0.f, frameRight - frameLeft), borderThickness_});
 
-    renderTexture.draw(titleText_);
+
+    renderTarget.draw(titleText_);
 }
 
 void GroupBox::onSizeChange()
@@ -152,7 +154,7 @@ void GroupBox::updateLayout()
 
     const auto titlePosition = getGlobalPosition() + engine::Vec2f{outerPadding_ + padding_ + titlePadding_, outerPadding_};
 
-    titleText_.setGlobalPosition(sf::Vector2f{titlePosition.x, titlePosition.y});
+    titleText_.setGlobalPosition(titlePosition);
     titleText_.setSize({std::ceil(titleBounds.x), std::ceil(titleBounds.y)});
     updateChildrenLayout();
 }
@@ -169,20 +171,20 @@ void GroupBox::updateChildrenLayout()
     }
 }
 
-void GroupBox::drawFrameSegment(sf::RenderTexture& renderTexture, const sf::FloatRect& rect) const
+void GroupBox::drawFrameSegment(engine::gfx::RenderTarget& renderTarget, const engine::FloatRect& rect) const
 {
     if (rect.width <= 0.f || rect.height <= 0.f || borderThickness_ <= 0.f)
     {
         return;
     }
 
-    sf::RectangleShape segment{{rect.width, rect.height}};
+    engine::gfx::RectangleShape segment{{rect.width, rect.height}};
 
     const auto position = getGlobalPosition() + engine::Vec2f{rect.left, rect.top};
 
-    segment.setPosition(sf::Vector2f{position.x, position.y});
+    segment.setPosition(position);
     segment.setFillColor(borderColor_);
-    renderTexture.draw(segment);
+    renderTarget.draw(segment);
 }
 
 }  // namespace engine::gui

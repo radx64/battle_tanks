@@ -2,7 +2,6 @@
 
 #include <memory>
 
-
 #include "engine/gui/FontLibrary.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 
@@ -20,7 +19,7 @@ const Sheet& StyleFactory::instance()
         {
             .face = Face
             {
-                .color = Stateful<sf::Color>::sameInAllStates(sf::Color::White),
+                .color = Stateful<engine::gfx::Color>::sameInAllStates(engine::gfx::Color::White),
                 .texture = Stateful<std::string_view>
                 {
                     .normal = "button_normal",
@@ -32,7 +31,7 @@ const Sheet& StyleFactory::instance()
             {
                 .fontName = "armata",
                 .size = 14,
-                .color = sf::Color::Black
+                .color = engine::gfx::Color::Black
             }
     
         };
@@ -47,17 +46,17 @@ const Sheet& StyleFactory::instance()
         
         sheet_->window = Window
         {
-            .background = sf::Color(200, 200, 200, 255),
-            .inactiveBackground = sf::Color(150, 150, 150, 255),
-            .header = sf::Color(0, 0, 128, 255),
-            .inactiveHeader = sf::Color(140, 140, 140, 255),
+            .background = engine::gfx::Color(200, 200, 200, 255),
+            .inactiveBackground = engine::gfx::Color(150, 150, 150, 255),
+            .header = engine::gfx::Color(0, 0, 128, 255),
+            .inactiveHeader = engine::gfx::Color(140, 140, 140, 255),
             .borderThickness = 1.f,
-            .borderColor = sf::Color::Black,
+            .borderColor = engine::gfx::Color::Black,
             .titleText =
             {
                 .fontName = "ibmVGA",
                 .size = 14,
-                .color = sf::Color::Black
+                .color = engine::gfx::Color::Black
             }
         };
 
@@ -65,32 +64,32 @@ const Sheet& StyleFactory::instance()
         {
             .fontName = "armata",
             .size = 14,
-            .color = sf::Color::Black
+            .color = engine::gfx::Color::Black
         };
 
         sheet_->progressBar = ProgressBar
         {
-            .backgroundColor = sf::Color(255, 255, 255, 255),
-            .barColor = sf::Color(0, 0, 128, 255),
+            .backgroundColor = engine::gfx::Color(255, 255, 255, 255),
+            .barColor = engine::gfx::Color(0, 0, 128, 255),
             .text =
             {
                 .fontName = "armata",
                 .size = 14,
-                .color = sf::Color::Black
+                .color = engine::gfx::Color::Black
             },
             .borderThickness = 0.f
         };
 
         sheet_->editBox = EditBox
         {
-            .backgroundColor = sf::Color(255, 255, 255, 255),
-            .focusedBackgroundColor = sf::Color(255, 255, 200, 255),
-            .selectionColor = sf::Color(0, 0, 128, 128),
+            .backgroundColor = engine::gfx::Color(255, 255, 255, 255),
+            .focusedBackgroundColor = engine::gfx::Color(255, 255, 200, 255),
+            .selectionColor = engine::gfx::Color(0, 0, 128, 128),
             .text =
             {
                 .fontName = "armata",
                 .size = 14,
-                .color = sf::Color::Black
+                .color = engine::gfx::Color::Black
             }
         };
 

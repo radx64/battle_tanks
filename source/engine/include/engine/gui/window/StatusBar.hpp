@@ -2,6 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/gfx/Texture.hpp"
+#include "engine/gfx/Sprite.hpp"
+
 #include "engine/gui/Widget.hpp"
 
 namespace engine::gui::window
@@ -16,15 +19,15 @@ public:
 
     void enable();
     void disable();
-    bool isInsideResizeGadget(const sf::Vector2f point);
+    bool isInsideResizeGadget(const engine::Vec2f point);
 
 protected:
-    void onRender(sf::RenderTexture&render_window) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
 
-    sf::Sprite resize_gadget_;
-    const sf::Texture& resize_gadget_texture_;
+    engine::gfx::Sprite resize_gadget_;
+    const engine::gfx::Texture& resize_gadget_texture_;
 };
 
 }  // namespace engine::gui::window

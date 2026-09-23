@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "engine/gui/BaseEditBox.hpp"
+#include "engine/Vector2.hpp"
 
 namespace engine::gui
 {
@@ -18,7 +19,7 @@ public:
 
     ~MultiLineEditBox() = default;
 
-    sf::Vector2f getContentSize() override;
+    engine::Vec2f getContentSize() override;
     size_t getLineCount() const;
     size_t getCursorLine() const;
 

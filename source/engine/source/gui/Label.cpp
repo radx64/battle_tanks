@@ -31,21 +31,21 @@ Label::Label(const std::string_view& text, const style::Text& style)
     recalculatePositionAndSize();
 }
 
-void Label::setFontColor(const sf::Color& color)
+void Label::setFontColor(const engine::gfx::Color& color)
 {
     text_.setFillColor(color);
 }
 
-sf::FloatRect Label::getTextBounds() const
+engine::FloatRect Label::getTextBounds() const
 {
     return text_.getTextBounds();
 }
 
-void Label::onRender(sf::RenderTexture& renderTexture)
+void Label::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(text_);
+    renderTarget.draw(text_);
 
-    debug::drawBox(renderTexture, getGlobalPosition(), getSize(), sf::Color::Cyan, -2.f);
+    debug::drawBox(renderTarget, getGlobalPosition(), getSize(), engine::gfx::Color::Cyan, -2.f);
 }
 
 void Label::setText(const std::string_view& text)
@@ -68,11 +68,10 @@ void Label::recalculatePositionAndSize()
 {
     const auto position = getGlobalPosition();
     const auto size = getSize();
-    text_.setGlobalPosition(sf::Vector2f{position.x, position.y});
-    text_.setSize(sf::Vector2f{size.x, size.y});
+    text_.setGlobalPosition(position);
+    text_.setSize(size);
 
-    text_.setOffset(calculateAlignmentOffset(
-        sf::Vector2f{size.x, size.y}, boundsToSize(text_.getTextBounds()), alignment_));
+    text_.setOffset(calculateAlignmentOffset(size, boundsToSize(text_.getTextBounds()), alignment_));
 }
 
 void Label::setAlignment(const engine::gui::Alignment& alignment)

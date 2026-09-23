@@ -20,7 +20,7 @@ protected:
     Horizontal();
     void onSizeChange() override;
     void onPositionChange() override;
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
 
     engine::gui::slider::HorizontalThick* slider_ptr_;
 };

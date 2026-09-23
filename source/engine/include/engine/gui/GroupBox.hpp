@@ -5,8 +5,10 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/gfx/Color.hpp"
 #include "engine/gui/Text.hpp"
 #include "engine/gui/Widget.hpp"
+#include "engine/Rect.hpp"
 
 namespace engine::gui
 {
@@ -28,29 +30,29 @@ public:
     void setOuterPadding(float padding);
     float getOuterPadding() const;
 
-    void setBorderColor(const sf::Color& color);
+    void setBorderColor(const engine::gfx::Color& color);
     void setBorderThickness(float thickness);
 
-    sf::FloatRect getContentBounds() const;
+    engine::FloatRect getContentBounds() const;
 
 protected:
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
 
 private:
     void updateLayout();
     void updateChildrenLayout();
-    void drawFrameSegment(sf::RenderTexture& renderTexture, const sf::FloatRect& rect) const;
+    void drawFrameSegment(engine::gfx::RenderTarget& renderTarget, const engine::FloatRect& rect) const;
 
     Text titleText_;
-    sf::Color borderColor_;
+    engine::gfx::Color borderColor_;
     float borderThickness_;
     float outerPadding_;
     float padding_;
     float titlePadding_;
     float titleToFrameSpacing_;
-    sf::FloatRect contentBounds_;
+    engine::FloatRect contentBounds_;
 };
 
 }  // namespace engine::gui

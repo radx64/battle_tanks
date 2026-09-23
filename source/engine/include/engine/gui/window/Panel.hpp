@@ -20,7 +20,7 @@ public:
 protected:
     void onSizeChange() override;
     void onPositionChange() override;
-    void onRender(sf::RenderTexture&render_window) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
 };
 
 }  // namespace engine::gui::window

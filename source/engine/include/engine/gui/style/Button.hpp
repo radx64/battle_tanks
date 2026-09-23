@@ -2,7 +2,6 @@
 
 #include <string_view>
 
-#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
 #include "engine/gui/style/Stateful.hpp"
@@ -13,7 +12,7 @@ namespace engine::gui::style
 
 struct Face
 {
-    Stateful<sf::Color> color;
+    Stateful<engine::gfx::Color> color;
     Stateful<std::string_view> texture;
 };
 

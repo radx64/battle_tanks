@@ -3,6 +3,9 @@
 
 #include "engine/gui/Widget.hpp"
 #include "engine/gui/FramedSprite.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/Shape.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace engine::gui { class Label; }
 
@@ -22,7 +25,7 @@ protected:
     void setTextLabel(const float value);
     void onPositionChange() override;
     void onSizeChange() override;
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
 
     void recalculateSize();
 
@@ -32,9 +35,9 @@ protected:
     float progress_{};
 
     engine::gui::FramedSprite background_;
-    const sf::Texture& normalTexture_;
+    const engine::gfx::Texture& normalTexture_;
 
-    sf::RectangleShape bar_;
+    engine::gfx::RectangleShape bar_;
     engine::gui::Label* text_;
 };
 

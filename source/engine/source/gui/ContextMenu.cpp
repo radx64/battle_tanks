@@ -1,5 +1,7 @@
 #include "engine/gui/ContextMenu.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include <algorithm>
 #include <ranges>
 
@@ -243,9 +245,9 @@ void ContextMenu::updateSubmenu(engine::gui::TextButton* buttonPtr, const Item& 
     openSubmenu_.ptr->open(submenuPosition);        
 }
 
-void ContextMenu::onRender(sf::RenderTexture& renderTexture)
+void ContextMenu::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
+    renderTarget.draw(background_);
 }
 
 ContextMenu* ContextMenu::getDeepestOpenMenu()
@@ -297,13 +299,13 @@ EventStatus ContextMenu::on(const engine::events::MouseButtonPressed& mouseButto
 void ContextMenu::onPositionChange()
 {
     const auto position = getGlobalPosition();
-    background_.setPosition(sf::Vector2f{position.x, position.y});
+    background_.setPosition(position);
 }
 
 void ContextMenu::onSizeChange()
 {
     const auto size = getSize(); 
-    background_.setSize(sf::Vector2f{size.x, size.y});
+    background_.setSize(size);
 
     if (layout_)
     {

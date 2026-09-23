@@ -12,29 +12,25 @@ StatusBar::StatusBar()
     resize_gadget_.setTexture(resize_gadget_texture_);
 }
 
-void StatusBar::onRender(sf::RenderTexture&render_window)
+void StatusBar::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-   render_window.draw(resize_gadget_);
+   renderTarget.draw(resize_gadget_);
 }
 
 void StatusBar::onSizeChange()
 {
     auto statusBarHeight = getSize().y;
     
-    resize_gadget_.setPosition(
-        engine::temporary::toSf(
-        Widget::getGlobalPosition() + Widget::getSize()
-        - engine::Vec2f{window::config::RESIZE_BOX_SIZE, statusBarHeight})); 
+    resize_gadget_.setPosition(Widget::getGlobalPosition() + Widget::getSize()
+        - engine::Vec2f{window::config::RESIZE_BOX_SIZE, statusBarHeight}); 
 }
 
 void StatusBar::onPositionChange()
 {
     auto statusBarHeight = getSize().y;
 
-    resize_gadget_.setPosition(
-        engine::temporary::toSf(
-        Widget::getGlobalPosition() + Widget::getSize()
-        - engine::Vec2f{window::config::RESIZE_BOX_SIZE, statusBarHeight}));
+    resize_gadget_.setPosition(Widget::getGlobalPosition() + Widget::getSize()
+        - engine::Vec2f{window::config::RESIZE_BOX_SIZE, statusBarHeight});
 }
 
 void StatusBar::enable()
@@ -46,7 +42,7 @@ void StatusBar::disable()
 
 }
 
-bool StatusBar::isInsideResizeGadget(const sf::Vector2f point)
+bool StatusBar::isInsideResizeGadget(const engine::Vec2f point)
 {
     return resize_gadget_.getGlobalBounds().contains(point);
 }

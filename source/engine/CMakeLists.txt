@@ -29,8 +29,21 @@ target_sources(engine_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/source/GameObject.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/WindowImpl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/FramedSpriteRenderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/SfmlRenderTarget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/Sprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/Texture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backends/sfml/RenderTexture.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/source/core/MouseCode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/events/KeyEvent.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/gfx/Color.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/gfx/Vertex.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/gfx/VertexArray.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/gfx/Shape.cpp
+
 
     ${CMAKE_CURRENT_SOURCE_DIR}/source/gui/debug/ComponentTree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/gui/keyboard/Utils.cpp

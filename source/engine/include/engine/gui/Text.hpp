@@ -5,6 +5,13 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/gfx/Color.hpp"
+#include "engine/Vector2.hpp"
+#include "engine/Rect.hpp"
+#include "engine/gfx/Drawable.hpp"
+#include "engine/gfx/RenderTexture.hpp"
+#include "engine/gfx/Sprite.hpp"
+
 #include "engine/gui/style/Text.hpp"
 
 namespace engine::gui {class TextDisplayModifier;}
@@ -16,7 +23,7 @@ namespace engine::gui
     in restricted bounding box
 */
 
-class Text : public sf::Drawable
+class Text : public engine::gfx::Drawable
 {
 public:
     Text(const style::Text& style);
@@ -30,42 +37,43 @@ public:
     void setCharacterSize(uint32_t size);
     uint32_t getCharacterSize() const;
 
-    void setOutlineColor(const sf::Color& color);
-    void setFillColor(const sf::Color& color);
+    void setOutlineColor(const engine::gfx::Color& color);
+    void setFillColor(const engine::gfx::Color& color);
     void setOutlineThickness(float thickness);
-
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-    void setOffset(const sf::Vector2f& offset);
-    const sf::Vector2f& getOffset() const;
-    void setGlobalPosition(const sf::Vector2f& position);
-    void setSize(const sf::Vector2f& size);
-
-    sf::Vector2f getGlobalPosition() const;
-    sf::Vector2f getSize() const;
-    sf::FloatRect getTextBounds() const;
+    
+    void setOffset(const engine::Vec2f& offset);
+    const engine::Vec2f& getOffset() const;
+    void setGlobalPosition(const engine::Vec2f& position);
+    void setSize(const engine::Vec2f& size);
+    
+    engine::Vec2f getGlobalPosition() const;
+    engine::Vec2f getSize() const;
+    engine::FloatRect getTextBounds() const;
     float getTextSingleLineHeight() const;
-
+    
     void addModifier(TextDisplayModifier* modifier);
     void removeModifier(TextDisplayModifier* modifier);
     
     void invalidateTexture();
     void updateTexture();
-
+    
 protected:
     void updateSprite();
-    sf::Vector2f offset_;
-    sf::Vector2f globalPosition_;
-    sf::Vector2f size_;
-    sf::RenderTexture texture_;
-    sf::Sprite sprite_;
+    engine::Vec2f offset_;
+    engine::Vec2f globalPosition_;
+    engine::Vec2f size_;
+    engine::gfx::RenderTexture texture_;
+    engine::gfx::Sprite sprite_;
     sf::Text text_;
-
+    
     std::vector<TextDisplayModifier*> modifiers_;
-
+    
     bool textureInvalidated_{false};
-
+    
     const style::Text& style_;
+    
+private:
+    void draw(engine::gfx::RenderTarget& target, const engine::gfx::RenderStates& states) const override;
 };
 
 }  // namespace engine::gui

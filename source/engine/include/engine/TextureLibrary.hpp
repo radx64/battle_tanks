@@ -4,6 +4,8 @@
 #include <string_view>
 #include <map>
 
+#include "engine/gfx/Texture.hpp"
+
 #include <SFML/Graphics.hpp>
 
 namespace engine
@@ -18,13 +20,13 @@ public:
     // This can be used to force the initialization of the library
     // when lazy initialization is not prefered
     static void init();
-    sf::Texture& get(const std::string_view& name);
+    engine::gfx::Texture& get(const std::string_view& name);
 
 protected:
     TextureLibrary();
     void initTexture(const std::string& name, const std::string& path);
 
-    std::map<std::string, sf::Texture, std::less<>> textures_;
+    std::map<std::string, engine::gfx::Texture, std::less<>> textures_;
 };
 
 template <typename AssetsList>
@@ -41,7 +43,7 @@ void TextureLibrary<AssetsList>::init()
 }
 
 template <typename AssetsList>
-sf::Texture& TextureLibrary<AssetsList>::get(const std::string_view& name)
+engine::gfx::Texture& TextureLibrary<AssetsList>::get(const std::string_view& name)
 {
     auto texture = textures_.find(name);
     if (texture == textures_.end())
@@ -65,7 +67,7 @@ TextureLibrary<AssetsList>::TextureLibrary()
 template <typename AssetsList>
 void TextureLibrary<AssetsList>::initTexture(const std::string& name, const std::string& path)
 {
-    auto placedElement = textures_.emplace(std::make_pair(name, sf::Texture()));
+    auto placedElement = textures_.emplace(std::make_pair(name, engine::gfx::Texture{}));
     bool hasLoaded = placedElement.first->second.loadFromFile(path);
     if(not hasLoaded) throw std::runtime_error("Couldn't load texture file...");
 }

@@ -67,15 +67,15 @@ const std::string_view Widget::getDebugName() const
     return debugName_;
 }
 
-void Widget::render(sf::RenderTexture& renderTexture)
+void Widget::render(engine::gfx::RenderTarget& renderTarget)
 {
     if (!isVisible_) return;
-    onRender(renderTexture);
+    onRender(renderTarget);
     for (auto& child : children_)
     {
-        child->render(renderTexture);
+        child->render(renderTarget);
     }
-    debug::drawBounds(renderTexture, this);
+    debug::drawBounds(renderTarget, this);
 }
 
 template <typename T>

@@ -1,5 +1,7 @@
 #include "engine/gui/window/MenuBar.hpp"
 
+#include "backends/sfml/FramedSpriteRenderer.hpp"
+
 #include <algorithm>
 #include <ranges>
 #include <utility>
@@ -33,8 +35,8 @@ namespace
 }
 
 MenuBar::MenuBar()
-: enabledColor_{sf::Color{192, 192, 192}}
-, disabledColor_{sf::Color{170, 170, 170}}
+: enabledColor_{engine::gfx::Color{192, 192, 192}}
+, disabledColor_{engine::gfx::Color{170, 170, 170}}
 {
     background_.setFillColor(enabledColor_);
 }
@@ -75,20 +77,20 @@ void MenuBar::disable()
     closeOpenMenu();
 }
 
-void MenuBar::onRender(sf::RenderTexture& renderTexture)
+void MenuBar::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture.draw(background_);
+    renderTarget.draw(background_);
 }
 
 void MenuBar::onSizeChange()
 {
-    background_.setSize(sf::Vector2f{getSize().x, getSize().y});
+    background_.setSize(getSize());
     layoutButtons();
 }
 
 void MenuBar::onPositionChange()
 {
-    background_.setPosition(sf::Vector2f{getGlobalPosition().x, getGlobalPosition().y});
+    background_.setPosition(getGlobalPosition());
 }
 
 void MenuBar::rebuild()

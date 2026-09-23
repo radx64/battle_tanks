@@ -1,5 +1,7 @@
 #include "engine/gui/FramedSprite.hpp"
 
+#include "engine/gfx/RenderTarget.hpp"
+
 namespace
 {
     constexpr auto NUMBER_OF_QUADS = 9;
@@ -14,24 +16,25 @@ FramedSprite::FramedSprite(const LayoutConfig& layoutConfig)
     : layoutConfig_(layoutConfig)
     , texture_{nullptr}
 {
-    verticies_.setPrimitiveType(sf::Quads);
+    verticies_.setPrimitiveType(engine::gfx::PrimitiveType::Quads);
     verticies_.resize(NUMBER_OF_ALL_VERTICES);
 }
 
-void FramedSprite::setSize(const sf::Vector2f& size)
+void FramedSprite::setSize(const engine::Vec2f& size)
 {
     size_ = size;
     recalculateVerticies();
 }
 
-const sf::Vector2f& FramedSprite::getSize() const
+const engine::Vec2f& FramedSprite::getSize() const
 {
     return size_;
 }
 
-void FramedSprite::setTexture(const sf::Texture& texture)
+void FramedSprite::setTexture(const engine::gfx::Texture& texture)
 {
     texture_ = &texture;
+    recalculateVerticies();
 }
 
 void FramedSprite::setLayoutConfig(const LayoutConfig& layoutConfig)
@@ -40,16 +43,20 @@ void FramedSprite::setLayoutConfig(const LayoutConfig& layoutConfig)
     recalculateVerticies();
 }
 
-const sf::Texture& FramedSprite::getTexture() const
+const engine::gfx::Texture& FramedSprite::getTexture() const
 {
     return *texture_;
 }
 
-void FramedSprite::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void FramedSprite::draw(engine::gfx::RenderTarget& target, const engine::gfx::RenderStates& states) const
 {
-    states.transform.combine(getTransform());
-    states.texture = texture_;
-    target.draw(verticies_, states);
+    (void) states;
+    if (!texture_)
+    {
+        return;
+    }
+
+    target.drawVertices(verticies_, *texture_, {.position = position_, .origin = origin_});
 }
 
 void FramedSprite::recalculateVerticies()
@@ -70,7 +77,7 @@ void FramedSprite::recalculateVerticies()
     setQuad(8, {size_.x - cornerSizes.bottomRight.x, size_.y - cornerSizes.bottomRight.y, cornerSizes.bottomRight.x, cornerSizes.bottomRight.y}, uvs.bottomRight);
 }
 
-void FramedSprite::setColor(const sf::Color& color)
+void FramedSprite::setColor(const engine::gfx::Color& color)
 {
     for (size_t index = 0; index < verticies_.getVertexCount(); ++index)
     {
@@ -78,13 +85,13 @@ void FramedSprite::setColor(const sf::Color& color)
     }
 }
 
-void FramedSprite::setVertex(size_t index, const sf::Vector2f& position, const sf::Vector2f& uv)
+void FramedSprite::setVertex(const size_t index, const engine::Vec2f& position, const engine::Vec2f& uv)
 {
     verticies_[index].position = position;
-    verticies_[index].texCoords = uv;
+    verticies_[index].uv = uv;
 }
 
-void FramedSprite::setQuad(size_t index, const sf::FloatRect& rect, const sf::FloatRect& uv)
+void FramedSprite::setQuad(const size_t index, const engine::FloatRect& rect, const engine::FloatRect& uv)
 {
     setVertex(NUMBER_OF_VERTICES_PER_QUAD * index + 0, {rect.left, rect.top}, {uv.left, uv.top});
     setVertex(NUMBER_OF_VERTICES_PER_QUAD * index + 1, {rect.left + rect.width, rect.top}, {uv.left + uv.width, uv.top});

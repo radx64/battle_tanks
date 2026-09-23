@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics/Color.hpp>
+#include "engine/gfx/Color.hpp"
 
 #include "engine/gui/style/Text.hpp"
 
@@ -9,9 +9,9 @@ namespace engine::gui::style
 
 struct EditBox
 {
-    sf::Color backgroundColor;
-    sf::Color focusedBackgroundColor;
-    sf::Color selectionColor;
+    engine::gfx::Color backgroundColor;
+    engine::gfx::Color focusedBackgroundColor;
+    engine::gfx::Color selectionColor;
     Text text;
 };
 

@@ -1,6 +1,14 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <cstddef>
+
+#include "engine/Rect.hpp"
+#include "engine/Vector2.hpp"
+#include "engine/gfx/Color.hpp"
+#include "engine/gfx/Drawable.hpp"
+#include "engine/gfx/Texture.hpp"
+#include "engine/gfx/Transformable.hpp"
+#include "engine/gfx/VertexArray.hpp"
 
 /*
 
@@ -33,7 +41,7 @@ coordinates on the texture, for each vertex.
 namespace engine::gui
 {
 
-class FramedSprite : public sf::Drawable, public sf::Transformable
+class FramedSprite : public engine::gfx::Drawable, public engine::gfx::Transformable
 {
 public:
 
@@ -41,15 +49,15 @@ public:
     {
         struct CornersSizes
         {
-            sf::Vector2f topLeft;
-            sf::Vector2f bottomRight;
+            engine::Vec2f topLeft;
+            engine::Vec2f bottomRight;
         };
         struct UVs
         {
-            sf::FloatRect topLeft;
-            sf::FloatRect topRight;
-            sf::FloatRect bottomLeft;
-            sf::FloatRect bottomRight;
+            engine::FloatRect topLeft;
+            engine::FloatRect topRight;
+            engine::FloatRect bottomLeft;
+            engine::FloatRect bottomRight;
         };
 
         CornersSizes cornerSizes; // corner size in pixels
@@ -57,23 +65,30 @@ public:
     };
 
     FramedSprite(const LayoutConfig& layoutConfig);
-    void setSize(const sf::Vector2f& size);
-    const sf::Vector2f& getSize() const;
-    void setTexture(const sf::Texture& texture);
+    void setSize(const engine::Vec2f& size);
+    const engine::Vec2f& getSize() const;
+    void setTexture(const engine::gfx::Texture& texture);
     void setLayoutConfig(const LayoutConfig& layoutConfig);
-    const sf::Texture& getTexture() const;
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    const engine::gfx::Texture& getTexture() const;
     void recalculateVerticies();
-    void setColor(const sf::Color& color);
+    void setColor(const engine::gfx::Color& color);
+
+    template <typename ColorLike>
+    void setColor(const ColorLike& color)
+    {
+        setColor(engine::gfx::Color{color.r, color.g, color.b, color.a});
+    }
 
 protected:
-    void setVertex(size_t index, const sf::Vector2f& position, const sf::Vector2f& uv);
-    void setQuad(size_t index, const sf::FloatRect& rect, const sf::FloatRect& uv);
+    void setVertex(size_t index, const engine::Vec2f& position, const engine::Vec2f& uv);
+    void setQuad(size_t index, const engine::FloatRect& rect, const engine::FloatRect& uv);
 
-    sf::VertexArray verticies_;
-    sf::Vector2f size_;
+    engine::gfx::VertexArray verticies_;
+    engine::Vec2f size_;
     LayoutConfig layoutConfig_;
-    const sf::Texture* texture_;
+    const engine::gfx::Texture* texture_;
+
+    void draw(engine::gfx::RenderTarget& target, const engine::gfx::RenderStates& states) const override;
 };
 
 } // namespace engine::gui

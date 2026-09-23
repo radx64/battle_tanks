@@ -27,7 +27,7 @@ Text::Text(const style::Text& style)
     text_.setFillColor(style.color);
 }
 
-void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Text::draw(engine::gfx::RenderTarget& target, const engine::gfx::RenderStates& states) const
 {
     if (textureInvalidated_)
     {
@@ -36,30 +36,30 @@ void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     target.draw(sprite_, states);
 
-    debug::drawBox(target, getGlobalPosition(), getSize(), sf::Color::Red, -4.f);
+    debug::drawBox(target, getGlobalPosition(), getSize(), engine::gfx::Color::Red, -4.f);
 
     debug::drawBox(target, sprite_.getPosition(), boundsToSize(getTextBounds()), 
-        sf::Color::Green, -2.f);
+        engine::gfx::Color::Green, -2.f);
 }
 
-void Text::setOffset(const sf::Vector2f& offset)
+void Text::setOffset(const engine::Vec2f& offset)
 {
     offset_ = offset;
     updateSprite();
 }
 
-const sf::Vector2f& Text::getOffset() const
+const engine::Vec2f& Text::getOffset() const
 {
     return offset_;
 }
 
-void Text::setGlobalPosition(const sf::Vector2f& position)
+void Text::setGlobalPosition(const engine::Vec2f& position)
 {
     globalPosition_ = position;
     updateSprite();
 }
 
-void Text::setSize(const sf::Vector2f& size)
+void Text::setSize(const engine::Vec2f& size)
 {
     size_ = size;
 }
@@ -193,12 +193,12 @@ void Text::updateSprite()
     sprite_.setPosition(sf::Vector2f{std::round(newPosition.x), std::round(newPosition.y)});
 }
 
-sf::Vector2f Text::getGlobalPosition() const
+engine::Vec2f Text::getGlobalPosition() const
 {
     return globalPosition_;
 }
 
-sf::Vector2f Text::getSize() const
+engine::Vec2f Text::getSize() const
 {
     return size_;
 }

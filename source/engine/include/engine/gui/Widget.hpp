@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "engine/gfx/RenderTarget.hpp"
 #include "engine/Logger.hpp"
 #include "engine/gui/EventReceiver.hpp"
 
@@ -32,9 +33,9 @@ public:
 
     uint32_t getId() const;
     const std::string_view getDebugName() const;
-    virtual void onRender(sf::RenderTexture& renderTexture) = 0;
+    virtual void onRender(engine::gfx::RenderTarget& renderTarget) = 0;
 
-    void render(sf::RenderTexture& renderTexture);
+    void render(engine::gfx::RenderTarget& renderTarget);
 
     virtual engine::Vec2f getSize() const;
     void setSize(const engine::Vec2f& size);

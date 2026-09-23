@@ -53,7 +53,7 @@ public:
     void onSelectionChange(std::function<void(std::optional<std::size_t>)> callback);
 
 protected:
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void onPositionChange() override;
 

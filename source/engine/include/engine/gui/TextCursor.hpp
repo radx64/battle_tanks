@@ -6,6 +6,9 @@
 
 #include "engine/gui/TextDisplayModifier.hpp"
 
+#include "engine/gfx/Shape.hpp"
+#include "engine/Vector2.hpp"
+#include "engine/Rect.hpp"
 
 namespace engine::gui {class Text;}
 
@@ -23,12 +26,12 @@ public:
     void moveRight(const bool moveWholeWord);
     void moveTo(float mouseX);
 
-    void render(sf::RenderTexture& renderTexture);
+    void render(engine::gfx::RenderTarget& renderTarget) override;
     void update();
     uint32_t getIndex() const;
     void setIndex(const uint32_t index);
-    sf::Vector2f getPosition() const;
-    sf::FloatRect getBounds() const;
+    engine::Vec2f getPosition() const;
+    engine::FloatRect getBounds() const;
 
     void disable();
     void enable();
@@ -50,7 +53,7 @@ protected:
 
     uint32_t textLength_;
     uint32_t cursorIndex_;
-    sf::RectangleShape cursorImage_;
+    engine::gfx::RectangleShape cursorImage_;
     bool enabled_;
     bool isCursorVisible_;
 
