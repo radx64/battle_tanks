@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-
 #include <fmt/format.h>
 
 #include "engine/Logger.hpp"
@@ -54,8 +52,8 @@ Application::Application()
 , camera_initial_position_{0.f + Config::WINDOW_WIDTH / 2.f, 0.f + Config::WINDOW_HEIGHT / 2.f}
 , camera_{camera_initial_position_, camera_initial_size_, camera_world_size_}
 , camera_controller_{&camera_}
-, camera_view_{sf::FloatRect(0.f, 0.f, Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT)}
-, waypoint_mouse_controller_{waypoints_, window_.getNativeHandle(), camera_view_}
+, camera_view_{engine::Vec2f{Config::WINDOW_WIDTH / 2.f, Config::WINDOW_HEIGHT / 2.f}, engine::Vec2f{static_cast<float>(Config::WINDOW_WIDTH), static_cast<float>(Config::WINDOW_HEIGHT)}}
+, waypoint_mouse_controller_{waypoints_, window_, camera_view_}
 , fps_average_{NUMBER_OF_MEASUREMENTS}
 , draw_profiler_{"game::Application::DRAW", "ms"}
 , physics_profiler_{"game::Application::PHYSICS", "ms"}
@@ -77,10 +75,10 @@ void Application::onInit()
     tilemap_ = std::make_unique<graphics::Tilemap>();
     mouseHandler_.subscribe(&waypoint_mouse_controller_);
 
-    window_.getNativeHandle().setFramerateLimit(60);
-    window_.getNativeHandle().setVerticalSyncEnabled(false);
+    window_.setFramerateLimit(60);
+    window_.setVerticalSyncEnabled(false);
 
-    camera_view_.setCenter(sf::Vector2f(camera_initial_position_.x, camera_initial_position_.y));
+    camera_view_.setCenter(engine::Vec2f(camera_initial_position_.x, camera_initial_position_.y));
     configureGUI();
 
     keyboardHandler_.subscribe(std::vector<engine::core::KeyCode>
@@ -143,8 +141,8 @@ void Application::onUpdate(float time_step)
     );
 
     camera_.update(time_step);
-    camera_view_.setCenter(sf::Vector2f(camera_.getPosition().x, camera_.getPosition().y));
-    camera_view_.setSize(sf::Vector2f(camera_.getSize().x, camera_.getSize().y));
+    camera_view_.setCenter(engine::Vec2f(camera_.getPosition().x, camera_.getPosition().y));
+    camera_view_.setSize(engine::Vec2f(camera_.getSize().x, camera_.getSize().y));
     
     PROFILE_SCOPE(physics_profiler_,
         for (auto& object : scene_.objects())
@@ -165,18 +163,18 @@ void Application::onRender()
     // otherwise values are wrong
     fps_counter_.startMeasurement();
 
-    window_.getNativeHandle().setView(camera_view_);
+    window_.setView(camera_view_);
     
     PROFILE_SCOPE(tilemap_profiler_,
-        tilemap_->draw(window_.getNativeHandle());
+        tilemap_->draw(window_.getRenderTarget());
     );
     
     PROFILE_SCOPE(waypoints_profiler_,
-        graphics::drawtools::drawWaypoints(window_.getNativeHandle(), waypoints_);
+        graphics::drawtools::drawWaypoints(window_.getRenderTarget(), waypoints_);
     );
     
     PROFILE_SCOPE(tracks_profiler_,
-        tracks_renderer_.draw(window_.getNativeHandle());
+        tracks_renderer_.draw(window_.getRenderTarget());
     );
     
     PROFILE_SCOPE(render_game_objects_profiler_,
@@ -184,15 +182,15 @@ void Application::onRender()
     );
     
     PROFILE_SCOPE(particles_profiler_,
-        particle_system_.draw(window_.getNativeHandle());
+        particle_system_.draw(window_.getRenderTarget());
     );
 
     if (rigid_body_debug_)
     {
-        engine::RigidBodyDebugRenderer::debug(scene_, window_.getNativeHandle());
+        engine::RigidBodyDebugRenderer::debug(scene_, window_.getRenderTarget());
     }
 
-    window_.getNativeHandle().setView(window_.getNativeHandle().getDefaultView());
+    window_.setView(window_.getDefaultView());
 
     PROFILE_SCOPE(gui_profiler_,
         engine::gui::Application::onRender();
@@ -243,7 +241,7 @@ void Application::renderGameObjects()
 
     for (auto& e : objectsToDraw)
     {
-        e.object->draw(window_.getNativeHandle(), constanttime_step_);
+        e.object->draw(window_.getRenderTarget(), constanttime_step_);
     }
 
     objectsToDraw.clear();
@@ -340,7 +338,7 @@ void Application::spawnSomeTanks()
     auto turtle_tank = entity::TankFactory::create(
         entity::TankFactory::TankType::Green, Config::WINDOW_WIDTH / 2.f + 100.f, Config::WINDOW_HEIGHT/2.f, 0.f, &tracks_renderer_);
 
-    turtle_tank->led().setColor(sf::Color::Red);
+    turtle_tank->led().setColor(engine::gfx::Color::Red);
     auto turtle_tank_controller = std::make_unique<game::entity::TankController>("scripts/turtle.lua", turtle_tank.get(), waypoints_);
     scripts_scheduler_.add(turtle_tank_controller->getScript());
     scene_.spawnObject(std::move(turtle_tank));
@@ -349,7 +347,7 @@ void Application::spawnSomeTanks()
     auto led_tank = entity::TankFactory::create(
         entity::TankFactory::TankType::Red, Config::WINDOW_WIDTH / 2.f + 200.f, Config::WINDOW_HEIGHT/2.f, 0.f, &tracks_renderer_);
 
-    led_tank->led().setColor(sf::Color::Red);
+    led_tank->led().setColor(engine::gfx::Color::Red);
     auto led_tank_controller = std::make_unique<game::entity::TankController>("scripts/blink.lua", led_tank.get(), waypoints_);
     scripts_scheduler_.add(led_tank_controller->getScript());
     scene_.spawnObject(std::move(led_tank));

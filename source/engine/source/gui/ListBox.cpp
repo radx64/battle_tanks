@@ -1,7 +1,5 @@
 #include "engine/gui/ListBox.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include <algorithm>
 #include <cmath>
 
@@ -128,7 +126,7 @@ void ListBox::onSelectionChange(std::function<void(std::optional<std::size_t>)> 
     onSelectionChange_ = std::move(callback);
 }
 
-void ListBox::onRender(engine:gfx::RenderTarget& renderTarget)
+void ListBox::onRender(engine::gfx::RenderTarget& renderTarget)
 {
     renderTarget.draw(background_);
 
@@ -161,7 +159,7 @@ void ListBox::onRender(engine:gfx::RenderTarget& renderTarget)
         const auto isSelected = selectedIndex_ && *selectedIndex_ == index;
         const auto isHovered = hoveredIndex_ && *hoveredIndex_ == index;
 
-        sf::RectangleShape row{{viewportWidth, itemHeight}};
+        engine::gfx::RectangleShape row{{viewportWidth, itemHeight}};
         row.setPosition({0.f, rowTop});
         row.setFillColor(style_.backgroundColor);
 
@@ -176,10 +174,10 @@ void ListBox::onRender(engine:gfx::RenderTarget& renderTarget)
 
         contentTexture_.draw(row);
 
-        sf::Text text;
+        engine::gfx::Text text;
         text.setFont(FontLibrary::get(textStyle_.fontName));
         text.setCharacterSize(textStyle_.size);
-        text.setFillColor(isSelected ? sf::Color::White : textStyle_.color);
+        text.setFillColor(isSelected ? engine::gfx::Color::White : textStyle_.color);
         text.setString(items_[index].text);
         text.setPosition({
             ROW_HORIZONTAL_PADDING,
@@ -189,8 +187,8 @@ void ListBox::onRender(engine:gfx::RenderTarget& renderTarget)
     }
 
     contentTexture_.display();
-    contentSprite_.setPosition(sf::Vector2f{viewportPosition.x, viewportPosition.y});
-    renderTexture.draw(contentSprite_);
+    contentSprite_.setPosition(engine::Vec2f{viewportPosition.x, viewportPosition.y});
+    renderTarget.draw(contentSprite_);
 }
 
 void ListBox::onSizeChange()
@@ -444,7 +442,7 @@ std::size_t ListBox::getFirstVisibleIndex() const
 
 std::optional<std::size_t> ListBox::getItemIndexAt(const engine::Vec2f& mousePosition) const
 {
-    sf::Vector2f globalPosition {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)};
+    engine::Vec2f globalPosition {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)};
     const auto viewportPosition = getGlobalPosition() + engine::Vec2f{INNER_PADDING, INNER_PADDING};
     const auto viewportWidth = getViewportWidth();
     const auto viewportHeight = getViewportHeight();

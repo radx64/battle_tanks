@@ -3,10 +3,10 @@
 namespace engine::gui::keyboard
 {
 
-std::string_view keyToString(sf::Keyboard::Key key)
+std::string_view keyToString(const engine::core::KeyCode key)
 {
-    #define KEY_LUT_ITEM(x) case sf::Keyboard::x : return #x;
-    #define KEY_LUT_ITEM_CUSTOM(x,y)  case sf::Keyboard::x : return y;
+    #define KEY_LUT_ITEM(x) case engine::core::KeyCode::x : return #x;
+    #define KEY_LUT_ITEM_CUSTOM(x,y)  case engine::core::KeyCode::x : return y;
  
     switch (key)
     {
@@ -59,18 +59,18 @@ std::string_view keyToString(sf::Keyboard::Key key)
         KEY_LUT_ITEM(Menu);
         KEY_LUT_ITEM(LBracket);
         KEY_LUT_ITEM(RBracket);
-        KEY_LUT_ITEM_CUSTOM(SemiColon, ":");
+        KEY_LUT_ITEM_CUSTOM(Semicolon, ":");
         KEY_LUT_ITEM_CUSTOM(Comma, ",");
         KEY_LUT_ITEM_CUSTOM(Period, ".");
-        KEY_LUT_ITEM_CUSTOM(Quote, "\"");
+        KEY_LUT_ITEM_CUSTOM(Apostrophe, "\"");
         KEY_LUT_ITEM_CUSTOM(Slash, "/");
-        KEY_LUT_ITEM_CUSTOM(BackSlash , "\\");
-        KEY_LUT_ITEM_CUSTOM(Tilde, "`");
+        KEY_LUT_ITEM_CUSTOM(Backslash , "\\");
+        KEY_LUT_ITEM_CUSTOM(Grave, "`");
         KEY_LUT_ITEM(Equal);
-        KEY_LUT_ITEM(Dash);
+        KEY_LUT_ITEM(Hyphen);
         KEY_LUT_ITEM_CUSTOM(Space, " ");
-        KEY_LUT_ITEM(Return);
-        KEY_LUT_ITEM(BackSpace);
+        KEY_LUT_ITEM(Enter);
+        KEY_LUT_ITEM(Backspace);
         KEY_LUT_ITEM(Tab);
         KEY_LUT_ITEM(PageUp);
         KEY_LUT_ITEM(PageDown);

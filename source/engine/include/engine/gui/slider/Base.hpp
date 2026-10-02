@@ -3,9 +3,7 @@
 #include <cmath>
 #include <functional>
 
-#include <SFML/Graphics.hpp>
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
 #include "engine/gfx/Texture.hpp"
 
 #include "engine/gui/FramedSprite.hpp"
@@ -13,8 +11,6 @@
 #include "engine/gui/slider/LayoutBuilder.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 #include "engine/gui/Widget.hpp"
-
-#include "engine/temporary/ToSfFromSf.hpp"
 
 namespace engine::gui::slider
 {
@@ -288,7 +284,7 @@ template <typename MouseHandlingPolicy, typename RenderingPolicy>
 void Base<MouseHandlingPolicy, RenderingPolicy>::processMovement(const engine::Vec2f& mouse_position)
 {
     setValue(MouseHandlingPolicy::translatePositionToThumbValue(mouse_position,
-        temporary::toSf(track_.getPosition()), temporary::toSf(track_.getSize()), temporary::toSf(thumb_.getSize()), min_, max_, step_));
+        track_.getPosition(), track_.getSize(), thumb_.getSize(), min_, max_, step_));
 
     focus();
     updateTexture();

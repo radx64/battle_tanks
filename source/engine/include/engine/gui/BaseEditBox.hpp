@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/Vector2.hpp"
 #include "engine/gfx/Texture.hpp"

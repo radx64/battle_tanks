@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/GameObject.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity
 {
@@ -10,7 +10,7 @@ namespace game::entity
 class Bullet : public engine::GameObject
 {
 public:
-    Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBody);
+    Bullet(float x, float y, float angle, float speed, engine::gfx::Texture& bulletBody);
     virtual ~Bullet() = default;
 
 protected:

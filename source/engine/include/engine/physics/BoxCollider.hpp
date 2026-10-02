@@ -1,15 +1,13 @@
 #pragma once
 
-#include <SFML/System.hpp>
+#include "engine/Vector2.hpp"
 
 namespace engine::physics
 {
 
 struct BoxCollider
 {
-    sf::Vector2f corners;
+    engine::Vec2f corners;
 };
 
 }  // namespace engine::physics
-
-

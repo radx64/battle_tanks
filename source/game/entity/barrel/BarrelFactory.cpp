@@ -1,6 +1,5 @@
 #include "game/entity/barrel/BarrelFactory.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "game/entity/barrel/Barrel.hpp"
 #include "graphics/TextureLibrary.hpp"
@@ -10,7 +9,7 @@ namespace game::entity
 
 namespace
 {
-sf::Texture& getBarrelTexture(const BarrelFactory::BarrelType type)
+engine::gfx::Texture& getBarrelTexture(const BarrelFactory::BarrelType type)
 {
     switch (type)
     {

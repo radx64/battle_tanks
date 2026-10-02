@@ -1,8 +1,9 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/Particle.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/Sprite.hpp"
 
 namespace game::particle
 {
@@ -13,13 +14,13 @@ public:
     Explosion(float x, float y);
     virtual ~Explosion() = default;
 
-    void draw(sf::RenderWindow& render_window) override;
+    void draw(engine::gfx::RenderTarget& render_window) override;
 
 protected:
     void onUpdate(float time_step) override;
     float lifetime_;
 
-    sf::Sprite sprite_;
+    engine::gfx::Sprite sprite_;
 };
 
 }  // namespace game::particle

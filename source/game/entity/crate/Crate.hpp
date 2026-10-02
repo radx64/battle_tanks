@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/GameObject.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity
 {
@@ -16,7 +16,7 @@ namespace game::entity
 class Crate : public engine::GameObject
 {
 public:
-    Crate(float x, float y, sf::Texture& barrelBody);
+    Crate(float x, float y, engine::gfx::Texture& barrelBody);
     virtual ~Crate() = default;
 };
 

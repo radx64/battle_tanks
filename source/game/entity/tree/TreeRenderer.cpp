@@ -5,22 +5,21 @@
 #include "engine/Context.hpp"
 #include "engine/math/Math.hpp"
 
-#include "engine/source/backends/sfml/ToSf.hpp"
 
 constexpr float HEIGHT_COEFF = 0.005f;
 
 namespace game::entity
 {
-TreeRenderer::TreeRenderer(Tree* tree, sf::Texture& treeBody)
+TreeRenderer::TreeRenderer(Tree* tree, engine::gfx::Texture& treeBody)
 : tree_(tree)
 {
     treeSprite_.setTexture(treeBody);
-    sf::Vector2u texture_body_size = treeBody.getSize();
-    auto middle_point = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
+    engine::Vec2u texture_body_size = treeBody.getSize();
+    auto middle_point = engine::Vec2f(texture_body_size.x / 2, texture_body_size.y / 2);
     treeSprite_.setOrigin(middle_point);     
 }
 
-void TreeRenderer::draw(sf::RenderWindow& render_window)
+void TreeRenderer::draw(engine::gfx::RenderTarget& render_window)
 {
     auto tree_transform = tree_->transform();
     auto tree_position = tree_transform.position();
@@ -42,12 +41,12 @@ void TreeRenderer::draw(sf::RenderWindow& render_window)
 
         treeSprite_.setScale(scale, scale);
         treeSprite_.setRotation(tree_transform.rotation() + layer * 30.f);
-        treeSprite_.setColor(sf::Color(10, 10, 10, 127));
-        treeSprite_.setPosition(engine::toSf(current_layer_point + engine::Vector2f{tree_->height_ * scale, tree_->height_ * scale}));
+        treeSprite_.setColor(engine::gfx::Color(10, 10, 10, 127));
+        treeSprite_.setPosition(current_layer_point + engine::Vector2f{tree_->height_ * scale, tree_->height_ * scale});
         render_window.draw(treeSprite_);
 
-        treeSprite_.setColor(sf::Color(255, 255, 255, 255));
-        treeSprite_.setPosition(engine::toSf(current_layer_point));
+        treeSprite_.setColor(engine::gfx::Color(255, 255, 255, 255));
+        treeSprite_.setPosition(current_layer_point);
         render_window.draw(treeSprite_);
     }
 }

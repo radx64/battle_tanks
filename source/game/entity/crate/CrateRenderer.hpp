@@ -1,6 +1,9 @@
 #pragma once
 
 #include "engine/Renderer.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/Sprite.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity { class Crate; }
 
@@ -9,12 +12,12 @@ namespace game::entity
 class CrateRenderer : public engine::Renderer
 {
 public:
-    CrateRenderer(Crate* crate, sf::Texture& crateBody);
-    void draw(sf::RenderWindow& render_window) override;
+    CrateRenderer(Crate* crate, engine::gfx::Texture& crateBody);
+    void draw(engine::gfx::RenderTarget& render_window) override;
 
 protected:
     Crate* crate_;
-    sf::Sprite crateSprite_;
+    engine::gfx::Sprite crateSprite_;
 };
 
 

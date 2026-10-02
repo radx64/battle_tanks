@@ -2,14 +2,17 @@
 
 #include <vector>
 
-#include <SFML/Graphics.hpp>
+#include "engine/Vector2.hpp"
+#include "engine/gfx/Color.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+
 
 namespace graphics::drawtools
 {
 
-void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color);
-void drawTarget(sf::RenderWindow& window, int x, int y);
-void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoints);
+void drawLine(engine::gfx::RenderTarget& window, int x1, int y1, int x2, int y2, engine::gfx::Color color);
+void drawTarget(engine::gfx::RenderTarget& window, int x, int y);
+void drawWaypoints(engine::gfx::RenderTarget& window, std::vector<engine::Vec2i>& waypoints);
 
 }  // namespeace graphics::drawtools
 

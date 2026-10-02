@@ -3,41 +3,38 @@
 namespace graphics::drawtools
 {
 
-void drawLine(sf::RenderWindow& window, int x1, int y1, int x2, int y2, sf::Color color)
+void drawLine(engine::gfx::RenderTarget& window, int x1, int y1, int x2, int y2, engine::gfx::Color color)
 {
-    sf::Vertex line[] =
-    {
-        sf::Vertex(sf::Vector2f(x1, y1), color),
-        sf::Vertex(sf::Vector2f(x2, y2), color)
-    };
-
-    window.draw(line, 2, sf::Lines);    
+    engine::gfx::VertexArray line{engine::gfx::PrimitiveType::Lines, 2};
+    line[0] = engine::gfx::Vertex(engine::Vec2f(static_cast<float>(x1), static_cast<float>(y1)), color);
+    line[1] = engine::gfx::Vertex(engine::Vec2f(static_cast<float>(x2), static_cast<float>(y2)), color);
+    window.draw(line);
 }
 
 
-void drawTarget(sf::RenderWindow& window, int x, int y)
+void drawTarget(engine::gfx::RenderTarget& window, int x, int y)
 {
-    static sf::CircleShape outerTarget(10.f);
-    static sf::CircleShape innerTarget(2.f);
+    static engine::gfx::CircleShape outerTarget(10.f);
+    static engine::gfx::CircleShape innerTarget(2.f);
 
-    outerTarget.setFillColor(sf::Color(255, 255, 255));
+    outerTarget.setFillColor(engine::gfx::Color(255, 255, 255));
     outerTarget.setOutlineThickness(2.f);
-    outerTarget.setOutlineColor(sf::Color(250, 10, 10));
+    outerTarget.setOutlineColor(engine::gfx::Color(250, 10, 10));
     outerTarget.setOrigin(10.f, 10.f);
     outerTarget.setPosition(static_cast<float>(x), static_cast<float>(y));
     window.draw(outerTarget);
 
-    innerTarget.setFillColor(sf::Color(250, 10, 10));
+    innerTarget.setFillColor(engine::gfx::Color(250, 10, 10));
     innerTarget.setOutlineThickness(2.f);
-    innerTarget.setOutlineColor(sf::Color(250, 10, 10));
+    innerTarget.setOutlineColor(engine::gfx::Color(250, 10, 10));
     innerTarget.setOrigin(2.f, 2.f);
     innerTarget.setPosition(static_cast<float>(x), static_cast<float>(y));
     window.draw(innerTarget);
 }
 
-void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoints)
+void drawWaypoints(engine::gfx::RenderTarget& window, std::vector<engine::Vec2i>& waypoints)
 {
-    static sf::VertexArray lines(sf::Lines);
+    static engine::gfx::VertexArray lines(engine::gfx::PrimitiveType::Lines);
     lines.clear();
     if (waypoints.size() > 1)
     {
@@ -45,15 +42,15 @@ void drawWaypoints(sf::RenderWindow& window, std::vector<sf::Vector2i>& waypoint
         for (std::size_t i = 1; i < waypoints.size(); ++i)
         {
             const auto& waypoint = waypoints[i];
-            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(lastWaypoint->x), static_cast<float>(lastWaypoint->y)), sf::Color::White));
-            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(waypoint.x), static_cast<float>(waypoint.y)), sf::Color::White));
+            lines.append(engine::gfx::Vertex(engine::Vec2f(static_cast<float>(lastWaypoint->x), static_cast<float>(lastWaypoint->y)), engine::gfx::Color::White));
+            lines.append(engine::gfx::Vertex(engine::Vec2f(static_cast<float>(waypoint.x), static_cast<float>(waypoint.y)), engine::gfx::Color::White));
             lastWaypoint = &waypoint;
         }
 
         if (waypoints.size() > 2)
         {
-            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(waypoints.front().x), static_cast<float>(waypoints.front().y)), sf::Color::Red));
-            lines.append(sf::Vertex(sf::Vector2f(static_cast<float>(waypoints.back().x), static_cast<float>(waypoints.back().y)), sf::Color::Red));
+            lines.append(engine::gfx::Vertex(engine::Vec2f(static_cast<float>(waypoints.front().x), static_cast<float>(waypoints.front().y)), engine::gfx::Color::Red));
+            lines.append(engine::gfx::Vertex(engine::Vec2f(static_cast<float>(waypoints.back().x), static_cast<float>(waypoints.back().y)), engine::gfx::Color::Red));
         }
     }
 

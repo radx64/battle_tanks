@@ -13,9 +13,9 @@ Particle::Particle()
 , isDead_{false}
 {}
 
-void Particle::draw(sf::RenderWindow& render_window)
+void Particle::draw(engine::gfx::RenderTarget& renderTarget)
 {
-    (void)render_window;
+    (void)renderTarget;
 }
 
 void Particle::update(float time_step)

@@ -1,6 +1,5 @@
 #include "game/entity/crate/CrateFactory.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "game/entity/crate/Crate.hpp"
 #include "graphics/TextureLibrary.hpp"
@@ -10,7 +9,7 @@ namespace game::entity
 
 namespace 
 {
-sf::Texture& getCrateTexture(const CrateFactory::CrateType type)
+engine::gfx::Texture& getCrateTexture(const CrateFactory::CrateType type)
 {
     switch (type)
     {

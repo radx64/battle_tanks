@@ -7,10 +7,10 @@
 #include <string>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 
+#include "engine/gfx/RenderTexture.hpp"
+#include "engine/gfx/Sprite.hpp"
+#include "engine/gfx/Texture.hpp"
 #include "engine/gui/FramedSprite.hpp"
 #include "engine/gui/Widget.hpp"
 #include "engine/gui/style/EditBox.hpp"
@@ -84,11 +84,11 @@ private:
 
     style::EditBox style_;
     FramedSprite background_;
-    const sf::Texture& focusTexture_;
-    const sf::Texture& normalTexture_;
+    const engine::gfx::Texture& focusTexture_;
+    const engine::gfx::Texture& normalTexture_;
     const style::Text& textStyle_;
-    sf::RenderTexture contentTexture_;
-    sf::Sprite contentSprite_;
+    engine::gfx::RenderTexture contentTexture_;
+    engine::gfx::Sprite contentSprite_;
 
     scrollbar::Vertical* scrollbar_;
     std::vector<Item> items_;

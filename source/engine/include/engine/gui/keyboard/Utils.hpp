@@ -1,11 +1,12 @@
 #pragma once
-#include <SFML/Window/Keyboard.hpp>
+
+#include "engine/core/KeyCode.hpp"
 
 #include <string_view>
 
 namespace engine::gui::keyboard
 {
 
-    std::string_view keyToString(sf::Keyboard::Key key);
+    std::string_view keyToString(engine::core::KeyCode key);
 
 }  // namespace engine::gui::keyboard

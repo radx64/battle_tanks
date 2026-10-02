@@ -72,7 +72,7 @@ public:
     }
 
 protected:
-    void onRender(sf::RenderTexture&) override
+    void onRender(engine::gfx::RenderTarget&) override
     {
     }
 

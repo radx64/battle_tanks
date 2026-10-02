@@ -100,9 +100,9 @@ void WindowManager::removeOverlay(Overlay* overlay)
         });
 }
 
-void WindowManager::render(sf::RenderWindow& render_window)
+void WindowManager::render(engine::gfx::RenderTarget& renderTarget)
 {
-    renderTexture_.clear(sf::Color{0,0,0,0});
+    renderTexture_.clear(engine::gfx::Color::Transparent);
 
     mainWindow_.render(renderTexture_);
 
@@ -118,7 +118,7 @@ void WindowManager::render(sf::RenderWindow& render_window)
 
     renderTexture_.display();
     textureSprite_.setTexture(renderTexture_.getTexture());
-   render_window.draw(textureSprite_);
+    renderTarget.draw(textureSprite_);
 }
 
 void WindowManager::update()

@@ -9,7 +9,7 @@
 
 namespace 
 {
-    const sf::Vector2f EXTRA_END_OFFSET{6.f, 4.f};
+    const engine::Vec2f EXTRA_END_OFFSET{6.f, 4.f};
     constexpr float CONTENT_WIDTH_MARGIN = 32.f;
     constexpr uint32_t DEFAULT_TEXT_MAX_LENGTH = 2048;
 }  // namespace
@@ -158,14 +158,14 @@ size_t MultiLineEditBox::getIndexFromLineColumn(size_t line, size_t column) cons
     return lineInfo.startIndex + column;
 }
 
-size_t MultiLineEditBox::getIndexFromScreenPosition(const sf::Vector2f& screenPos)
+size_t MultiLineEditBox::getIndexFromScreenPosition(const engine::Vec2f& screenPos)
 {
     const std::string& fieldText = text_.getText();
-    const sf::Vector2f textGlobalPos = text_.getGlobalPosition();
-    const sf::Vector2f textOffset = text_.getOffset();
+    const engine::Vec2f textGlobalPos = text_.getGlobalPosition();
+    const engine::Vec2f textOffset = text_.getOffset();
     
     // Get font info
-    const sf::Font* font = text_.getFont();
+    const engine::gfx::Font* font = text_.getFont();
     if (!font) return 0;
     
     uint32_t charSize = text_.getCharacterSize();
@@ -196,9 +196,9 @@ size_t MultiLineEditBox::getIndexFromScreenPosition(const sf::Vector2f& screenPo
         float keringOffset = 0.f;
         if (i > 0)
         {
-            keringOffset = font->getKerning(lineText[i-1], lineText[i], charSize);
+            keringOffset = font->getKerning(static_cast<std::uint32_t>(lineText[i-1]), static_cast<std::uint32_t>(lineText[i]), charSize);
         }
-        float glyphWidth = font->getGlyph(lineText[i], charSize, false, 0.f).advance + keringOffset;
+        float glyphWidth = font->getGlyphAdvance(static_cast<std::uint32_t>(lineText[i]), charSize) + keringOffset;
         
         if (currentX + glyphWidth >= screenPos.x)
         {
@@ -330,7 +330,7 @@ EventStatus MultiLineEditBox::on(const engine::events::MouseButtonPressed& mouse
     enterEdit();
 
     // Convert 2D screen position to text index
-    sf::Vector2f screenPos{static_cast<float>(mouseButtonPressedEvent.getPosition().x), static_cast<float>(mouseButtonPressedEvent.getPosition().y)};
+    engine::Vec2f screenPos{static_cast<float>(mouseButtonPressedEvent.getPosition().x), static_cast<float>(mouseButtonPressedEvent.getPosition().y)};
     size_t textIndex = getIndexFromScreenPosition(screenPos);
     textCursor_.setIndex(textIndex);
     ensureCursorVisible();
@@ -359,7 +359,7 @@ EventStatus MultiLineEditBox::on(const engine::events::MouseMoved& mouseMovedEve
     if(mouseLeftButtonPressed_)
     {
         // Convert 2D screen position to text index
-        sf::Vector2f screenPos{static_cast<float>(mouseMovedEvent.getPosition().x), static_cast<float>(mouseMovedEvent.getPosition().y)};
+        engine::Vec2f screenPos{static_cast<float>(mouseMovedEvent.getPosition().x), static_cast<float>(mouseMovedEvent.getPosition().y)};
         size_t textIndex = getIndexFromScreenPosition(screenPos);
         textCursor_.setIndex(textIndex);
         ensureCursorVisible();
@@ -384,7 +384,7 @@ EventStatus MultiLineEditBox::on(const engine::gui::events::MouseButtonDoublePre
         enterEdit();
     }
 
-    const sf::Vector2f screenPos{
+    const engine::Vec2f screenPos{
         static_cast<float>(mouseButtonDoublePressedEvent.getPosition().x),
         static_cast<float>(mouseButtonDoublePressedEvent.getPosition().y)
     };

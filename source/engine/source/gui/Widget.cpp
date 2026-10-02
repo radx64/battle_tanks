@@ -8,8 +8,6 @@
 
 #include "engine/gui/Debug.hpp"
 
-#include "engine/temporary/ToSfFromSf.hpp"
-
 namespace engine::gui
 {
 
@@ -229,14 +227,9 @@ void Widget::onPositionChange()
 {
 }
 
-bool Widget::isInside(sf::Vector2f point) const
-{
-    return bounds_.contains(point);
-}
-
 bool Widget::isInside(const engine::Vec2f& position) const
 {
-    return isInside(temporary::toSf(position));
+    return bounds_.contains(position);
 }
 
 const engine::Vec2f Widget::getGlobalPosition() const

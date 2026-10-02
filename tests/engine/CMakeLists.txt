@@ -7,6 +7,11 @@ add_executable(battle_tanks_testing_engine
     TimerTests.cpp
     RectTests.cpp
     Vector2Tests.cpp
+    StopwatchTests.cpp
+    gfx/ViewTests.cpp
+    gfx/ShapeTests.cpp
+    gfx/VertexArrayTests.cpp
+    gui/FramedSpriteTests.cpp
     gui/layout/ConstraintTests.cpp
     gui/layout/GridTests.cpp
     gui/layout/HorizontalTests.cpp

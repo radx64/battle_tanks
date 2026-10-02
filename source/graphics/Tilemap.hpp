@@ -2,7 +2,8 @@
 
 #include <memory>
 
-#include <SFML/Graphics.hpp>
+#include "engine/gfx/RenderTarget.hpp"
+
 
 namespace graphics
 {
@@ -13,7 +14,7 @@ public:
     Tilemap();
     ~Tilemap();
 
-    void draw(sf::RenderWindow& render_window);
+    void draw(engine::gfx::RenderTarget& render_window);
 
 private:
     struct Impl;

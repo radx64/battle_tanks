@@ -18,7 +18,6 @@ namespace engine
 
 Application::Application(const std::string_view windowName, const std::string_view logPrefix, const engine::Vec2f& windowSize)
 : window_(engine::WindowProperties{windowName.data(), {static_cast<int>(windowSize.x), static_cast<int>(windowSize.y)}})
-, profilingText_{"", font_, 16}
 , mouseHandler_{&timer_service_}
 , realtime_step_{}
 , collisionSolver_{scene_}
@@ -38,9 +37,10 @@ Application::Application(const std::string_view windowName, const std::string_vi
     context_.setTimerService(&timer_service_);
 
     font_.loadFromFile("./resources/fonts/Px437_IBM_VGA_8x16.ttf");
+    profilingText_.setFont(font_);
     profilingText_.setPosition({10.f, 10.f});
-    profilingText_.setFillColor(sf::Color::Black);
-    profilingText_.setOutlineColor(sf::Color::White);
+    profilingText_.setFillColor(engine::gfx::Color::Black);
+    profilingText_.setOutlineColor(engine::gfx::Color::White);
     profilingText_.setOutlineThickness(2.f);
     profilingText_.setCharacterSize(16);
 }
@@ -78,7 +78,7 @@ int Application::run()
         while (isRunning_)
         {
             profiling_.reset();
-            realtime_step_ = std::chrono::milliseconds(clock_.restart().asMilliseconds());
+            realtime_step_ = std::chrono::milliseconds(clock_.restart());
             PROFILE_SCOPE(eventsProfiler_,
                 window_.pollEvents();
             );
@@ -221,7 +221,7 @@ void Application::update()
 void Application::render()
 {
     PROFILE_SCOPE(clearProfiler_,
-        window_.getNativeHandle().clear(sf::Color(0, 0, 0));
+        window_.clear(engine::gfx::Color::Black);
     );
     
     PROFILE_SCOPE(renderProfiler_,
@@ -233,7 +233,7 @@ void Application::render()
     );
     
     PROFILE_SCOPE(display_profiler_,
-        window_.getNativeHandle().display();
+        window_.display();
     );
 }
 
@@ -246,7 +246,7 @@ void Application::renderProfilingInfo()
     }
     
     profilingText_.setString(text);
-    window_.getNativeHandle().draw(profilingText_);
+    window_.getRenderTarget().draw(profilingText_);
 }
 
 }  // namespace engine

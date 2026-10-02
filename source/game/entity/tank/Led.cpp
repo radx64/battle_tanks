@@ -4,19 +4,18 @@
 
 #include "engine/math/Math.hpp"
 
-#include "engine/source/backends/sfml/ToSf.hpp"
 
 namespace game::entity 
 {
 
-Led::Led(float x, float y, sf::Texture& texture)
+Led::Led(float x, float y, engine::gfx::Texture& texture)
 : x_{x},
 y_{y},
 timeToChangeState_{rate_}
 {
     sprite_.setTexture(texture);
-    sf::Vector2u texture_size = texture.getSize();
-    sf::Vector2f texture_middle_point = sf::Vector2f(texture_size) / 2.f;
+    engine::Vec2u texture_size = texture.getSize();
+    engine::Vec2f texture_middle_point = engine::Vec2f(texture_size) / 2.f;
     sprite_.setOrigin(texture_middle_point);
     sprite_.setColor(color_);
 }
@@ -26,19 +25,19 @@ void Led::setRotation(float rotation)
     rotation_ = rotation;
 }
 
-void Led::draw(sf::RenderWindow& render_window)
+void Led::draw(engine::gfx::RenderTarget& render_window)
 {
     auto rotatedOffset = engine::math::rotatePoint(offset_, rotation_, engine::Vector2f{0.0f, 0.0f});
     auto rotatedPosition = rotatedOffset + engine::Vector2f(x_, y_);
     
-    sprite_.setPosition(engine::toSf(rotatedPosition));
+    sprite_.setPosition(rotatedPosition);
     if (isOn_)
     {
         sprite_.setColor(color_);
     }
     else
     {
-        sprite_.setColor(sf::Color(10, 10, 10, 127));
+        sprite_.setColor(engine::gfx::Color(10, 10, 10, 127));
     }
    render_window.draw(sprite_);
 }
@@ -55,7 +54,7 @@ void Led::update(float time_step)
     }
 }
 
-void Led::setColor(const sf::Color& color)
+void Led::setColor(const engine::gfx::Color& color)
 {
     color_ = color;
 }

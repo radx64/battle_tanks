@@ -12,7 +12,6 @@
 
 // TODO: Temporary hack while moving from public sfml to implementation detail
 // engine will cover all backend types later
-#include "engine/source/backends/sfml/ToSf.hpp"
 
 namespace
 {
@@ -106,13 +105,13 @@ public:
         sprite_.setPosition(x, y);
     }
 
-    void draw(sf::RenderTexture&render_window)
+    void draw(engine::gfx::RenderTexture&render_window)
     {
        render_window.draw(sprite_);
     }
 
 private:
-    sf::Sprite sprite_;
+    engine::gfx::Sprite sprite_;
 };
 
 TileType idToType(const uint8_t id)
@@ -168,7 +167,7 @@ struct Tilemap::Impl
     : chunks{CHUNK_SIZE}
     {}
 
-    void draw(sf::RenderWindow& render_window)
+    void draw(engine::gfx::RenderTarget& render_window)
     {
         auto& camera = engine::Context::getCamera();
         const auto& camera_position = camera.getPosition();
@@ -253,7 +252,7 @@ Tilemap::Tilemap()
 
 Tilemap::~Tilemap() = default;
 
-void Tilemap::draw(sf::RenderWindow& render_window)
+void Tilemap::draw(engine::gfx::RenderTarget& render_window)
 {
     impl_->draw(render_window);
 }

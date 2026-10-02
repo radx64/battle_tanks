@@ -1,7 +1,6 @@
 #include "game/entity/bullet/Bullet.hpp"
 
 #include <cmath>
-#include <SFML/Graphics.hpp>
 
 #include "engine/math/Math.hpp"
 #include "game/entity/bullet/BulletRenderer.hpp"
@@ -18,7 +17,7 @@ constexpr float AIR_DRAG_COEEF = 0.999f;
 
 constexpr float BULLET_LIFETIME = 7.5f;
 
-Bullet::Bullet(float x, float y, float angle, float speed, sf::Texture& bulletBody)
+Bullet::Bullet(float x, float y, float angle, float speed, engine::gfx::Texture& bulletBody)
 : lifetime_{}
 { 
     transform().position().x = x;

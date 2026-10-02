@@ -1,16 +1,14 @@
 #pragma once
 
-#include <SFML/System.hpp>
+#include "engine/Vector2.hpp"
 
 namespace engine::physics
 {
 
 struct CircleCollider
 {
-    sf::Vector2f position;
+    engine::Vec2f position;
     float radius;
 };
 
 }  // namespace engine::physics
-
-

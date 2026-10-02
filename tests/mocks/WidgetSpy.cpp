@@ -9,7 +9,7 @@ WidgetSpy::~WidgetSpy()
     die();
 }   
 
-void WidgetSpy::onRender(sf::RenderTexture&)
+void WidgetSpy::onRender(engine::gfx::RenderTarget&)
 {
     logger_.debug("onRender called");
     render_mock();

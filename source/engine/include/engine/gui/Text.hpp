@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <string_view>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gfx/Color.hpp"
 #include "engine/Vector2.hpp"
@@ -11,6 +10,7 @@
 #include "engine/gfx/Drawable.hpp"
 #include "engine/gfx/RenderTexture.hpp"
 #include "engine/gfx/Sprite.hpp"
+#include "engine/gfx/Text.hpp"
 
 #include "engine/gui/style/Text.hpp"
 
@@ -19,8 +19,8 @@ namespace engine::gui {class TextDisplayModifier;}
 namespace engine::gui
 {
 
-/*  This is a wrapper for sf::Text that alows partial text rendering
-    in restricted bounding box
+/*  Draws a string inside a restricted bounding box.
+    The glyphs are rendered into a texture so only the visible part is shown.
 */
 
 class Text : public engine::gfx::Drawable
@@ -31,8 +31,8 @@ public:
     void setText(const std::string_view& text);
     std::string getText() const;
 
-    void setFont(const sf::Font& font);
-    const sf::Font* getFont() const;
+    void setFont(const engine::gfx::Font& font);
+    const engine::gfx::Font* getFont() const;
 
     void setCharacterSize(uint32_t size);
     uint32_t getCharacterSize() const;
@@ -64,7 +64,7 @@ protected:
     engine::Vec2f size_;
     engine::gfx::RenderTexture texture_;
     engine::gfx::Sprite sprite_;
-    sf::Text text_;
+    engine::gfx::Text text_;
     
     std::vector<TextDisplayModifier*> modifiers_;
     

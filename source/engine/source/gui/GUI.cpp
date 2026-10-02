@@ -89,9 +89,9 @@ GUI::GUI(const engine::Vec2f& mainWindowSize)
 
 GUI::~GUI() = default;
 
-void GUI::render(sf::RenderWindow& render_window)
+void GUI::render(engine::gfx::RenderTarget& renderTarget)
 {
-    windowManager_.render(render_window);
+    windowManager_.render(renderTarget);
 }
 
 void GUI::update()

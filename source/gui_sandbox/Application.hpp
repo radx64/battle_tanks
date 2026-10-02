@@ -1,6 +1,8 @@
 #pragma once
 
 #include "engine/Timer.hpp"
+#include "engine/gfx/RenderTexture.hpp"
+#include "engine/gfx/Sprite.hpp"
 
 #include "engine/gui/Application.hpp"
 #include "engine/gui/WindowManager.hpp"
@@ -24,8 +26,8 @@ protected:
 
     void generateBackground();
 
-    sf::RenderTexture backgroundTexture_;
-    sf::Sprite backgroundSprite_;
+    engine::gfx::RenderTexture backgroundTexture_;
+    engine::gfx::Sprite backgroundSprite_;
     engine::Timer timer_;
 
     bool isSyncing_ = false;

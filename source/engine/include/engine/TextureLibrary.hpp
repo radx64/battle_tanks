@@ -1,12 +1,13 @@
 #pragma once
 
+#include <functional>
+#include <map>
+#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <map>
 
 #include "engine/gfx/Texture.hpp"
 
-#include <SFML/Graphics.hpp>
 
 namespace engine
 {

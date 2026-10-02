@@ -1,6 +1,5 @@
 #include "game/entity/barrel/Barrel.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "game/entity/barrel/BarrelRenderer.hpp"
 #include "game/InstanceIdGenerator.hpp"
@@ -13,7 +12,7 @@ constexpr float BARREL_RADIUS = 12;
 constexpr float BARREL_MASS = 2;
 constexpr float GROUND_DRAG_COEEF = 0.93;
 
-Barrel::Barrel(float x, float y, sf::Texture& barrelBody)
+Barrel::Barrel(float x, float y, engine::gfx::Texture& barrelBody)
 { 
     transform_.position().x = x;
     transform_.position().y = y;

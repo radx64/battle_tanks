@@ -34,8 +34,8 @@ TextCursor::TextCursor(engine::gui::Text& text)
 , isCursorVisible_{false}
 , blinkTimer_{500ms, [this]{animateCursor();}}
 {
-    cursorImage_.setFillColor(sf::Color::Black);
-    cursorImage_.setOutlineColor(sf::Color::Black);
+    cursorImage_.setFillColor(engine::gfx::Color::Black);
+    cursorImage_.setOutlineColor(engine::gfx::Color::Black);
 }
 
 void TextCursor::animateCursor()
@@ -53,17 +53,17 @@ void TextCursor::setCharacterSize(uint32_t characterSize)
     characterSize_ = characterSize;
     assert(font_ != nullptr && "Font* needs to be set before setting character size");
     float actualFontHeight = getFontHeight(*font_, characterSize);
-    cursorImage_.setSize(sf::Vector2f{CURSOR_WIDTH, actualFontHeight});
+    cursorImage_.setSize(engine::Vec2f{CURSOR_WIDTH, actualFontHeight});
 }
 
-void TextCursor::setFont(const sf::Font* font)
+void TextCursor::setFont(const engine::gfx::Font* font)
 {
     font_ = font;
 }
 
 void TextCursor::update()
 {
-    auto cursorPosition = sf::Vector2f{0.f, 0.f};
+    auto cursorPosition = engine::Vec2f{0.f, 0.f};
 
     assert(characterSize_ > 0 && "Character size must be > 0");
     assert(font_ != nullptr && "Font* needs to be set");
@@ -233,10 +233,9 @@ float TextCursor::getGlyphOffset(const std::string& string, const size_t index)
     {
         // On some font rendering systems kering make characters closer to each other
         // This need to be accomodated in cursor position calculations
-        keringOffset =  font_->getKerning(string[index-1],string[index], characterSize_);
+        keringOffset =  font_->getKerning(static_cast<std::uint32_t>(string[index-1]), static_cast<std::uint32_t>(string[index]), characterSize_);
     }
-    // TODO: do something with false and 0.f params later
-    return font_->getGlyph(string[index], characterSize_, false, 0.f).advance + keringOffset;
+    return font_->getGlyphAdvance(static_cast<std::uint32_t>(string[index]), characterSize_) + keringOffset;
 }
 
 void TextCursor::moveTo(float mouseX)

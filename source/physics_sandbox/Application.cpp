@@ -93,7 +93,7 @@ void Application::onUpdate(float time_step)
 
 void Application::onRender()
 {
-    engine::RigidBodyDebugRenderer::debug(scene_, window_.getNativeHandle());
+    engine::RigidBodyDebugRenderer::debug(scene_, window_.getRenderTarget());
 }
 
 }  // namespace sandbox

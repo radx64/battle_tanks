@@ -5,12 +5,10 @@
 #include <memory>
 #include <utility>
 
-#include <SFML/Graphics.hpp>
-
 #include "engine/Vector2.hpp"
 #include "engine/Rect.hpp"
-
-#include "engine/temporary/ToSfFromSf.hpp"
+#include "engine/gfx/RenderTexture.hpp"
+#include "engine/gfx/Sprite.hpp"
 
 namespace engine
 {
@@ -23,8 +21,8 @@ public:
     struct Chunk
     {
         engine::Vector2f position;
-        std::unique_ptr<sf::RenderTexture> target;
-        sf::Sprite sprite;
+        std::unique_ptr<engine::gfx::RenderTexture> target;
+        engine::gfx::Sprite sprite;
         bool needsDisplay{false};
     };
 
@@ -46,7 +44,7 @@ public:
             initializeChunk(chunk);
             chunk.target->display();
             chunk.sprite.setTexture(chunk.target->getTexture(), true);
-            chunk.sprite.setPosition(engine::temporary::toSf(chunk.position));
+            chunk.sprite.setPosition(chunk.position);
         }
 
         return chunk;

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/System.hpp>
-
 #include <cstdint>
+
+#include "engine/Stopwatch.hpp"
 
 namespace engine
 {
@@ -16,7 +16,7 @@ public:
     uint32_t getFps();
 
 protected:
-    sf::Clock clock_;
+    engine::Stopwatch clock_;
     uint32_t fps_;
     float smoothing_;
 };

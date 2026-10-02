@@ -5,7 +5,7 @@
 
 #include "engine/Particle.hpp"
 
-namespace sf {class RenderWindow;}
+namespace engine::gfx { class RenderTarget; }
 
 namespace engine
 {
@@ -16,7 +16,7 @@ public:
     ParticleSystem();
 
     void add(std::unique_ptr<Particle> particle);
-    void draw(sf::RenderWindow& render_window);
+    void draw(engine::gfx::RenderTarget& renderTarget);
     void clear();
     void update(float time_step);
 

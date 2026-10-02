@@ -1,11 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/Timer.hpp"
 
 #include "engine/gui/TextDisplayModifier.hpp"
 
+#include "engine/gfx/Font.hpp"
 #include "engine/gfx/Shape.hpp"
 #include "engine/Vector2.hpp"
 #include "engine/Rect.hpp"
@@ -20,7 +20,7 @@ class TextCursor : public TextDisplayModifier
 public:
     TextCursor(engine::gui::Text& text);
     void setCharacterSize(uint32_t characterSize);
-    void setFont(const sf::Font* font);
+    void setFont(const engine::gfx::Font* font);
 
     void moveLeft(const bool moveWholeWord);
     void moveRight(const bool moveWholeWord);
@@ -48,7 +48,7 @@ protected:
     float getLineHeight() const;
 
     uint32_t characterSize_;
-    const sf::Font* font_;
+    const engine::gfx::Font* font_;
     engine::gui::Text& text_;
 
     uint32_t textLength_;

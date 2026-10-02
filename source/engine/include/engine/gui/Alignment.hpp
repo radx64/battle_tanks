@@ -2,7 +2,6 @@
 
 #include <type_traits>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/Rect.hpp"
 

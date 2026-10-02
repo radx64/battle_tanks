@@ -1,6 +1,5 @@
 #include "game/entity/tank/TankFactory.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "game/entity/tank/Cannon.hpp"
 #include "game/entity/tank/Tank.hpp"
@@ -10,7 +9,7 @@ namespace game::entity
 {
 
 namespace {
-sf::Texture& getTankTexture(const TankFactory::TankType type)
+engine::gfx::Texture& getTankTexture(const TankFactory::TankType type)
 {
     switch (type)
     {
@@ -23,7 +22,7 @@ sf::Texture& getTankTexture(const TankFactory::TankType type)
     }
 };
 
-sf::Texture& getCannonTexture(const TankFactory::TankType type)
+engine::gfx::Texture& getCannonTexture(const TankFactory::TankType type)
 {
     switch (type)
     {

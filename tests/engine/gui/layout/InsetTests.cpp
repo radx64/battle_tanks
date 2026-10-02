@@ -24,15 +24,15 @@ TEST(InsetShould, offsetChildWidgetFromItsParentByPixels)
 
     sut->addChild(std::move(child));
 
-    sut->setSize(sf::Vector2f(100.0f, 100.0f));
+    sut->setSize(engine::Vec2f(100.0f, 100.0f));
     
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(90.0f, 90.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(5.0f, 5.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(90.0f, 90.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(5.0f, 5.0f));
 
     sut->set(Constraint::Pixels(20));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(80.0f, 80.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(10.0f, 10.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(80.0f, 80.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(10.0f, 10.0f));
 }
 
 TEST(InsetShould, offsetChildWidgetFromItsParentByPercentage)
@@ -44,15 +44,15 @@ TEST(InsetShould, offsetChildWidgetFromItsParentByPercentage)
 
     sut->addChild(std::move(child));
 
-    sut->setSize(sf::Vector2f(100.0f, 100.0f));
+    sut->setSize(engine::Vec2f(100.0f, 100.0f));
     
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(10.0f, 10.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(45.0f, 45.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(10.0f, 10.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(45.0f, 45.0f));
 
     sut->set(Constraint::Percent(20));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(20.0f, 20.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(40.0f, 40.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(20.0f, 20.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(40.0f, 40.0f));
 }
 
 TEST(InsetShould, doNotoffsetChildWidgetFromItsParentWhenAuto)
@@ -64,15 +64,15 @@ TEST(InsetShould, doNotoffsetChildWidgetFromItsParentWhenAuto)
 
     sut->addChild(std::move(child));
 
-    sut->setSize(sf::Vector2f(100.0f, 100.0f));
+    sut->setSize(engine::Vec2f(100.0f, 100.0f));
     
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(100.0f, 100.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 
     sut->set(Constraint::Auto());
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(100.0f, 100.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 }
 
 TEST(InsetShould, setChildWidgetSizeToParentWhenInsetIsZeroPixels)
@@ -84,15 +84,15 @@ TEST(InsetShould, setChildWidgetSizeToParentWhenInsetIsZeroPixels)
 
     sut->addChild(std::move(child));
 
-    sut->setSize(sf::Vector2f(100.0f, 100.0f));
+    sut->setSize(engine::Vec2f(100.0f, 100.0f));
     
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(100.0f, 100.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 
     sut->set(Constraint::Pixels(0));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(100.0f, 100.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(100.0f, 100.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 }
 
 TEST(InsetShould, setChildWidgetSizeToZeroWhenInsetIsZeroPercent)
@@ -104,13 +104,13 @@ TEST(InsetShould, setChildWidgetSizeToZeroWhenInsetIsZeroPercent)
 
     sut->addChild(std::move(child));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 
     sut->set(Constraint::Percent(0));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f)); 
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f)); 
 }
 
 TEST(InsetShould, setChildWidgetSizeProperlyWhenInsetIsNegativeInPixels)
@@ -122,15 +122,15 @@ TEST(InsetShould, setChildWidgetSizeProperlyWhenInsetIsNegativeInPixels)
 
     sut->addChild(std::move(child));
 
-    sut->setSize(sf::Vector2f(100.0f, 100.0f));
+    sut->setSize(engine::Vec2f(100.0f, 100.0f));
     
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(110.0f, 110.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(-5.0f, -5.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(110.0f, 110.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(-5.0f, -5.0f));
 
     sut->set(Constraint::Pixels(-20));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(120.0f, 120.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(-10.0f, -10.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(120.0f, 120.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(-10.0f, -10.0f));
 }
 
 TEST(InsetShould, setChildWidgetSizeToZeroWhenInsetIsNegativeInPercent)
@@ -142,15 +142,15 @@ TEST(InsetShould, setChildWidgetSizeToZeroWhenInsetIsNegativeInPercent)
 
     sut->addChild(std::move(child));
 
-    sut->setSize(sf::Vector2f(100.0f, 100.0f));
+    sut->setSize(engine::Vec2f(100.0f, 100.0f));
     
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 
     sut->set(Constraint::Percent(-20));
 
-    EXPECT_EQ(child_ptr->getSize(), sf::Vector2f(0.0f, 0.0f));
-    EXPECT_EQ(child_ptr->getPosition(), sf::Vector2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getSize(), engine::Vec2f(0.0f, 0.0f));
+    EXPECT_EQ(child_ptr->getPosition(), engine::Vec2f(0.0f, 0.0f));
 }
 
 

@@ -1,7 +1,5 @@
 #include "engine/gui/ProgressBar.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include "engine/gui/Label.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 #include "engine/gui/style/StyleFactory.hpp"
@@ -13,7 +11,7 @@ namespace
 
 const auto BORDER_OFFSET = engine::Vec2f{10.f, 10.f};
 
-engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
+engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const engine::Vec2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
 {
     engine::gui::FramedSprite::LayoutConfig layoutConfig{
         .cornerSizes = 
@@ -64,7 +62,7 @@ ProgressBar::ProgressBar()
     bar_.setOutlineThickness(style.borderThickness);
 
     const auto position = getGlobalPosition();
-    bar_.setPosition(sf::Vector2f{position.x, position.y});
+    bar_.setPosition(engine::Vec2f{position.x, position.y});
 
     auto textPtr = engine::gui::Label::create("", style.text);
     text_ = textPtr.get();
@@ -110,7 +108,7 @@ void ProgressBar::onPositionChange()
 {
     const auto position = getGlobalPosition();
     background_.setPosition(position);
-    bar_.setPosition(sf::Vector2f{position.x, position.y} + sf::Vector2f{BORDER_OFFSET.x, BORDER_OFFSET.y});
+    bar_.setPosition(engine::Vec2f{position.x, position.y} + engine::Vec2f{BORDER_OFFSET.x, BORDER_OFFSET.y});
 }
 
 void ProgressBar::onSizeChange()
@@ -130,7 +128,7 @@ void ProgressBar::recalculateSize()
     background_.setSize(widgetSize);
 
     auto widgetSizeWithOffset = widgetSize - BORDER_OFFSET * 2.f;
-    bar_.setSize(sf::Vector2f{widgetSizeWithOffset.x * progress_, widgetSizeWithOffset.y});
+    bar_.setSize(engine::Vec2f{widgetSizeWithOffset.x * progress_, widgetSizeWithOffset.y});
     
     text_->setSize(widgetSize);    
 }

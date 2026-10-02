@@ -8,24 +8,24 @@
 
 namespace game::entity
 {
-TankRenderer::TankRenderer(Tank* tank, sf::Texture& tankBody)
+TankRenderer::TankRenderer(Tank* tank, engine::gfx::Texture& tankBody)
 : tank_(tank)
 {
     tankSprite_.setTexture(tankBody);
-    sf::Vector2u texture_body_size = tankBody.getSize();
-    auto tank_middle_point = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
+    engine::Vec2u texture_body_size = tankBody.getSize();
+    auto tank_middle_point = engine::Vec2f(texture_body_size.x / 2, texture_body_size.y / 2);
     tankSprite_.setOrigin(tank_middle_point);     
 }
 
-void TankRenderer::draw(sf::RenderWindow& render_window)
+void TankRenderer::draw(engine::gfx::RenderTarget& render_window)
 {
     auto& tank_transform = tank_->transform();
-    tankSprite_.setColor(sf::Color(10, 10, 10, 127));
+    tankSprite_.setColor(engine::gfx::Color(10, 10, 10, 127));
     tankSprite_.setPosition(tank_transform.position().x + 8, tank_transform.position().y + 8);
     tankSprite_.setRotation(tank_->current_direction_);
    render_window.draw(tankSprite_);
 
-    tankSprite_.setColor(sf::Color(255, 255, 255, 255));
+    tankSprite_.setColor(engine::gfx::Color(255, 255, 255, 255));
     tankSprite_.setPosition(tank_transform.position().x, tank_transform.position().y);
    render_window.draw(tankSprite_);
     tank_->cannon().x_ = tank_transform.position().x;
@@ -43,17 +43,17 @@ void TankRenderer::draw(sf::RenderWindow& render_window)
     }
 }
 
-void TankRenderer::drawDebugInfo(sf::RenderWindow& render_window)
+void TankRenderer::drawDebugInfo(engine::gfx::RenderTarget& render_window)
 {
     auto x = tank_->transform().position().x;
     auto y = tank_->transform().position().y;
     auto velocity = tank_->getRigidBody().velocity_;
 
-    sf::Text debug_text;
+    engine::gfx::Text debug_text;
     debug_text.setFont(engine::gui::FontLibrary::get("armata"));
     debug_text.setPosition(x + 40, y - 20);
     debug_text.setCharacterSize(15);
-    debug_text.setFillColor(sf::Color::Black);
+    debug_text.setFillColor(engine::gfx::Color::Black);
 
     debug_text.setString("SPD: " + std::to_string(fabs(velocity.x) + fabs(velocity.y)) + "\n" + 
         "ROT: " + std::to_string(tank_->current_direction_) + "\n" + 

@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/BaseEditBox.hpp"
 #include "engine/Vector2.hpp"
@@ -51,7 +50,7 @@ private:
     size_t getLineFromIndex(size_t textIndex) const;
     size_t getColumnFromIndex(size_t textIndex) const;
     size_t getIndexFromLineColumn(size_t line, size_t column) const;
-    size_t getIndexFromScreenPosition(const sf::Vector2f& screenPos);
+    size_t getIndexFromScreenPosition(const engine::Vec2f& screenPos);
 
     // Line management
     struct LineInfo

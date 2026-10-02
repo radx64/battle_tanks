@@ -1,9 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
-namespace engine{class Scene;}
-namespace sf{class RenderWindow;}
+namespace engine { class Scene; }
+namespace engine::gfx { class RenderTarget; }
 
 namespace engine
 {
@@ -11,7 +9,7 @@ namespace engine
 class RigidBodyDebugRenderer
 {
 public:
-static void debug(engine::Scene& scene, sf::RenderWindow& render_window);
+    static void debug(engine::Scene& scene, engine::gfx::RenderTarget& renderTarget);
 };
 
-}  // namespace game
+}  // namespace engine

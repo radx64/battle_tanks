@@ -1,7 +1,5 @@
 #include "engine/gui/Button.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include "engine/gui/Label.hpp"
 #include "engine/gui/layout/Inset.hpp"
 #include "engine/gui/style/Sheet.hpp"
@@ -11,7 +9,7 @@
 namespace
 {
 
-engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
+engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const engine::Vec2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
 {
     engine::gui::FramedSprite::LayoutConfig layoutConfig{
         .cornerSizes = 

@@ -1,10 +1,6 @@
 #include "engine/gui/Window.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include <memory>
-
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/Button.hpp"
 #include "engine/gui/GUI.hpp"
@@ -17,15 +13,13 @@
 #include "engine/gui/window/StatusBar.hpp"
 #include "engine/gui/WindowManager.hpp"
 
-#include "engine/temporary/ToSfFromSf.hpp"
-
 constexpr auto MINIMUM_WINDOW_HEIGHT = 300.f;
 constexpr auto MINIMUM_WINDOW_WIDTH = 300.f;
 
 
 namespace
 {
-    engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const sf::Vector2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
+    engine::gui::FramedSprite::LayoutConfig buildLayoutConfig(const engine::Vec2f& cornerSizes, const engine::gui::FramedSprite::LayoutConfig::UVs& uvs)
     {
         engine::gui::FramedSprite::LayoutConfig layoutConfig{
             .cornerSizes = 
@@ -139,12 +133,12 @@ bool Window::isInsideHeader(const engine::Vec2f& point)
 
 bool Window::isInsideResizeGadget(const engine::Vec2f& point)
 {
-    return statusBar_->isInsideResizeGadget(temporary::toSf(point));
+    return statusBar_->isInsideResizeGadget(point);
 }
 
-void Window::onRender(sf::RenderTexture& renderTexture)
+void Window::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    engine::backends::sfml::FramedSpriteRenderer::draw(renderTexture, background_);
+    renderTarget.draw(background_);
 }
 
 bool Window::isInState(const Window::State& state) const

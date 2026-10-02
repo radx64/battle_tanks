@@ -7,8 +7,7 @@
 #include "engine/RigidBody.hpp"
 
 namespace engine {class Scene;}
-
-namespace sf {class RenderWindow;}
+namespace engine::gfx { class RenderTarget; }
 
 namespace engine
 {
@@ -18,7 +17,7 @@ class GameObject
 public:
     GameObject();
     virtual ~GameObject() = default;
-    void draw(sf::RenderWindow& render_window, float time_step);
+    void draw(engine::gfx::RenderTarget& renderTarget, float time_step);
     void update(engine::Scene& scene, float time_step);
     RigidBody& getRigidBody();
     Renderer& getRenderer();

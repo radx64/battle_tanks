@@ -1,5 +1,7 @@
 #include "Application.hpp"
 
+#include "engine/gfx/Shape.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -21,10 +23,10 @@ constexpr float LINE_HEIGHT = 22.f;
 constexpr float MARGIN_X = 48.f;
 constexpr float MARGIN_Y = 40.f;
 
-const sf::Color TEXT_GREY{0xC0, 0xC0, 0xC0};
-const sf::Color TEXT_WHITE{0xF0, 0xF0, 0xF0};
-const sf::Color TEXT_CYAN{0x40, 0xC0, 0xC0};
-const sf::Color TEXT_YELLOW{0xE0, 0xE0, 0x40};
+const engine::gfx::Color TEXT_GREY{0xC0, 0xC0, 0xC0};
+const engine::gfx::Color TEXT_WHITE{0xF0, 0xF0, 0xF0};
+const engine::gfx::Color TEXT_CYAN{0x40, 0xC0, 0xC0};
+const engine::gfx::Color TEXT_YELLOW{0xE0, 0xE0, 0x40};
 
 constexpr std::uint32_t MEMORY_TOTAL_KB = 65536;
 
@@ -50,19 +52,19 @@ void Application::onInit()
 
     // The base Application draws a profiling overlay each frame; make it
     // invisible so it does not clutter the BIOS screen.
-    profilingText_.setFillColor(sf::Color::Transparent);
+    profilingText_.setFillColor(engine::gfx::Color::Transparent);
     profilingText_.setOutlineThickness(0.f);
 
     screen_.create(static_cast<unsigned int>(WINDOW_WIDTH),
         static_cast<unsigned int>(WINDOW_HEIGHT));
     screenSprite_.setTexture(screen_.getTexture(), true);
 
-    if (sf::Shader::isAvailable() &&
-        crtShader_.loadFromFile("./resources/shaders/crt.frag", sf::Shader::Fragment))
+    if (engine::gfx::Shader::isAvailable() &&
+        crtShader_.loadFromFile("./resources/shaders/crt.frag", engine::gfx::Shader::Type::Fragment))
     {
         crtAvailable_ = true;
-        crtShader_.setUniform("texture", sf::Shader::CurrentTexture);
-        crtShader_.setUniform("resolution", sf::Glsl::Vec2{WINDOW_WIDTH, WINDOW_HEIGHT});
+        crtShader_.setUniformCurrentTexture("texture");
+        crtShader_.setUniform("resolution", engine::Vec2f{WINDOW_WIDTH, WINDOW_HEIGHT});
         logger_.debug("CRT shader loaded.");
     }
     else
@@ -95,7 +97,7 @@ void Application::onEvent(engine::events::Event& event)
 
 void Application::onUpdate(float /*time_step*/)
 {
-    elapsed_ = bootClock_.getElapsedTime().asSeconds();
+    elapsed_ = bootClock_.getElapsedSeconds();
     if (elapsed_ > BOOT_DURATION_)
     {
         bootClock_.restart();
@@ -105,23 +107,23 @@ void Application::onUpdate(float /*time_step*/)
 
 void Application::onRender()
 {
-    screen_.clear(sf::Color::Black);
+    screen_.clear(engine::gfx::Color::Black);
     drawScene(screen_);
     screen_.display();
 
     if (crtAvailable_)
     {
         crtShader_.setUniform("time", elapsed_);
-        window_.getNativeHandle().draw(screenSprite_, &crtShader_);
+        window_.getRenderTarget().draw(screenSprite_, engine::gfx::RenderStates{.shader = &crtShader_});
     }
     else
     {
-        window_.getNativeHandle().draw(screenSprite_);
+        window_.getRenderTarget().draw(screenSprite_);
     }
 }
 
-void Application::drawText(sf::RenderTarget& target, const std::string& text,
-    float x, float y, sf::Color color)
+void Application::drawText(engine::gfx::RenderTarget& target, const std::string& text,
+    float x, float y, engine::gfx::Color color)
 {
     text_.setString(text);
     text_.setFillColor(color);
@@ -129,7 +131,7 @@ void Application::drawText(sf::RenderTarget& target, const std::string& text,
     target.draw(text_);
 }
 
-void Application::drawScene(sf::RenderTarget& target)
+void Application::drawScene(engine::gfx::RenderTarget& target)
 {
     // Timeline of the boot sequence (seconds):
     //   0.0 - 1.2 : black screen, monitor warming up
@@ -153,7 +155,7 @@ void Application::drawScene(sf::RenderTarget& target)
     }
 }
 
-void Application::drawPostScreen(sf::RenderTarget& target, float t)
+void Application::drawPostScreen(engine::gfx::RenderTarget& target, float t)
 {
     float y = MARGIN_Y;
     const float x = MARGIN_X;
@@ -190,9 +192,9 @@ void Application::drawPostScreen(sf::RenderTarget& target, float t)
     }
 
     const float logoX = WINDOW_WIDTH - MARGIN_X - 150.f;
-    sf::RectangleShape logo{sf::Vector2f{170.f, 66.f}};
+    engine::gfx::RectangleShape logo{engine::Vec2f{170.f, 66.f}};
     logo.setPosition(std::round(logoX), MARGIN_Y);
-    logo.setFillColor(sf::Color::Black);
+    logo.setFillColor(engine::gfx::Color::Black);
     logo.setOutlineColor(TEXT_CYAN);
     logo.setOutlineThickness(2.f);
     target.draw(logo);
@@ -208,7 +210,7 @@ void Application::drawPostScreen(sf::RenderTarget& target, float t)
         x, WINDOW_HEIGHT - MARGIN_Y - LINE_HEIGHT, TEXT_GREY);
 }
 
-void Application::drawBootScreen(sf::RenderTarget& target, float t)
+void Application::drawBootScreen(engine::gfx::RenderTarget& target, float t)
 {
     float y = MARGIN_Y;
     const float x = MARGIN_X;
@@ -217,7 +219,7 @@ void Application::drawBootScreen(sf::RenderTarget& target, float t)
     {
         float at;            // seconds into the boot phase before it appears
         std::string text;
-        sf::Color color;
+        engine::gfx::Color color;
     };
 
     static const std::vector<Line> lines = {
@@ -267,7 +269,7 @@ void Application::drawBootScreen(sf::RenderTarget& target, float t)
         const bool on = std::fmod(elapsed_, 1.0f) < 0.5f;
         if (on)
         {
-            sf::RectangleShape cursor{sf::Vector2f{10.f, 18.f}};
+            engine::gfx::RectangleShape cursor{engine::Vec2f{10.f, 18.f}};
             cursor.setPosition(x, std::round(y + 2.f));
             cursor.setFillColor(TEXT_WHITE);
             target.draw(cursor);

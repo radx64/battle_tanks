@@ -58,8 +58,8 @@ Application::Application()
 
 void Application::onInit()
 {
-    window_.getNativeHandle().setFramerateLimit(60);
-    window_.getNativeHandle().setVerticalSyncEnabled(true);
+    window_.setFramerateLimit(60);
+    window_.setVerticalSyncEnabled(true);
     generateBackground();
 
     auto quitButton = engine::gui::TextButton::create("Quit");
@@ -1094,31 +1094,31 @@ void Application::generateBackground()
     const auto X_STEPS = 20;
     const auto Y_STEPS = 10;
 
-    sf::RectangleShape outerBox{};
+    engine::gfx::RectangleShape outerBox{};
     outerBox.setPosition(EDGE_OFFSET, EDGE_OFFSET);
-    outerBox.setSize(sf::Vector2f{Config::WINDOW_WIDTH - 2 * EDGE_OFFSET, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
+    outerBox.setSize(engine::Vec2f{Config::WINDOW_WIDTH - 2 * EDGE_OFFSET, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
     outerBox.setOutlineThickness(LINE_THICKNESS);
-    outerBox.setFillColor(sf::Color::Transparent);
-    outerBox.setOutlineColor(sf::Color(255,255,255,240));
+    outerBox.setFillColor(engine::gfx::Color::Transparent);
+    outerBox.setOutlineColor(engine::gfx::Color(255,255,255,240));
     backgroundTexture_.draw(outerBox);
 
     for (auto x = 1; x < X_STEPS; ++x)
     {
         auto xCoord = x * ((Config::WINDOW_WIDTH - 2*EDGE_OFFSET) / X_STEPS) + EDGE_OFFSET;
-        sf::RectangleShape line{};
+        engine::gfx::RectangleShape line{};
         line.setPosition(xCoord, EDGE_OFFSET);
-        line.setSize(sf::Vector2f{LINE_THICKNESS/4.f, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
-        line.setFillColor(sf::Color(255,255,255,200));
+        line.setSize(engine::Vec2f{LINE_THICKNESS/4.f, Config::WINDOW_HEIGHT -  2*EDGE_OFFSET});
+        line.setFillColor(engine::gfx::Color(255,255,255,200));
         backgroundTexture_.draw(line);
     }
 
     for (auto y = 1; y < Y_STEPS; ++y)
     {
         auto yCoord = y * ((Config::WINDOW_HEIGHT- 2*EDGE_OFFSET) / Y_STEPS) + EDGE_OFFSET;
-        sf::RectangleShape line{};
+        engine::gfx::RectangleShape line{};
         line.setPosition(EDGE_OFFSET, yCoord);
-        line.setSize(sf::Vector2f{Config::WINDOW_WIDTH -  2*EDGE_OFFSET, LINE_THICKNESS/4.f});
-        line.setFillColor(sf::Color(255,255,255,200));
+        line.setSize(engine::Vec2f{Config::WINDOW_WIDTH -  2*EDGE_OFFSET, LINE_THICKNESS/4.f});
+        line.setFillColor(engine::gfx::Color(255,255,255,200));
         backgroundTexture_.draw(line);
     }
     backgroundTexture_.display();
@@ -1126,8 +1126,8 @@ void Application::generateBackground()
 
 void Application::onRender()
 {
-    window_.getNativeHandle().clear(sf::Color(20, 110, 158));
-    window_.getNativeHandle().draw(backgroundSprite_);
+    window_.clear(engine::gfx::Color(20, 110, 158));
+    window_.getRenderTarget().draw(backgroundSprite_);
     engine::gui::Application::onRender();
 }
 

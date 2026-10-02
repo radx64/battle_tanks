@@ -13,7 +13,7 @@ void FpsCounter::startMeasurement()
 
 void FpsCounter::endMeasurement()
 {
-    auto measurement = clock_.getElapsedTime().asMilliseconds();
+    auto measurement = clock_.getElapsedMilliseconds();
 
     if (measurement <= 1)
     {

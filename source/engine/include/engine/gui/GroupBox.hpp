@@ -3,7 +3,6 @@
 #include <memory>
 #include <string_view>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gfx/Color.hpp"
 #include "engine/gui/Text.hpp"

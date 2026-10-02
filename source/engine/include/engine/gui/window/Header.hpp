@@ -2,7 +2,6 @@
 
 #include <functional>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/Widget.hpp"
 #include "engine/gfx/Shape.hpp"

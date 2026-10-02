@@ -1,7 +1,5 @@
 #include "engine/gui/window/MenuBar.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include <algorithm>
 #include <ranges>
 #include <utility>

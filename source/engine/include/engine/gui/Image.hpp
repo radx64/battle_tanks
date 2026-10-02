@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gfx/Texture.hpp"
 #include "engine/gfx/Sprite.hpp"

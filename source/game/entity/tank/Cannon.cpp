@@ -20,7 +20,7 @@ constexpr float CANNON_SPRITE_ROTATION_OFFSET = 90.f;
 constexpr float CANNON_LENGTH = 30.f;
 constexpr float BULLET_SPEED = 400.f;
 
-Cannon::Cannon(float x, float y, float rotation, sf::Texture& texture) 
+Cannon::Cannon(float x, float y, float rotation, engine::gfx::Texture& texture) 
     : x_(x),
     y_(y),
     current_rotation_(rotation),
@@ -28,19 +28,19 @@ Cannon::Cannon(float x, float y, float rotation, sf::Texture& texture)
     cooldown_{}
 {
     sprite_.setTexture(texture);
-    sf::Vector2u texture_size = texture.getSize();
-    sf::Vector2f texture_middle_point(texture_size.x / 2, texture_size.y / 2 + 10);
+    engine::Vec2u texture_size = texture.getSize();
+    engine::Vec2f texture_middle_point(texture_size.x / 2, texture_size.y / 2 + 10);
     sprite_.setOrigin(texture_middle_point);
 }
 
-void Cannon::draw(sf::RenderWindow& render_window)
+void Cannon::draw(engine::gfx::RenderTarget& render_window)
 {
-    sprite_.setColor(sf::Color(10, 10, 10, 127));
+    sprite_.setColor(engine::gfx::Color(10, 10, 10, 127));
     sprite_.setPosition(x_ + 3, y_+ 3);
     sprite_.setRotation(current_rotation_);
    render_window.draw(sprite_);
 
-    sprite_.setColor(sf::Color(255, 255, 255, 255));
+    sprite_.setColor(engine::gfx::Color(255, 255, 255, 255));
     sprite_.setPosition(x_, y_);
    render_window.draw(sprite_);
 }

@@ -30,7 +30,7 @@ public:
     GUI(const engine::Vec2f& mainWindowSize);
     virtual ~GUI();
 
-    void render(sf::RenderWindow& render_window);
+    void render(engine::gfx::RenderTarget& renderTarget);
     void update();
     
     MainWindow& mainWindow();

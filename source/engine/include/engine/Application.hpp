@@ -1,8 +1,9 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "engine/Clock.hpp"
+#include "engine/Stopwatch.hpp"
+#include "engine/gfx/Font.hpp"
+#include "engine/gfx/Text.hpp"
 #include "engine/CollisionSolver.hpp"
 #include "engine/Context.hpp"
 #include "engine/events/Event.hpp"
@@ -51,9 +52,9 @@ protected:
     bool isRunning_{true};
 
     engine::Window window_;
-    sf::Clock clock_;
-    sf::Font font_;
-    sf::Text profilingText_;
+    engine::Stopwatch clock_;
+    engine::gfx::Font font_;
+    engine::gfx::Text profilingText_;
 
     engine::ParticleSystem particle_system_;
     engine::TimerService timer_service_;

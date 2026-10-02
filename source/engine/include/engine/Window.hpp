@@ -6,9 +6,9 @@
 
 #include "engine/Vector2.hpp"
 #include "engine/events/Event.hpp"
-
-// TODO Hack, see below 
-namespace sf { class RenderWindow; }
+#include "engine/gfx/Color.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/View.hpp"
 
 namespace engine
 {
@@ -35,15 +35,23 @@ public:
     void setSize(const engine::Vector2i& size);
     void setPosition(const engine::Vector2i& position);
     void setKeyRepeatEnabled(bool enabled);
+    void setFramerateLimit(unsigned int limit);
+    void setVerticalSyncEnabled(bool enabled);
     void close();
+
+    void clear(const engine::gfx::Color& color);
+    void display();
+    engine::gfx::RenderTarget& getRenderTarget();
+
+    void setView(const engine::gfx::View& view);
+    engine::gfx::View getView() const;
+    const engine::gfx::View& getDefaultView() const;
+    engine::Vec2f mapPixelToCoords(const engine::Vec2f& point, const engine::gfx::View& view) const;
 
     void pollEvents();
 
     using EventCallbackFn = std::function<void(engine::events::Event&)>;
     void setEventsCallback(const EventCallbackFn& callback){event_callback_ = callback;};
-
-    // TODO temporary solution while moving towards hiding sfml2 to backend
-    sf::RenderWindow& getNativeHandle() const;
 
 private:
     class Impl;

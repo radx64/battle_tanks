@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/GameObject.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity
 {
@@ -10,7 +10,7 @@ namespace game::entity
 class Tree : public engine::GameObject
 {
 public:
-    Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrunkRadius);
+    Tree(float x, float y, float height, engine::gfx::Texture& treeBody, float treeTrunkRadius);
     virtual ~Tree() = default;
 
     float height_;

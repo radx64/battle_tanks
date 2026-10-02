@@ -54,7 +54,7 @@ protected:
     const engine::Vector2f camera_initial_position_;
     engine::Camera camera_;
     engine::CameraController camera_controller_;
-    sf::View camera_view_;
+    engine::gfx::View camera_view_;
 
     std::unique_ptr<graphics::Tilemap> tilemap_;
 
@@ -63,7 +63,7 @@ protected:
     
     game::WaypointMouseController waypoint_mouse_controller_;
 
-    std::vector<sf::Vector2i> waypoints_;
+    std::vector<engine::Vec2i> waypoints_;
     std::vector<std::unique_ptr<game::entity::TankController>> lua_controllers_;
     lua::ScriptsScheduler scripts_scheduler_;
 

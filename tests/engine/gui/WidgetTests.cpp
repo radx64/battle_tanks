@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/Widget.hpp"
 
@@ -111,7 +110,7 @@ TEST(WidgetShould, callOnRenderMethodOnlyWhenWidgetIsVisible)
     auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
     auto sut_ptr = sut_.get();
 
-    sf::RenderTexture guiRenderTexture;
+    engine::gfx::RenderTexture guiRenderTexture;
 
     EXPECT_CALL(*sut_ptr, render_mock()).Times(1);
     sut_->setVisibility(true);
@@ -151,7 +150,7 @@ TEST(WidgetShould, renderChildrenOnlyWhenWidgetItselfIsVisible)
     sut_->addChild(std::move(child_1));
     sut_->addChild(std::move(child_2));
 
-    sf::RenderTexture guiRenderTexture;
+    engine::gfx::RenderTexture guiRenderTexture;
     EXPECT_CALL(*sut_ptr, render_mock()).Times(1);
     EXPECT_CALL(*child_1_ptr, render_mock()).Times(1);
     EXPECT_CALL(*child_2_ptr, render_mock()).Times(1);
@@ -171,7 +170,7 @@ TEST(WidgetShould, renderChildrenOnlyWhenWidgetItselfIsVisible)
 TEST(WidgetShould, setAndGetItsSize)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
-    auto required_size = sf::Vector2f{2.f, 9.f};
+    auto required_size = engine::Vec2f{2.f, 9.f};
     sut_->setSize(required_size);
 
     EXPECT_EQ(sut_->getSize(), required_size);
@@ -181,9 +180,9 @@ TEST(WidgetShould, KnowOwnPositionWithoutParent)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
-    sut_->setPosition(sf::Vector2f{10.f,20.f});
+    sut_->setPosition(engine::Vec2f{10.f,20.f});
 
-    auto expected_position = sf::Vector2f{10.f, 20.f};
+    auto expected_position = engine::Vec2f{10.f, 20.f};
     EXPECT_EQ(sut_->getPosition(), expected_position);
     EXPECT_EQ(sut_->getGlobalPosition(), expected_position);
 }
@@ -193,13 +192,13 @@ TEST(WidgetShould, KnowOwnPositionWithParent)
     auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
     auto parent_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
 
-    parent_->setPosition(sf::Vector2f{10.f,20.f});
-    sut_->setPosition(sf::Vector2f{20.f,10.f});
+    parent_->setPosition(engine::Vec2f{10.f,20.f});
+    sut_->setPosition(engine::Vec2f{20.f,10.f});
     auto sut_ptr = sut_.get();
     parent_->addChild(std::move(sut_));
 
-    auto expected_global_position = sf::Vector2f{30.f, 30.f};
-    auto expected_local_position = sf::Vector2f{20.f, 10.f};
+    auto expected_global_position = engine::Vec2f{30.f, 30.f};
+    auto expected_local_position = engine::Vec2f{20.f, 10.f};
     EXPECT_EQ(sut_ptr->getPosition(), expected_local_position);
     EXPECT_EQ(sut_ptr->getGlobalPosition(), expected_global_position);
 }
@@ -207,11 +206,11 @@ TEST(WidgetShould, KnowOwnPositionWithParent)
 TEST(WidgetShould, DetectIfPointIsInsideOfWidget)
 {
     auto sut_ = std::make_unique<::testing::NiceMock<WidgetSpy>>();
-    sut_->setPosition(sf::Vector2f{20.f,10.f});
-    sut_->setSize(sf::Vector2f{10.f,10.f});
+    sut_->setPosition(engine::Vec2f{20.f,10.f});
+    sut_->setSize(engine::Vec2f{10.f,10.f});
 
-    EXPECT_TRUE(sut_->isInside(sf::Vector2f{25.f, 15.f}));
-    EXPECT_FALSE(sut_->isInside(sf::Vector2f{0.f, 5.f}));
+    EXPECT_TRUE(sut_->isInside(engine::Vec2f{25.f, 15.f}));
+    EXPECT_FALSE(sut_->isInside(engine::Vec2f{0.f, 5.f}));
 }
 
 }  // namespace engine::gui

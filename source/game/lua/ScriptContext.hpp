@@ -2,12 +2,12 @@
 
 #include <sol/sol.hpp>
 
-#include <SFML/System.hpp>
 
 #include <string>
 #include <string_view>
 
 #include "engine/Logger.hpp"
+#include "engine/Vector2.hpp"
 #include "game/lua/WaitCondition.hpp"
 
 
@@ -21,7 +21,7 @@ public:
 
     // TODO: waypoints should not be part of script context, 
     // this is just a quick and dirty solution for PoC, refactor later
-    ScriptContext(std::string_view scriptFile, entity::Tank* tank, std::vector<sf::Vector2i>& waypoints_);
+    ScriptContext(std::string_view scriptFile, entity::Tank* tank, std::vector<engine::Vec2i>& waypoints_);
     ~ScriptContext() = default;
         
     ScriptContext(const ScriptContext& other) = delete;
@@ -36,7 +36,7 @@ public:
     sol::coroutine& coroutine();
     std::unique_ptr<WaitCondition>& waitCondition();
     entity::Tank* tank();
-    std::vector<sf::Vector2i>& waypoints();
+    std::vector<engine::Vec2i>& waypoints();
     bool isStopped() const noexcept;
     const std::string& stopReason() const noexcept;
     
@@ -46,7 +46,7 @@ protected:
     sol::state lua_state_;
     sol::coroutine coroutine_;
     entity::Tank* tank_;
-    std::vector<sf::Vector2i>& waypoints_;
+    std::vector<engine::Vec2i>& waypoints_;
     std::unique_ptr<WaitCondition> wait_;
     const std::string_view script_file_;
     bool stopped_ = true;

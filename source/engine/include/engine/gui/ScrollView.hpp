@@ -22,10 +22,10 @@ public:
 
 protected:
     ScrollView();
-    void onRender(sf::RenderTexture& renderTexture) override;
+    void onRender(engine::gfx::RenderTarget& renderTarget) override;
     void onSizeChange() override;
     void applyScroll();
-    void ensureRectVisible(const sf::FloatRect& rectBounds);
+    void ensureRectVisible(const engine::FloatRect& rectBounds);
     void applyLayout(const bool showHorizontalScrollBar, const bool showVerticalScrollBar);
     engine::Vec2f calculateViewportSize(const bool showHorizontalScrollBar, const bool showVerticalScrollBar) const;
 

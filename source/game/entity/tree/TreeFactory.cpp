@@ -1,6 +1,5 @@
 #include "game/entity/tree/TreeFactory.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "game/entity/tree/Tree.hpp"
 #include "graphics/TextureLibrary.hpp"
@@ -12,7 +11,7 @@ constexpr float SMALL_TREE_TRUNK_RADIUS = 5.f;
 constexpr float LARGE_TREE_TRUNK_RADIUS = 10.f;
 
 namespace {
-sf::Texture& getTreeTexture(const TreeFactory::TreeType type)
+engine::gfx::Texture& getTreeTexture(const TreeFactory::TreeType type)
 {
     switch (type)
     {

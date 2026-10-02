@@ -1,7 +1,5 @@
 #include "engine/gui/ContextMenu.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include <algorithm>
 #include <ranges>
 

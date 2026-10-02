@@ -1,11 +1,14 @@
 #pragma once
 
+#include <vector>
+
 #include "engine/Application.hpp"
+#include "engine/gfx/Sprite.hpp"
+#include "engine/gfx/Texture.hpp"
 #include "MouseController.hpp"
 #include "KeyboardController.hpp"
 
 #include <box2d/box2d.h>
-#include <SFML/Graphics.hpp>
 
 namespace sandbox
 {
@@ -32,11 +35,11 @@ protected:
     b2WorldId worldId_;
     std::vector<b2BodyId> bodies_;
 
-    sf::Texture boxTexture_;
-    sf::Texture circleTexture_;
+    engine::gfx::Texture boxTexture_;
+    engine::gfx::Texture circleTexture_;
 
-    sf::Sprite boxSprite_;
-    sf::Sprite circleSprite_; 
+    engine::gfx::Sprite boxSprite_;
+    engine::gfx::Sprite circleSprite_; 
     bool debugDraw_ = false;
 };
 

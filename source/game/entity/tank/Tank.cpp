@@ -32,7 +32,7 @@ void Tank::setDebug(bool is_enabled)
 
 Tank::Tank(float x, float y, float rotation, 
     std::unique_ptr<Cannon> cannon, 
-    sf::Texture& tank_body,
+    engine::gfx::Texture& tank_body,
     TracksRenderer* tracks_renderer)
 : current_direction_{rotation}
 , cannon_{std::move(cannon)}

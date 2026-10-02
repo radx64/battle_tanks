@@ -11,12 +11,12 @@ namespace engine::gui
 
 void FontLibrary::initDefaultFont()
 {
-    fonts_.emplace(std::make_pair("default", sf::Font()));
+    fonts_.emplace(std::make_pair("default", engine::gfx::Font()));
 }
 
 void FontLibrary::initFont(const std::string_view& name, const std::string_view& path)
 {
-    auto placedElement = fonts_.emplace(std::make_pair(name, sf::Font()));
+    auto placedElement = fonts_.emplace(std::make_pair(name, engine::gfx::Font()));
     bool hasLoaded = placedElement.first->second.loadFromFile(std::string(path));
     if(not hasLoaded) throw std::string("Couldn't load font file...");
 }
@@ -31,7 +31,7 @@ void FontLibrary::init()
     initFont("ibmVGA",      concat(fontPath, "Px437_IBM_VGA_8x16.ttf"));
 }
 
-sf::Font& FontLibrary::get(const std::string_view& name)
+engine::gfx::Font& FontLibrary::get(const std::string_view& name)
 {
     auto font = fonts_.find(std::string(name));
     if (font == fonts_.end())
@@ -44,6 +44,6 @@ void FontLibrary::destroy()
     fonts_.clear();
 }
 
-std::map<std::string, sf::Font> FontLibrary::fonts_;
+std::map<std::string, engine::gfx::Font> FontLibrary::fonts_;
 
 }  // namespace engine::gui

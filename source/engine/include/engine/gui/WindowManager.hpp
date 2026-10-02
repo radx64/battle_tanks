@@ -1,15 +1,19 @@
 #pragma once
 
+#include <functional>
 #include <list>
 #include <memory>
+#include <vector>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/ContextMenu.hpp"
 #include "engine/gui/Window.hpp"
 #include "engine/Logger.hpp"
 #include "engine/TasksQueue.hpp"
 #include "engine/Vector2.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/RenderTexture.hpp"
+#include "engine/gfx/Sprite.hpp"
 
 namespace engine::gui { class Window; }
 namespace engine::gui { class MainWindow; }
@@ -30,7 +34,7 @@ public:
     void openWindow(std::unique_ptr<Window> window);
     void openContextMenu(std::unique_ptr<ContextMenu> menu, const engine::Vec2f& globalPosition);
 
-    void render(sf::RenderWindow& render_window);
+    void render(engine::gfx::RenderTarget& renderTarget);
     void update();
 
     MainWindow& mainWindow();
@@ -56,8 +60,8 @@ protected:
     // Widgets drawn on top of all windows (e.g. context menus)
     std::list<std::unique_ptr<Overlay>> overlays_;
 
-    sf::RenderTexture renderTexture_;
-    sf::Sprite textureSprite_;
+    engine::gfx::RenderTexture renderTexture_;
+    engine::gfx::Sprite textureSprite_;
 
     WindowCloseHandler windowCloseHandler_;
     OverlayCloseHandler overlayCloseHandler_;

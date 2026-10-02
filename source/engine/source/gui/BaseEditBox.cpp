@@ -1,7 +1,5 @@
 #include "engine/gui/BaseEditBox.hpp"
 
-#include "backends/sfml/FramedSpriteRenderer.hpp"
-
 #include <fmt/format.h>
 
 #include "engine/gui/Clipboard.hpp"

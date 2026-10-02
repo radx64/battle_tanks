@@ -1,8 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <string>
 
 #include "engine/Application.hpp"
+#include "engine/gfx/RenderTexture.hpp"
+#include "engine/gfx/Shader.hpp"
+#include "engine/gfx/Sprite.hpp"
 
 namespace bios
 {
@@ -20,22 +23,22 @@ protected:
     void onRender() override;
 
 private:
-    void drawScene(sf::RenderTarget& target);
-    void drawPostScreen(sf::RenderTarget& target, float t);
-    void drawBootScreen(sf::RenderTarget& target, float t);
+    void drawScene(engine::gfx::RenderTarget& target);
+    void drawPostScreen(engine::gfx::RenderTarget& target, float t);
+    void drawBootScreen(engine::gfx::RenderTarget& target, float t);
 
-    void drawText(sf::RenderTarget& target, const std::string& text,
-        float x, float y, sf::Color color = sf::Color(0xC0, 0xC0, 0xC0));
+    void drawText(engine::gfx::RenderTarget& target, const std::string& text,
+        float x, float y, engine::gfx::Color color = engine::gfx::Color(0xC0, 0xC0, 0xC0));
 
-    sf::Font font_;
-    sf::Text text_;
+    engine::gfx::Font font_;
+    engine::gfx::Text text_;
 
-    sf::RenderTexture screen_;
-    sf::Sprite screenSprite_;
-    sf::Shader crtShader_;
+    engine::gfx::RenderTexture screen_;
+    engine::gfx::Sprite screenSprite_;
+    engine::gfx::Shader crtShader_;
     bool crtAvailable_{false};
 
-    sf::Clock bootClock_;
+    engine::Stopwatch bootClock_;
     float elapsed_{0.f};
     static constexpr float BOOT_DURATION_{25.f};
 };

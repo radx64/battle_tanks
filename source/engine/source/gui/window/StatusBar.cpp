@@ -3,7 +3,6 @@
 #include "engine/gui/window/Config.hpp"
 #include "engine/gui/TextureLibrary.hpp"
 
-#include "engine/temporary/ToSfFromSf.hpp"
 namespace engine::gui::window
 {
 StatusBar::StatusBar()

@@ -31,8 +31,8 @@ TEST_F(ButtonShould, callOnClickWhenClickedInside)
 {
     ActionReceiver receiver;
     auto sut = engine::gui::TextButton::create("TEST button");
-    sut->setSize(sf::Vector2f{10.f, 10.f});
-    sut->setPosition(sf::Vector2f{0.f,0.f});
+    sut->setSize(engine::Vec2f{10.f, 10.f});
+    sut->setPosition(engine::Vec2f{0.f,0.f});
     sut->onClick([&receiver](){receiver.action();});
     EXPECT_CALL(receiver, action());
     sut->receive(engine::engine::events::MouseButtonPressed{.button = engine::gui::events::MouseButton::Left, .position = {1.f, 1.f}});

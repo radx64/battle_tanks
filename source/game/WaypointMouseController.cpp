@@ -5,7 +5,7 @@
 namespace game
 {
 
-WaypointMouseController::WaypointMouseController(std::vector<sf::Vector2i>& waypoints, sf::RenderWindow& window, sf::View& view)
+WaypointMouseController::WaypointMouseController(std::vector<engine::Vec2i>& waypoints, engine::Window& window, engine::gfx::View& view)
 : waypoints_(waypoints)
 , window_(window)
 , view_(view)
@@ -21,7 +21,7 @@ engine::gui::EventStatus WaypointMouseController::onButtonPressed(const engine::
     }
 
     auto waypoint_position  = screen_coords;
-    waypoints_.push_back(sf::Vector2i{waypoint_position});
+    waypoints_.push_back(engine::Vec2i{waypoint_position});
     return engine::gui::EventStatus::Consumed;
 }
 
@@ -40,11 +40,11 @@ engine::gui::EventStatus WaypointMouseController::onMouseScrolled(const engine::
     return engine::gui::EventStatus::NotConsumed;
 }
 
-sf::Vector2f WaypointMouseController::mapPixelToCoords(const engine::Vec2f& mouse_position)
+engine::Vec2f WaypointMouseController::mapPixelToCoords(const engine::Vec2f& mouse_position)
 {
     engine::Logger logger{"WaypointMouseController"};
     logger.vip(fmt::format("Mapping pixel to coords: mouse_position = ({}, {})", mouse_position.x, mouse_position.y));
-    return window_.mapPixelToCoords(sf::Vector2i{(int)mouse_position.x, (int)mouse_position.y}, view_);
+    return window_.mapPixelToCoords(mouse_position, view_);
 }
 
 }  // namespace game

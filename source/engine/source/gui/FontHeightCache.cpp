@@ -4,9 +4,9 @@
 #include <utility>
 
 #include <fmt/format.h>
-#include <SFML/Graphics.hpp>
 
 #include "engine/Logger.hpp"
+#include "engine/gfx/Text.hpp"
 
 namespace 
 {
@@ -24,9 +24,9 @@ namespace engine::gui {
 
 namespace
 {
-sf::FloatRect getReferenceTextBounds(const sf::Font& font, unsigned int characterSize)
+engine::FloatRect getReferenceTextBounds(const engine::gfx::Font& font, unsigned int characterSize)
 {
-    sf::Text text;
+    engine::gfx::Text text;
     text.setFont(font);
     text.setCharacterSize(characterSize);
     text.setString("Ay|_,q");
@@ -34,10 +34,10 @@ sf::FloatRect getReferenceTextBounds(const sf::Font& font, unsigned int characte
 }
 }
 
-float getFontHeight(const sf::Font& font, unsigned int characterSize)
+float getFontHeight(const engine::gfx::Font& font, unsigned int characterSize)
 {
-    using HashFunc = PairHash<const sf::Font*, unsigned int>;
-    static std::unordered_map<std::pair<const sf::Font*, unsigned int>, float, HashFunc> cache{};
+    using HashFunc = PairHash<const engine::gfx::Font*, unsigned int>;
+    static std::unordered_map<std::pair<const engine::gfx::Font*, unsigned int>, float, HashFunc> cache{};
 
     const auto key = std::make_pair(&font, characterSize);
     const auto it = cache.find(key);
@@ -57,10 +57,10 @@ float getFontHeight(const sf::Font& font, unsigned int characterSize)
     return height;
 }
 
-float getFontTop(const sf::Font& font, unsigned int characterSize)
+float getFontTop(const engine::gfx::Font& font, unsigned int characterSize)
 {
-    using HashFunc = PairHash<const sf::Font*, unsigned int>;
-    static std::unordered_map<std::pair<const sf::Font*, unsigned int>, float, HashFunc> cache{};
+    using HashFunc = PairHash<const engine::gfx::Font*, unsigned int>;
+    static std::unordered_map<std::pair<const engine::gfx::Font*, unsigned int>, float, HashFunc> cache{};
 
     const auto key = std::make_pair(&font, characterSize);
     const auto it = cache.find(key);
@@ -79,10 +79,10 @@ float getFontTop(const sf::Font& font, unsigned int characterSize)
     return top;
 }
 
-float getFontLineSpacing(const sf::Font& font, unsigned int characterSize)
+float getFontLineSpacing(const engine::gfx::Font& font, unsigned int characterSize)
 {
-    using HashFunc = PairHash<const sf::Font*, unsigned int>;
-    static std::unordered_map<std::pair<const sf::Font*, unsigned int>, float, HashFunc> cache{};
+    using HashFunc = PairHash<const engine::gfx::Font*, unsigned int>;
+    static std::unordered_map<std::pair<const engine::gfx::Font*, unsigned int>, float, HashFunc> cache{};
 
     const auto key = std::make_pair(&font, characterSize);
     const auto it = cache.find(key);

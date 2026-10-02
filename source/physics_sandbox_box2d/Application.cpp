@@ -165,27 +165,27 @@ void Application::drawBody(b2BodyId bodyId)
                 float angleInRadians = b2Rot_GetAngle(rotation);
                 
                 boxSprite_.setRotation(angleInRadians * 180.0f / 3.14159265f);
-                window_.getNativeHandle().draw(boxSprite_);
+                window_.getRenderTarget().draw(boxSprite_);
             }
 
             if (!debugDraw_) continue;
 
-            sf::VertexArray lines(sf::LineStrip, polygon.count + 1);
+            engine::gfx::VertexArray lines(engine::gfx::PrimitiveType::LineStrip, polygon.count + 1);
 
             for (int i = 0; i < polygon.count; ++i) {
                 b2Vec2 worldPos = b2TransformPoint(transform, polygon.vertices[i]);
-                lines[i].position = sf::Vector2f(worldPos.x * SCALE, worldPos.y * SCALE);
+                lines[i].position = engine::Vec2f(worldPos.x * SCALE, worldPos.y * SCALE);
                 if(b2Body_IsAwake(bodyId))
                 {
-                    lines[i].color = sf::Color::Blue;
+                    lines[i].color = engine::gfx::Color::Blue;
                 }
                 else
                 {
-                    lines[i].color = sf::Color(128, 128, 128, 128);
+                    lines[i].color = engine::gfx::Color(128, 128, 128, 128);
                 }
             }
             lines[polygon.count] = lines[0]; // Close outline loop
-            window_.getNativeHandle().draw(lines);
+            window_.getRenderTarget().draw(lines);
         }
         else if (type == b2ShapeType::b2_circleShape) 
         {
@@ -208,36 +208,36 @@ void Application::drawBody(b2BodyId bodyId)
             b2Rot rotation = transform.q;
             float angleInRadians = b2Rot_GetAngle(rotation);
             circleSprite_.setRotation(angleInRadians * 180.0f / 3.14159265f);         
-            window_.getNativeHandle().draw(circleSprite_);
+            window_.getRenderTarget().draw(circleSprite_);
 
             if (!debugDraw_) continue;
 
             float pixelRadius = circle.radius * SCALE;
 
-            sf::CircleShape sfCircle(pixelRadius);
+            engine::gfx::CircleShape sfCircle(pixelRadius);
             if (b2Body_IsAwake(bodyId))
             {
-                sfCircle.setOutlineColor(sf::Color::Red);
+                sfCircle.setOutlineColor(engine::gfx::Color::Red);
             } else {
-                sfCircle.setOutlineColor(sf::Color(128, 128, 128, 128));
+                sfCircle.setOutlineColor(engine::gfx::Color(128, 128, 128, 128));
             }
 
             sfCircle.setOutlineThickness(1.0f);
-            sfCircle.setFillColor(sf::Color::Transparent);
+            sfCircle.setFillColor(engine::gfx::Color::Transparent);
             
             sfCircle.setOrigin(pixelRadius, pixelRadius);
             sfCircle.setPosition(worldPos.x * SCALE, worldPos.y * SCALE);
 
-            sf::VertexArray radiusLine(sf::Lines, 2);
+            engine::gfx::VertexArray radiusLine(engine::gfx::PrimitiveType::Lines, 2);
             radiusLine[0].position = sfCircle.getPosition();
-            radiusLine[0].color = sf::Color::Green;
+            radiusLine[0].color = engine::gfx::Color::Green;
 
             b2Vec2 edgePoint = b2TransformPoint(transform, b2Vec2{circle.center.x + circle.radius, circle.center.y});
-            radiusLine[1].position = sf::Vector2f(edgePoint.x * SCALE, edgePoint.y * SCALE);
-            radiusLine[1].color = sf::Color::Green;
+            radiusLine[1].position = engine::Vec2f(edgePoint.x * SCALE, edgePoint.y * SCALE);
+            radiusLine[1].color = engine::gfx::Color::Green;
 
-            window_.getNativeHandle().draw(sfCircle);
-            window_.getNativeHandle().draw(radiusLine);
+            window_.getRenderTarget().draw(sfCircle);
+            window_.getRenderTarget().draw(radiusLine);
         }
     }
 }

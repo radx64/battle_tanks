@@ -2,7 +2,6 @@
 
 #include <cstddef>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gfx/Color.hpp"
 #include "engine/gfx/Shape.hpp"

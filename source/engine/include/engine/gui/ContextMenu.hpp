@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/Widget.hpp"
 #include "engine/gui/FramedSprite.hpp"

@@ -2,9 +2,11 @@
 
 #include <memory>
 #include <source_location>
+#include <string>
+#include <vector>
 
-#include <SFML/Graphics.hpp>
 
+#include "engine/Rect.hpp"
 #include "engine/gfx/RenderTarget.hpp"
 #include "engine/Logger.hpp"
 #include "engine/gui/EventReceiver.hpp"
@@ -46,7 +48,6 @@ public:
     const engine::Vec2f getPosition() const;
     void setPosition(const engine::Vec2f& position);
 
-    bool isInside(sf::Vector2f point) const;
     bool isInside(const engine::Vec2f& position) const;
 
     const engine::Vec2f getGlobalPosition() const;
@@ -129,7 +130,7 @@ protected:
     void applyPendingOperations(); // TODO: probably is no longer needed as events are handled in different manner. Will check later when I will fix context menus.
 
     engine::Vec2f localPosition_;  // offset from parent position
-    sf::FloatRect bounds_;         // bounds box in global space position
+    engine::FloatRect bounds_;         // bounds box in global space position
     Widget* parent_; 
     GUI* gui_;                     // pointer to gui handling this widget
     std::vector<std::unique_ptr<Widget>> children_;

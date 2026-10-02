@@ -17,7 +17,7 @@ public:
 
     ~WidgetSpy() override;
 
-    void onRender(sf::RenderTexture&) override;
+    void onRender(engine::gfx::RenderTarget&) override;
     engine::gui::EventStatus on(const engine::gui::events::FocusGained&) override;
     engine::gui::EventStatus on(const engine::gui::events::FocusLost&) override;
 

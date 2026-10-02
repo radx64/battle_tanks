@@ -3,12 +3,10 @@
 #include "engine/gui/Events.hpp"
 #include "engine/gui/EventReceiver.hpp"
 
-#include "engine/temporary/ToSfFromSf.hpp"
-
 namespace engine::gui
 {
 
-MouseController::MouseController(engine::gui::EventReceiver* receiver, sf::RenderWindow& window, const sf::View& view)
+MouseController::MouseController(engine::gui::EventReceiver* receiver, engine::Window& window, const engine::gfx::View& view)
 : receiver_(receiver)
 , window_(window)
 , view_(view)
@@ -52,12 +50,9 @@ engine::gui::EventStatus MouseController::onMouseScrolled(const engine::Vec2f& m
     return result;
 }
 
-sf::Vector2f MouseController::mapPixelToCoords(const engine::Vec2f& mouse_position)
+engine::Vec2f MouseController::mapPixelToCoords(const engine::Vec2f& mouse_position)
 {
-    return window_.mapPixelToCoords(sf::Vector2i{
-        static_cast<int>(mouse_position.x), 
-        static_cast<int>(mouse_position.y)}, 
-        view_);
+    return window_.mapPixelToCoords(mouse_position, view_);
 }
 
 }  // namespace engine::gui

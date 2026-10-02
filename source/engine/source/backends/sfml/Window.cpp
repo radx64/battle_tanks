@@ -8,6 +8,7 @@
 
 #include "WindowImpl.hpp"
 
+#include "backends/sfml/ToSf.hpp"
 #include "fromSf.hpp"
 
 namespace engine
@@ -27,6 +28,7 @@ void Window::setTitle(const std::string& title)
 void Window::setSize(const engine::Vector2i& size)
 {
     impl_->renderWindow_.setSize(sf::Vector2u(size.x, size.y));
+    impl_->syncDefaultView();
 }
 
 void Window::setPosition(const engine::Vector2i& position)
@@ -39,9 +41,57 @@ void Window::setKeyRepeatEnabled(bool enabled)
     impl_->renderWindow_.setKeyRepeatEnabled(enabled);
 }
 
+void Window::setFramerateLimit(const unsigned int limit)
+{
+    impl_->renderWindow_.setFramerateLimit(limit);
+}
+
+void Window::setVerticalSyncEnabled(const bool enabled)
+{
+    impl_->renderWindow_.setVerticalSyncEnabled(enabled);
+}
+
 void Window::close()
 {
     impl_->renderWindow_.close();
+}
+
+void Window::clear(const engine::gfx::Color& color)
+{
+    impl_->renderTarget_->clear(color);
+}
+
+void Window::display()
+{
+    impl_->renderWindow_.display();
+}
+
+engine::gfx::RenderTarget& Window::getRenderTarget()
+{
+    return *impl_->renderTarget_;
+}
+
+void Window::setView(const engine::gfx::View& view)
+{
+    impl_->renderWindow_.setView(toSf(view));
+}
+
+engine::gfx::View Window::getView() const
+{
+    return fromSf(impl_->renderWindow_.getView());
+}
+
+const engine::gfx::View& Window::getDefaultView() const
+{
+    return impl_->defaultView_;
+}
+
+engine::Vec2f Window::mapPixelToCoords(const engine::Vec2f& point, const engine::gfx::View& view) const
+{
+    const auto mapped = impl_->renderWindow_.mapPixelToCoords(
+        sf::Vector2i{static_cast<int>(point.x), static_cast<int>(point.y)},
+        toSf(view));
+    return engine::Vec2f{mapped.x, mapped.y};
 }
 
 void Window::pollEvents()
@@ -141,11 +191,5 @@ void Window::pollEvents()
     }
     
 }
-
-// TODO temporary solution while moving towards hiding sfml2 to backend
-sf::RenderWindow& Window::getNativeHandle() const
-{
-    return impl_->renderWindow_;
-};
 
 }  // namespace engine

@@ -7,7 +7,6 @@
 #include "engine/gfx/Sprite.hpp"
 #include "engine/gui/Widget.hpp"
 
-#include <SFML/Graphics.hpp>
 
 namespace engine::gui
 {

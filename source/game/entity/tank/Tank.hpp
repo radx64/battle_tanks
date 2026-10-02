@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/GameObject.hpp"
 #include "engine/Vector2.hpp"
@@ -19,7 +18,7 @@ class Tank : public engine::GameObject
 public:
     Tank(float x, float y, float rotation, 
         std::unique_ptr<Cannon> cannon, 
-        sf::Texture& tank_body,
+        engine::gfx::Texture& tank_body,
         TracksRenderer* tracks_renderer);
     virtual ~Tank() = default;
 
@@ -44,7 +43,7 @@ public:
 protected:
     std::unique_ptr<Cannon> cannon_;
     Led led_;
-    sf::Vector2f tank_middle_point_;
+    engine::Vec2f tank_middle_point_;
     float set_direction_{};
     float set_throttle_{};
     float lifetime_{};

@@ -6,8 +6,6 @@ namespace engine {class Scene;}
 namespace engine {class Renderer;}
 namespace engine {class RigidBody;}
 
-namespace sf {class RenderWindow;}
-
 namespace engine
 {
 
@@ -25,10 +23,10 @@ void GameObject::kill()
     isDead_ = true;
 }
 
-void GameObject::draw(sf::RenderWindow& render_window, float time_step)
+void GameObject::draw(engine::gfx::RenderTarget& renderTarget, float time_step)
 {
     (void) time_step;
-    if (renderer_)  renderer_->draw(render_window); // TODO add time_step 
+    if (renderer_)  renderer_->draw(renderTarget); // TODO add time_step 
 }
 
 void GameObject::onUpdate(engine::Scene& scene, float time_step)

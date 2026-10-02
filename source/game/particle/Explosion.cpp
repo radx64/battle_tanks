@@ -14,20 +14,20 @@ Explosion::Explosion(float x, float y)
     angularVelocity_ = 180.f;
     auto& explosionBody = graphics::TextureLibrary::instance().get("explosion_smoke_2");
     sprite_.setTexture(explosionBody);
-    sf::Vector2u texture_body_size = explosionBody.getSize();
-    auto middle_point = sf::Vector2f(texture_body_size.x / 2, texture_body_size.y / 2);
+    engine::Vec2u texture_body_size = explosionBody.getSize();
+    auto middle_point = engine::Vec2f(texture_body_size.x / 2, texture_body_size.y / 2);
     sprite_.setOrigin(middle_point);   
 }
 
-void Explosion::draw(sf::RenderWindow& render_window)
+void Explosion::draw(engine::gfx::RenderTarget& render_window)
 {
-    sprite_.setScale(sf::Vector2f{2.f,2.f} * lifetime_);
+    sprite_.setScale(engine::Vec2f{2.f,2.f} * lifetime_);
     sprite_.setRotation(rotation_);
-    sprite_.setColor(sf::Color(10, 10, 10, 127 * (EXPLOSION_LIFETIME - lifetime_)));
-    sprite_.setPosition(position_ + sf::Vector2f{4.f, 4.f});
+    sprite_.setColor(engine::gfx::Color(10, 10, 10, 127 * (EXPLOSION_LIFETIME - lifetime_)));
+    sprite_.setPosition(position_ + engine::Vec2f{4.f, 4.f});
    render_window.draw(sprite_);
 
-    sprite_.setColor(sf::Color(255, 255, 255, 255 * (EXPLOSION_LIFETIME - lifetime_)));
+    sprite_.setColor(engine::gfx::Color(255, 255, 255, 255 * (EXPLOSION_LIFETIME - lifetime_)));
     sprite_.setPosition(position_);
    render_window.draw(sprite_);
 }

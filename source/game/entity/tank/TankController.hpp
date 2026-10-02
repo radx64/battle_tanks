@@ -13,7 +13,7 @@ namespace game::entity
 class TankController
 {
 public:
-    TankController(std::string_view script_file, game::entity::Tank* tank, std::vector<sf::Vector2i>& waypoints);
+    TankController(std::string_view script_file, game::entity::Tank* tank, std::vector<engine::Vec2i>& waypoints);
     virtual ~TankController() = default;
     lua::ScriptContext* getScript();
     void reload();

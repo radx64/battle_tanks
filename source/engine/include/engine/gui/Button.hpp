@@ -4,7 +4,6 @@
 #include <memory>
 #include <string_view>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gfx/Texture.hpp"
 

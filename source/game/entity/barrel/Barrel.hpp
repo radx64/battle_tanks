@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/GameObject.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity
 {
@@ -10,7 +10,7 @@ namespace game::entity
 class Barrel : public engine::GameObject
 {
 public:
-    Barrel(float x, float y, sf::Texture& barrelBody);
+    Barrel(float x, float y, engine::gfx::Texture& barrelBody);
     virtual ~Barrel() = default;
 };
 

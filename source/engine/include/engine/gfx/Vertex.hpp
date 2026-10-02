@@ -17,7 +17,7 @@ public:
     Vertex(const engine::Vec2f& position, const engine::gfx::Color& color, const engine::Vec2f& uv);
 
     engine::Vec2f position;
-    engine::gfx::Color color;
+    engine::gfx::Color color{255, 255, 255, 255};
     engine::Vec2f uv;
 };
 

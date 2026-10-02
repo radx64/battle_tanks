@@ -2,7 +2,6 @@
 
 #include <string_view>
 
-#include <SFML/Graphics/Texture.hpp>
 
 #include "engine/gui/style/Stateful.hpp"
 #include "engine/gui/style/Text.hpp"

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "engine/Renderer.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/Sprite.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity { class Bullet; }
 
@@ -9,12 +12,12 @@ namespace game::entity
 class BulletRenderer : public engine::Renderer
 {
 public:
-    BulletRenderer(Bullet* bullet, sf::Texture& bulletBody);
-    void draw(sf::RenderWindow& render_window) override;
+    BulletRenderer(Bullet* bullet, engine::gfx::Texture& bulletBody);
+    void draw(engine::gfx::RenderTarget& render_window) override;
 
 protected:
     Bullet* bullet_;
-    sf::Sprite bulletSprite_;
+    engine::gfx::Sprite bulletSprite_;
 };
 
 }  // namespace game::entity 

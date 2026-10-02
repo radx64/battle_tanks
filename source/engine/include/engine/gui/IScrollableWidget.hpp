@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include "engine/Rect.hpp"
 #include "engine/gui/Widget.hpp"
 #include "engine/Vector2.hpp"
 
@@ -18,7 +19,7 @@ public:
         onViewChangeCallback_ = std::move(callback);
     }
 
-    void onFocusRectChange(std::function<void(const sf::FloatRect&)> callback)
+    void onFocusRectChange(std::function<void(const engine::FloatRect&)> callback)
     {
         onFocusRectChangeCallback_ = std::move(callback);
     }
@@ -35,7 +36,7 @@ protected:
         }
     }
 
-    void notifyFocusRectChange(const sf::FloatRect& position)
+    void notifyFocusRectChange(const engine::FloatRect& position)
     {
         if (onFocusRectChangeCallback_)
         {
@@ -44,7 +45,7 @@ protected:
     }
 
     std::function<void()> onViewChangeCallback_;
-    std::function<void(const sf::FloatRect&)> onFocusRectChangeCallback_;
+    std::function<void(const engine::FloatRect&)> onFocusRectChangeCallback_;
 };
 
 }  // namespace engine::gui

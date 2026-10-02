@@ -62,7 +62,7 @@ ScriptContext* get_script_context(lua_State* L)
 }  // namespace
 
 
-ScriptContext::ScriptContext(const std::string_view scriptFile, entity::Tank* tank, std::vector<sf::Vector2i>& waypoints)
+ScriptContext::ScriptContext(const std::string_view scriptFile, entity::Tank* tank, std::vector<engine::Vec2i>& waypoints)
 : logger_{"ScriptContext"}
 , tank_{tank}
 , waypoints_{waypoints}
@@ -158,7 +158,7 @@ entity::Tank* ScriptContext::tank()
     return tank_;
 }
 
-std::vector<sf::Vector2i>& ScriptContext::waypoints()
+std::vector<engine::Vec2i>& ScriptContext::waypoints()
 {
     return waypoints_;
 }
@@ -321,7 +321,7 @@ int lua_set_led_color(sol::this_state ts, int r, int g, int b)
 
     if (!ctx->tank()) return 0;
 
-    ctx->tank()->led().setColor(sf::Color(r, g, b));
+    ctx->tank()->led().setColor(engine::gfx::Color(r, g, b));
     return 0;
 }
 
@@ -346,7 +346,7 @@ int lua_set_led_color_hex(sol::this_state ts, const std::string& hexColor)
         int r = std::stoi(hex.substr(0, 2), nullptr, 16);
         int g = std::stoi(hex.substr(2, 2), nullptr, 16);
         int b = std::stoi(hex.substr(4, 2), nullptr, 16);
-        ctx->tank()->led().setColor(sf::Color(r, g, b));
+        ctx->tank()->led().setColor(engine::gfx::Color(r, g, b));
     } catch (const std::exception& e) {
         ctx->logger_.error("Error parsing hex color: " + std::string(e.what()));
     }

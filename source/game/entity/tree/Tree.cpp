@@ -1,6 +1,5 @@
 #include "game/entity/tree/Tree.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "graphics/TextureLibrary.hpp"
 
@@ -14,7 +13,7 @@ namespace game::entity
 constexpr float GROUND_DRAG_COEEF = 0.1f;
 constexpr float TREE_MASS = 500.f;
 
-Tree::Tree(float x, float y, float height, sf::Texture& treeBody, float treeTrunkRadius)
+Tree::Tree(float x, float y, float height, engine::gfx::Texture& treeBody, float treeTrunkRadius)
 : height_(height)
 { 
     transform().position().x = x;

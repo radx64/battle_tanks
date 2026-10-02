@@ -17,11 +17,11 @@ namespace engine::gui
 
 Text::Text(const style::Text& style)
 : offset_{0.f, 0.f}
-, sprite_(texture_.getTexture())
 , style_{style}
 {
     // Start with a small default size; will grow dynamically as text changes.
     texture_.create(256, 256);
+    sprite_.setTexture(texture_.getTexture(), true);
     text_.setFont(FontLibrary::get(style.fontName));
     text_.setCharacterSize(style.size);
     text_.setFillColor(style.color);
@@ -64,7 +64,7 @@ void Text::setSize(const engine::Vec2f& size)
     size_ = size;
 }
 
-sf::FloatRect Text::getTextBounds() const
+engine::FloatRect Text::getTextBounds() const
 {
     auto textBounds = text_.getLocalBounds();
     textBounds.top = getFontTop(*text_.getFont(), text_.getCharacterSize());
@@ -84,12 +84,12 @@ std::string Text::getText() const
     return text_.getString();
 }
 
-void Text::setFont(const sf::Font& font)
+void Text::setFont(const engine::gfx::Font& font)
 {
     text_.setFont(font);
 }
 
-const sf::Font* Text::getFont() const
+const engine::gfx::Font* Text::getFont() const
 {
     return text_.getFont();
 }
@@ -104,12 +104,12 @@ uint32_t Text::getCharacterSize() const
     return text_.getCharacterSize();
 }
 
-void Text::setOutlineColor(const sf::Color& color)
+void Text::setOutlineColor(const engine::gfx::Color& color)
 {
     text_.setOutlineColor(color);
 }
 
-void Text::setFillColor(const sf::Color& color)
+void Text::setFillColor(const engine::gfx::Color& color)
 {
     text_.setFillColor(color);
 }
@@ -138,12 +138,13 @@ void Text::updateTexture()
         auto newWidth = static_cast<unsigned int>(requiredWidth * 1.2f);
         auto newHeight = static_cast<unsigned int>(requiredHeight * 1.2f);
         texture_.create(newWidth, newHeight);
+        sprite_.setTexture(texture_.getTexture(), true);
     }
 
-    texture_.clear(sf::Color::Transparent);
+    texture_.clear(engine::gfx::Color::Transparent);
 
     // Keep a stable baseline for the font instead of re-anchoring on the current glyph mix.
-    text_.setPosition(-textBounds.left, -referenceTop);
+    text_.setPosition({-textBounds.left, -referenceTop});
 
     texture_.draw(text_);
 
@@ -163,8 +164,8 @@ void Text::invalidateTexture()
 
 void Text::updateSprite()
 {
-    sf::Vector2f textureStart{0.f, 0.f};
-    sf::Vector2f positionOffset{0.f, 0.f};
+    engine::Vec2f textureStart{0.f, 0.f};
+    engine::Vec2f positionOffset{0.f, 0.f};
 
     if (offset_.x > 0)
     {
@@ -188,9 +189,13 @@ void Text::updateSprite()
         positionOffset.y = 0;
     }
 
-    sprite_.setTextureRect(sf::IntRect(textureStart.x, textureStart.y, size_.x, size_.y));
+    sprite_.setTextureRect(engine::IntRect{
+        static_cast<int>(textureStart.x),
+        static_cast<int>(textureStart.y),
+        static_cast<int>(size_.x),
+        static_cast<int>(size_.y)});
     auto newPosition = globalPosition_ + positionOffset;
-    sprite_.setPosition(sf::Vector2f{std::round(newPosition.x), std::round(newPosition.y)});
+    sprite_.setPosition(engine::Vec2f{std::round(newPosition.x), std::round(newPosition.y)});
 }
 
 engine::Vec2f Text::getGlobalPosition() const

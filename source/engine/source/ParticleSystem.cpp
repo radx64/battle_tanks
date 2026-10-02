@@ -17,11 +17,11 @@ void ParticleSystem::add(std::unique_ptr<Particle> particle)
     particles_to_spawn_.push_back(std::move(particle));
 }
 
-void ParticleSystem::draw(sf::RenderWindow& render_window)
+void ParticleSystem::draw(engine::gfx::RenderTarget& renderTarget)
 {
     for (const auto& particle : active_particles_)
     {
-        particle->draw(render_window);
+        particle->draw(renderTarget);
     }
 }
 

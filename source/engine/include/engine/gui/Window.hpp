@@ -3,7 +3,6 @@
 #include <functional>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
 
 #include "engine/gui/ContextMenu.hpp"
 #include "engine/gui/Widget.hpp"
@@ -113,8 +112,8 @@ protected:
     engine::Vec2f windowSizeToRestore_;
     engine::Vec2f windowPositionToRestore_;
 
-    const sf::Texture& activeTexture_;
-    const sf::Texture& inactiveTexture_;
+    const engine::gfx::Texture& activeTexture_;
+    const engine::gfx::Texture& inactiveTexture_;
     engine::gui::FramedSprite background_;
 };
 

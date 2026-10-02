@@ -1,6 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/Sprite.hpp"
+#include "engine/gfx/Texture.hpp"
 
 namespace game::entity 
 {
@@ -8,8 +10,8 @@ namespace game::entity
 class Cannon
 {
 public:
-    Cannon(float x, float y, float rotation, sf::Texture& texture);
-    void draw(sf::RenderWindow& render_window);
+    Cannon(float x, float y, float rotation, engine::gfx::Texture& texture);
+    void draw(engine::gfx::RenderTarget& render_window);
     void physics(float time_step);
     void setRotation(float rotation);
     void fire();
@@ -20,7 +22,7 @@ public:
     float current_rotation_;
     float set_rotation_;
     float cooldown_;
-    sf::Sprite sprite_;
+    engine::gfx::Sprite sprite_;
 };
 
 }  // namespace game::entity

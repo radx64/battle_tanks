@@ -33,9 +33,9 @@ void TracksRenderer::addTrackImprint(const int x, const int y, const float angle
         {
             auto& chunk = chunks_.getOrCreateChunk(coordinates);
 
-            sf::RectangleShape rectangle(sf::Vector2f(TRACK_HEIGHT, TRACK_WIDTH));
-            rectangle.setPosition(engine::temporary::toSf(engine::Vector2f(x, y) - chunk.position));
-            rectangle.setFillColor(sf::Color(0, 0, 0, TRACK_IMPRINT_OPACITY));
+            engine::gfx::RectangleShape rectangle(engine::Vec2f(TRACK_HEIGHT, TRACK_WIDTH));
+            rectangle.setPosition(engine::Vector2f(x, y) - chunk.position);
+            rectangle.setFillColor(engine::gfx::Color(0, 0, 0, TRACK_IMPRINT_OPACITY));
             rectangle.setRotation(angle);
 
             chunk.target->draw(rectangle);
@@ -43,7 +43,7 @@ void TracksRenderer::addTrackImprint(const int x, const int y, const float angle
         });
 }
 
-void TracksRenderer::draw(sf::RenderWindow& render_window)
+void TracksRenderer::draw(engine::gfx::RenderTarget& render_window)
 {
     auto& camera = engine::Context::getCamera();
     const auto& camera_position = camera.getPosition();
@@ -60,7 +60,7 @@ void TracksRenderer::draw(sf::RenderWindow& render_window)
                 chunk.sprite.setTexture(chunk.target->getTexture(), true);
             }
 
-            chunk.sprite.setColor(sf::Color(0, 0, 0, PARTICLE_LAYER_OPACITY));
+            chunk.sprite.setColor(engine::gfx::Color(0, 0, 0, PARTICLE_LAYER_OPACITY));
            render_window.draw(chunk.sprite);
         });
 }

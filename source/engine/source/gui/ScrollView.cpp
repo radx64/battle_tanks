@@ -36,7 +36,7 @@ void ScrollView::setContent(std::unique_ptr<IScrollableWidget> content)
         updateScrollBars();
     });
 
-    content_->onFocusRectChange([this](const sf::FloatRect& position)
+    content_->onFocusRectChange([this](const engine::FloatRect& position)
     {
         ensureRectVisible(position);
     });
@@ -86,9 +86,9 @@ ScrollView::ScrollView()
     addChild(std::move(verticalScrollBar));
 }
 
-void ScrollView::onRender(sf::RenderTexture& renderTexture)
+void ScrollView::onRender(engine::gfx::RenderTarget& renderTarget)
 {
-    (void)renderTexture;
+    (void)renderTarget;
 }
 
 void ScrollView::onSizeChange()
@@ -163,7 +163,7 @@ void ScrollView::applyScroll()
     scrollOffset_.x = calculateScrollOffset(horizontalScrollBar_->getValue(), horizontalMetrics.maxOffset, false);
     scrollOffset_.y = calculateScrollOffset(verticalScrollBar_->getValue(), verticalMetrics.maxOffset, true);
 
-    const sf::Vector2f contentOffset{
+    const engine::Vec2f contentOffset{
         scrollPadding_.left - scrollOffset_.x,
         scrollPadding_.top - scrollOffset_.y
     };
@@ -236,7 +236,7 @@ void ScrollView::updateScrollBars()
     applyScroll();
 }
 
-void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
+void ScrollView::ensureRectVisible(const engine::FloatRect& rectBounds)
 {
     if (content_ == nullptr)
     {
@@ -256,7 +256,7 @@ void ScrollView::ensureRectVisible(const sf::FloatRect& rectBounds)
         scrollPadding_.top,
         scrollPadding_.bottom);
 
-    const sf::FloatRect paddedRectBounds{
+    const engine::FloatRect paddedRectBounds{
         rectBounds.left + scrollPadding_.left,
         rectBounds.top + scrollPadding_.top,
         rectBounds.width,

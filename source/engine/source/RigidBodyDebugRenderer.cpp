@@ -1,62 +1,48 @@
 #include "engine/RigidBodyDebugRenderer.hpp"
 
-#include <SFML/Graphics.hpp>
-
-#include "backends/sfml/ToSf.hpp"
-
 #include "engine/Scene.hpp"
+#include "engine/gfx/Color.hpp"
+#include "engine/gfx/RenderTarget.hpp"
+#include "engine/gfx/Shape.hpp"
+#include "engine/gfx/VertexArray.hpp"
 
 namespace engine
 {
 
-void RigidBodyDebugRenderer::debug(engine::Scene& scene, sf::RenderWindow& render_window)
+namespace
+{
+void drawLine(engine::gfx::RenderTarget& renderTarget, const engine::Vec2f& from, const engine::Vec2f& to,
+    const engine::gfx::Color& color)
+{
+    engine::gfx::VertexArray line{engine::gfx::PrimitiveType::Lines, 2};
+    line[0] = engine::gfx::Vertex{from, color};
+    line[1] = engine::gfx::Vertex{to, color};
+    renderTarget.draw(line);
+}
+}  // namespace
+
+void RigidBodyDebugRenderer::debug(engine::Scene& scene, engine::gfx::RenderTarget& renderTarget)
 {
     for (const auto& gameObject : scene.objects())
     {
-        auto x = gameObject->getRigidBody().transform().position().x;
-        auto y = gameObject->getRigidBody().transform().position().y;
-        float radius = gameObject->getRigidBody().radius_;
-        
-        sf::CircleShape boundary(radius, 12);
-        boundary.setFillColor(sf::Color(0, 0, 0, 0));
-        boundary.setOutlineThickness(1);
-        
-        if(gameObject->getRigidBody().type_ == engine::RigidBody::Type::STATIC)
-        {
-            boundary.setOutlineColor(sf::Color(0, 0, 255));
-        }
-        else
-        {
-            boundary.setOutlineColor(sf::Color(255, 0, 0));
-        }
-        boundary.setOrigin(radius, radius);
-        boundary.setPosition(x, y);
-        render_window.draw(boundary);
-        
-        // Velocity vectors
-        auto velocity = engine::toSf(gameObject->getRigidBody().velocity_);
-        sf::Vertex velocityVector[] =
-        {
-            sf::Vertex(sf::Vector2f(x, y)),
-            sf::Vertex(sf::Vector2f(x, y)+ (velocity))
-        };
-       render_window.draw(velocityVector, 2, sf::Lines);
+        const auto x = gameObject->getRigidBody().transform().position().x;
+        const auto y = gameObject->getRigidBody().transform().position().y;
+        const float radius = gameObject->getRigidBody().radius_;
 
-        sf::Vertex velocityXvector[] =
-        {
-            sf::Vertex(sf::Vector2f(x, y), sf::Color::Red),
-            sf::Vertex(sf::Vector2f(x+velocity.x, y), sf::Color::Red)
-        };
+        engine::gfx::CircleShape boundary{radius, 12};
+        boundary.setFillColor(engine::gfx::Color{0, 0, 0, 0});
+        boundary.setOutlineThickness(1.f);
+        boundary.setOutlineColor(gameObject->getRigidBody().type_ == engine::RigidBody::Type::STATIC
+            ? engine::gfx::Color::Blue
+            : engine::gfx::Color::Red);
+        boundary.setOrigin({radius, radius});
+        boundary.setPosition({x, y});
+        renderTarget.draw(boundary);
 
-       render_window.draw(velocityXvector, 2, sf::Lines);
-
-        sf::Vertex velocityYvector[] =
-        {
-            sf::Vertex(sf::Vector2f(x, y), sf::Color::Green),
-            sf::Vertex(sf::Vector2f(x, y+velocity.y), sf::Color::Green)
-        };
-
-       render_window.draw(velocityYvector, 2, sf::Lines);
+        const auto& velocity = gameObject->getRigidBody().velocity_;
+        drawLine(renderTarget, {x, y}, {x + velocity.x, y + velocity.y}, engine::gfx::Color::White);
+        drawLine(renderTarget, {x, y}, {x + velocity.x, y}, engine::gfx::Color::Red);
+        drawLine(renderTarget, {x, y}, {x, y + velocity.y}, engine::gfx::Color::Green);
     }
 }
 

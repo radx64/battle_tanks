@@ -1,6 +1,5 @@
 #include "game/entity/bullet/BulletFactory.hpp"
 
-#include <SFML/Graphics.hpp>
 
 #include "game/entity/bullet/Bullet.hpp"
 #include "graphics/TextureLibrary.hpp"
@@ -10,7 +9,7 @@ namespace game::entity
 
 namespace
 {
-sf::Texture& getBulletTexture(const BulletFactory::BulletType type)
+engine::gfx::Texture& getBulletTexture(const BulletFactory::BulletType type)
 {
     switch (type)
     {

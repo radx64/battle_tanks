@@ -79,7 +79,7 @@ void Selection::update()
     text_.invalidateTexture();
 
     const std::string& fieldText = text_.getText();
-    const sf::Font* font = text_.getFont();
+    const engine::gfx::Font* font = text_.getFont();
     
     if (!font || isEmpty())
     {
@@ -208,7 +208,7 @@ size_t Selection::getLineEndIndex(const std::string& text, size_t lineNumber) co
 
 float Selection::getLineXWidth(const std::string& text, size_t lineStartIdx, size_t lineEndIdx) const
 {
-    const sf::Font* font = text_.getFont();
+    const engine::gfx::Font* font = text_.getFont();
     if (!font) return 0.f;
     
     uint32_t charSize = text_.getCharacterSize();
@@ -219,9 +219,9 @@ float Selection::getLineXWidth(const std::string& text, size_t lineStartIdx, siz
         float keringOffset = 0.f;
         if (i > lineStartIdx)
         {
-            keringOffset = font->getKerning(text[i-1], text[i], charSize);
+            keringOffset = font->getKerning(static_cast<std::uint32_t>(text[i-1]), static_cast<std::uint32_t>(text[i]), charSize);
         }
-        width += font->getGlyph(text[i], charSize, false, 0.f).advance + keringOffset;
+        width += font->getGlyphAdvance(static_cast<std::uint32_t>(text[i]), charSize) + keringOffset;
     }
     
     return width;

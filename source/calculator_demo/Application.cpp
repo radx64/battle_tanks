@@ -39,7 +39,7 @@ void Application::onUpdate(float time_step)
 
 void Application::onRender()
 {
-    window_.getNativeHandle().clear(sf::Color(192, 192, 192));
+    window_.clear(engine::gfx::Color(192, 192, 192));
     engine::gui::Application::onRender();
 }
 
